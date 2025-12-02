@@ -1,0 +1,654 @@
+apiVersion: v1
+data:
+  devcontainer-activity.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "grafana",
+              "uid": "-- Grafana --"
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "liveNow": false,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Number of developers currently connected and sending metrics",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value"
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count(count by (developer_id) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}))",
+              "refId": "A"
+            }
+          ],
+          "title": "Active Developers",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Number of developers uploading more than 10 MB/s (potential data exfiltration)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 8,
+            "y": 0
+          },
+          "id": 2,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value"
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count(sum by (developer_id) (rate(system_network_io_bytes_total{direction=\"transmit\"}[5m])) > 10*1024*1024)",
+              "refId": "A"
+            }
+          ],
+          "title": "Upload Alert (>10 MB/s)",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Network errors per second across all devcontainers",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1
+                  },
+                  {
+                    "color": "red",
+                    "value": 10
+                  }
+                ]
+              },
+              "unit": "short",
+              "decimals": 1
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 16,
+            "y": 0
+          },
+          "id": 3,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value"
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum(rate(system_network_errors_total{service_name=\"devcontainer-monitor\"}[5m]))",
+              "refId": "A"
+            }
+          ],
+          "title": "Network Errors (per sec)",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Comprehensive view of all active developers showing project assignment, memory usage, CPU, network, and uptime",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Last Seen"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsIso"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 180
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Developer ID"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Project Name"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Docker RAM (GB)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decgbytes"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Devcontainer RAM usage"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decgbytes"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 8
+                        },
+                        {
+                          "color": "red",
+                          "value": 10
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Container Uptime"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dtdurations"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CPU Usage (cores)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 3
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 2
+                        },
+                        {
+                          "color": "red",
+                          "value": 3
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Network Traffic (MB/s)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "MBs"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 5
+                        },
+                        {
+                          "color": "red",
+                          "value": 10
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "id": 4,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Last Seen"
+              }
+            ]
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count by (developer_id, project_name) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"})",
+              "format": "table",
+              "instant": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (developer_id) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}) / 1024 / 1024 / 1024",
+              "format": "table",
+              "instant": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (developer_id) (container_memory_current_bytes{service_name=\"devcontainer-monitor\"}) / 1024 / 1024 / 1024",
+              "format": "table",
+              "instant": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "max by (developer_id) (container_uptime_seconds{service_name=\"devcontainer-monitor\"})",
+              "format": "table",
+              "instant": true,
+              "refId": "D"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (developer_id) (rate(container_cpu_usage_seconds_total{service_name=\"devcontainer-monitor\"}[5m]))",
+              "format": "table",
+              "instant": true,
+              "refId": "E"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "sum by (developer_id) (rate(system_network_io_bytes_total{service_name=\"devcontainer-monitor\"}[5m])) / 1024 / 1024",
+              "format": "table",
+              "instant": true,
+              "refId": "F"
+            }
+          ],
+          "title": "Developers by Project",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "state": true,
+                  "cluster_name": true,
+                  "instance": true,
+                  "job": true,
+                  "service_name": true
+                },
+                "indexByName": {},
+                "renameByName": {}
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time 1": true,
+                  "Time 2": true,
+                  "Time 3": true,
+                  "Time 4": true,
+                  "Time 5": true,
+                  "Time 6": true,
+                  "Value #A": true
+                },
+                "indexByName": {
+                  "developer_id": 0,
+                  "project_name": 1,
+                  "Time": 2,
+                  "Value #B": 3,
+                  "Value #C": 4,
+                  "Value #D": 5,
+                  "Value #E": 6,
+                  "Value #F": 7
+                },
+                "renameByName": {
+                  "Time": "Last Seen",
+                  "Value #B": "Docker RAM (GB)",
+                  "Value #C": "Devcontainer RAM usage",
+                  "Value #D": "Container Uptime",
+                  "Value #E": "CPU Usage (cores)",
+                  "Value #F": "Network Traffic (MB/s)",
+                  "developer_id": "Developer ID",
+                  "project_name": "Project Name"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 38,
+      "style": "dark",
+      "tags": [
+        "devcontainer",
+        "monitoring",
+        "security"
+      ],
+      "templating": {
+        "list": []
+      },
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Devcontainer overview",
+      "uid": "devcontainer-overview",
+      "version": 10,
+      "weekStart": ""
+    }
+kind: ConfigMap
+metadata:
+  annotations:
+    grafana_folder: "Devcontainer"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"devcontainer-overview.json":"{\n  \"annotations\": {\n    \"list\": [\n      {\n        \"builtIn\": 1,\n        \"datasource\": {\n          \"type\": \"grafana\",\n          \"uid\": \"-- Grafana --\"\n        },\n        \"enable\": true,\n        \"hide\": true,\n        \"iconColor\": \"rgba(0, 211, 255, 1)\",\n        \"name\": \"Annotations \u0026 Alerts\",\n        \"type\": \"dashboard\"\n      }\n    ]\n  },\n  \"editable\": true,\n  \"fiscalYearStartMonth\": 0,\n  \"graphTooltip\": 1,\n  \"id\": null,\n  \"links\": [],\n  \"liveNow\": false,\n  \"panels\": [\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Number of developers currently connected and sending metrics\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"red\",\n                \"value\": null\n              },\n              {\n                \"color\": \"green\",\n                \"value\": 1\n              }\n            ]\n          },\n          \"unit\": \"short\"\n        },\n        \"overrides\": []\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 8,\n        \"x\": 0,\n        \"y\": 0\n      },\n      \"id\": 1,\n      \"options\": {\n        \"colorMode\": \"background\",\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ],\n          \"fields\": \"\",\n          \"values\": false\n        },\n        \"text\": {},\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"count(count by (developer_id) (system_memory_usage_bytes{service_name=\\\"devcontainer-monitor\\\"}))\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Active Developers\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Number of developers uploading more than 10 MB/s (potential data exfiltration)\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"green\",\n                \"value\": null\n              },\n              {\n                \"color\": \"red\",\n                \"value\": 1\n              }\n            ]\n          },\n          \"unit\": \"short\"\n        },\n        \"overrides\": []\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 8,\n        \"x\": 8,\n        \"y\": 0\n      },\n      \"id\": 2,\n      \"options\": {\n        \"colorMode\": \"background\",\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ],\n          \"fields\": \"\",\n          \"values\": false\n        },\n        \"text\": {},\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"count(sum by (developer_id) (rate(system_network_io_bytes_total{direction=\\\"transmit\\\"}[5m])) \u003e 10*1024*1024)\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Upload Alert (\u003e10 MB/s)\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Network errors per second across all devcontainers\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"green\",\n                \"value\": null\n              },\n              {\n                \"color\": \"yellow\",\n                \"value\": 1\n              },\n              {\n                \"color\": \"red\",\n                \"value\": 10\n              }\n            ]\n          },\n          \"unit\": \"short\",\n          \"decimals\": 1\n        },\n        \"overrides\": []\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 8,\n        \"x\": 16,\n        \"y\": 0\n      },\n      \"id\": 3,\n      \"options\": {\n        \"colorMode\": \"background\",\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ],\n          \"fields\": \"\",\n          \"values\": false\n        },\n        \"text\": {},\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum(rate(system_network_errors_total{service_name=\\\"devcontainer-monitor\\\"}[5m]))\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Network Errors (per sec)\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Comprehensive view of all active developers showing project assignment, memory usage, CPU, network, and uptime\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"custom\": {\n            \"align\": \"auto\",\n            \"cellOptions\": {\n              \"type\": \"auto\"\n            },\n            \"inspect\": false\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"green\",\n                \"value\": null\n              }\n            ]\n          }\n        },\n        \"overrides\": [\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Last Seen\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"dateTimeAsIso\"\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 180\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Developer ID\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Project Name\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Docker RAM (GB)\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"decgbytes\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 2\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Devcontainer RAM usage\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"decgbytes\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 2\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 190\n              },\n              {\n                \"id\": \"custom.cellOptions\",\n                \"value\": {\n                  \"type\": \"color-background\"\n                }\n              },\n              {\n                \"id\": \"thresholds\",\n                \"value\": {\n                  \"mode\": \"absolute\",\n                  \"steps\": [\n                    {\n                      \"color\": \"green\",\n                      \"value\": null\n                    },\n                    {\n                      \"color\": \"yellow\",\n                      \"value\": 8\n                    },\n                    {\n                      \"color\": \"red\",\n                      \"value\": 10\n                    }\n                  ]\n                }\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Container Uptime\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"dtdurations\"\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"CPU Usage (cores)\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"short\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 3\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              },\n              {\n                \"id\": \"custom.cellOptions\",\n                \"value\": {\n                  \"type\": \"color-background\"\n                }\n              },\n              {\n                \"id\": \"thresholds\",\n                \"value\": {\n                  \"mode\": \"absolute\",\n                  \"steps\": [\n                    {\n                      \"color\": \"green\",\n                      \"value\": null\n                    },\n                    {\n                      \"color\": \"yellow\",\n                      \"value\": 2\n                    },\n                    {\n                      \"color\": \"red\",\n                      \"value\": 3\n                    }\n                  ]\n                }\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Network Traffic (MB/s)\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"MBs\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 2\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 170\n              },\n              {\n                \"id\": \"custom.cellOptions\",\n                \"value\": {\n                  \"type\": \"color-background\"\n                }\n              },\n              {\n                \"id\": \"thresholds\",\n                \"value\": {\n                  \"mode\": \"absolute\",\n                  \"steps\": [\n                    {\n                      \"color\": \"green\",\n                      \"value\": null\n                    },\n                    {\n                      \"color\": \"yellow\",\n                      \"value\": 5\n                    },\n                    {\n                      \"color\": \"red\",\n                      \"value\": 10\n                    }\n                  ]\n                }\n              }\n            ]\n          }\n        ]\n      },\n      \"gridPos\": {\n        \"h\": 10,\n        \"w\": 24,\n        \"x\": 0,\n        \"y\": 4\n      },\n      \"id\": 4,\n      \"options\": {\n        \"cellHeight\": \"sm\",\n        \"footer\": {\n          \"countRows\": false,\n          \"fields\": \"\",\n          \"reducer\": [\n            \"sum\"\n          ],\n          \"show\": false\n        },\n        \"showHeader\": true,\n        \"sortBy\": [\n          {\n            \"desc\": true,\n            \"displayName\": \"Last Seen\"\n          }\n        ]\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"count by (developer_id, project_name) (system_memory_usage_bytes{service_name=\\\"devcontainer-monitor\\\"})\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"A\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (system_memory_usage_bytes{service_name=\\\"devcontainer-monitor\\\"}) / 1024 / 1024 / 1024\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"B\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (container_memory_current_bytes{service_name=\\\"devcontainer-monitor\\\"}) / 1024 / 1024 / 1024\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"C\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"max by (developer_id) (container_uptime_seconds{service_name=\\\"devcontainer-monitor\\\"})\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"D\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (rate(container_cpu_usage_seconds_total{service_name=\\\"devcontainer-monitor\\\"}[5m]))\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"E\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (rate(system_network_io_bytes_total{service_name=\\\"devcontainer-monitor\\\"}[5m])) / 1024 / 1024\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"F\"\n        }\n      ],\n      \"title\": \"Developers by Project\",\n      \"transformations\": [\n        {\n          \"id\": \"organize\",\n          \"options\": {\n            \"excludeByName\": {\n              \"state\": true,\n              \"cluster_name\": true,\n              \"instance\": true,\n              \"job\": true,\n              \"service_name\": true\n            },\n            \"indexByName\": {},\n            \"renameByName\": {}\n          }\n        },\n        {\n          \"id\": \"merge\",\n          \"options\": {}\n        },\n        {\n          \"id\": \"organize\",\n          \"options\": {\n            \"excludeByName\": {\n              \"Time 1\": true,\n              \"Time 2\": true,\n              \"Time 3\": true,\n              \"Time 4\": true,\n              \"Time 5\": true,\n              \"Time 6\": true,\n              \"Value #A\": true\n            },\n            \"indexByName\": {\n              \"developer_id\": 0,\n              \"project_name\": 1,\n              \"Time\": 2,\n              \"Value #B\": 3,\n              \"Value #C\": 4,\n              \"Value #D\": 5,\n              \"Value #E\": 6,\n              \"Value #F\": 7\n            },\n            \"renameByName\": {\n              \"Time\": \"Last Seen\",\n              \"Value #B\": \"Docker RAM (GB)\",\n              \"Value #C\": \"Devcontainer RAM usage\",\n              \"Value #D\": \"Container Uptime\",\n              \"Value #E\": \"CPU Usage (cores)\",\n              \"Value #F\": \"Network Traffic (MB/s)\",\n              \"developer_id\": \"Developer ID\",\n              \"project_name\": \"Project Name\"\n            }\n          }\n        }\n      ],\n      \"type\": \"table\"\n    }\n  ],\n  \"refresh\": \"30s\",\n  \"schemaVersion\": 38,\n  \"style\": \"dark\",\n  \"tags\": [\n    \"devcontainer\",\n    \"monitoring\",\n    \"security\"\n  ],\n  \"templating\": {\n    \"list\": []\n  },\n  \"time\": {\n    \"from\": \"now-1h\",\n    \"to\": \"now\"\n  },\n  \"timepicker\": {},\n  \"timezone\": \"browser\",\n  \"title\": \"Dashboard 1: Developer Activity Overview\",\n  \"uid\": \"devcontainer-dashboard-1\",\n  \"version\": 10,\n  \"weekStart\": \"\"\n}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"grafana_dashboard":"1"},"name":"grafana-dashboard-devcontainer-activity","namespace":"monitoring"}}
+  creationTimestamp: "2025-11-13T21:52:54Z"
+  labels:
+    grafana_dashboard: "1"
+  name: grafana-dashboard-devcontainer-overview
+  namespace: monitoring
+  resourceVersion: "939974"
+  uid: 7d0a95bd-fc77-4339-a153-0d66b0d65416

@@ -1,0 +1,39 @@
+# File: /workspace/.devcontainer/additions/otel/script-exporter-config.yaml
+#
+# Purpose: Configuration for ricoberger/script_exporter
+#          Defines custom scripts that collect metrics and expose them via HTTP
+#          for Prometheus/OTel scraping.
+#
+# Usage: script_exporter --config.files=/workspace/.devcontainer/additions/otel/script-exporter-config.yaml
+#
+# Each script is executed when the corresponding endpoint is scraped by Prometheus/OTel.
+# Prometheus scrapes at the interval you define, not on a fixed schedule.
+#
+# Endpoints:
+#   - http://localhost:9469/probe?script=cgroup_metrics
+#   - http://localhost:9469/metrics (built-in metrics for script_exporter itself)
+#
+
+# Define the scripts to be executed
+scripts:
+  # Container cgroup metrics (memory, CPU)
+  # Executed when: Prometheus/OTel scrapes /probe?script=cgroup_metrics
+  # Output: Prometheus exposition format
+  - name: cgroup_metrics
+    command: ["/workspace/.devcontainer/additions/otel/scripts/metrics-devcontainer.sh"]
+    timeout:
+      max_timeout: 5
+
+  # Devcontainer information (installed components, OS info)
+  # Executed when: Prometheus/OTel scrapes /probe?script=devcontainer_info
+  # Output: Prometheus exposition format
+  - name: devcontainer_info
+    command: ["/workspace/.devcontainer/additions/otel/scripts/devcontainer-info.sh"]
+    timeout:
+      max_timeout: 5
+
+# HTTP server configuration
+# The exporter listens on this address for Prometheus scrapes
+# Default: :9469
+# web:
+#   listen-address: ":9469"
