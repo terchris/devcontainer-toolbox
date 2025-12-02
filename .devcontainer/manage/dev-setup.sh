@@ -1885,7 +1885,7 @@ execute_tool_installation() {
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "✅ Successfully installed: $tool_name"
         echo ""
-        echo "ℹ️  This tool has been auto-enabled for your team."
+        echo "ℹ️  This tool has been auto-enabled for this repo."
         echo "   It will automatically install on next container rebuild."
         echo "   To disable: Run 'dev-setup' → Manage Auto-Install Tools"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
