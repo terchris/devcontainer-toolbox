@@ -14,7 +14,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Nginx Reverse Proxy"
 SCRIPT_DESCRIPTION="Install nginx as reverse proxy for Claude Code ↔ LiteLLM with Host header injection"
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
-CHECK_INSTALLED_COMMAND="command -v nginx >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="command -v nginx >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install nginx

@@ -19,7 +19,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="OpenTelemetry Monitoring"
 SCRIPT_DESCRIPTION="Install OpenTelemetry Collector for devcontainer monitoring when connected to our network"
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
-CHECK_INSTALLED_COMMAND="([ -f /usr/bin/otelcol-contrib ] || command -v otelcol-contrib >/dev/null 2>&1) && ([ -f /usr/local/bin/script_exporter ] || command -v script_exporter >/dev/null 2>&1)"
+SCRIPT_CHECK_COMMAND="([ -f /usr/bin/otelcol-contrib ] || command -v otelcol-contrib >/dev/null 2>&1) && ([ -f /usr/local/bin/script_exporter ] || command -v script_exporter >/dev/null 2>&1)"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install OpenTelemetry Collector

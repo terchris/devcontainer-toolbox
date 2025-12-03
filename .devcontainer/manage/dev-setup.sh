@@ -322,7 +322,7 @@ scan_available_tools() {
     local found=0
 
     # Use library to scan install scripts
-    # Output format: script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>CHECK_INSTALLED_COMMAND<TAB>PREREQUISITE_CONFIGS
+    # Output format: script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND<TAB>SCRIPT_PREREQUISITES
     while IFS=$'\t' read -r script_basename script_id script_name script_description script_category check_command prerequisite_configs; do
         # Add to arrays
         AVAILABLE_TOOLS+=("$script_name")
@@ -707,8 +707,8 @@ check_service_installation_prerequisites() {
         return 1
     fi
 
-    # Extract CHECK_INSTALLED_COMMAND from install script using library
-    local check_command=$(extract_script_metadata "$install_script" "CHECK_INSTALLED_COMMAND")
+    # Extract SCRIPT_CHECK_COMMAND from install script using library
+    local check_command=$(extract_script_metadata "$install_script" "SCRIPT_CHECK_COMMAND")
 
     if [[ -z "$check_command" ]]; then
         # No check command means we can't validate installation
@@ -778,7 +778,7 @@ show_service_dependencies() {
         local status="✗ Not installed"
 
         if [[ -f "$install_script" ]]; then
-            local check_command=$(extract_script_metadata "$install_script" "CHECK_INSTALLED_COMMAND")
+            local check_command=$(extract_script_metadata "$install_script" "SCRIPT_CHECK_COMMAND")
             if [[ -n "$check_command" ]] && eval "$check_command" >/dev/null 2>&1; then
                 status="✓ Installed"
             fi
@@ -1852,7 +1852,7 @@ execute_tool_installation() {
     fi
 
     # Check prerequisites before installing
-    local prerequisite_configs=$(extract_script_metadata "$script_path" "PREREQUISITE_CONFIGS")
+    local prerequisite_configs=$(extract_script_metadata "$script_path" "SCRIPT_PREREQUISITES")
     if [[ -n "$prerequisite_configs" ]]; then
         log_info_msg "Checking prerequisites for $tool_name: $prerequisite_configs"
         if ! check_prerequisite_configs "$prerequisite_configs" "$ADDITIONS_DIR"; then
@@ -1941,7 +1941,7 @@ check_tool_status() {
     local script_name="${TOOL_SCRIPTS[$tool_index]}"
     local script_path="$ADDITIONS_DIR/$script_name"
 
-    local check_command=$(extract_script_metadata "$script_path" "CHECK_INSTALLED_COMMAND")
+    local check_command=$(extract_script_metadata "$script_path" "SCRIPT_CHECK_COMMAND")
     check_component_installed "$check_command"
     return $?
 }
@@ -1962,7 +1962,7 @@ check_service_installed() {
         return 1  # Install script not found
     fi
 
-    local check_command=$(extract_script_metadata "$install_script" "CHECK_INSTALLED_COMMAND")
+    local check_command=$(extract_script_metadata "$install_script" "SCRIPT_CHECK_COMMAND")
     check_component_installed "$check_command"
     return $?
 }
@@ -1996,7 +1996,7 @@ check_tool_installed() {
 
     # Fallback: extract metadata directly if not in array
     local script_path="$ADDITIONS_DIR/$script_name"
-    local check_command=$(extract_script_metadata "$script_path" "CHECK_INSTALLED_COMMAND")
+    local check_command=$(extract_script_metadata "$script_path" "SCRIPT_CHECK_COMMAND")
     check_component_installed "$check_command"
     return $?
 }

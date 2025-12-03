@@ -13,7 +13,7 @@
 # USAGE:
 #   source /workspace/.devcontainer/additions/lib/prerequisite-check.sh
 #
-#   # Check if a config script has been run (using its CHECK_CONFIGURED_COMMAND)
+#   # Check if a config script has been run (using its SCRIPT_CHECK_COMMAND)
 #   if check_prerequisite_config "config-devcontainer-identity.sh" "/workspace/.devcontainer/additions"; then
 #       echo "Identity is configured"
 #   else
@@ -67,8 +67,8 @@ check_prerequisite_config() {
         return 1
     fi
 
-    # Extract CHECK_CONFIGURED_COMMAND from the config script
-    local check_command=$(grep -m 1 "^CHECK_CONFIGURED_COMMAND=" "$config_script_path" 2>/dev/null | cut -d'"' -f2)
+    # Extract SCRIPT_CHECK_COMMAND from the config script
+    local check_command=$(grep -m 1 "^SCRIPT_CHECK_COMMAND=" "$config_script_path" 2>/dev/null | cut -d'"' -f2)
 
     # If no check command, assume not configured
     if [[ -z "$check_command" ]]; then
@@ -128,7 +128,7 @@ check_prerequisite_configs() {
 #   config_script_name - Name of the config script
 #   additions_dir      - Directory containing config scripts
 #
-# Returns: CONFIG_NAME value via stdout (or script name if not found)
+# Returns: SCRIPT_NAME value via stdout (or script name if not found)
 #
 # Example:
 #   name=$(get_config_name "config-devcontainer-identity.sh" "/workspace/.devcontainer/additions")
@@ -147,10 +147,10 @@ get_config_name() {
         return 0
     fi
 
-    # Extract CONFIG_NAME
-    local config_name=$(grep -m 1 "^CONFIG_NAME=" "$config_script_path" 2>/dev/null | cut -d'"' -f2)
+    # Extract SCRIPT_NAME
+    local config_name=$(grep -m 1 "^SCRIPT_NAME=" "$config_script_path" 2>/dev/null | cut -d'"' -f2)
 
-    # Return CONFIG_NAME or fallback to script name
+    # Return SCRIPT_NAME or fallback to script name
     if [[ -n "$config_name" ]]; then
         echo "$config_name"
     else

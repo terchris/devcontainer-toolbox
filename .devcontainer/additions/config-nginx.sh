@@ -14,11 +14,11 @@
 # CONFIGURATION - Metadata for dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
-CONFIG_NAME="Backend Infrastructure"
-CONFIG_VER="0.0.1"
-CONFIG_DESCRIPTION="Configure backend URL and ports for nginx reverse proxy (LiteLLM, OTEL, etc.)"
-CONFIG_CATEGORY="INFRA_CONFIG"
-CHECK_CONFIGURED_COMMAND="[ -f ~/.nginx-backend-config ] && grep -q '^export BACKEND_URL=' ~/.nginx-backend-config"
+SCRIPT_NAME="Backend Infrastructure"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Configure backend URL and ports for nginx reverse proxy (LiteLLM, OTEL, etc.)"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="[ -f ~/.nginx-backend-config ] && grep -q '^export BACKEND_URL=' ~/.nginx-backend-config"
 
 #------------------------------------------------------------------------------
 

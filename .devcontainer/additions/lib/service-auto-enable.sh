@@ -100,7 +100,7 @@ regenerate_supervisor_config() {
 #------------------------------------------------------------------------------
 
 # Enable service for auto-start (auto-detects SCRIPT_ID from metadata)
-# No parameters needed - reads SCRIPT_ID and SERVICE_SCRIPT_NAME from caller's environment
+# No parameters needed - reads SCRIPT_ID and SCRIPT_NAME from caller's environment
 # Usage: auto_enable_service
 auto_enable_service() {
     if [[ -z "$SCRIPT_ID" ]]; then
@@ -108,7 +108,7 @@ auto_enable_service() {
         return 1
     fi
 
-    local service_name="${SERVICE_SCRIPT_NAME:-$SCRIPT_ID}"
+    local service_name="${SCRIPT_NAME:-$SCRIPT_ID}"
 
     # Enable for auto-start
     if enable_service_autostart "$SCRIPT_ID" "$service_name"; then
@@ -118,7 +118,7 @@ auto_enable_service() {
 }
 
 # Disable service from auto-start (auto-detects SCRIPT_ID from metadata)
-# No parameters needed - reads SCRIPT_ID and SERVICE_SCRIPT_NAME from caller's environment
+# No parameters needed - reads SCRIPT_ID and SCRIPT_NAME from caller's environment
 # Usage: auto_disable_service
 auto_disable_service() {
     if [[ -z "$SCRIPT_ID" ]]; then
@@ -126,7 +126,7 @@ auto_disable_service() {
         return 1
     fi
 
-    disable_service_autostart "$SCRIPT_ID" "${SERVICE_SCRIPT_NAME:-$SCRIPT_ID}"
+    disable_service_autostart "$SCRIPT_ID" "${SCRIPT_NAME:-$SCRIPT_ID}"
 }
 
 # Disable a service from auto-start

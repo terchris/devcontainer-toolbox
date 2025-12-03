@@ -14,7 +14,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Kubernetes Development Tools"
 SCRIPT_DESCRIPTION="Installs kubectl, k9s, helm and sets up .devcontainer.secrets folder for kubeconfig"
 SCRIPT_CATEGORY="INFRA_CONFIG"
-CHECK_INSTALLED_COMMAND="command -v kubectl >/dev/null 2>&1 || command -v k9s >/dev/null 2>&1 || command -v helm >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="command -v kubectl >/dev/null 2>&1 || command -v k9s >/dev/null 2>&1 || command -v helm >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Kubernetes development tools

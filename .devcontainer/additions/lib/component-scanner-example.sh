@@ -22,7 +22,7 @@ echo ""
 # Example 2: Check if component is installed
 echo "Example 2: Check if Python is installed"
 echo "-------------------------------------------"
-check_cmd=$(extract_script_metadata "/workspace/.devcontainer/additions/install-dev-python.sh" "CHECK_INSTALLED_COMMAND")
+check_cmd=$(extract_script_metadata "/workspace/.devcontainer/additions/install-dev-python.sh" "SCRIPT_CHECK_COMMAND")
 if check_component_installed "$check_cmd"; then
     echo "Result: Python IS installed"
 else

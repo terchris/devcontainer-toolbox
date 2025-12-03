@@ -35,7 +35,7 @@
 #   For full category descriptions, see: .devcontainer/additions/lib/categories.sh
 #   Or run: source lib/categories.sh && show_all_categories
 #
-# CHECK_INSTALLED_COMMAND - Shell command to check if already installed
+# SCRIPT_CHECK_COMMAND - Shell command to check if already installed
 #   - Must return exit code 0 if installed, 1 if not installed
 #   - Should suppress all output (use >/dev/null 2>&1)
 #   - Should be fast (run in < 1 second)
@@ -49,7 +49,7 @@
 #     "dpkg -l python3 2>/dev/null | grep -q '^ii'"
 #     "[ -d /opt/tool ]"
 #
-# PREREQUISITE_CONFIGS - Space-separated list of config scripts required (OPTIONAL)
+# SCRIPT_PREREQUISITES - Space-separated list of config scripts required (OPTIONAL)
 #   Use this field to declare configuration prerequisites that must exist before
 #   your tool can be installed. The system will automatically check these and
 #   block installation with a clear error if prerequisites are missing.
@@ -71,7 +71,7 @@
 #
 #     Layer 2: Loud Prerequisites (install_project_tools - uses this field!)
 #       - Runs DURING tool installation for YOUR tool
-#       - Checks YOUR PREREQUISITE_CONFIGS field
+#       - Checks YOUR SCRIPT_PREREQUISITES field
 #       - LOUD error if required config missing
 #       - Blocks installation until fixed
 #
@@ -103,7 +103,7 @@ SCRIPT_VER="0.0.1"           # Script version - displayed in --help and during i
 SCRIPT_NAME="[Name]"
 SCRIPT_DESCRIPTION="[Brief description of what this script installs and its purpose]"
 SCRIPT_CATEGORY="DEV_TOOLS"  # Options: DEV_TOOLS, INFRA_CONFIG, AI_TOOLS, MONITORING, DATABASE, CLOUD
-CHECK_INSTALLED_COMMAND="command -v [tool-name] >/dev/null 2>&1"  # Command to check if already installed
+SCRIPT_CHECK_COMMAND="command -v [tool-name] >/dev/null 2>&1"  # Command to check if already installed
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install
@@ -112,8 +112,8 @@ SCRIPT_USAGE="  $(basename "$0")              # Install
 
 # Optional: Prerequisite configurations required before installation
 # Uncomment and modify if your tool requires specific configurations
-# PREREQUISITE_CONFIGS="config-devcontainer-identity.sh"
-# Multiple prerequisites: PREREQUISITE_CONFIGS="config-identity.sh config-aws-credentials.sh"
+# SCRIPT_PREREQUISITES="config-devcontainer-identity.sh"
+# Multiple prerequisites: SCRIPT_PREREQUISITES="config-identity.sh config-aws-credentials.sh"
 
 # --- IMPORTANT: Base Devcontainer Packages ---
 # The following packages are PRE-INSTALLED in the base devcontainer image
@@ -313,11 +313,11 @@ pre_installation_setup() {
 # ============================================================================
 # DEPRECATED: VERIFY_COMMANDS - DO NOT USE IN NEW SCRIPTS
 # ============================================================================
-# VERIFY_COMMANDS has been deprecated in favor of CHECK_INSTALLED_COMMAND
+# VERIFY_COMMANDS has been deprecated in favor of SCRIPT_CHECK_COMMAND
 # as the single source of truth for installation verification.
 #
 # DECISION: We are in the process of removing VERIFY_COMMANDS from all scripts.
-# - CHECK_INSTALLED_COMMAND is used by the menu system (dev-setup.sh)
+# - SCRIPT_CHECK_COMMAND is used by the menu system (dev-setup.sh)
 # - VERIFY_COMMANDS was optional post-installation verification
 # - Maintaining both creates duplication and confusion
 # - Refactored scripts (golang, java) do not use VERIFY_COMMANDS

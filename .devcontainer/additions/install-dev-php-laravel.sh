@@ -13,7 +13,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="PHP Laravel Development Tools"
 SCRIPT_DESCRIPTION="Installs PHP 8.4, Composer, Laravel installer, and sets up Laravel development environment"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
-CHECK_INSTALLED_COMMAND="([ -f /usr/bin/php ] || command -v php >/dev/null 2>&1) && ([ -f /usr/local/bin/composer ] || command -v composer >/dev/null 2>&1) && ([ -f $HOME/.composer/vendor/bin/laravel ] || command -v laravel >/dev/null 2>&1)"
+SCRIPT_CHECK_COMMAND="([ -f /usr/bin/php ] || command -v php >/dev/null 2>&1) && ([ -f /usr/local/bin/composer ] || command -v composer >/dev/null 2>&1) && ([ -f $HOME/.composer/vendor/bin/laravel ] || command -v laravel >/dev/null 2>&1)"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install PHP Laravel development environment

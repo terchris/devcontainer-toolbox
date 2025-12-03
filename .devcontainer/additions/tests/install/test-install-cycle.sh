@@ -37,7 +37,7 @@ should_skip() {
 
 get_check_command() {
     local script="$1"
-    grep -m 1 "^CHECK_INSTALLED_COMMAND=" "$script" 2>/dev/null | cut -d'"' -f2
+    grep -m 1 "^SCRIPT_CHECK_COMMAND=" "$script" 2>/dev/null | cut -d'"' -f2
 }
 
 #------------------------------------------------------------------------------
@@ -59,12 +59,12 @@ test_install_cycle() {
             continue
         fi
 
-        # Get the CHECK_INSTALLED_COMMAND
+        # Get the SCRIPT_CHECK_COMMAND
         local check_cmd
         check_cmd=$(get_check_command "$script")
 
         if [[ -z "$check_cmd" ]]; then
-            echo "  ⏭ $name (no CHECK_INSTALLED_COMMAND)"
+            echo "  ⏭ $name (no SCRIPT_CHECK_COMMAND)"
             ((skipped++))
             continue
         fi
@@ -80,10 +80,10 @@ test_install_cycle() {
             continue
         fi
 
-        # Step 2: Verify installed (CHECK_INSTALLED_COMMAND should return 0)
+        # Step 2: Verify installed (SCRIPT_CHECK_COMMAND should return 0)
         echo "    2. Verifying installation..."
         if ! eval "$check_cmd" 2>/dev/null; then
-            echo "  ✗ $name - CHECK_INSTALLED_COMMAND failed after install"
+            echo "  ✗ $name - SCRIPT_CHECK_COMMAND failed after install"
             # Try to clean up
             bash "$script" --uninstall 2>/dev/null || true
             ((failed++))
@@ -98,7 +98,7 @@ test_install_cycle() {
             continue
         fi
 
-        # Step 4: Verify uninstalled (CHECK_INSTALLED_COMMAND should return 1)
+        # Step 4: Verify uninstalled (SCRIPT_CHECK_COMMAND should return 1)
         echo "    4. Verifying uninstallation..."
         if eval "$check_cmd" 2>/dev/null; then
             echo "  ✗ $name - tool still installed after uninstall"

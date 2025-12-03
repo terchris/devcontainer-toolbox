@@ -32,17 +32,17 @@
 # discover and display all service scripts. To make your script visible in the menu,
 # you must define these four metadata fields below:
 #
-# SERVICE_SCRIPT_NAME - Human-readable name displayed in the menu (2-4 words)
+# SCRIPT_NAME - Human-readable name displayed in the menu (2-4 words)
 #   Example: "Example Service"
 #
-# SERVICE_SCRIPT_DESCRIPTION - Brief description of what this service does (one sentence)
+# SCRIPT_DESCRIPTION - Brief description of what this service does (one sentence)
 #   Example: "Example background service for demonstration"
 #
-# SERVICE_SCRIPT_CATEGORY - Category for menu organization
+# SCRIPT_CATEGORY - Category for menu organization
 #   Common options: INFRA_CONFIG, DATABASE, MONITORING, CACHE
 #   Example: "INFRA_CONFIG"
 #
-# SERVICE_PREREQUISITE_CONFIGS - Space-separated list of required config-*.sh scripts
+# SCRIPT_PREREQUISITES - Space-separated list of required config-*.sh scripts
 #   - Script checks prerequisites before showing commands in menu
 #   - Leave empty ("") if no prerequisites
 #   - Multiple: "config-example.sh config-database.sh"
@@ -85,11 +85,11 @@
 #
 #------------------------------------------------------------------------------
 
-SERVICE_SCRIPT_NAME="Example Service"
-SERVICE_SCRIPT_VER="0.0.1"  # Script version - displayed in --help
-SERVICE_SCRIPT_DESCRIPTION="Example background service for demonstration"
-SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
-SERVICE_PREREQUISITE_CONFIGS=""  # Example: "config-example.sh" or "" if none
+SCRIPT_NAME="Example Service"
+SCRIPT_VER="0.0.1"  # Script version - displayed in --help
+SCRIPT_DESCRIPTION="Example background service for demonstration"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------
 # COMMAND DEFINITIONS - Single source of truth
@@ -219,7 +219,7 @@ wait_for_service_ready() {
 
 service_start() {
     echo "════════════════════════════════════════════════════════"
-    echo "🚀 Starting $SERVICE_SCRIPT_NAME"
+    echo "🚀 Starting $SCRIPT_NAME"
     echo "════════════════════════════════════════════════════════"
     echo ""
 
@@ -261,7 +261,7 @@ service_start() {
 
 service_stop() {
     echo "════════════════════════════════════════════════════════"
-    echo "🛑 Stopping $SERVICE_SCRIPT_NAME"
+    echo "🛑 Stopping $SCRIPT_NAME"
     echo "════════════════════════════════════════════════════════"
     echo ""
 
@@ -303,7 +303,7 @@ service_stop() {
 
 service_restart() {
     echo "════════════════════════════════════════════════════════"
-    echo "🔄 Restarting $SERVICE_SCRIPT_NAME"
+    echo "🔄 Restarting $SCRIPT_NAME"
     echo "════════════════════════════════════════════════════════"
     echo ""
 
@@ -333,7 +333,7 @@ service_restart() {
 
 service_status() {
     echo "════════════════════════════════════════════════════════"
-    echo "📊 Status: $SERVICE_SCRIPT_NAME"
+    echo "📊 Status: $SCRIPT_NAME"
     echo "════════════════════════════════════════════════════════"
     echo ""
 
@@ -364,7 +364,7 @@ service_status() {
 
 service_logs() {
     echo "════════════════════════════════════════════════════════"
-    echo "📄 Recent Logs: $SERVICE_SCRIPT_NAME"
+    echo "📄 Recent Logs: $SCRIPT_NAME"
     echo "════════════════════════════════════════════════════════"
     echo ""
 
@@ -387,7 +387,7 @@ service_logs() {
 
 service_logs_follow() {
     echo "════════════════════════════════════════════════════════"
-    echo "📄 Following Logs: $SERVICE_SCRIPT_NAME"
+    echo "📄 Following Logs: $SCRIPT_NAME"
     echo "════════════════════════════════════════════════════════"
     echo ""
     echo "Press Ctrl+C to stop following..."
@@ -605,7 +605,7 @@ show_help() {
     fi
 
     # Generate help from COMMANDS array (pass version as 3rd argument)
-    cmd_framework_generate_help COMMANDS "service-example.sh" "$SERVICE_SCRIPT_VER"
+    cmd_framework_generate_help COMMANDS "service-example.sh" "$SCRIPT_VER"
 
     # Add examples section
     echo ""

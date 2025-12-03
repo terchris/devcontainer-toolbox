@@ -13,7 +13,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Rust Development Tools"
 SCRIPT_DESCRIPTION="Installs Rust (latest stable via rustup), cargo, and sets up Rust development environment"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
-CHECK_INSTALLED_COMMAND="[ -f $HOME/.cargo/bin/rustc ] || command -v rustc >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f $HOME/.cargo/bin/rustc ] || command -v rustc >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install

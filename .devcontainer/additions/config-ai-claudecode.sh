@@ -14,16 +14,15 @@
 # CONFIGURATION - Metadata for dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
-CONFIG_NAME="Claude Code Environment"
-CONFIG_VER="0.0.1"
-CONFIG_DESCRIPTION="Configure Claude Code authentication and networking for LiteLLM proxy"
-CONFIG_CATEGORY="AI_TOOLS"
-CHECK_CONFIGURED_COMMAND="[ -f ~/.claude-code-env ] && grep -q '^export ANTHROPIC_AUTH_TOKEN=' ~/.claude-code-env"
+SCRIPT_NAME="Claude Code Environment"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Configure Claude Code authentication and networking for LiteLLM proxy"
+SCRIPT_CATEGORY="AI_TOOLS"
+SCRIPT_CHECK_COMMAND="[ -f ~/.claude-code-env ] && grep -q '^export ANTHROPIC_AUTH_TOKEN=' ~/.claude-code-env"
 
 # NOTE: Claude Code depends on nginx being configured to proxy requests to LiteLLM
 # Run config-nginx.sh first to set up the backend URL
-# TODO: Implement PREREQUISITE_CONFIGS checking for config scripts in dev-setup.sh
-PREREQUISITE_CONFIGS="config-nginx.sh"
+SCRIPT_PREREQUISITES="config-nginx.sh"
 
 #------------------------------------------------------------------------------
 

@@ -37,7 +37,7 @@
 #
 #   # Extract single metadata field
 #   script_name=$(extract_script_metadata "/path/to/install-python.sh" "SCRIPT_NAME")
-#   config_name=$(extract_config_metadata "/path/to/config-identity.sh" "CONFIG_NAME")
+#   config_name=$(extract_config_metadata "/path/to/config-identity.sh" "SCRIPT_NAME")
 #
 #------------------------------------------------------------------------------
 # LIBRARY VERSION
@@ -56,7 +56,7 @@ COMPONENT_SCANNER_VERSION="1.2.0"
 # Arguments:
 #   script_path      - Absolute path to the install-*.sh script
 #   metadata_field   - Field name to extract (SCRIPT_NAME, SCRIPT_DESCRIPTION,
-#                      SCRIPT_CATEGORY, CHECK_INSTALLED_COMMAND)
+#                      SCRIPT_CATEGORY, SCRIPT_CHECK_COMMAND)
 #
 # Returns: The value of the requested field via stdout (empty if not found)
 # Exit code: 0 on success, 1 if script not found
@@ -94,7 +94,7 @@ extract_script_metadata() {
 # Usage: check_component_installed <check_command_string>
 #
 # Arguments:
-#   check_command_string - Shell command to execute (from CHECK_INSTALLED_COMMAND)
+#   check_command_string - Shell command to execute (from SCRIPT_CHECK_COMMAND)
 #
 # Returns: 0 (success) if installed, 1 if not installed
 #
@@ -124,7 +124,7 @@ check_component_installed() {
 #   additions_dir - Directory containing install-*.sh scripts
 #
 # Output format (tab-separated, one line per component):
-#   script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>CHECK_INSTALLED_COMMAND<TAB>PREREQUISITE_CONFIGS
+#   script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND<TAB>SCRIPT_PREREQUISITES
 #
 # Exit code: 0 on success, 1 if directory not found
 #
@@ -162,8 +162,8 @@ scan_install_scripts() {
         local script_name=$(extract_script_metadata "$script" "SCRIPT_NAME")
         local script_description=$(extract_script_metadata "$script" "SCRIPT_DESCRIPTION")
         local script_category=$(extract_script_metadata "$script" "SCRIPT_CATEGORY")
-        local check_command=$(extract_script_metadata "$script" "CHECK_INSTALLED_COMMAND")
-        local prerequisite_configs=$(extract_script_metadata "$script" "PREREQUISITE_CONFIGS")
+        local check_command=$(extract_script_metadata "$script" "SCRIPT_CHECK_COMMAND")
+        local prerequisite_configs=$(extract_script_metadata "$script" "SCRIPT_PREREQUISITES")
 
         # Skip if no SCRIPT_ID or SCRIPT_NAME found (invalid component)
         if [[ -z "$script_id" || -z "$script_name" ]]; then
@@ -330,14 +330,14 @@ scan_service_scripts() {
 #
 # Arguments:
 #   script_path      - Absolute path to the service-*.sh script
-#   metadata_field   - Field name to extract (SERVICE_SCRIPT_NAME, SERVICE_SCRIPT_DESCRIPTION,
-#                      SERVICE_SCRIPT_CATEGORY, SERVICE_PREREQUISITE_CONFIGS)
+#   metadata_field   - Field name to extract (SCRIPT_NAME, SCRIPT_DESCRIPTION,
+#                      SCRIPT_CATEGORY, SCRIPT_PREREQUISITES)
 #
 # Returns: The value of the requested field via stdout (empty if not found)
 # Exit code: 0 on success, 1 if script not found
 #
 # Example:
-#   service_name=$(extract_service_script_metadata "/path/to/service-nginx.sh" "SERVICE_SCRIPT_NAME")
+#   service_name=$(extract_service_script_metadata "/path/to/service-nginx.sh" "SCRIPT_NAME")
 #   # Returns: "Nginx Reverse Proxy"
 #
 extract_service_script_metadata() {
@@ -412,7 +412,7 @@ extract_service_commands() {
 #   additions_dir - Directory containing service-*.sh scripts
 #
 # Output format (tab-separated, one line per script):
-#   script_basename<TAB>SERVICE_SCRIPT_NAME<TAB>SERVICE_SCRIPT_DESCRIPTION<TAB>SERVICE_SCRIPT_CATEGORY<TAB>script_path<TAB>SERVICE_PREREQUISITE_CONFIGS
+#   script_basename<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>script_path<TAB>SCRIPT_PREREQUISITES
 #
 # Exit code: 0 on success, 1 if directory not found
 #
@@ -447,12 +447,12 @@ scan_service_scripts_new() {
         # Extract metadata
         local script_basename=$(basename "$script")
         local script_path=$(cd "$(dirname "$script")" && pwd)/$(basename "$script")
-        local service_name=$(extract_service_script_metadata "$script" "SERVICE_SCRIPT_NAME")
-        local service_description=$(extract_service_script_metadata "$script" "SERVICE_SCRIPT_DESCRIPTION")
-        local service_category=$(extract_service_script_metadata "$script" "SERVICE_SCRIPT_CATEGORY")
-        local prerequisite_configs=$(extract_service_script_metadata "$script" "SERVICE_PREREQUISITE_CONFIGS")
+        local service_name=$(extract_service_script_metadata "$script" "SCRIPT_NAME")
+        local service_description=$(extract_service_script_metadata "$script" "SCRIPT_DESCRIPTION")
+        local service_category=$(extract_service_script_metadata "$script" "SCRIPT_CATEGORY")
+        local prerequisite_configs=$(extract_service_script_metadata "$script" "SCRIPT_PREREQUISITES")
 
-        # Skip if no SERVICE_SCRIPT_NAME found (invalid service script)
+        # Skip if no SCRIPT_NAME found (invalid service script)
         if [[ -z "$service_name" ]]; then
             continue
         fi
@@ -490,14 +490,14 @@ scan_service_scripts_new() {
 #
 # Arguments:
 #   script_path      - Absolute path to the config-*.sh script
-#   metadata_field   - Field name to extract (CONFIG_NAME, CONFIG_DESCRIPTION,
-#                      CONFIG_CATEGORY, CHECK_CONFIGURED_COMMAND)
+#   metadata_field   - Field name to extract (SCRIPT_NAME, SCRIPT_DESCRIPTION,
+#                      SCRIPT_CATEGORY, SCRIPT_CHECK_COMMAND)
 #
 # Returns: The value of the requested field via stdout (empty if not found)
 # Exit code: 0 on success, 1 if script not found
 #
 # Example:
-#   config_name=$(extract_config_metadata "/path/to/config-identity.sh" "CONFIG_NAME")
+#   config_name=$(extract_config_metadata "/path/to/config-identity.sh" "SCRIPT_NAME")
 #   # Returns: "Developer Identity"
 #
 extract_config_metadata() {
@@ -529,7 +529,7 @@ extract_config_metadata() {
 # Usage: check_config_configured <check_command_string>
 #
 # Arguments:
-#   check_command_string - Shell command to execute (from CHECK_CONFIGURED_COMMAND)
+#   check_command_string - Shell command to execute (from SCRIPT_CHECK_COMMAND)
 #
 # Returns: 0 (success) if configured, 1 if not configured
 #
@@ -559,7 +559,7 @@ check_config_configured() {
 #   additions_dir - Directory containing config-*.sh scripts
 #
 # Output format (tab-separated, one line per config):
-#   script_basename<TAB>CONFIG_NAME<TAB>CONFIG_DESCRIPTION<TAB>CONFIG_CATEGORY<TAB>CHECK_CONFIGURED_COMMAND
+#   script_basename<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND
 #
 # Exit code: 0 on success, 1 if directory not found
 #
@@ -593,12 +593,12 @@ scan_config_scripts() {
 
         # Extract metadata
         local script_basename=$(basename "$script")
-        local config_name=$(extract_config_metadata "$script" "CONFIG_NAME")
-        local config_description=$(extract_config_metadata "$script" "CONFIG_DESCRIPTION")
-        local config_category=$(extract_config_metadata "$script" "CONFIG_CATEGORY")
-        local check_command=$(extract_config_metadata "$script" "CHECK_CONFIGURED_COMMAND")
+        local config_name=$(extract_config_metadata "$script" "SCRIPT_NAME")
+        local config_description=$(extract_config_metadata "$script" "SCRIPT_DESCRIPTION")
+        local config_category=$(extract_config_metadata "$script" "SCRIPT_CATEGORY")
+        local check_command=$(extract_config_metadata "$script" "SCRIPT_CHECK_COMMAND")
 
-        # Skip if no CONFIG_NAME found (invalid config)
+        # Skip if no SCRIPT_NAME found (invalid config)
         if [[ -z "$config_name" ]]; then
             continue
         fi
@@ -635,14 +635,14 @@ scan_config_scripts() {
 #
 # Arguments:
 #   script_path      - Absolute path to the cmd-*.sh script
-#   metadata_field   - Field name to extract (CMD_SCRIPT_NAME, CMD_SCRIPT_DESCRIPTION,
-#                      CMD_SCRIPT_CATEGORY, CMD_PREREQUISITE_CONFIGS)
+#   metadata_field   - Field name to extract (SCRIPT_NAME, SCRIPT_DESCRIPTION,
+#                      SCRIPT_CATEGORY, SCRIPT_PREREQUISITES)
 #
 # Returns: The value of the requested field via stdout (empty if not found)
 # Exit code: 0 on success, 1 if script not found
 #
 # Example:
-#   cmd_name=$(extract_cmd_metadata "/path/to/cmd-ai.sh" "CMD_SCRIPT_NAME")
+#   cmd_name=$(extract_cmd_metadata "/path/to/cmd-ai.sh" "SCRIPT_NAME")
 #   # Returns: "AI Management"
 #
 extract_cmd_metadata() {
@@ -717,7 +717,7 @@ extract_cmd_commands() {
 #   additions_dir - Directory containing cmd-*.sh scripts
 #
 # Output format (tab-separated, one line per script):
-#   script_basename<TAB>CMD_SCRIPT_NAME<TAB>CMD_SCRIPT_DESCRIPTION<TAB>CMD_SCRIPT_CATEGORY<TAB>script_path<TAB>CMD_PREREQUISITE_CONFIGS
+#   script_basename<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>script_path<TAB>SCRIPT_PREREQUISITES
 #
 # Exit code: 0 on success, 1 if directory not found
 #
@@ -752,12 +752,12 @@ scan_cmd_scripts() {
         # Extract metadata
         local script_basename=$(basename "$script")
         local script_path=$(cd "$(dirname "$script")" && pwd)/$(basename "$script")
-        local cmd_name=$(extract_cmd_metadata "$script" "CMD_SCRIPT_NAME")
-        local cmd_description=$(extract_cmd_metadata "$script" "CMD_SCRIPT_DESCRIPTION")
-        local cmd_category=$(extract_cmd_metadata "$script" "CMD_SCRIPT_CATEGORY")
-        local prerequisite_configs=$(extract_cmd_metadata "$script" "CMD_PREREQUISITE_CONFIGS")
+        local cmd_name=$(extract_cmd_metadata "$script" "SCRIPT_NAME")
+        local cmd_description=$(extract_cmd_metadata "$script" "SCRIPT_DESCRIPTION")
+        local cmd_category=$(extract_cmd_metadata "$script" "SCRIPT_CATEGORY")
+        local prerequisite_configs=$(extract_cmd_metadata "$script" "SCRIPT_PREREQUISITES")
 
-        # Skip if no CMD_SCRIPT_NAME found (invalid cmd script)
+        # Skip if no SCRIPT_NAME found (invalid cmd script)
         if [[ -z "$cmd_name" ]]; then
             continue
         fi

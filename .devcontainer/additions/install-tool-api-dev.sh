@@ -14,7 +14,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="API Development Tools"
 SCRIPT_DESCRIPTION="Installs Thunder Client REST API client and OpenAPI Editor for API development, testing, and documentation"
 SCRIPT_CATEGORY="CLOUD_TOOLS"
-CHECK_INSTALLED_COMMAND="code --list-extensions 2>/dev/null | grep -q 'rangav.vscode-thunder-client'"
+SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'rangav.vscode-thunder-client'"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install API development tools

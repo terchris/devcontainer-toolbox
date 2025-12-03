@@ -48,7 +48,7 @@ source "${COMMON_LIB_DIR}/categories.sh"
 # Dependencies:
 #   Reads metadata variables from calling script:
 #   - SCRIPT_ID, SCRIPT_NAME, SCRIPT_DESCRIPTION, SCRIPT_CATEGORY
-#   - CHECK_INSTALLED_COMMAND, PREREQUISITE_CONFIGS
+#   - SCRIPT_CHECK_COMMAND, SCRIPT_PREREQUISITES
 #   - SCRIPT_USAGE (optional) - Custom usage text, uses default if not provided
 #   - PACKAGES_SYSTEM, PACKAGES_NODE, PACKAGES_PYTHON, PACKAGES_PWSH
 #   - PACKAGES_GO, PACKAGES_CARGO, PACKAGES_DOTNET, PACKAGES_JAVA
@@ -90,9 +90,9 @@ show_script_help() {
     echo ""
 
     # Prerequisites
-    if [[ -n "$PREREQUISITE_CONFIGS" ]]; then
+    if [[ -n "$SCRIPT_PREREQUISITES" ]]; then
         echo "Prerequisites:"
-        IFS=',' read -ra PREREQS <<< "$PREREQUISITE_CONFIGS"
+        IFS=',' read -ra PREREQS <<< "$SCRIPT_PREREQUISITES"
         for prereq in "${PREREQS[@]}"; do
             echo "  - $prereq"
         done

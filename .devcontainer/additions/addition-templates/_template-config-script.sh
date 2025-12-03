@@ -25,17 +25,17 @@
 # discover and display all config scripts. To make your script visible in the menu,
 # you must define these four metadata fields in the CONFIGURATION section below:
 #
-# CONFIG_NAME - Human-readable name displayed in the menu (2-4 words)
+# SCRIPT_NAME - Human-readable name displayed in the menu (2-4 words)
 #   Example: "Developer Identity"
 #
-# CONFIG_DESCRIPTION - Brief description of what this configures (one sentence)
+# SCRIPT_DESCRIPTION - Brief description of what this configures (one sentence)
 #   Example: "Configure your identity for devcontainer monitoring"
 #
-# CONFIG_CATEGORY - Category for menu organization
+# SCRIPT_CATEGORY - Category for menu organization
 #   Common options: INFRA_CONFIG, USER_CONFIG, SECURITY, CREDENTIALS
 #   Example: "INFRA_CONFIG"
 #
-# CHECK_CONFIGURED_COMMAND - Shell command to check if already configured
+# SCRIPT_CHECK_COMMAND - Shell command to check if already configured
 #   - Must return exit code 0 if configured, 1 if not configured
 #   - Should suppress all output (use >/dev/null 2>&1)
 #   - Should be fast (run in < 1 second)
@@ -141,11 +141,11 @@
 # CONFIGURATION METADATA - For dev-setup.sh menu discovery
 #------------------------------------------------------------------------------
 
-CONFIG_NAME="[Configuration Name]"
-CONFIG_VER="0.0.1"  # Script version - displayed during configuration
-CONFIG_DESCRIPTION="Configure [setting/credential/identity] for [purpose]"
-CONFIG_CATEGORY="USER_CONFIG"  # Options: INFRA_CONFIG, USER_CONFIG, SECURITY, CREDENTIALS
-CHECK_CONFIGURED_COMMAND="[ -f ~/.config-file ] && grep -q '^key=value' ~/.config-file"
+SCRIPT_NAME="[Configuration Name]"
+SCRIPT_VER="0.0.1"  # Script version - displayed during configuration
+SCRIPT_DESCRIPTION="Configure [setting/credential/identity] for [purpose]"
+SCRIPT_CATEGORY="USER_CONFIG"  # Options: INFRA_CONFIG, USER_CONFIG, SECURITY, CREDENTIALS
+SCRIPT_CHECK_COMMAND="[ -f ~/.config-file ] && grep -q '^key=value' ~/.config-file"
 
 #------------------------------------------------------------------------------
 
@@ -242,7 +242,7 @@ verify_your_config() {
 
 check_if_already_configured() {
     # Check if configuration already exists
-    if eval "$CHECK_CONFIGURED_COMMAND"; then
+    if eval "$SCRIPT_CHECK_COMMAND"; then
         echo ""
         log_warn "Configuration already exists!"
         echo ""
@@ -435,11 +435,11 @@ fi
 main() {
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "🔧 $CONFIG_NAME"
+    echo "🔧 $SCRIPT_NAME"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo "$CONFIG_DESCRIPTION"
-    echo "Script version: $CONFIG_VER"
+    echo "$SCRIPT_DESCRIPTION"
+    echo "Script version: $SCRIPT_VER"
     echo ""
 
     # Check if already configured

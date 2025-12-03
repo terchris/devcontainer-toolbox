@@ -45,11 +45,11 @@ test_config_scripts_categories() {
 
     for script in $(get_scripts "config-*.sh" "$filter"); do
         local name=$(basename "$script")
-        local config_cat=$(grep -m 1 "^CONFIG_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local script_cat=$(grep -m 1 "^SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
 
-        if [[ -n "$config_cat" ]]; then
-            if ! is_valid_category "$config_cat"; then
-                echo "  ✗ $name - invalid category '$config_cat'"
+        if [[ -n "$script_cat" ]]; then
+            if ! is_valid_category "$script_cat"; then
+                echo "  ✗ $name - invalid category '$script_cat'"
                 echo "    Valid: $(get_all_category_ids | tr '\n' ' ')"
                 ((failed++))
             else
@@ -69,11 +69,11 @@ test_service_scripts_categories() {
 
     for script in $(get_scripts "service-*.sh" "$filter"); do
         local name=$(basename "$script")
-        local svc_cat=$(grep -m 1 "^SERVICE_SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local script_cat=$(grep -m 1 "^SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
 
-        if [[ -n "$svc_cat" ]]; then
-            if ! is_valid_category "$svc_cat"; then
-                echo "  ✗ $name - invalid category '$svc_cat'"
+        if [[ -n "$script_cat" ]]; then
+            if ! is_valid_category "$script_cat"; then
+                echo "  ✗ $name - invalid category '$script_cat'"
                 echo "    Valid: $(get_all_category_ids | tr '\n' ' ')"
                 ((failed++))
             else
@@ -93,11 +93,11 @@ test_cmd_scripts_categories() {
 
     for script in $(get_scripts "cmd-*.sh" "$filter"); do
         local name=$(basename "$script")
-        local cmd_cat=$(grep -m 1 "^CMD_SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local script_cat=$(grep -m 1 "^SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
 
-        if [[ -n "$cmd_cat" ]]; then
-            if ! is_valid_category "$cmd_cat"; then
-                echo "  ✗ $name - invalid category '$cmd_cat'"
+        if [[ -n "$script_cat" ]]; then
+            if ! is_valid_category "$script_cat"; then
+                echo "  ✗ $name - invalid category '$script_cat'"
                 echo "    Valid: $(get_all_category_ids | tr '\n' ' ')"
                 ((failed++))
             else

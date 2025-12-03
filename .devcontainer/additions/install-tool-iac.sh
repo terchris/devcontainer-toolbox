@@ -14,7 +14,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Infrastructure as Code Tools"
 SCRIPT_DESCRIPTION="Installs Infrastructure as Code and configuration management tools: Ansible, Terraform, and Bicep"
 SCRIPT_CATEGORY="INFRA_CONFIG"
-CHECK_INSTALLED_COMMAND="command -v ansible >/dev/null 2>&1 || command -v terraform >/dev/null 2>&1 || command -v bicep >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="command -v ansible >/dev/null 2>&1 || command -v terraform >/dev/null 2>&1 || command -v bicep >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install IaC tools
