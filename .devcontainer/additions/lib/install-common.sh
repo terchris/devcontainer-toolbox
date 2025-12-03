@@ -80,6 +80,7 @@ show_script_help() {
     # Script Information
     [[ -n "$SCRIPT_ID" ]] && echo "ID:           $SCRIPT_ID"
     [[ -n "$SCRIPT_NAME" ]] && echo "Name:         $SCRIPT_NAME"
+    [[ -n "${SCRIPT_VER:-}" ]] && echo "Script version: $SCRIPT_VER"
     if [[ -n "$SCRIPT_CATEGORY" ]]; then
         local category_display=$(get_category_display_name "$SCRIPT_CATEGORY")
         echo "Category:     $SCRIPT_CATEGORY, $category_display"
@@ -640,6 +641,46 @@ add_to_bashrc() {
 
     echo "✅ Added configuration to ~/.bashrc"
     return 0
+}
+
+# ============================================================================
+# Function: show_install_header
+# Description: Display standardized header for install/uninstall operations
+#
+# Usage:
+#   show_install_header              # For installation
+#   show_install_header "uninstall"  # For uninstallation
+#
+# Parameters:
+#   $1 (optional): Mode - "install" (default) or "uninstall"
+#
+# Dependencies:
+#   Reads metadata variables from calling script:
+#   - SCRIPT_NAME - Name of the script/tool
+#   - SCRIPT_DESCRIPTION - Description of what the script does
+#   - SCRIPT_VER - Version of the script
+#
+# Output:
+#   Formatted header showing script name, description, and version
+#
+# Examples:
+#   # In install script main execution
+#   if [ "${UNINSTALL_MODE}" -eq 1 ]; then
+#       show_install_header "uninstall"
+#   else
+#       show_install_header
+#   fi
+# ============================================================================
+show_install_header() {
+    local mode="${1:-install}"
+
+    if [ "$mode" = "uninstall" ]; then
+        echo "🔄 Starting uninstallation process for: $SCRIPT_NAME"
+    else
+        echo "🔄 Starting installation process for: $SCRIPT_NAME"
+    fi
+    echo "Purpose: $SCRIPT_DESCRIPTION"
+    [[ -n "${SCRIPT_VER:-}" ]] && echo "Script version: $SCRIPT_VER"
 }
 
 # ============================================================================

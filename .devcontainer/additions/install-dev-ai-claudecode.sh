@@ -11,9 +11,10 @@
 # Script metadata - must be at the very top of the configuration section
 SCRIPT_NAME="Claude Code"
 SCRIPT_ID="dev-ai-claudecode"
+SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Installs Claude Code, Anthropic's terminal-based AI coding assistant with agentic capabilities and LSP integration"
 SCRIPT_CATEGORY="AI_TOOLS"
-CHECK_INSTALLED_COMMAND="[ -f /Users/terje.christensen/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
+CHECK_INSTALLED_COMMAND="[ -f /home/vscode/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
 
 # Optional: Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Claude Code
@@ -37,10 +38,10 @@ source "${SCRIPT_DIR}/lib/logging.sh"
 # Before running installation, we need to add any required repositories or setup
 pre_installation_setup() {
     if [ "${UNINSTALL_MODE}" -eq 1 ]; then
-        echo "=' Preparing for uninstallation..."
+        echo "🔧 Preparing for uninstallation..."
     else
-        echo "=' Performing pre-installation setup..."
-        echo " Pre-installation setup complete"
+        echo "🔧 Performing pre-installation setup..."
+        echo "✅ Pre-installation setup complete"
     fi
 }
 
@@ -60,20 +61,20 @@ EXTENSIONS=()
 
 # Define verification commands
 VERIFY_COMMANDS=(
-    "command -v claude >/dev/null && echo ' Claude Code binary is available' || echo 'L Claude Code binary not found'"
-    "test -L /home/vscode/.claude-code-env && echo ' Environment config symlink exists' || echo '�  Environment config symlink not found'"
-    "test -d /workspace/.devcontainer.secrets/env-vars && echo ' Environment directory exists in .devcontainer.secrets/' || echo 'L Environment directory not found'"
-    "test -d /workspace/.claude/skills && echo ' Skills directory exists' || echo '�  Skills directory not found'"
-    "grep -q '.devcontainer.secrets/' /workspace/.gitignore && echo ' .devcontainer.secrets/ is gitignored' || echo 'L .devcontainer.secrets/ NOT gitignored (SECURITY RISK!)'"
-    "grep -q 'Claude Code environment' /home/vscode/.bashrc && echo ' Environment loading added to bashrc' || echo '�  bashrc not configured'"
-    "claude --version >/dev/null 2>&1 && echo ' Claude Code is functional' || echo '�  Claude Code installed'"
+    "command -v claude >/dev/null && echo '✅ Claude Code binary is available' || echo '❌ Claude Code binary not found'"
+    "test -L /home/vscode/.claude-code-env && echo '✅ Environment config symlink exists' || echo '⚠️  Environment config symlink not found'"
+    "test -d /workspace/.devcontainer.secrets/env-vars && echo '✅ Environment directory exists in .devcontainer.secrets/' || echo '❌ Environment directory not found'"
+    "test -d /workspace/.claude/skills && echo '✅ Skills directory exists' || echo '⚠️  Skills directory not found'"
+    "grep -q '.devcontainer.secrets/' /workspace/.gitignore && echo '✅ .devcontainer.secrets/ is gitignored' || echo '❌ .devcontainer.secrets/ NOT gitignored (SECURITY RISK!)'"
+    "grep -q 'Claude Code environment' /home/vscode/.bashrc && echo '✅ Environment loading added to bashrc' || echo '⚠️  bashrc not configured'"
+    "claude --version >/dev/null 2>&1 && echo '✅ Claude Code is functional' || echo '⚠️  Claude Code installed'"
 )
 
 # Post-installation notes
 post_installation_message() {
 
     echo
-    echo "<� Installation process complete for: $SCRIPT_NAME!"
+    echo "🎉 Installation process complete for: $SCRIPT_NAME!"
     echo "Purpose: $SCRIPT_DESCRIPTION"
     echo
     echo "Important Notes:"
@@ -95,7 +96,7 @@ post_uninstallation_message() {
     # Remove from auto-enable config
     auto_disable_tool
     echo
-    echo "<� Uninstallation process complete for: $SCRIPT_NAME!"
+    echo "🏁 Uninstallation process complete for: $SCRIPT_NAME!"
     echo
     echo "Additional Notes:"
     echo "1. Claude Code has been removed"
@@ -167,8 +168,7 @@ process_installations() {
 
 # Main execution
 if [ "${UNINSTALL_MODE}" -eq 1 ]; then
-    echo "= Starting uninstallation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header "uninstall"
     pre_installation_setup
     process_installations
     post_uninstallation_message
@@ -176,8 +176,7 @@ if [ "${UNINSTALL_MODE}" -eq 1 ]; then
     # Remove from auto-enable config
     auto_disable_tool
 else
-    echo "= Starting installation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header
     pre_installation_setup
     process_installations
     verify_installations

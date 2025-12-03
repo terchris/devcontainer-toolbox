@@ -98,10 +98,12 @@ cmd_framework_parse_command() {
 cmd_framework_generate_help() {
     local array_name=$1
     local script_name=$2
+    local script_version="${3:-}"
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "Usage: $script_name [COMMAND]"
+    [[ -n "$script_version" ]] && echo "Version: $script_version"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 

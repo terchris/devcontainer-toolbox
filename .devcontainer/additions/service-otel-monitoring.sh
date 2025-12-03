@@ -20,6 +20,7 @@
 
 SCRIPT_ID="service-otel"
 SERVICE_SCRIPT_NAME="OTel Monitoring"
+SERVICE_SCRIPT_VER="0.0.1"
 SERVICE_SCRIPT_DESCRIPTION="OpenTelemetry monitoring stack (lifecycle, metrics, script exporter)"
 SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
 SERVICE_PREREQUISITE_CONFIGS="config-devcontainer-identity.sh"
@@ -957,9 +958,9 @@ service_health() {
 #------------------------------------------------------------------------------
 
 show_help() {
-    # Use cmd-framework.sh to generate help text from COMMANDS array
+    # Use cmd-framework.sh to generate help text from COMMANDS array (pass version as 3rd argument)
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "service-otel-monitoring.sh"
+    cmd_framework_generate_help COMMANDS "service-otel-monitoring.sh" "$SERVICE_SCRIPT_VER"
 }
 
 parse_args() {

@@ -16,6 +16,7 @@
 
 SCRIPT_ID="service-nginx"
 SERVICE_SCRIPT_NAME="Nginx Reverse Proxy"
+SERVICE_SCRIPT_VER="0.0.1"
 SERVICE_SCRIPT_DESCRIPTION="Nginx reverse proxy for LiteLLM (adds Host header)"
 SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
 SERVICE_PREREQUISITE_CONFIGS=""  # Optional: "config-nginx.sh" if required
@@ -685,9 +686,9 @@ service_health() {
 #------------------------------------------------------------------------------
 
 show_help() {
-    # Use cmd-framework.sh to generate help text from COMMANDS array
+    # Use cmd-framework.sh to generate help text from COMMANDS array (pass version as 3rd argument)
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "service-nginx.sh"
+    cmd_framework_generate_help COMMANDS "service-nginx.sh" "$SERVICE_SCRIPT_VER"
 }
 
 parse_args() {

@@ -15,6 +15,7 @@
 
 # --- Script Metadata ---
 SCRIPT_ID="srv-otel"
+SCRIPT_VER="0.0.1"
 SCRIPT_NAME="OpenTelemetry Monitoring"
 SCRIPT_DESCRIPTION="Install OpenTelemetry Collector for devcontainer monitoring when connected to our network"
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
@@ -448,8 +449,7 @@ process_installations() {
 #------------------------------------------------------------------------------
 
 if [ "${UNINSTALL_MODE}" -eq 1 ]; then
-    echo "🔄 Starting uninstallation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header "uninstall"
     pre_installation_setup
     process_installations
     post_uninstallation_message
@@ -457,8 +457,7 @@ if [ "${UNINSTALL_MODE}" -eq 1 ]; then
     # Remove from auto-enable config
     auto_disable_tool
 else
-    echo "🔄 Starting installation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header
     pre_installation_setup
     process_installations
     post_installation_message
