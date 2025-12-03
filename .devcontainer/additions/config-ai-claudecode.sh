@@ -15,6 +15,7 @@
 #------------------------------------------------------------------------------
 
 CONFIG_NAME="Claude Code Environment"
+CONFIG_VER="0.0.1"
 CONFIG_DESCRIPTION="Configure Claude Code authentication and networking for LiteLLM proxy"
 CONFIG_CATEGORY="AI_TOOLS"
 CHECK_CONFIGURED_COMMAND="[ -f ~/.claude-code-env ] && grep -q '^export ANTHROPIC_AUTH_TOKEN=' ~/.claude-code-env"

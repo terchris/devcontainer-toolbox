@@ -9,6 +9,7 @@
 
 # Script metadata - must be at the very top of the configuration section
 SCRIPT_ID="dev-rust"
+SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Rust Development Tools"
 SCRIPT_DESCRIPTION="Installs Rust (latest stable via rustup), cargo, and sets up Rust development environment"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
@@ -262,8 +263,7 @@ process_installations() {
 #------------------------------------------------------------------------------
 
 if [ "${UNINSTALL_MODE}" -eq 1 ]; then
-    echo "🔄 Starting uninstallation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header "uninstall"
     pre_installation_setup
     process_installations
     post_uninstallation_message
@@ -271,8 +271,7 @@ if [ "${UNINSTALL_MODE}" -eq 1 ]; then
     # Remove from auto-enable config
     auto_disable_tool
 else
-    echo "🔄 Starting installation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header
     pre_installation_setup
     process_installations
     post_installation_message

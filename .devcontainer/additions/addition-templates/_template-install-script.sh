@@ -99,6 +99,7 @@
 
 # --- Script Metadata ---
 SCRIPT_ID="[category-name]"  # Unique identifier (e.g., dev-python, tool-azure, srv-nginx)
+SCRIPT_VER="0.0.1"           # Script version - displayed in --help and during install/uninstall
 SCRIPT_NAME="[Name]"
 SCRIPT_DESCRIPTION="[Brief description of what this script installs and its purpose]"
 SCRIPT_CATEGORY="DEV_TOOLS"  # Options: DEV_TOOLS, INFRA_CONFIG, AI_TOOLS, MONITORING, DATABASE, CLOUD
@@ -469,8 +470,7 @@ process_installations() {
 #------------------------------------------------------------------------------
 
 if [ "${UNINSTALL_MODE}" -eq 1 ]; then
-    echo "🔄 Starting uninstallation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header "uninstall"
     pre_installation_setup
     process_installations
     post_uninstallation_message
@@ -478,8 +478,7 @@ if [ "${UNINSTALL_MODE}" -eq 1 ]; then
     # Remove from auto-enable config
     auto_disable_tool
 else
-    echo "🔄 Starting installation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header
     pre_installation_setup
     process_installations
     post_installation_message

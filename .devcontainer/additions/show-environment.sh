@@ -19,6 +19,7 @@
 #------------------------------------------------------------------------------
 
 SCRIPT_NAME="Show Environment Info"
+SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Display development environment status and configuration"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 

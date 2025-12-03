@@ -86,6 +86,7 @@
 #------------------------------------------------------------------------------
 
 SERVICE_SCRIPT_NAME="Example Service"
+SERVICE_SCRIPT_VER="0.0.1"  # Script version - displayed in --help
 SERVICE_SCRIPT_DESCRIPTION="Example background service for demonstration"
 SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
 SERVICE_PREREQUISITE_CONFIGS=""  # Example: "config-example.sh" or "" if none
@@ -603,8 +604,8 @@ show_help() {
         source "${SCRIPT_DIR}/lib/cmd-framework.sh"
     fi
 
-    # Generate help from COMMANDS array
-    cmd_framework_generate_help COMMANDS "service-example.sh"
+    # Generate help from COMMANDS array (pass version as 3rd argument)
+    cmd_framework_generate_help COMMANDS "service-example.sh" "$SERVICE_SCRIPT_VER"
 
     # Add examples section
     echo ""

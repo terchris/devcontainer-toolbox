@@ -10,6 +10,7 @@
 
 # --- Script Metadata ---
 SCRIPT_ID="dev-python"
+SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Python Development Tools"
 SCRIPT_DESCRIPTION="Adds ipython, pytest-cov, and VS Code extensions for Python development"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
@@ -182,8 +183,7 @@ process_installations() {
 #------------------------------------------------------------------------------
 
 if [ "${UNINSTALL_MODE}" -eq 1 ]; then
-    echo "🔄 Starting uninstallation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header "uninstall"
     pre_installation_setup
     process_installations
     post_uninstallation_message
@@ -191,8 +191,7 @@ if [ "${UNINSTALL_MODE}" -eq 1 ]; then
     # Remove from auto-enable config
     auto_disable_tool
 else
-    echo "🔄 Starting installation process for: $SCRIPT_NAME"
-    echo "Purpose: $SCRIPT_DESCRIPTION"
+    show_install_header
     pre_installation_setup
     process_installations
     post_installation_message

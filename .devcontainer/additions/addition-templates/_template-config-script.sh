@@ -142,6 +142,7 @@
 #------------------------------------------------------------------------------
 
 CONFIG_NAME="[Configuration Name]"
+CONFIG_VER="0.0.1"  # Script version - displayed during configuration
 CONFIG_DESCRIPTION="Configure [setting/credential/identity] for [purpose]"
 CONFIG_CATEGORY="USER_CONFIG"  # Options: INFRA_CONFIG, USER_CONFIG, SECURITY, CREDENTIALS
 CHECK_CONFIGURED_COMMAND="[ -f ~/.config-file ] && grep -q '^key=value' ~/.config-file"
@@ -438,6 +439,7 @@ main() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
     echo "$CONFIG_DESCRIPTION"
+    echo "Script version: $CONFIG_VER"
     echo ""
 
     # Check if already configured

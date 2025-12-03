@@ -9,6 +9,7 @@
 #------------------------------------------------------------------------------
 
 CONFIG_NAME="Supervisor Auto-Start"
+CONFIG_VER="0.0.1"
 CONFIG_DESCRIPTION="Regenerate supervisor configuration from enabled services"
 CONFIG_CATEGORY="INFRA_CONFIG"
 CHECK_CONFIGURED_COMMAND="test -f /etc/supervisor/supervisord.conf"

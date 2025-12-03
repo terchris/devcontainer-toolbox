@@ -8,6 +8,7 @@
 #------------------------------------------------------------------------------
 
 CONFIG_NAME="Host Information"
+CONFIG_VER="0.0.1"
 CONFIG_DESCRIPTION="Detect host OS, user, and architecture for telemetry monitoring"
 CONFIG_CATEGORY="INFRA_CONFIG"
 CHECK_CONFIGURED_COMMAND="[ -f /workspace/.devcontainer.secrets/env-vars/.host-info ]"
@@ -43,6 +44,7 @@ setup_persistent_storage() {
     mkdir -p "$PERSISTENT_DIR"
 }
 
+#TODO: should use existing function from lib files
 get_architecture() {
     # Normalize architecture names
     local arch=$(uname -m)

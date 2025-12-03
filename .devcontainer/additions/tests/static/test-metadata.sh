@@ -22,12 +22,14 @@ test_install_scripts_metadata() {
 
         # Check required fields
         local script_id=$(grep -m 1 "^SCRIPT_ID=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local script_ver=$(grep -m 1 "^SCRIPT_VER=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_name=$(grep -m 1 "^SCRIPT_NAME=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_desc=$(grep -m 1 "^SCRIPT_DESCRIPTION=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_cat=$(grep -m 1 "^SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
         local check_cmd=$(grep -m 1 "^CHECK_INSTALLED_COMMAND=" "$script" 2>/dev/null | cut -d'"' -f2)
 
         [[ -z "$script_id" ]] && missing+="SCRIPT_ID "
+        [[ -z "$script_ver" ]] && missing+="SCRIPT_VER "
         [[ -z "$script_name" ]] && missing+="SCRIPT_NAME "
         [[ -z "$script_desc" ]] && missing+="SCRIPT_DESCRIPTION "
         [[ -z "$script_cat" ]] && missing+="SCRIPT_CATEGORY "
@@ -54,11 +56,13 @@ test_config_scripts_metadata() {
 
         # Check required fields
         local config_name=$(grep -m 1 "^CONFIG_NAME=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local config_ver=$(grep -m 1 "^CONFIG_VER=" "$script" 2>/dev/null | cut -d'"' -f2)
         local config_desc=$(grep -m 1 "^CONFIG_DESCRIPTION=" "$script" 2>/dev/null | cut -d'"' -f2)
         local config_cat=$(grep -m 1 "^CONFIG_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
         local check_cmd=$(grep -m 1 "^CHECK_CONFIGURED_COMMAND=" "$script" 2>/dev/null | cut -d'"' -f2)
 
         [[ -z "$config_name" ]] && missing+="CONFIG_NAME "
+        [[ -z "$config_ver" ]] && missing+="CONFIG_VER "
         [[ -z "$config_desc" ]] && missing+="CONFIG_DESCRIPTION "
         [[ -z "$config_cat" ]] && missing+="CONFIG_CATEGORY "
         [[ -z "$check_cmd" ]] && missing+="CHECK_CONFIGURED_COMMAND "
@@ -84,10 +88,12 @@ test_service_scripts_metadata() {
 
         # Check required fields
         local svc_name=$(grep -m 1 "^SERVICE_SCRIPT_NAME=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local svc_ver=$(grep -m 1 "^SERVICE_SCRIPT_VER=" "$script" 2>/dev/null | cut -d'"' -f2)
         local svc_desc=$(grep -m 1 "^SERVICE_SCRIPT_DESCRIPTION=" "$script" 2>/dev/null | cut -d'"' -f2)
         local svc_cat=$(grep -m 1 "^SERVICE_SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
 
         [[ -z "$svc_name" ]] && missing+="SERVICE_SCRIPT_NAME "
+        [[ -z "$svc_ver" ]] && missing+="SERVICE_SCRIPT_VER "
         [[ -z "$svc_desc" ]] && missing+="SERVICE_SCRIPT_DESCRIPTION "
         [[ -z "$svc_cat" ]] && missing+="SERVICE_SCRIPT_CATEGORY "
 
@@ -117,10 +123,12 @@ test_cmd_scripts_metadata() {
 
         # Check required fields
         local cmd_name=$(grep -m 1 "^CMD_SCRIPT_NAME=" "$script" 2>/dev/null | cut -d'"' -f2)
+        local cmd_ver=$(grep -m 1 "^CMD_SCRIPT_VER=" "$script" 2>/dev/null | cut -d'"' -f2)
         local cmd_desc=$(grep -m 1 "^CMD_SCRIPT_DESCRIPTION=" "$script" 2>/dev/null | cut -d'"' -f2)
         local cmd_cat=$(grep -m 1 "^CMD_SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
 
         [[ -z "$cmd_name" ]] && missing+="CMD_SCRIPT_NAME "
+        [[ -z "$cmd_ver" ]] && missing+="CMD_SCRIPT_VER "
         [[ -z "$cmd_desc" ]] && missing+="CMD_SCRIPT_DESCRIPTION "
         [[ -z "$cmd_cat" ]] && missing+="CMD_SCRIPT_CATEGORY "
 

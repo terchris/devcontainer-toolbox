@@ -19,6 +19,7 @@
 #------------------------------------------------------------------------------
 
 CMD_SCRIPT_NAME="AI Management"
+CMD_SCRIPT_VER="0.0.1"
 CMD_SCRIPT_DESCRIPTION="Manage AI models, spending, and usage through LiteLLM"
 CMD_SCRIPT_CATEGORY="AI_TOOLS"
 CMD_PREREQUISITE_CONFIGS="config-ai-claudecode.sh"
@@ -832,8 +833,8 @@ show_help() {
         source "${SCRIPT_DIR}/lib/cmd-framework.sh"
     fi
 
-    # Generate help from COMMANDS array
-    cmd_framework_generate_help COMMANDS "cmd-ai.sh"
+    # Generate help from COMMANDS array (pass version as 3rd argument)
+    cmd_framework_generate_help COMMANDS "cmd-ai.sh" "$CMD_SCRIPT_VER"
 
     # Add examples section
     echo ""

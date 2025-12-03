@@ -73,6 +73,7 @@
 #------------------------------------------------------------------------------
 
 CMD_SCRIPT_NAME="Example Management"
+CMD_SCRIPT_VER="0.0.1"  # Script version - displayed in --help
 CMD_SCRIPT_DESCRIPTION="Manage and analyze example resources"
 CMD_SCRIPT_CATEGORY="UNCATEGORIZED"
 CMD_PREREQUISITE_CONFIGS=""  # Example: "config-example.sh" or "" if none
@@ -384,8 +385,8 @@ show_help() {
         source "${SCRIPT_DIR}/lib/cmd-framework.sh"
     fi
 
-    # Generate help from COMMANDS array
-    cmd_framework_generate_help COMMANDS "cmd-example.sh"
+    # Generate help from COMMANDS array (pass version as 3rd argument)
+    cmd_framework_generate_help COMMANDS "cmd-example.sh" "$CMD_SCRIPT_VER"
 
     # Add examples section
     echo ""
