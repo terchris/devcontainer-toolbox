@@ -19,12 +19,12 @@
 #------------------------------------------------------------------------------
 
 SCRIPT_ID="service-otel"
-SERVICE_SCRIPT_NAME="OTel Monitoring"
-SERVICE_SCRIPT_VER="0.0.1"
-SERVICE_SCRIPT_DESCRIPTION="OpenTelemetry monitoring stack (lifecycle, metrics, script exporter)"
-SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
-SERVICE_PREREQUISITE_CONFIGS="config-devcontainer-identity.sh"
-SERVICE_PREREQUISITE_TOOLS="install-srv-otel-monitoring.sh"  # Must be installed first
+SCRIPT_NAME="OTel Monitoring"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="OpenTelemetry monitoring stack (lifecycle, metrics, script exporter)"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_PREREQUISITES="config-devcontainer-identity.sh"
+SCRIPT_PREREQUISITE_TOOLS="install-srv-otel-monitoring.sh"  # Must be installed first
 
 # Supervisord metadata
 SERVICE_PRIORITY="30"
@@ -960,7 +960,7 @@ service_health() {
 show_help() {
     # Use cmd-framework.sh to generate help text from COMMANDS array (pass version as 3rd argument)
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "service-otel-monitoring.sh" "$SERVICE_SCRIPT_VER"
+    cmd_framework_generate_help COMMANDS "service-otel-monitoring.sh" "$SCRIPT_VER"
 }
 
 parse_args() {

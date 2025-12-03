@@ -15,12 +15,12 @@
 #------------------------------------------------------------------------------
 
 SCRIPT_ID="service-nginx"
-SERVICE_SCRIPT_NAME="Nginx Reverse Proxy"
-SERVICE_SCRIPT_VER="0.0.1"
-SERVICE_SCRIPT_DESCRIPTION="Nginx reverse proxy for LiteLLM (adds Host header)"
-SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
-SERVICE_PREREQUISITE_CONFIGS=""  # Optional: "config-nginx.sh" if required
-SERVICE_PREREQUISITE_TOOLS="install-srv-nginx.sh"  # Must be installed first
+SCRIPT_NAME="Nginx Reverse Proxy"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Nginx reverse proxy for LiteLLM (adds Host header)"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_PREREQUISITES=""  # Optional: "config-nginx.sh" if required
+SCRIPT_PREREQUISITE_TOOLS="install-srv-nginx.sh"  # Must be installed first
 
 # Supervisord metadata
 SERVICE_PRIORITY="20"
@@ -688,7 +688,7 @@ service_health() {
 show_help() {
     # Use cmd-framework.sh to generate help text from COMMANDS array (pass version as 3rd argument)
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "service-nginx.sh" "$SERVICE_SCRIPT_VER"
+    cmd_framework_generate_help COMMANDS "service-nginx.sh" "$SCRIPT_VER"
 }
 
 parse_args() {

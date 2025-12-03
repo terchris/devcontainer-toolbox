@@ -8,11 +8,11 @@
 # CONFIG METADATA - For dev-setup.sh integration
 #------------------------------------------------------------------------------
 
-CONFIG_NAME="Supervisor Auto-Start"
-CONFIG_VER="0.0.1"
-CONFIG_DESCRIPTION="Regenerate supervisor configuration from enabled services"
-CONFIG_CATEGORY="INFRA_CONFIG"
-CHECK_CONFIGURED_COMMAND="test -f /etc/supervisor/supervisord.conf"
+SCRIPT_NAME="Supervisor Auto-Start"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Regenerate supervisor configuration from enabled services"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="test -f /etc/supervisor/supervisord.conf"
 
 #------------------------------------------------------------------------------
 
@@ -108,9 +108,9 @@ discover_services() {
         local service_depends
         local service_auto_restart
 
-        # Extract SCRIPT_ID and SERVICE_SCRIPT_NAME
+        # Extract SCRIPT_ID and SCRIPT_NAME
         script_id=$(grep '^SCRIPT_ID=' "$service_script" 2>/dev/null | cut -d'"' -f2 || echo "")
-        service_name=$(grep '^SERVICE_SCRIPT_NAME=' "$service_script" 2>/dev/null | cut -d'"' -f2 || echo "")
+        service_name=$(grep '^SCRIPT_NAME=' "$service_script" 2>/dev/null | cut -d'"' -f2 || echo "")
         # Command is the script path with --start flag
         service_command="bash $service_script --start"
         service_priority=$(grep '^SERVICE_PRIORITY=' "$service_script" 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo "50")

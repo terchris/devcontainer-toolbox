@@ -15,7 +15,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Azure Operations & Infrastructure Management"
 SCRIPT_DESCRIPTION="Installs Azure CLI, PowerShell with Az/Graph modules, and VS Code extensions for Azure resource management, policy, Bicep IaC, and KQL queries"
 SCRIPT_CATEGORY="CLOUD_TOOLS"
-CHECK_INSTALLED_COMMAND="(command -v az >/dev/null 2>&1 && command -v pwsh >/dev/null 2>&1) || [ -f /usr/bin/pwsh ]"
+SCRIPT_CHECK_COMMAND="(command -v az >/dev/null 2>&1 && command -v pwsh >/dev/null 2>&1) || [ -f /usr/bin/pwsh ]"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Azure ops tools

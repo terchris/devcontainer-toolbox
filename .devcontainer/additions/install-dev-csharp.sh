@@ -13,7 +13,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="C# Development Tools"
 SCRIPT_DESCRIPTION="Installs .NET SDK, ASP.NET Core Runtime, and VS Code extensions for C# development"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
-CHECK_INSTALLED_COMMAND="[ -f $HOME/.dotnet/dotnet ] || [ -f /usr/bin/dotnet ] || command -v dotnet >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f $HOME/.dotnet/dotnet ] || [ -f /usr/bin/dotnet ] || command -v dotnet >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install .NET development environment

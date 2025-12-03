@@ -15,7 +15,7 @@ SCRIPT_VER="0.0.3"
 SCRIPT_NAME="Okta Identity Management Tools"
 SCRIPT_DESCRIPTION="Installs Okta CLI and VS Code extensions for Okta identity and access management"
 SCRIPT_CATEGORY="CLOUD_TOOLS"
-CHECK_INSTALLED_COMMAND="command -v okta-cli >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="command -v okta-cli >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Okta management tools

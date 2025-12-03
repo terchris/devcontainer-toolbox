@@ -13,7 +13,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="C/C++ Development Tools"
 SCRIPT_DESCRIPTION="Installs GCC, Clang, build tools, debuggers, and VS Code extensions for C/C++ development"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
-CHECK_INSTALLED_COMMAND="command -v gcc >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="command -v gcc >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install

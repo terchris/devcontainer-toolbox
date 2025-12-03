@@ -18,11 +18,11 @@
 # SCRIPT METADATA - For dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
-CMD_SCRIPT_NAME="AI Management"
-CMD_SCRIPT_VER="0.0.1"
-CMD_SCRIPT_DESCRIPTION="Manage AI models, spending, and usage through LiteLLM"
-CMD_SCRIPT_CATEGORY="AI_TOOLS"
-CMD_PREREQUISITE_CONFIGS="config-ai-claudecode.sh"
+SCRIPT_NAME="AI Management"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Manage AI models, spending, and usage through LiteLLM"
+SCRIPT_CATEGORY="AI_TOOLS"
+SCRIPT_PREREQUISITES="config-ai-claudecode.sh"
 
 #------------------------------------------------------------------------------
 # COMMAND DEFINITIONS - Single source of truth
@@ -834,7 +834,7 @@ show_help() {
     fi
 
     # Generate help from COMMANDS array (pass version as 3rd argument)
-    cmd_framework_generate_help COMMANDS "cmd-ai.sh" "$CMD_SCRIPT_VER"
+    cmd_framework_generate_help COMMANDS "cmd-ai.sh" "$SCRIPT_VER"
 
     # Add examples section
     echo ""

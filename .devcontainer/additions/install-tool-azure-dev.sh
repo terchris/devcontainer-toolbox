@@ -15,7 +15,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Azure Application Development"
 SCRIPT_DESCRIPTION="Installs Azure CLI, Functions Core Tools, Azurite, and VS Code extensions for building Azure applications, APIs, Service Bus, and Cosmos DB solutions"
 SCRIPT_CATEGORY="CLOUD_TOOLS"
-CHECK_INSTALLED_COMMAND="[ -f /usr/bin/az ] || [ -f /usr/local/bin/az ] || command -v az >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f /usr/bin/az ] || [ -f /usr/local/bin/az ] || command -v az >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Azure development tools

@@ -13,7 +13,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="TypeScript Development Tools"
 SCRIPT_DESCRIPTION="Adds TypeScript and development tools (Node.js already in devcontainer)"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
-CHECK_INSTALLED_COMMAND="command -v tsc >/dev/null 2>&1 || npm list -g typescript 2>/dev/null | grep -q typescript"
+SCRIPT_CHECK_COMMAND="command -v tsc >/dev/null 2>&1 || npm list -g typescript 2>/dev/null | grep -q typescript"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install TypeScript development environment

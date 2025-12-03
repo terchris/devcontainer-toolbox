@@ -14,7 +14,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Data & Analytics Tools"
 SCRIPT_DESCRIPTION="Installs Python data analysis libraries, Jupyter notebooks, and related VS Code extensions"
 SCRIPT_CATEGORY="DATA_ANALYTICS"
-CHECK_INSTALLED_COMMAND="[ -f /usr/local/bin/jupyter ] || [ -f $HOME/.local/bin/jupyter ] || command -v jupyter >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f /usr/local/bin/jupyter ] || [ -f $HOME/.local/bin/jupyter ] || command -v jupyter >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install data analytics tools

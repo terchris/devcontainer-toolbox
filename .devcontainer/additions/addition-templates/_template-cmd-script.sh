@@ -25,17 +25,17 @@
 # discover and display all cmd scripts. To make your script visible in the menu,
 # you must define these four metadata fields below:
 #
-# CMD_SCRIPT_NAME - Human-readable name displayed in the menu (2-4 words)
+# SCRIPT_NAME - Human-readable name displayed in the menu (2-4 words)
 #   Example: "Database Management"
 #
-# CMD_SCRIPT_DESCRIPTION - Brief description of what this script does (one sentence)
+# SCRIPT_DESCRIPTION - Brief description of what this script does (one sentence)
 #   Example: "Query, backup, and analyze database operations"
 #
-# CMD_SCRIPT_CATEGORY - Category for menu organization
+# SCRIPT_CATEGORY - Category for menu organization
 #   Common options: AI_TOOLS, DATABASE, MONITORING, INFRA_CONFIG, DATA_ANALYTICS
 #   Example: "DATABASE"
 #
-# CMD_PREREQUISITE_CONFIGS - Space-separated list of required config-*.sh scripts
+# SCRIPT_PREREQUISITES - Space-separated list of required config-*.sh scripts
 #   - Script checks prerequisites before showing commands in menu
 #   - Leave empty ("") if no prerequisites
 #   - Multiple: "config-database.sh config-credentials.sh"
@@ -72,11 +72,11 @@
 #
 #------------------------------------------------------------------------------
 
-CMD_SCRIPT_NAME="Example Management"
-CMD_SCRIPT_VER="0.0.1"  # Script version - displayed in --help
-CMD_SCRIPT_DESCRIPTION="Manage and analyze example resources"
-CMD_SCRIPT_CATEGORY="UNCATEGORIZED"
-CMD_PREREQUISITE_CONFIGS=""  # Example: "config-example.sh" or "" if none
+SCRIPT_NAME="Example Management"
+SCRIPT_VER="0.0.1"  # Script version - displayed in --help
+SCRIPT_DESCRIPTION="Manage and analyze example resources"
+SCRIPT_CATEGORY="UNCATEGORIZED"
+SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------
 # COMMAND DEFINITIONS - Single source of truth
@@ -386,7 +386,7 @@ show_help() {
     fi
 
     # Generate help from COMMANDS array (pass version as 3rd argument)
-    cmd_framework_generate_help COMMANDS "cmd-example.sh" "$CMD_SCRIPT_VER"
+    cmd_framework_generate_help COMMANDS "cmd-example.sh" "$SCRIPT_VER"
 
     # Add examples section
     echo ""

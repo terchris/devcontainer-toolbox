@@ -7,11 +7,11 @@
 # CONFIG METADATA - For dev-setup.sh integration
 #------------------------------------------------------------------------------
 
-CONFIG_NAME="Git Identity"
-CONFIG_VER="0.0.1"
-CONFIG_DESCRIPTION="Set your global Git username and email for commits"
-CONFIG_CATEGORY="INFRA_CONFIG"
-CHECK_CONFIGURED_COMMAND="git config --global user.name >/dev/null 2>&1 && git config --global user.email >/dev/null 2>&1"
+SCRIPT_NAME="Git Identity"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Set your global Git username and email for commits"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="git config --global user.name >/dev/null 2>&1 && git config --global user.email >/dev/null 2>&1"
 
 #------------------------------------------------------------------------------
 

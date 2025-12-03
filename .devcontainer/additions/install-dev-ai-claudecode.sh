@@ -14,7 +14,7 @@ SCRIPT_ID="dev-ai-claudecode"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Installs Claude Code, Anthropic's terminal-based AI coding assistant with agentic capabilities and LSP integration"
 SCRIPT_CATEGORY="AI_TOOLS"
-CHECK_INSTALLED_COMMAND="[ -f /home/vscode/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f /home/vscode/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
 
 # Optional: Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Claude Code

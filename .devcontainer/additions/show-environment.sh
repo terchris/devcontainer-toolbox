@@ -95,7 +95,7 @@ scan_available_tools() {
     local found=0
 
     # Use library to scan install scripts (suppress errors)
-    # Output format: script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>CHECK_INSTALLED_COMMAND<TAB>PREREQUISITE_CONFIGS
+    # Output format: script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND<TAB>SCRIPT_PREREQUISITES
     while IFS=$'\t' read -r script_basename script_id script_name script_description script_category check_command prerequisite_configs; do
         # Add to arrays
         AVAILABLE_TOOLS+=("$script_name")
@@ -206,7 +206,7 @@ check_tool_installed() {
     local script_path="$ADDITIONS_DIR/$script_name"
 
     # Extract check command using library
-    local check_command=$(extract_script_metadata "$script_path" "CHECK_INSTALLED_COMMAND")
+    local check_command=$(extract_script_metadata "$script_path" "SCRIPT_CHECK_COMMAND")
 
     # Check using library
     check_component_installed "$check_command"

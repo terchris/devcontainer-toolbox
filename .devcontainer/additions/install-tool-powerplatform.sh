@@ -15,7 +15,7 @@ SCRIPT_VER="0.0.3"
 SCRIPT_NAME="Microsoft Power Platform Tools"
 SCRIPT_DESCRIPTION="Installs Power Platform CLI (pac - dotnet global tool), Power Platform Tools VS Code extension. Requires .NET SDK and x64 (AMD64) architecture."
 SCRIPT_CATEGORY="CLOUD_TOOLS"
-CHECK_INSTALLED_COMMAND="[ -f $HOME/.dotnet/tools/pac ] || command -v pac >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f $HOME/.dotnet/tools/pac ] || command -v pac >/dev/null 2>&1"
 
 # Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Power Platform development tools

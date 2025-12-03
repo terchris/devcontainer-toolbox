@@ -14,11 +14,11 @@
 # CONFIGURATION - Metadata for dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
-CONFIG_NAME="Developer Identity"
-CONFIG_VER="0.0.1"
-CONFIG_DESCRIPTION="Configure your identity for devcontainer monitoring (required for tracking your activity in Grafana dashboards)"
-CONFIG_CATEGORY="INFRA_CONFIG"
-CHECK_CONFIGURED_COMMAND="[ -f ~/.devcontainer-identity ] && grep -q '^export DEVELOPER_ID=' ~/.devcontainer-identity"
+SCRIPT_NAME="Developer Identity"
+SCRIPT_VER="0.0.1"
+SCRIPT_DESCRIPTION="Configure your identity for devcontainer monitoring (required for tracking your activity in Grafana dashboards)"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="[ -f ~/.devcontainer-identity ] && grep -q '^export DEVELOPER_ID=' ~/.devcontainer-identity"
 
 #------------------------------------------------------------------------------
 

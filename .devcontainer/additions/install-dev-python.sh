@@ -14,7 +14,7 @@ SCRIPT_VER="0.0.1"
 SCRIPT_NAME="Python Development Tools"
 SCRIPT_DESCRIPTION="Adds ipython, pytest-cov, and VS Code extensions for Python development"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
-CHECK_INSTALLED_COMMAND="command -v ipython >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="command -v ipython >/dev/null 2>&1"
 
 # Optional: Custom usage text for --help
 SCRIPT_USAGE="  $(basename "$0")              # Install Python development environment
