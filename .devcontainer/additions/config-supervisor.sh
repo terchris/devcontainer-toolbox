@@ -2,6 +2,7 @@
 # File: .devcontainer/additions/config-supervisor.sh
 # Purpose: Auto-generate supervisor config from service metadata
 # Usage: bash config-supervisor.sh
+#        bash config-supervisor.sh --verify   # Non-interactive validation
 
 #------------------------------------------------------------------------------
 # CONFIG METADATA - For dev-setup.sh integration
@@ -213,10 +214,56 @@ reload_supervisor() {
 }
 
 #------------------------------------------------------------------------------
+# Verify Function (for --verify flag)
+#------------------------------------------------------------------------------
+
+verify_supervisor() {
+    local errors=0
+
+    # Check if supervisord.conf exists
+    if [[ ! -f /etc/supervisor/supervisord.conf ]]; then
+        log_warn "Supervisor config not found: /etc/supervisor/supervisord.conf"
+        ((errors++))
+    fi
+
+    # Check if supervisor conf.d directory exists
+    if [[ ! -d "$SUPERVISOR_CONF_D" ]]; then
+        log_warn "Supervisor conf.d directory not found: $SUPERVISOR_CONF_D"
+        ((errors++))
+    fi
+
+    # Check if supervisord is running
+    if pgrep supervisord > /dev/null; then
+        log_info "Supervisor is running"
+    else
+        log_info "Supervisor is not running (will start when services are enabled)"
+    fi
+
+    # List auto-generated configs
+    local auto_configs
+    auto_configs=$(ls "$SUPERVISOR_CONF_D"/auto-*.conf 2>/dev/null | wc -l)
+    log_info "Auto-generated service configs: $auto_configs"
+
+    if [[ $errors -eq 0 ]]; then
+        log_success "Supervisor configuration verified"
+        return 0
+    else
+        log_warn "Supervisor configuration has issues"
+        return 1
+    fi
+}
+
+#------------------------------------------------------------------------------
 # Main
 #------------------------------------------------------------------------------
 
 main() {
+    # Handle --verify flag for non-interactive validation
+    if [ "${1:-}" = "--verify" ]; then
+        verify_supervisor
+        exit $?
+    fi
+
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "🔧 Generating Supervisor Configuration"
