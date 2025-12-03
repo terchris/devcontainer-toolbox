@@ -1,0 +1,186 @@
+# file: .github/workflows/ci-tests.yml
+#
+# CI Tests for DevContainer Toolbox
+# Runs static and unit tests on every push/PR to .devcontainer/ files
+#
+# Test Levels:
+#   - Static (Level 1): Syntax, metadata, categories, flags (no execution)
+#   - Unit (Level 2): --help execution, --verify, library functions
+#
+# Note: Install cycle tests (Level 3) are for local testing only,
+#       they require a fully configured devcontainer environment.
+#
+
+name: CI Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/ci-tests.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/ci-tests.yml'
+  workflow_dispatch:
+    inputs:
+      run_unit_tests:
+        description: 'Run unit tests'
+        type: boolean
+        default: true
+
+jobs:
+  # ===========================================================================
+  # Stage 1: Build the devcontainer image
+  # ===========================================================================
+  build:
+    name: Build Container
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build devcontainer image
+        run: |
+          docker build \
+            -t devcontainer-test:latest \
+            -f .devcontainer/Dockerfile.base \
+            .devcontainer/
+
+      - name: Save container image
+        run: |
+          docker save devcontainer-test:latest -o /tmp/devcontainer-test.tar
+
+      - name: Upload container image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: container-image
+          path: /tmp/devcontainer-test.tar
+          retention-days: 1
+
+  # ===========================================================================
+  # Stage 2: Static Tests (syntax, metadata, categories, flags)
+  # ===========================================================================
+  static-tests:
+    name: Static Tests (Level 1)
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download container image
+        uses: actions/download-artifact@v4
+        with:
+          name: container-image
+          path: /tmp
+
+      - name: Load container image
+        run: docker load -i /tmp/devcontainer-test.tar
+
+      - name: Run static tests
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace \
+            devcontainer-test:latest \
+            bash /workspace/.devcontainer/additions/tests/run-all-tests.sh static
+
+  # ===========================================================================
+  # Stage 3: ShellCheck Linting
+  # ===========================================================================
+  shellcheck:
+    name: ShellCheck Linting
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.devcontainer'
+          severity: warning
+          format: tty
+        continue-on-error: true  # Don't fail the build on shellcheck warnings
+
+  # ===========================================================================
+  # Stage 4: Unit Tests (--help, --verify, library functions)
+  # ===========================================================================
+  unit-tests:
+    name: Unit Tests (Level 2)
+    runs-on: ubuntu-latest
+    needs: static-tests
+    if: github.event.inputs.run_unit_tests != 'false'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download container image
+        uses: actions/download-artifact@v4
+        with:
+          name: container-image
+          path: /tmp
+
+      - name: Load container image
+        run: docker load -i /tmp/devcontainer-test.tar
+
+      - name: Run unit tests
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace \
+            devcontainer-test:latest \
+            bash /workspace/.devcontainer/additions/tests/run-all-tests.sh unit
+
+  # ===========================================================================
+  # Summary Job
+  # ===========================================================================
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [static-tests, shellcheck, unit-tests]
+    if: always()
+
+    steps:
+      - name: Check test results
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.static-tests.result }}" == "success" ]; then
+            echo "- ✅ Static Tests: PASSED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ Static Tests: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.shellcheck.result }}" == "success" ]; then
+            echo "- ✅ ShellCheck: PASSED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⚠️ ShellCheck: WARNINGS" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.unit-tests.result }}" == "success" ]; then
+            echo "- ✅ Unit Tests: PASSED" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.unit-tests.result }}" == "skipped" ]; then
+            echo "- ⏭️ Unit Tests: SKIPPED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ Unit Tests: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Note: Install cycle tests (Level 3) run locally in the devcontainer only." >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail if critical tests failed
+        if: needs.static-tests.result == 'failure' || needs.unit-tests.result == 'failure'
+        run: exit 1
