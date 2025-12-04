@@ -423,26 +423,69 @@ service_status() {
 service_logs() {
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "📋 Recent Nginx Logs (last 50 lines)"
+    echo "📋 Recent Nginx Logs"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
-    if [ -f "$NGINX_ERROR_LOG" ]; then
-        echo "🔴 Error Log:"
-        sudo tail -n 25 "$NGINX_ERROR_LOG" 2>/dev/null || echo "   (Unable to read error log)"
-    else
-        echo "⚠️  Error log not found: $NGINX_ERROR_LOG"
+    local log_dir="/var/log/nginx"
+    local lines_per_log=15
+
+    # Show LiteLLM logs (main proxy)
+    if [ -f "$log_dir/litellm-access.log" ]; then
+        local litellm_lines=$(wc -l < "$log_dir/litellm-access.log" 2>/dev/null || echo "0")
+        echo "🤖 LiteLLM Access Log ($litellm_lines total lines):"
+        sudo tail -n $lines_per_log "$log_dir/litellm-access.log" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
     fi
 
-    echo ""
-
-    if [ -f "$NGINX_ACCESS_LOG" ]; then
-        echo "🟢 Access Log:"
-        sudo tail -n 25 "$NGINX_ACCESS_LOG" 2>/dev/null || echo "   (Unable to read access log)"
-    else
-        echo "⚠️  Access log not found: $NGINX_ACCESS_LOG"
+    if [ -f "$log_dir/litellm-error.log" ] && [ -s "$log_dir/litellm-error.log" ]; then
+        echo "🔴 LiteLLM Error Log:"
+        sudo tail -n $lines_per_log "$log_dir/litellm-error.log" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
     fi
 
+    # Show OTEL logs
+    if [ -f "$log_dir/otel-access.log" ]; then
+        local otel_lines=$(wc -l < "$log_dir/otel-access.log" 2>/dev/null || echo "0")
+        echo "📊 OTEL Access Log ($otel_lines total lines, showing last $lines_per_log):"
+        sudo tail -n $lines_per_log "$log_dir/otel-access.log" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
+    fi
+
+    if [ -f "$log_dir/otel-error.log" ] && [ -s "$log_dir/otel-error.log" ]; then
+        echo "🔴 OTEL Error Log:"
+        sudo tail -n $lines_per_log "$log_dir/otel-error.log" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
+    fi
+
+    # Show Open WebUI logs
+    if [ -f "$log_dir/openwebui-access.log" ]; then
+        local webui_lines=$(wc -l < "$log_dir/openwebui-access.log" 2>/dev/null || echo "0")
+        echo "🌐 Open WebUI Access Log ($webui_lines total lines):"
+        sudo tail -n $lines_per_log "$log_dir/openwebui-access.log" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
+    fi
+
+    if [ -f "$log_dir/openwebui-error.log" ] && [ -s "$log_dir/openwebui-error.log" ]; then
+        echo "🔴 Open WebUI Error Log:"
+        sudo tail -n $lines_per_log "$log_dir/openwebui-error.log" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
+    fi
+
+    # Show default nginx logs only if they have content
+    if [ -f "$NGINX_ERROR_LOG" ] && [ -s "$NGINX_ERROR_LOG" ]; then
+        echo "🔴 Default Error Log:"
+        sudo tail -n $lines_per_log "$NGINX_ERROR_LOG" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
+    fi
+
+    if [ -f "$NGINX_ACCESS_LOG" ] && [ -s "$NGINX_ACCESS_LOG" ]; then
+        echo "🟢 Default Access Log:"
+        sudo tail -n $lines_per_log "$NGINX_ACCESS_LOG" 2>/dev/null | sed 's/^/   /' || echo "   (empty)"
+        echo ""
+    fi
+
+    echo "📁 Log directory: $log_dir"
     echo ""
 }
 
@@ -654,18 +697,31 @@ service_health() {
         ((health_ok++))
     fi
 
-    # Check 4: Recent errors
+    # Check 4: Recent errors (check all error logs)
     echo ""
     echo "4️⃣  Checking for recent errors..."
-    if [ -f "$NGINX_ERROR_LOG" ]; then
-        local error_count=$(sudo grep -c "emerg\|alert\|crit\|error" "$NGINX_ERROR_LOG" 2>/dev/null | tail -100 || echo 0)
-        if [ "$error_count" -gt 0 ]; then
-            log_warning "Found errors in nginx error log (last 100 lines: $error_count errors)"
-            echo "   Recent errors:"
-            sudo grep "emerg\|alert\|crit\|error" "$NGINX_ERROR_LOG" 2>/dev/null | tail -5
-        else
-            log_success "No critical errors in recent logs"
+    local total_errors=0
+    local log_dir="/var/log/nginx"
+
+    for error_log in "$log_dir"/*-error.log "$NGINX_ERROR_LOG"; do
+        if [ -f "$error_log" ] && [ -s "$error_log" ]; then
+            local count=$(sudo grep -c "emerg\|alert\|crit\|error" "$error_log" 2>/dev/null || echo "0")
+            if [ "$count" -gt 0 ]; then
+                total_errors=$((total_errors + count))
+            fi
         fi
+    done
+
+    if [ "$total_errors" -gt 0 ]; then
+        log_warning "Found $total_errors errors across nginx error logs"
+        echo "   Recent errors:"
+        for error_log in "$log_dir"/*-error.log "$NGINX_ERROR_LOG"; do
+            if [ -f "$error_log" ] && [ -s "$error_log" ]; then
+                sudo grep "emerg\|alert\|crit\|error" "$error_log" 2>/dev/null | tail -3 | sed 's/^/   /'
+            fi
+        done
+    else
+        log_success "No critical errors in recent logs"
     fi
 
     echo ""

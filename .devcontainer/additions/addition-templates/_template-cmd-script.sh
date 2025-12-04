@@ -80,6 +80,22 @@ SCRIPT_CATEGORY="INFRA_CONFIG"  # Options: LANGUAGE_DEV, AI_TOOLS, CLOUD_TOOLS, 
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------
+# LOGGING NOTE
+#------------------------------------------------------------------------------
+# If your command script creates persistent log files, add them to cmd-logs.sh
+# configuration so they can be managed (viewed, cleaned) centrally. Edit the
+# arrays at the top of cmd-logs.sh:
+#
+#   TRUNCATE_LOGS - For log files that should be truncated when over size limit
+#     Example: "/var/log/mycommand.log:10"  (truncate at 10MB)
+#
+#   CLEAN_DIRS - For directories with timestamped log files to delete when old
+#     Example: "/tmp/mycommand-logs:7"  (delete files older than 7 days)
+#
+# This ensures logs don't fill up disk space during long-running sessions.
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 # SCRIPT_COMMANDS DEFINITIONS - Single source of truth
 #------------------------------------------------------------------------------
 

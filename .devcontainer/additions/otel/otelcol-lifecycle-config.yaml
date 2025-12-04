@@ -101,7 +101,7 @@ service:
   # Internal telemetry for the collector
   telemetry:
     logs:
-      level: debug
+      level: info
       # Output collector's own logs to stdout/stderr instead of directly to /var/log/
       # Why: Collector runs as non-root vscode user and cannot write to /var/log/otelcol.log
       # Solution: stdout/stderr are captured by nohup in start-otel-monitoring.sh and redirected
