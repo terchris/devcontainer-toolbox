@@ -646,9 +646,18 @@ show_all_services_menu() {
             for service_index in "${INDICES[@]}"; do
                 local service_name="${AVAILABLE_SERVICES[$service_index]}"
                 local service_description="${SERVICE_DESCRIPTIONS[$service_index]}"
+                local service_script="${SERVICE_SCRIPTS[$service_index]}"
                 local prefix="${CATEGORY_PREFIX[$category_key]}"
 
-                menu_options+=("$option_num" "$prefix $service_name" "$service_description")
+                # Check if service is running
+                local status_icon=""
+                if bash "$ADDITIONS_DIR/$service_script" --is-running >/dev/null 2>&1; then
+                    status_icon="✅ "
+                else
+                    status_icon="⏸️ "
+                fi
+
+                menu_options+=("$option_num" "$status_icon$prefix $service_name" "$service_description")
                 MENU_TO_SERVICE_INDEX[$option_num]=$service_index
                 ((option_num++))
             done
