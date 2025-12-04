@@ -85,10 +85,12 @@
 #
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="service-example"  # Unique identifier (must match filename without .sh)
 SCRIPT_NAME="Example Service"
 SCRIPT_VER="0.0.1"  # Script version - displayed in --help
 SCRIPT_DESCRIPTION="Example background service for demonstration"
 SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="pgrep -f 'example-service' >/dev/null 2>&1"  # Check if service is running
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------

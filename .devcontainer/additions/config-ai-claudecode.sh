@@ -14,11 +14,20 @@
 # CONFIGURATION - Metadata for dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="config-ai-claudecode"
 SCRIPT_NAME="Claude Code Environment"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Configure Claude Code authentication and networking for LiteLLM proxy"
 SCRIPT_CATEGORY="AI_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f ~/.claude-code-env ] && grep -q '^export ANTHROPIC_AUTH_TOKEN=' ~/.claude-code-env"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Configure Claude Code environment||false|"
+    "Action|--show|Display current configuration||false|"
+    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Info|--help|Show help information||false|"
+)
 
 # NOTE: Claude Code depends on nginx being configured to proxy requests to LiteLLM
 # Run config-nginx.sh first to set up the backend URL
@@ -316,6 +325,52 @@ show_completion() {
 }
 
 #------------------------------------------------------------------------------
+# SHOW CONFIG - Display current configuration
+#------------------------------------------------------------------------------
+
+show_config() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📋 Current Configuration: $SCRIPT_NAME"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "❌ Not configured"
+        echo ""
+        echo "Run: bash $0"
+        return 1
+    fi
+
+    # Source and display (with secrets truncated)
+    # shellcheck source=/dev/null
+    source "$ENV_FILE" 2>/dev/null
+
+    echo "Config file: $ENV_FILE"
+    if [ -L "$ENV_FILE" ]; then
+        echo "Symlink to:  $(readlink -f "$ENV_FILE")"
+    fi
+    echo ""
+    echo "Variables:"
+    echo "  ANTHROPIC_AUTH_TOKEN:  ${ANTHROPIC_AUTH_TOKEN:0:20}... (truncated)"
+    echo "  ANTHROPIC_BASE_URL:    ${ANTHROPIC_BASE_URL:-<not set>}"
+    echo "  DISABLE_TELEMETRY:     ${DISABLE_TELEMETRY:-<not set>}"
+    echo "  DISABLE_AUTOUPDATER:   ${DISABLE_AUTOUPDATER:-<not set>}"
+    echo ""
+
+    # Show persistent storage status
+    if [ -f "$PERSISTENT_FILE" ]; then
+        echo "Persistent Storage: ✅ Survives container rebuild"
+        echo "  Location: $PERSISTENT_FILE"
+    else
+        echo "Persistent Storage: ❌ Will be lost on rebuild"
+    fi
+    echo ""
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # VERIFY MODE - Non-interactive validation for container rebuild
 #------------------------------------------------------------------------------
 
@@ -373,11 +428,26 @@ else
 fi
 
 main() {
-    # Handle --verify flag for non-interactive validation
-    if [ "${1:-}" = "--verify" ]; then
-        verify_environment
-        exit $?
-    fi
+    # Handle flags
+    case "${1:-}" in
+        --show)
+            show_config
+            exit $?
+            ;;
+        --verify)
+            verify_environment
+            exit $?
+            ;;
+        --help)
+            echo "Usage: $0 [--show|--verify|--help]"
+            echo ""
+            echo "  (no args)  Configure Claude Code environment interactively"
+            echo "  --show     Display current configuration"
+            echo "  --verify   Restore from .devcontainer.secrets (non-interactive)"
+            echo "  --help     Show this help"
+            exit 0
+            ;;
+    esac
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

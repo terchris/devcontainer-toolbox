@@ -141,11 +141,20 @@
 # CONFIGURATION METADATA - For dev-setup.sh menu discovery
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="config-[name]"  # Unique identifier (must match filename without .sh)
 SCRIPT_NAME="[Configuration Name]"
 SCRIPT_VER="0.0.1"  # Script version - displayed during configuration
 SCRIPT_DESCRIPTION="Configure [setting/credential/identity] for [purpose]"
 SCRIPT_CATEGORY="USER_CONFIG"  # Options: INFRA_CONFIG, USER_CONFIG, SECURITY, CREDENTIALS
 SCRIPT_CHECK_COMMAND="[ -f ~/.config-file ] && grep -q '^key=value' ~/.config-file"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Configure [setting] interactively||false|"
+    "Action|--show|Display current configuration||false|"
+    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Info|--help|Show help information||false|"
+)
 
 #------------------------------------------------------------------------------
 

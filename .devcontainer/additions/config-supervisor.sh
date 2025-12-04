@@ -8,11 +8,20 @@
 # CONFIG METADATA - For dev-setup.sh integration
 #------------------------------------------------------------------------------
 
-SCRIPT_NAME="Supervisor Auto-Start"
+SCRIPT_ID="config-supervisor"
+SCRIPT_NAME="Supervisor configuration"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Regenerate supervisor configuration from enabled services"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="test -f /etc/supervisor/supervisord.conf"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Regenerate supervisor configuration||false|"
+    "Action|--show|Display enabled services and status||false|"
+    "Action|--verify|Verify supervisor configuration||false|"
+    "Info|--help|Show help information||false|"
+)
 
 #------------------------------------------------------------------------------
 
@@ -215,6 +224,62 @@ reload_supervisor() {
 }
 
 #------------------------------------------------------------------------------
+# SHOW CONFIG - Display current configuration
+#------------------------------------------------------------------------------
+
+show_config() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📋 Current Configuration: $SCRIPT_NAME"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    # Show enabled services
+    echo "Enabled Services (from $ENABLED_SERVICES_CONF):"
+    if [ -f "$ENABLED_SERVICES_CONF" ]; then
+        local count=0
+        while IFS= read -r line; do
+            [[ "$line" =~ ^#.*$ ]] && continue
+            [[ -z "$line" ]] && continue
+            echo "  • $line"
+            count=$((count + 1))
+        done < "$ENABLED_SERVICES_CONF"
+        if [ $count -eq 0 ]; then
+            echo "  (none)"
+        fi
+    else
+        echo "  (config file not found)"
+    fi
+    echo ""
+
+    # Show auto-generated configs
+    echo "Auto-generated Supervisor Configs:"
+    local auto_configs=$(ls "$SUPERVISOR_CONF_D"/auto-*.conf 2>/dev/null || true)
+    if [ -n "$auto_configs" ]; then
+        for conf in $auto_configs; do
+            echo "  • $(basename "$conf")"
+        done
+    else
+        echo "  (none)"
+    fi
+    echo ""
+
+    # Show supervisor status
+    echo "Supervisor Status:"
+    if pgrep supervisord > /dev/null; then
+        echo "  Running: ✅ Yes"
+        echo ""
+        echo "  Service Status:"
+        sudo supervisorctl status 2>/dev/null | sed 's/^/    /' || echo "    (unable to get status)"
+    else
+        echo "  Running: ❌ No"
+    fi
+    echo ""
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # Verify Function (for --verify flag)
 #------------------------------------------------------------------------------
 
@@ -259,11 +324,26 @@ verify_supervisor() {
 #------------------------------------------------------------------------------
 
 main() {
-    # Handle --verify flag for non-interactive validation
-    if [ "${1:-}" = "--verify" ]; then
-        verify_supervisor
-        exit $?
-    fi
+    # Handle flags
+    case "${1:-}" in
+        --show)
+            show_config
+            exit $?
+            ;;
+        --verify)
+            verify_supervisor
+            exit $?
+            ;;
+        --help)
+            echo "Usage: $0 [--show|--verify|--help]"
+            echo ""
+            echo "  (no args)  Regenerate supervisor configuration"
+            echo "  --show     Display enabled services and status"
+            echo "  --verify   Verify supervisor configuration"
+            echo "  --help     Show this help"
+            exit 0
+            ;;
+    esac
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

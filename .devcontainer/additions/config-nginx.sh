@@ -14,11 +14,20 @@
 # CONFIGURATION - Metadata for dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
-SCRIPT_NAME="Backend Infrastructure"
+SCRIPT_ID="config-nginx"
+SCRIPT_NAME="Configure Nginx proxy"
 SCRIPT_VER="0.0.1"
-SCRIPT_DESCRIPTION="Configure backend URL and ports for nginx reverse proxy (LiteLLM, OTEL, etc.)"
+SCRIPT_DESCRIPTION="Configure Nginx as reverse proxy so that the devcontainer can use AI backend (LiteLLM, OTEL, etc.)"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="[ -f ~/.nginx-backend-config ] && grep -q '^export BACKEND_URL=' ~/.nginx-backend-config"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Configure Nginx proxy||false|"
+    "Action|--show|Display current configuration||false|"
+    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Info|--help|Show help information||false|"
+)
 
 #------------------------------------------------------------------------------
 
@@ -366,6 +375,55 @@ show_completion() {
 }
 
 #------------------------------------------------------------------------------
+# SHOW CONFIG - Display current configuration
+#------------------------------------------------------------------------------
+
+show_config() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📋 Current Configuration: $SCRIPT_NAME"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "❌ Not configured"
+        echo ""
+        echo "Run: bash $0"
+        return 1
+    fi
+
+    # Source and display
+    # shellcheck source=/dev/null
+    source "$ENV_FILE" 2>/dev/null
+
+    echo "Config file: $ENV_FILE"
+    if [ -L "$ENV_FILE" ]; then
+        echo "Symlink to:  $(readlink -f "$ENV_FILE")"
+    fi
+    echo ""
+    echo "Backend Configuration:"
+    echo "  BACKEND_URL:         ${BACKEND_URL:-<not set>}"
+    echo "  BACKEND_TYPE:        ${BACKEND_TYPE:-<not set>}"
+    echo ""
+    echo "Proxy Ports:"
+    echo "  NGINX_LITELLM_PORT:   ${NGINX_LITELLM_PORT:-8080}"
+    echo "  NGINX_OTEL_PORT:      ${NGINX_OTEL_PORT:-8081}"
+    echo "  NGINX_OPENWEBUI_PORT: ${NGINX_OPENWEBUI_PORT:-8082}"
+    echo ""
+
+    # Show persistent storage status
+    if [ -f "$PERSISTENT_FILE" ]; then
+        echo "Persistent Storage: ✅ Survives container rebuild"
+        echo "  Location: $PERSISTENT_FILE"
+    else
+        echo "Persistent Storage: ❌ Will be lost on rebuild"
+    fi
+    echo ""
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # VERIFY MODE - Non-interactive validation for container rebuild
 #------------------------------------------------------------------------------
 
@@ -430,11 +488,26 @@ verify_environment() {
 #------------------------------------------------------------------------------
 
 main() {
-    # Handle --verify flag for non-interactive validation
-    if [ "${1:-}" = "--verify" ]; then
-        verify_environment
-        exit $?
-    fi
+    # Handle flags
+    case "${1:-}" in
+        --show)
+            show_config
+            exit $?
+            ;;
+        --verify)
+            verify_environment
+            exit $?
+            ;;
+        --help)
+            echo "Usage: $0 [--show|--verify|--help]"
+            echo ""
+            echo "  (no args)  Configure backend infrastructure interactively"
+            echo "  --show     Display current configuration"
+            echo "  --verify   Restore from .devcontainer.secrets (non-interactive)"
+            echo "  --help     Show this help"
+            exit 0
+            ;;
+    esac
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
