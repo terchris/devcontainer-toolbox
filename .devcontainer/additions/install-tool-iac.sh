@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Installs Infrastructure as Code and configuration management
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="command -v ansible >/dev/null 2>&1 || command -v terraform >/dev/null 2>&1 || command -v bicep >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install IaC tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall IaC tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Infrastructure as Code tools||false|"
+    "Action|--uninstall|Uninstall Infrastructure as Code tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=(

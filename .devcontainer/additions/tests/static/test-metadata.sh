@@ -35,6 +35,11 @@ test_install_scripts_metadata() {
         [[ -z "$script_cat" ]] && missing+="SCRIPT_CATEGORY "
         [[ -z "$check_cmd" ]] && missing+="SCRIPT_CHECK_COMMAND "
 
+        # Check SCRIPT_COMMANDS array exists (for menu integration)
+        if ! grep -q "^SCRIPT_COMMANDS=(" "$script" 2>/dev/null; then
+            missing+="SCRIPT_COMMANDS "
+        fi
+
         if [[ -n "$missing" ]]; then
             echo "  ✗ $name - missing: $missing"
             ((failed++))
@@ -97,9 +102,9 @@ test_service_scripts_metadata() {
         [[ -z "$script_desc" ]] && missing+="SCRIPT_DESCRIPTION "
         [[ -z "$script_cat" ]] && missing+="SCRIPT_CATEGORY "
 
-        # Check COMMANDS array exists
-        if ! grep -q "^COMMANDS=(" "$script" 2>/dev/null; then
-            missing+="COMMANDS "
+        # Check SCRIPT_COMMANDS array exists
+        if ! grep -q "^SCRIPT_COMMANDS=(" "$script" 2>/dev/null; then
+            missing+="SCRIPT_COMMANDS "
         fi
 
         if [[ -n "$missing" ]]; then
@@ -132,9 +137,9 @@ test_cmd_scripts_metadata() {
         [[ -z "$script_desc" ]] && missing+="SCRIPT_DESCRIPTION "
         [[ -z "$script_cat" ]] && missing+="SCRIPT_CATEGORY "
 
-        # Check COMMANDS array exists
-        if ! grep -q "^COMMANDS=(" "$script" 2>/dev/null; then
-            missing+="COMMANDS "
+        # Check SCRIPT_COMMANDS array exists
+        if ! grep -q "^SCRIPT_COMMANDS=(" "$script" 2>/dev/null; then
+            missing+="SCRIPT_COMMANDS "
         fi
 
         if [[ -n "$missing" ]]; then

@@ -15,11 +15,12 @@ SCRIPT_DESCRIPTION="Installs PHP 8.4, Composer, Laravel installer, and sets up L
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="([ -f /usr/bin/php ] || command -v php >/dev/null 2>&1) && ([ -f /usr/local/bin/composer ] || command -v composer >/dev/null 2>&1) && ([ -f $HOME/.composer/vendor/bin/laravel ] || command -v laravel >/dev/null 2>&1)"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install PHP Laravel development environment
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall PHP Laravel tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install PHP Laravel development tools||false|"
+    "Action|--uninstall|Uninstall PHP Laravel development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # --- Default Configuration ---
 DEFAULT_VERSION="8.4"

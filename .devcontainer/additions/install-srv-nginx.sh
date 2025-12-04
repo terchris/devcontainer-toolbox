@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Install nginx as reverse proxy for Claude Code ↔ LiteLLM w
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
 SCRIPT_CHECK_COMMAND="command -v nginx >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install nginx
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall nginx
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install nginx reverse proxy||false|"
+    "Action|--uninstall|Uninstall nginx||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=(

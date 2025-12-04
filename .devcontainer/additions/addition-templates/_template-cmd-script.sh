@@ -12,7 +12,7 @@
 #
 # Command scripts should:
 #   - Provide multiple related commands via flags
-#   - Use COMMANDS array as single source of truth
+#   - Use SCRIPT_COMMANDS array as single source of truth
 #   - Be non-interactive (use flags, not menus)
 #   - Provide clear, actionable output
 #   - Support both direct execution and menu integration
@@ -44,10 +44,10 @@
 # For more details, see: .devcontainer/additions/README-additions.md
 #
 #------------------------------------------------------------------------------
-# COMMANDS ARRAY PATTERN - Single source of truth for all commands
+# SCRIPT_COMMANDS ARRAY PATTERN - Single source of truth for all commands
 #------------------------------------------------------------------------------
 #
-# The COMMANDS array defines all available commands. Each entry has 6 fields:
+# The SCRIPT_COMMANDS array defines all available commands. Each entry has 6 fields:
 #
 # Format: "category|flag|description|function|requires_arg|param_prompt"
 #
@@ -63,7 +63,7 @@
 #   "Management|--delete|Delete an item|cmd_delete|true|Enter item ID"
 #   "Analysis|--stats|Show statistics|cmd_stats|false|"
 #
-# Benefits of COMMANDS array:
+# Benefits of SCRIPT_COMMANDS array:
 #   - Add new command = just 1 line + implement function
 #   - Help text auto-generated
 #   - Menu integration automatic
@@ -79,11 +79,11 @@ SCRIPT_CATEGORY="UNCATEGORIZED"
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------
-# COMMAND DEFINITIONS - Single source of truth
+# SCRIPT_COMMANDS DEFINITIONS - Single source of truth
 #------------------------------------------------------------------------------
 
 # Format: category|flag|description|function|requires_arg|param_prompt
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Management|--list|List all items|cmd_list|false|"
     "Management|--show|Show details for specific item|cmd_show|true|Enter item ID"
     "Management|--create|Create new item|cmd_create|true|Enter item name"
@@ -385,8 +385,8 @@ show_help() {
         source "${SCRIPT_DIR}/lib/cmd-framework.sh"
     fi
 
-    # Generate help from COMMANDS array (pass version as 3rd argument)
-    cmd_framework_generate_help COMMANDS "cmd-example.sh" "$SCRIPT_VER"
+    # Generate help from SCRIPT_COMMANDS array (pass version as 3rd argument)
+    cmd_framework_generate_help SCRIPT_COMMANDS "cmd-example.sh" "$SCRIPT_VER"
 
     # Add examples section
     echo ""
@@ -406,7 +406,7 @@ parse_args() {
     fi
 
     # Use framework to parse arguments
-    cmd_framework_parse_args COMMANDS "cmd-example.sh" "$@"
+    cmd_framework_parse_args SCRIPT_COMMANDS "cmd-example.sh" "$@"
 }
 
 #------------------------------------------------------------------------------

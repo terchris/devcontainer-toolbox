@@ -15,11 +15,12 @@ SCRIPT_DESCRIPTION="Installs .NET SDK, ASP.NET Core Runtime, and VS Code extensi
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f $HOME/.dotnet/dotnet ] || [ -f /usr/bin/dotnet ] || command -v dotnet >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install .NET development environment
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall .NET packages
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install C# / .NET development tools||false|"
+    "Action|--uninstall|Uninstall C# / .NET development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # --- Default Configuration ---
 DEFAULT_VERSION="8.0"

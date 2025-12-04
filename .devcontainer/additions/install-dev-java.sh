@@ -15,11 +15,13 @@ SCRIPT_DESCRIPTION="Installs Java JDK, Maven, Gradle, and VS Code extensions for
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f /usr/bin/java ] || [ -f /usr/lib/jvm/*/bin/java ] || command -v java >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")                # Install (default version)
-  $(basename "$0") --version X    # Install specific Java version (e.g., 11, 17, 21)
-  $(basename "$0") --help         # Show this help
-  $(basename "$0") --uninstall    # Uninstall"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Java with default version||false|"
+    "Action|--version|Install specific Java version||true|Enter Java version (e.g., 11, 17, 21)"
+    "Action|--uninstall|Uninstall Java development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages (all packages already in base devcontainer - see Dockerfile.base)
 PACKAGES_SYSTEM=()

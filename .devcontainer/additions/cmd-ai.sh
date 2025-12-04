@@ -29,7 +29,7 @@ SCRIPT_PREREQUISITES="config-ai-claudecode.sh"
 #------------------------------------------------------------------------------
 
 # Format: category|flag|description|function|requires_arg|param_prompt
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Information|--models|List all models you have access to|cmd_models|false|"
     "Information|--info|Show user info (teams, budgets)|cmd_info|false|"
     "Information|--budget|Show budget status with usage percentage|cmd_budget|false|"
@@ -833,8 +833,8 @@ show_help() {
         source "${SCRIPT_DIR}/lib/cmd-framework.sh"
     fi
 
-    # Generate help from COMMANDS array (pass version as 3rd argument)
-    cmd_framework_generate_help COMMANDS "cmd-ai.sh" "$SCRIPT_VER"
+    # Generate help from SCRIPT_COMMANDS array (pass version as 3rd argument)
+    cmd_framework_generate_help SCRIPT_COMMANDS "cmd-ai.sh" "$SCRIPT_VER"
 
     # Add examples section
     echo ""
@@ -854,7 +854,7 @@ parse_args() {
     fi
 
     # Use framework to parse arguments
-    cmd_framework_parse_args COMMANDS "cmd-ai.sh" "$@"
+    cmd_framework_parse_args SCRIPT_COMMANDS "cmd-ai.sh" "$@"
 }
 
 #------------------------------------------------------------------------------

@@ -22,11 +22,12 @@ SCRIPT_CATEGORY="INFRA_CONFIG"
 # they don't need to update this check. The extension installer is idempotent anyway.
 SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'mtxr.sqltools'"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install development utilities
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall utilities
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install development utilities||false|"
+    "Action|--uninstall|Uninstall development utilities||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=(

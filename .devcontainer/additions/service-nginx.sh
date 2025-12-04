@@ -28,10 +28,10 @@ SERVICE_DEPENDS=""
 SERVICE_AUTO_RESTART="true"
 
 #------------------------------------------------------------------------------
-# COMMANDS ARRAY - Single source of truth for all operations
+# SCRIPT_COMMANDS ARRAY - Single source of truth for all operations
 #------------------------------------------------------------------------------
 
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start nginx in foreground (for supervisord)|service_start|false|"
     "Control|--stop|Stop nginx gracefully|service_stop|false|"
     "Control|--restart|Restart nginx service|service_restart|false|"
@@ -686,15 +686,15 @@ service_health() {
 #------------------------------------------------------------------------------
 
 show_help() {
-    # Use cmd-framework.sh to generate help text from COMMANDS array (pass version as 3rd argument)
+    # Use cmd-framework.sh to generate help text from SCRIPT_COMMANDS array (pass version as 3rd argument)
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "service-nginx.sh" "$SCRIPT_VER"
+    cmd_framework_generate_help SCRIPT_COMMANDS "service-nginx.sh" "$SCRIPT_VER"
 }
 
 parse_args() {
     # Use cmd-framework.sh to parse arguments and call appropriate function
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_parse_args COMMANDS "service-nginx.sh" "$@"
+    cmd_framework_parse_args SCRIPT_COMMANDS "service-nginx.sh" "$@"
 }
 
 #------------------------------------------------------------------------------

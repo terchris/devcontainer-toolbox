@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Installs Thunder Client REST API client and OpenAPI Editor f
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'rangav.vscode-thunder-client'"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install API development tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall API tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install API development tools||false|"
+    "Action|--uninstall|Uninstall API development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # --- Default Configuration ---
 # System packages (none needed - extensions only)

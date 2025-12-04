@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Installs Claude Code, Anthropic's terminal-based AI coding a
 SCRIPT_CATEGORY="AI_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f /home/vscode/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
 
-# Optional: Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Claude Code
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Claude Code
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Claude Code||false|"
+    "Action|--uninstall|Uninstall Claude Code||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 #------------------------------------------------------------------------------
 

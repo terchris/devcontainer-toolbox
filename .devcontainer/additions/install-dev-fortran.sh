@@ -15,10 +15,14 @@ SCRIPT_DESCRIPTION="Installs GNU Fortran compiler (gfortran), build tools, and V
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v gfortran >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall"
+# Commands for dev-setup.sh menu integration
+# Format: category|flag|description|function|requires_arg|param_prompt
+# Note: Empty flag means "run with no arguments" (default install action)
+SCRIPT_COMMANDS=(
+    "Action||Install Fortran development tools||false|"
+    "Action|--uninstall|Uninstall Fortran development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=(

@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Adds ipython, pytest-cov, and VS Code extensions for Python 
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v ipython >/dev/null 2>&1"
 
-# Optional: Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Python development environment
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Python packages (Python runtime remains)
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Python development tools||false|"
+    "Action|--uninstall|Uninstall Python development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # Python packages (pytest, black, mypy already in base image)
 PACKAGES_PYTHON=(

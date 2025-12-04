@@ -15,11 +15,12 @@ SCRIPT_DESCRIPTION="Adds TypeScript and development tools (Node.js already in de
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v tsc >/dev/null 2>&1 || npm list -g typescript 2>/dev/null | grep -q typescript"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install TypeScript development environment
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall TypeScript packages
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install TypeScript development tools||false|"
+    "Action|--uninstall|Uninstall TypeScript development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # Node.js packages
 PACKAGES_NODE=(

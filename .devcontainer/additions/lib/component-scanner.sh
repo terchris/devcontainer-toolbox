@@ -364,15 +364,15 @@ extract_service_script_metadata() {
     return 0
 }
 
-# Extract COMMANDS array from service-*.sh script
+# Extract SCRIPT_COMMANDS array from service-*.sh script
 #
 # Usage: extract_service_commands <script_path>
 #
 # Arguments:
 #   script_path - Absolute path to the service-*.sh script
 #
-# Returns: COMMANDS array entries, one per line
-# Exit code: 0 on success, 1 if script not found or COMMANDS array not found
+# Returns: SCRIPT_COMMANDS array entries, one per line
+# Exit code: 0 on success, 1 if script not found or SCRIPT_COMMANDS array not found
 #
 # Example:
 #   while IFS= read -r cmd_def; do
@@ -394,10 +394,10 @@ extract_service_commands() {
         return 1
     fi
 
-    # Extract COMMANDS array from file
-    # Find lines between COMMANDS=( and closing )
-    sed -n '/^COMMANDS=(/,/^)/p' "$script_path" 2>/dev/null | \
-        grep -v '^COMMANDS=(' | \
+    # Extract SCRIPT_COMMANDS array from file
+    # Find lines between SCRIPT_COMMANDS=( and closing )
+    sed -n '/^SCRIPT_COMMANDS=(/,/^)/p' "$script_path" 2>/dev/null | \
+        grep -v '^SCRIPT_COMMANDS=(' | \
         grep -v '^)' | \
         sed 's/^[[:space:]]*//' | \
         sed 's/"$//' | \
@@ -669,22 +669,22 @@ extract_cmd_metadata() {
     return 0
 }
 
-# Extract COMMANDS array from cmd-*.sh script
+# Extract SCRIPT_COMMANDS array from any script
 #
-# Usage: extract_cmd_commands <script_path>
+# Usage: extract_script_commands <script_path>
 #
 # Arguments:
-#   script_path - Absolute path to the cmd-*.sh script
+#   script_path - Absolute path to the script (install-*.sh, cmd-*.sh, service-*.sh)
 #
-# Returns: COMMANDS array entries, one per line
-# Exit code: 0 on success, 1 if script not found or COMMANDS array not found
+# Returns: SCRIPT_COMMANDS array entries, one per line
+# Exit code: 0 on success, 1 if script not found or SCRIPT_COMMANDS array not found
 #
 # Example:
 #   while IFS= read -r cmd_def; do
 #       echo "Command: $cmd_def"
-#   done < <(extract_cmd_commands "/path/to/cmd-ai.sh")
+#   done < <(extract_script_commands "/path/to/install-dev-fortran.sh")
 #
-extract_cmd_commands() {
+extract_script_commands() {
     local script_path="$1"
 
     # Validate input
@@ -699,14 +699,19 @@ extract_cmd_commands() {
         return 1
     fi
 
-    # Extract COMMANDS array from file
-    # Find lines between COMMANDS=( and closing )
-    sed -n '/^COMMANDS=(/,/^)/p' "$script_path" 2>/dev/null | \
-        grep -v '^COMMANDS=(' | \
+    # Extract SCRIPT_COMMANDS array from file
+    # Find lines between SCRIPT_COMMANDS=( and closing )
+    sed -n '/^SCRIPT_COMMANDS=(/,/^)/p' "$script_path" 2>/dev/null | \
+        grep -v '^SCRIPT_COMMANDS=(' | \
         grep -v '^)' | \
         sed 's/^[[:space:]]*//' | \
         sed 's/"$//' | \
         sed 's/^"//'
+}
+
+# Legacy alias for backward compatibility
+extract_cmd_commands() {
+    extract_script_commands "$@"
 }
 
 # Scan all cmd-*.sh scripts and output structured data

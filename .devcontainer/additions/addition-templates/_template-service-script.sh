@@ -15,7 +15,7 @@
 # Service scripts should:
 #   - Manage long-running background services
 #   - Provide multiple operations via flags (start, stop, restart, status, logs, validate)
-#   - Use COMMANDS array as single source of truth
+#   - Use SCRIPT_COMMANDS array as single source of truth
 #   - Be non-interactive (use flags, not menus)
 #   - Integrate with supervisord for auto-start
 #   - Support both manual and supervisord execution
@@ -51,10 +51,10 @@
 # For more details, see: .devcontainer/additions/README-additions.md
 #
 #------------------------------------------------------------------------------
-# COMMANDS ARRAY PATTERN - Single source of truth for all operations
+# SCRIPT_COMMANDS ARRAY PATTERN - Single source of truth for all operations
 #------------------------------------------------------------------------------
 #
-# The COMMANDS array defines all available service operations. Each entry has 6 fields:
+# The SCRIPT_COMMANDS array defines all available service operations. Each entry has 6 fields:
 #
 # Format: "category|flag|description|function|requires_arg|param_prompt"
 #
@@ -76,7 +76,7 @@
 #   "Control|--stop|Stop service gracefully|service_stop|false|"
 #   "Status|--logs|Show recent logs|service_logs|true|Number of lines (default 50)"
 #
-# Benefits of COMMANDS array:
+# Benefits of SCRIPT_COMMANDS array:
 #   - Add new operation = just 1 line + implement function
 #   - Help text auto-generated
 #   - Menu integration automatic
@@ -92,11 +92,11 @@ SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------
-# COMMAND DEFINITIONS - Single source of truth
+# SCRIPT_COMMANDS DEFINITIONS - Single source of truth
 #------------------------------------------------------------------------------
 
 # Format: category|flag|description|function|requires_arg|param_prompt
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start service in foreground (for supervisord)|service_start|false|"
     "Control|--stop|Stop service gracefully|service_stop|false|"
     "Control|--restart|Restart service|service_restart|false|"
@@ -604,8 +604,8 @@ show_help() {
         source "${SCRIPT_DIR}/lib/cmd-framework.sh"
     fi
 
-    # Generate help from COMMANDS array (pass version as 3rd argument)
-    cmd_framework_generate_help COMMANDS "service-example.sh" "$SCRIPT_VER"
+    # Generate help from SCRIPT_COMMANDS array (pass version as 3rd argument)
+    cmd_framework_generate_help SCRIPT_COMMANDS "service-example.sh" "$SCRIPT_VER"
 
     # Add examples section
     echo ""
@@ -631,7 +631,7 @@ parse_args() {
     fi
 
     # Use framework to parse arguments
-    cmd_framework_parse_args COMMANDS "service-example.sh" "$@"
+    cmd_framework_parse_args SCRIPT_COMMANDS "service-example.sh" "$@"
 }
 
 #------------------------------------------------------------------------------
