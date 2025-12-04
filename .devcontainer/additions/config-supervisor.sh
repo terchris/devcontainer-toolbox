@@ -142,6 +142,14 @@ discover_services() {
         fi
     done < <(find "$ADDITIONS_DIR" -name "service-*.sh" -type f -print0)
 
+    # Add built-in log cleanup scheduler (always enabled, runs last)
+    SERVICE_NAMES+=("Log Cleanup")
+    SERVICE_COMMANDS+=("bash $ADDITIONS_DIR/cmd-logs.sh --scheduled")
+    SERVICE_PRIORITIES+=("999")
+    SERVICE_DEPENDENCIES+=("")
+    SERVICE_AUTO_RESTART+=("true")
+    log_info "  Added: Log Cleanup (priority: 999) ✅ BUILT-IN"
+
     log_success "Discovered ${#SERVICE_NAMES[@]} enabled services"
 }
 

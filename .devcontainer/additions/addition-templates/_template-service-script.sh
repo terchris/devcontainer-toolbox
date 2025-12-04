@@ -98,6 +98,20 @@ SERVICE_PRIORITY="50"  # Lower numbers start first (10=first, 99=last). nginx=20
 SERVICE_DEPENDS=""     # Comma-separated service IDs this depends on. Example: "service-nginx"
 
 #------------------------------------------------------------------------------
+# LOGGING NOTE
+#------------------------------------------------------------------------------
+# If your service creates log files, add them to cmd-logs.sh configuration so
+# they can be managed (viewed, cleaned) centrally. Edit the arrays at the top
+# of cmd-logs.sh:
+#
+#   TRUNCATE_LOGS - For log files that should be truncated when over size limit
+#     Example: "/var/log/myservice.log:10"  (truncate at 10MB)
+#
+#   CLEAN_DIRS - For directories with timestamped log files to delete when old
+#     Example: "/tmp/myservice-logs:7"  (delete files older than 7 days)
+#
+# This ensures logs don't fill up disk space during long-running sessions.
+#------------------------------------------------------------------------------
 # SCRIPT_COMMANDS DEFINITIONS - Single source of truth
 #------------------------------------------------------------------------------
 
