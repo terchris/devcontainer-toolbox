@@ -15,10 +15,12 @@ SCRIPT_DESCRIPTION="Installs Rust (latest stable via rustup), cargo, and sets up
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f $HOME/.cargo/bin/rustc ] || command -v rustc >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Rust development tools||false|"
+    "Action|--uninstall|Uninstall Rust development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=(

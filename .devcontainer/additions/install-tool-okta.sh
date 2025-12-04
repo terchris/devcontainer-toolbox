@@ -17,11 +17,12 @@ SCRIPT_DESCRIPTION="Installs Okta CLI and VS Code extensions for Okta identity a
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="command -v okta-cli >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Okta management tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Okta tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Okta identity management tools||false|"
+    "Action|--uninstall|Uninstall Okta tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # --- Default Configuration ---
 # System packages (Python already in base devcontainer - see Dockerfile.base)

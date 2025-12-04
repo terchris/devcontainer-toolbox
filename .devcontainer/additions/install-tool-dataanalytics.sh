@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Installs Python data analysis libraries, Jupyter notebooks, 
 SCRIPT_CATEGORY="DATA_ANALYTICS"
 SCRIPT_CHECK_COMMAND="[ -f /usr/local/bin/jupyter ] || [ -f $HOME/.local/bin/jupyter ] || command -v jupyter >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install data analytics tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall analytics tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install data analytics tools||false|"
+    "Action|--uninstall|Uninstall data analytics tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages (all packages already in base devcontainer - see Dockerfile.base)
 PACKAGES_SYSTEM=()

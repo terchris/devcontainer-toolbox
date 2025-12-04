@@ -15,10 +15,12 @@ SCRIPT_DESCRIPTION="Installs GCC, Clang, build tools, debuggers, and VS Code ext
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v gcc >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install C/C++ development tools||false|"
+    "Action|--uninstall|Uninstall C/C++ development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=(

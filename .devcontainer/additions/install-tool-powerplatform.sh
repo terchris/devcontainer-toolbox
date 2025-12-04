@@ -17,11 +17,12 @@ SCRIPT_DESCRIPTION="Installs Power Platform CLI (pac - dotnet global tool), Powe
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f $HOME/.dotnet/tools/pac ] || command -v pac >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Power Platform development tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Power Platform tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Power Platform tools||false|"
+    "Action|--uninstall|Uninstall Power Platform tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # --- Default Configuration ---
 # System packages (not needed - .NET SDK handled by prerequisite)

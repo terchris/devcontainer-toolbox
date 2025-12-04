@@ -13,7 +13,7 @@ This template helps you create **service-*.sh** scripts that manage long-running
 3. [Quick Start](#quick-start)
 4. [Template Structure](#template-structure)
 5. [Metadata Fields](#metadata-fields)
-6. [COMMANDS Array](#commands-array)
+6. [SCRIPT_COMMANDS Array](#commands-array)
 7. [Core Functions](#core-functions)
 8. [Supervisord Integration](#supervisord-integration)
 9. [Helper Functions](#helper-functions)
@@ -60,8 +60,8 @@ service-nginx.sh   ← All operations: start, stop, restart, status, logs, valid
 |--------|------------------------------|-------------------------|
 | **Files** | 2 files per service | 1 file per service |
 | **Operations** | 2 ops (start, stop) | 10+ ops (start, stop, restart, status, logs, validate, reload, etc.) |
-| **Help text** | Manual duplication | Auto-generated from COMMANDS array |
-| **Extensibility** | Add new script for each op | Add 1 line to COMMANDS array |
+| **Help text** | Manual duplication | Auto-generated from SCRIPT_COMMANDS array |
+| **Extensibility** | Add new script for each op | Add 1 line to SCRIPT_COMMANDS array |
 | **Discovery** | Only start-*.sh discovered | Full service-*.sh discovery |
 | **Naming clarity** | Ambiguous (install vs start?) | Clear (cmd vs service) |
 | **Framework reuse** | Custom parsing | Uses cmd-framework.sh |
@@ -115,10 +115,10 @@ SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
 SERVICE_PREREQUISITE_CONFIGS=""  # Or "config-myservice.sh"
 ```
 
-### 3. Define COMMANDS Array
+### 3. Define SCRIPT_COMMANDS Array
 
 ```bash
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start service in foreground|service_start|false|"
     "Control|--stop|Stop service gracefully|service_stop|false|"
     "Control|--restart|Restart service|service_restart|false|"
@@ -182,10 +182,10 @@ SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
 SERVICE_PREREQUISITE_CONFIGS=""
 ```
 
-### 2. COMMANDS Array (Lines 22-40)
+### 2. SCRIPT_COMMANDS Array (Lines 22-40)
 
 ```bash
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start service|service_start|false|"
     "Control|--stop|Stop service|service_stop|false|"
     # ... 11 total commands
@@ -345,9 +345,9 @@ SERVICE_AUTO_RESTART="false"  # Don't restart
 
 ---
 
-## COMMANDS Array
+## SCRIPT_COMMANDS Array
 
-The COMMANDS array is the **single source of truth** for all service operations. Each line defines one command.
+The SCRIPT_COMMANDS array is the **single source of truth** for all service operations. Each line defines one command.
 
 ### Format (6 fields, pipe-separated)
 
@@ -398,7 +398,7 @@ The COMMANDS array is the **single source of truth** for all service operations.
 ### Example with Parameter
 
 ```bash
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Config|--set-port|Change service port|service_set_port|true|Enter port number (1-65535)"
 )
 
@@ -970,7 +970,7 @@ SERVICE_SCRIPT_DESCRIPTION="Simple HTTP server for development"
 SERVICE_SCRIPT_CATEGORY="INFRA_CONFIG"
 SERVICE_PREREQUISITE_CONFIGS=""
 
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start web server in foreground|service_start|false|"
     "Control|--stop|Stop web server|service_stop|false|"
     "Control|--restart|Restart web server|service_restart|false|"
@@ -1018,7 +1018,7 @@ SERVICE_SCRIPT_DESCRIPTION="PostgreSQL database server"
 SERVICE_SCRIPT_CATEGORY="DATABASE"
 SERVICE_PREREQUISITE_CONFIGS="config-database.sh"
 
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start database|service_start|false|"
     "Control|--stop|Stop database|service_stop|false|"
     "Control|--restart|Restart database|service_restart|false|"
@@ -1134,7 +1134,7 @@ service_stop() {
 This is where the extensibility shines! Add operations that weren't possible before:
 
 ```bash
-COMMANDS=(
+SCRIPT_COMMANDS=(
     # Migrated from start/stop
     "Control|--start|Start service|service_start|false|"
     "Control|--stop|Stop service|service_stop|false|"
@@ -1303,7 +1303,7 @@ bash /workspace/.devcontainer/additions/config-supervisor.sh
 The **service-*.sh** pattern provides:
 
 ✅ **Consolidation** - 1 file instead of 2
-✅ **Extensibility** - Add operations by adding 1 line to COMMANDS array
+✅ **Extensibility** - Add operations by adding 1 line to SCRIPT_COMMANDS array
 ✅ **Framework reuse** - Uses cmd-framework.sh for parsing and help
 ✅ **Rich operations** - From 2 ops to 10+ ops per service
 ✅ **Supervisord compatibility** - Works with auto-start via exec
@@ -1313,7 +1313,7 @@ The **service-*.sh** pattern provides:
 **Next steps:**
 1. Copy `_template-service-script.sh`
 2. Update metadata
-3. Define COMMANDS array
+3. Define SCRIPT_COMMANDS array
 4. Implement operations
 5. Test thoroughly
 6. Enable auto-start

@@ -32,10 +32,10 @@ SERVICE_DEPENDS="service-nginx"  # Sends data through nginx reverse proxy
 SERVICE_AUTO_RESTART="true"
 
 #------------------------------------------------------------------------------
-# COMMANDS ARRAY - Single source of truth for all operations
+# SCRIPT_COMMANDS ARRAY - Single source of truth for all operations
 #------------------------------------------------------------------------------
 
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Control|--start|Start all OTel services (for supervisord)|service_start|false|"
     "Control|--stop|Stop all OTel services|service_stop|false|"
     "Control|--restart|Restart all OTel services|service_restart|false|"
@@ -958,15 +958,15 @@ service_health() {
 #------------------------------------------------------------------------------
 
 show_help() {
-    # Use cmd-framework.sh to generate help text from COMMANDS array (pass version as 3rd argument)
+    # Use cmd-framework.sh to generate help text from SCRIPT_COMMANDS array (pass version as 3rd argument)
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "service-otel-monitoring.sh" "$SCRIPT_VER"
+    cmd_framework_generate_help SCRIPT_COMMANDS "service-otel-monitoring.sh" "$SCRIPT_VER"
 }
 
 parse_args() {
     # Use cmd-framework.sh to parse arguments and call appropriate function
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_parse_args COMMANDS "service-otel-monitoring.sh" "$@"
+    cmd_framework_parse_args SCRIPT_COMMANDS "service-otel-monitoring.sh" "$@"
 }
 
 #------------------------------------------------------------------------------

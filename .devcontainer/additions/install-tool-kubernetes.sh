@@ -16,27 +16,12 @@ SCRIPT_DESCRIPTION="Installs kubectl, k9s, helm and sets up .devcontainer.secret
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="command -v kubectl >/dev/null 2>&1 || command -v k9s >/dev/null 2>&1 || command -v helm >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Kubernetes development tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Kubernetes tools
-  $(basename "$0") --debug      # Install with debug output
-
-Authentication Setup:
-  After installation, kubectl requires authentication to connect to your cluster.
-  The installer creates helper scripts to copy your kubeconfig from the host.
-
-  On your HOST machine (Mac/Windows), run ONE of these scripts:
-    Mac:     bash .devcontainer.secrets/.kube/copy-kubeconfig-mac.sh
-    Windows: powershell .devcontainer.secrets/.kube/copy-kubeconfig-win.ps1
-
-  These scripts copy ~/.kube/config from your host and rewrite server URLs
-  to use host.docker.internal for container networking.
-
-  Inside the devcontainer, ~/.kube is symlinked to the secrets folder,
-  so kubectl automatically uses the copied configuration.
-
-  Test your connection: kubectl get nodes"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Kubernetes development tools||false|"
+    "Action|--uninstall|Uninstall Kubernetes tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=()

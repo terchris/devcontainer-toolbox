@@ -83,14 +83,14 @@ Addition scripts are bash scripts that automate the installation of tools, confi
 
 **Characteristics:**
 - Non-interactive (flag-based interface)
-- Multiple commands in single script via COMMANDS array
+- Multiple commands in single script via SCRIPT_COMMANDS array
 - Integrates with dev-setup menu (shows all commands)
-- Help text auto-generated from COMMANDS array
+- Help text auto-generated from SCRIPT_COMMANDS array
 - Supports both direct CLI usage and menu execution
 - Dynamic argument parsing via cmd-framework.sh
 
 **Key Features:**
-- **Single Source of Truth:** COMMANDS array defines all commands (no manual duplication)
+- **Single Source of Truth:** SCRIPT_COMMANDS array defines all commands (no manual duplication)
 - **Auto-discovery:** Metadata enables automatic menu integration
 - **Prerequisites:** Can require config scripts before execution
 - **Reusable:** Uses cmd-framework.sh and utilities.sh libraries
@@ -160,9 +160,9 @@ cp /workspace/.devcontainer/additions/addition-templates/_template-cmd-script.sh
 # - Update CMD_SCRIPT_NAME, CMD_SCRIPT_DESCRIPTION, CMD_SCRIPT_CATEGORY
 # - Update CMD_PREREQUISITE_CONFIGS (or leave empty if none)
 
-# 3. Define your COMMANDS array
+# 3. Define your SCRIPT_COMMANDS array
 # Format: "category|flag|description|function|requires_arg|param_prompt"
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Management|--list|List all items|cmd_list|false|"
     "Management|--delete|Delete an item|cmd_delete|true|Enter item ID"
     "Analysis|--stats|Show statistics|cmd_stats|false|"
@@ -193,7 +193,7 @@ dev-setup
 ```
 
 **Benefits:**
-- Add new command = 1 line in COMMANDS array + implement function
+- Add new command = 1 line in SCRIPT_COMMANDS array + implement function
 - Help text auto-generated
 - Menu integration automatic
 - No need to modify parse_args()
@@ -286,7 +286,7 @@ Complete template for creating command scripts with automatic menu integration.
 
 **Includes:**
 - Metadata fields (CMD_SCRIPT_NAME, CMD_SCRIPT_DESCRIPTION, CMD_SCRIPT_CATEGORY, CMD_PREREQUISITE_CONFIGS)
-- COMMANDS array pattern (single source of truth for all commands)
+- SCRIPT_COMMANDS array pattern (single source of truth for all commands)
 - cmd-framework.sh integration (automatic argument parsing and help generation)
 - utilities.sh integration (date ranges, currency formatting, number formatting)
 - Example command implementations (management, analysis, testing)
@@ -301,9 +301,9 @@ CMD_SCRIPT_DESCRIPTION="Manage and analyze example resources"
 CMD_SCRIPT_CATEGORY="UNCATEGORIZED"
 CMD_PREREQUISITE_CONFIGS="config-example.sh"  # Optional
 
-# COMMANDS array (6 fields)
+# SCRIPT_COMMANDS array (6 fields)
 # Format: category|flag|description|function|requires_arg|param_prompt
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Management|--list|List all items|cmd_list|false|"
     "Management|--delete|Delete an item|cmd_delete|true|Enter item ID"
     "Analysis|--stats|Show statistics|cmd_stats|false|"
@@ -322,17 +322,17 @@ cmd_delete() {
 # Help and parsing (uses framework)
 show_help() {
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_generate_help COMMANDS "cmd-example.sh"
+    cmd_framework_generate_help SCRIPT_COMMANDS "cmd-example.sh"
 }
 
 parse_args() {
     source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    cmd_framework_parse_args COMMANDS "cmd-example.sh" "$@"
+    cmd_framework_parse_args SCRIPT_COMMANDS "cmd-example.sh" "$@"
 }
 ```
 
 **Adding a new command:**
-1. Add one line to COMMANDS array
+1. Add one line to SCRIPT_COMMANDS array
 2. Implement the function
 3. Done! (Help text, menu integration, parsing all automatic)
 
@@ -381,9 +381,9 @@ parse_args() {
 | `CMD_SCRIPT_DESCRIPTION` | Yes | Brief description (one sentence) | `"Manage AI models, spending, and usage"` |
 | `CMD_SCRIPT_CATEGORY` | Yes | Category for menu organization | `"AI_TOOLS"` |
 | `CMD_PREREQUISITE_CONFIGS` | No | Space-separated config scripts | `"config-ai-claudecode.sh"` or `""` |
-| `COMMANDS` | Yes | Array of command definitions | See COMMANDS array format below |
+| `SCRIPT_COMMANDS` | Yes | Array of command definitions | See SCRIPT_COMMANDS array format below |
 
-**COMMANDS Array Format (6 fields):**
+**SCRIPT_COMMANDS Array Format (6 fields):**
 ```
 "category|flag|description|function|requires_arg|param_prompt"
 ```
@@ -399,7 +399,7 @@ parse_args() {
 
 **Example:**
 ```bash
-COMMANDS=(
+SCRIPT_COMMANDS=(
     "Management|--list|List all items|cmd_list|false|"
     "Management|--delete|Delete an item|cmd_delete|true|Enter item ID"
 )

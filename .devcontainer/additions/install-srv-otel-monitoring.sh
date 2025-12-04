@@ -21,11 +21,12 @@ SCRIPT_DESCRIPTION="Install OpenTelemetry Collector for devcontainer monitoring 
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
 SCRIPT_CHECK_COMMAND="([ -f /usr/bin/otelcol-contrib ] || command -v otelcol-contrib >/dev/null 2>&1) && ([ -f /usr/local/bin/script_exporter ] || command -v script_exporter >/dev/null 2>&1)"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install OpenTelemetry Collector
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall OpenTelemetry Collector
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install OpenTelemetry Collector||false|"
+    "Action|--uninstall|Uninstall OpenTelemetry Collector||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # OTel Collector configuration
 OTEL_VERSION="0.140.1"  # Latest stable version as of 2025-11

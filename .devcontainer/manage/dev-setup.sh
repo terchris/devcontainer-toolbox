@@ -886,7 +886,7 @@ show_service_submenu() {
     fi
 
     while true; do
-        # Extract COMMANDS array from the script
+        # Extract SCRIPT_COMMANDS array from the script
         local commands=()
         while IFS= read -r cmd_def; do
             commands+=("$cmd_def")
@@ -961,7 +961,7 @@ show_service_submenu() {
 
 show_service_details_and_actions() {
     local service_index=$1
-    # Show service-*.sh COMMANDS array menu
+    # Show service-*.sh SCRIPT_COMMANDS array menu
     show_service_submenu "$service_index"
 }
 
@@ -1478,11 +1478,11 @@ show_cmd_submenu() {
     fi
 
     while true; do
-        # Extract COMMANDS array from the script
+        # Extract SCRIPT_COMMANDS array from the script
         local commands=()
         while IFS= read -r cmd_def; do
             commands+=("$cmd_def")
-        done < <(extract_cmd_commands "$script_path")
+        done < <(extract_script_commands "$script_path")
 
         if [[ ${#commands[@]} -eq 0 ]]; then
             dialog --title "No Commands" --msgbox "No commands found in $cmd_name" $DIALOG_HEIGHT $DIALOG_WIDTH
@@ -1808,29 +1808,210 @@ install_tools() {
 }
 
 # Show tool details and get user decision
+# If the install script has a SCRIPT_COMMANDS array, shows a submenu with available actions
+# Otherwise falls back to simple Install/Back menu
 show_tool_details_and_confirm() {
     local tool_index=$1
     local tool_name="${AVAILABLE_TOOLS[$tool_index]}"
     local tool_description="${TOOL_DESCRIPTIONS[$tool_index]}"
-    
-    # Show tool details with Install/Back options
-    local user_choice
-    user_choice=$(dialog --clear \
-        --title "Tool Details: $tool_name" \
-        --menu "$tool_description\n\nWhat would you like to do?" \
-        $DIALOG_HEIGHT $DIALOG_WIDTH 4 \
-        "1" "Install this tool" \
-        "2" "Back to tool list" \
-        2>&1 >/dev/tty)
-    
-    case $user_choice in
-        1)
-            execute_tool_installation "$tool_index"
-            ;;
-        2|"")
-            # Go back to tool list (do nothing, loop will continue)
-            ;;
-    esac
+    local script_name="${TOOL_SCRIPTS[$tool_index]}"
+    local script_path="$ADDITIONS_DIR/$script_name"
+
+    # Check prerequisites first
+    local prerequisite_configs=$(extract_script_metadata "$script_path" "SCRIPT_PREREQUISITES")
+    if [[ -n "$prerequisite_configs" ]]; then
+        # Source prerequisite-check library
+        source "$ADDITIONS_DIR/lib/prerequisite-check.sh"
+
+        if ! check_prerequisite_configs "$prerequisite_configs" "$ADDITIONS_DIR"; then
+            # Show missing prerequisites
+            local missing_msg=$(show_missing_prerequisites "$prerequisite_configs" "$ADDITIONS_DIR")
+            dialog --title "Prerequisites Not Met" \
+                --msgbox "Cannot run $tool_name. Prerequisites not met:\n\n$missing_msg\n\nPlease configure required items first." \
+                20 70
+            clear
+            return 1
+        fi
+    fi
+
+    # Try to extract SCRIPT_COMMANDS array from the script
+    local commands=()
+    while IFS= read -r cmd_def; do
+        commands+=("$cmd_def")
+    done < <(extract_script_commands "$script_path")
+
+    # If no SCRIPT_COMMANDS array found, fall back to simple Install/Back menu
+    if [[ ${#commands[@]} -eq 0 ]]; then
+        local user_choice
+        user_choice=$(dialog --clear \
+            --title "Tool Details: $tool_name" \
+            --menu "$tool_description\n\nWhat would you like to do?" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH 4 \
+            "1" "Install this tool" \
+            "2" "Back to tool list" \
+            2>&1 >/dev/tty)
+
+        case $user_choice in
+            1)
+                execute_tool_installation "$tool_index"
+                ;;
+            2|"")
+                # Go back to tool list (do nothing, loop will continue)
+                ;;
+        esac
+        return 0
+    fi
+
+    # Show submenu with SCRIPT_COMMANDS (same pattern as show_cmd_submenu)
+    while true; do
+        # Extract additional metadata for display
+        local script_id=$(extract_script_metadata "$script_path" "SCRIPT_ID")
+        local script_ver=$(extract_script_metadata "$script_path" "SCRIPT_VER")
+        local check_command=$(extract_script_metadata "$script_path" "SCRIPT_CHECK_COMMAND")
+
+        # Check if installed
+        local install_status="Not installed"
+        if [[ -n "$check_command" ]] && eval "$check_command" >/dev/null 2>&1; then
+            install_status="Installed"
+        fi
+
+        # Build info text for menu header
+        local menu_text="ID: $script_id | Version: $script_ver | Status: $install_status\n\n$tool_description"
+
+        # Build menu with category prefixes
+        # Note: Not using --item-help because empty flags cause dialog issues
+        local menu_options=()
+        local menu_actions=()
+        local option_num=1
+
+        for cmd_def in "${commands[@]}"; do
+            IFS='|' read -r category flag description function requires_arg param_prompt <<< "$cmd_def"
+
+            # Add command with category prefix
+            local display_text="[$category] $description"
+            menu_options+=("$option_num" "$display_text")
+            menu_actions[$option_num]="$flag|$requires_arg|$param_prompt"
+            ((option_num++))
+        done
+
+        # Add back option
+        menu_options+=("0" "Back to tool list")
+
+        # Show submenu
+        local choice
+        choice=$(dialog --clear \
+            --title "$tool_name" \
+            --menu "$menu_text" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH $MENU_HEIGHT \
+            "${menu_options[@]}" \
+            2>&1 >/dev/tty)
+
+        # Check if user cancelled (ESC)
+        if [[ $? -ne 0 ]]; then
+            return 0
+        fi
+
+        # Handle back option
+        if [[ $choice -eq 0 || -z "$choice" ]]; then
+            return 0
+        fi
+
+        # Execute selected command
+        local action_def="${menu_actions[$choice]}"
+        if [[ -n "$action_def" ]]; then
+            execute_tool_action "$tool_index" "$action_def"
+        fi
+    done
+}
+
+# Execute a tool action based on the SCRIPT_COMMANDS array entry
+# Similar to execute_cmd_action() but for install scripts
+# Handles empty flag (default action = run with no arguments)
+execute_tool_action() {
+    local tool_index=$1
+    local action_def="$2"
+    local tool_name="${AVAILABLE_TOOLS[$tool_index]}"
+    local script_name="${TOOL_SCRIPTS[$tool_index]}"
+    local script_path="$ADDITIONS_DIR/$script_name"
+
+    IFS='|' read -r flag requires_arg param_prompt <<< "$action_def"
+
+    # Build command arguments (empty flag = no arguments)
+    local cmd_args=()
+    if [[ -n "$flag" ]]; then
+        cmd_args+=("$flag")
+    fi
+
+    # Prompt for parameter if needed
+    if [[ "$requires_arg" = "true" ]]; then
+        local param_value
+        param_value=$(dialog --clear \
+            --title "Parameter Required" \
+            --inputbox "$param_prompt:" \
+            8 60 \
+            2>&1 >/dev/tty)
+
+        # Check if user cancelled
+        if [[ $? -ne 0 ]]; then
+            return 0
+        fi
+
+        if [[ -n "$param_value" ]]; then
+            cmd_args+=("$param_value")
+        else
+            dialog --msgbox "Parameter required - command cancelled" 6 40
+            clear
+            return 1
+        fi
+    fi
+
+    # Special handling for --help flag (show in dialog)
+    if [[ "$flag" = "--help" ]]; then
+        clear
+        local help_output
+        help_output=$("$script_path" --help 2>&1)
+        dialog --title "$tool_name - Help" \
+            --msgbox "$help_output" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH
+        clear
+        return 0
+    fi
+
+    # Log the action
+    local action_desc="${flag:-install}"
+    log_user_choice "Browse & Install Tools" "Action: $tool_name $action_desc"
+
+    # Execute command
+    clear
+    if [[ -n "$flag" ]]; then
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Executing: $script_name ${cmd_args[*]}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    else
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Installing: $tool_name"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    fi
+    echo ""
+
+    # Make script executable and run
+    chmod +x "$script_path"
+
+    if "$script_path" "${cmd_args[@]}"; then
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "✅ Command completed successfully"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    else
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "❌ Command failed"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    fi
+
+    echo ""
+    read -p "Press Enter to continue..." -r
+    clear
 }
 
 execute_tool_installation() {

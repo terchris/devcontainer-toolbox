@@ -105,10 +105,39 @@ SCRIPT_DESCRIPTION="[Brief description of what this script installs and its purp
 SCRIPT_CATEGORY="DEV_TOOLS"  # Options: DEV_TOOLS, INFRA_CONFIG, AI_TOOLS, MONITORING, DATABASE, CLOUD
 SCRIPT_CHECK_COMMAND="command -v [tool-name] >/dev/null 2>&1"  # Command to check if already installed
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall"
+#------------------------------------------------------------------------------
+# SCRIPT_COMMANDS ARRAY - For dev-setup.sh menu integration
+#------------------------------------------------------------------------------
+# Define available actions for this install script. These appear in the
+# dev-setup.sh submenu when user selects this tool.
+#
+# Format: category|flag|description|function|requires_arg|param_prompt
+#
+# This is the SAME format used by cmd-*.sh scripts for consistency.
+#
+# Fields:
+#   category     - Menu grouping (e.g., "Action", "Info")
+#   flag         - Command line flag (empty = default action, run with no args)
+#   description  - User-friendly text for menus
+#   function     - Not used for install scripts (leave empty)
+#   requires_arg - "true" if flag needs a parameter, "false" otherwise
+#   param_prompt - Prompt text if parameter needed (empty if no parameter)
+#
+# Standard commands for most install scripts:
+SCRIPT_COMMANDS=(
+    "Action||Install this tool||false|"
+    "Action|--uninstall|Uninstall this tool||false|"
+    "Info|--help|Show help and usage information||false|"
+)
+#
+# Extended example with version support (for scripts that support --version):
+# SCRIPT_COMMANDS=(
+#     "Action||Install with default version||false|"
+#     "Action|--version|Install specific version||true|Enter version (e.g., 1.21.0)"
+#     "Action|--uninstall|Uninstall this tool||false|"
+#     "Info|--help|Show help and usage information||false|"
+# )
+#------------------------------------------------------------------------------
 
 # Optional: Prerequisite configurations required before installation
 # Uncomment and modify if your tool requires specific configurations

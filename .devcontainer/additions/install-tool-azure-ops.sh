@@ -17,11 +17,12 @@ SCRIPT_DESCRIPTION="Installs Azure CLI, PowerShell with Az/Graph modules, and VS
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="(command -v az >/dev/null 2>&1 && command -v pwsh >/dev/null 2>&1) || [ -f /usr/bin/pwsh ]"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Azure ops tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Azure ops tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Azure operations tools||false|"
+    "Action|--uninstall|Uninstall Azure operations tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # --- Default Configuration ---
 DEFAULT_VERSION="7.5.4"  # PowerShell 7.5.4 (latest stable as of October 2025)

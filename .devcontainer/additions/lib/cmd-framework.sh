@@ -4,7 +4,7 @@
 #
 # Purpose:
 #   Provides reusable functions for cmd-*.sh scripts to:
-#   - Parse COMMANDS array entries
+#   - Parse SCRIPT_COMMANDS array entries
 #   - Generate help text dynamically
 #   - Validate command definitions
 #   - Export command metadata as JSON
@@ -12,19 +12,19 @@
 # Usage:
 #   source "${SCRIPT_DIR}/lib/cmd-framework.sh"
 #
-#   # Define COMMANDS array in your script
-#   COMMANDS=(
+#   # Define SCRIPT_COMMANDS array in your script
+#   SCRIPT_COMMANDS=(
 #       "Category|--flag|Description|function_name|requires_arg|param_prompt"
 #       ...
 #   )
 #
 #   # Generate help text
-#   cmd_framework_generate_help COMMANDS "script-name.sh"
+#   cmd_framework_generate_help SCRIPT_COMMANDS "script-name.sh"
 #
 #   # Validate commands
-#   cmd_framework_validate_commands COMMANDS
+#   cmd_framework_validate_commands SCRIPT_COMMANDS
 #
-# COMMANDS Array Format (6 fields):
+# SCRIPT_COMMANDS Array Format (6 fields):
 #   Field 1: category      - Menu grouping (e.g., Information, Testing)
 #   Field 2: flag          - Command line flag (e.g., --models, --test)
 #   Field 3: description   - User-friendly description
@@ -42,12 +42,12 @@
 set -euo pipefail
 
 #------------------------------------------------------------------------------
-# Parse a single COMMANDS array entry
+# Parse a single SCRIPT_COMMANDS array entry
 #
 # Usage: cmd_framework_parse_command <command_definition>
 #
 # Arguments:
-#   command_definition - Single command entry from COMMANDS array
+#   command_definition - Single command entry from SCRIPT_COMMANDS array
 #
 # Returns: The parsed fields via stdout (pipe-separated)
 #   category|flag|description|function|requires_arg|param_prompt
@@ -68,19 +68,19 @@ cmd_framework_parse_command() {
 }
 
 #------------------------------------------------------------------------------
-# Generate help text from COMMANDS array
+# Generate help text from SCRIPT_COMMANDS array
 #
 # Usage: cmd_framework_generate_help <commands_array_name> <script_name>
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #   script_name        - Name of the script for usage line
 #
 # Returns: Formatted help text via stdout
 #
 # Example:
-#   COMMANDS=("Cat1|--cmd1|Desc1|func1|false|" "Cat2|--cmd2|Desc2|func2|true|Enter value")
-#   cmd_framework_generate_help COMMANDS "cmd-ai.sh"
+#   SCRIPT_COMMANDS=("Cat1|--cmd1|Desc1|func1|false|" "Cat2|--cmd2|Desc2|func2|true|Enter value")
+#   cmd_framework_generate_help SCRIPT_COMMANDS "cmd-ai.sh"
 #
 # Output:
 #   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -137,12 +137,12 @@ cmd_framework_generate_help() {
 }
 
 #------------------------------------------------------------------------------
-# Validate COMMANDS array format
+# Validate SCRIPT_COMMANDS array format
 #
 # Usage: cmd_framework_validate_commands <commands_array_name>
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #
 # Returns:
 #   Exit code: 0 if all valid, number of errors otherwise
@@ -154,8 +154,8 @@ cmd_framework_generate_help() {
 #   - requires_arg is either "true" or "false"
 #
 # Example:
-#   COMMANDS=("Cat|--cmd|Desc|func|false|")
-#   if cmd_framework_validate_commands COMMANDS; then
+#   SCRIPT_COMMANDS=("Cat|--cmd|Desc|func|false|")
+#   if cmd_framework_validate_commands SCRIPT_COMMANDS; then
 #       echo "All commands valid"
 #   fi
 #
@@ -172,7 +172,7 @@ cmd_framework_validate_commands() {
         local field_count=$(echo "$cmd_def" | awk -F'|' '{print NF}')
 
         if [ "$field_count" -ne 6 ]; then
-            echo "ERROR: Invalid COMMANDS entry (expected 6 fields, got $field_count):" >&2
+            echo "ERROR: Invalid SCRIPT_COMMANDS entry (expected 6 fields, got $field_count):" >&2
             echo "  $cmd_def" >&2
             ((errors++))
             continue
@@ -206,18 +206,18 @@ cmd_framework_validate_commands() {
 }
 
 #------------------------------------------------------------------------------
-# Export COMMANDS array as JSON
+# Export SCRIPT_COMMANDS array as JSON
 #
 # Usage: cmd_framework_export_json <commands_array_name>
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #
 # Returns: JSON representation via stdout
 #
 # Example:
-#   COMMANDS=("Cat|--cmd|Desc|func|false|")
-#   cmd_framework_export_json COMMANDS > commands.json
+#   SCRIPT_COMMANDS=("Cat|--cmd|Desc|func|false|")
+#   cmd_framework_export_json SCRIPT_COMMANDS > commands.json
 #
 # Output:
 #   {
@@ -286,14 +286,14 @@ EOF
 # Usage: cmd_framework_get_category <commands_array_name> <category_name>
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #   category_name       - Category to filter by
 #
 # Returns: Matching command entries via stdout (one per line)
 #
 # Example:
-#   COMMANDS=("Cat1|--cmd1|Desc1|func1|false|" "Cat2|--cmd2|Desc2|func2|true|Enter")
-#   cmd_framework_get_category COMMANDS "Cat1"
+#   SCRIPT_COMMANDS=("Cat1|--cmd1|Desc1|func1|false|" "Cat2|--cmd2|Desc2|func2|true|Enter")
+#   cmd_framework_get_category SCRIPT_COMMANDS "Cat1"
 #   # Output: Cat1|--cmd1|Desc1|func1|false|
 #
 #------------------------------------------------------------------------------
@@ -314,18 +314,18 @@ cmd_framework_get_category() {
 }
 
 #------------------------------------------------------------------------------
-# Get all unique categories from COMMANDS array
+# Get all unique categories from SCRIPT_COMMANDS array
 #
 # Usage: cmd_framework_get_categories <commands_array_name>
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #
 # Returns: List of unique categories via stdout (one per line, in order)
 #
 # Example:
-#   COMMANDS=("Cat1|--cmd1|Desc1|func1|false|" "Cat2|--cmd2|Desc2|func2|true|Enter")
-#   cmd_framework_get_categories COMMANDS
+#   SCRIPT_COMMANDS=("Cat1|--cmd1|Desc1|func1|false|" "Cat2|--cmd2|Desc2|func2|true|Enter")
+#   cmd_framework_get_categories SCRIPT_COMMANDS
 #   # Output:
 #   # Cat1
 #   # Cat2
@@ -364,14 +364,14 @@ cmd_framework_get_categories() {
 # Usage: cmd_framework_find_command <commands_array_name> <flag>
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #   flag                - Flag to search for (e.g., --test)
 #
 # Returns: Matching command entry via stdout (empty if not found)
 #
 # Example:
-#   COMMANDS=("Cat|--test|Test model|cmd_test|true|Enter model")
-#   cmd_def=$(cmd_framework_find_command COMMANDS "--test")
+#   SCRIPT_COMMANDS=("Cat|--test|Test model|cmd_test|true|Enter model")
+#   cmd_def=$(cmd_framework_find_command SCRIPT_COMMANDS "--test")
 #   # Output: Cat|--test|Test model|cmd_test|true|Enter model
 #
 #------------------------------------------------------------------------------
@@ -400,7 +400,7 @@ cmd_framework_find_command() {
 # Usage: cmd_framework_parse_args <commands_array_name> <script_name> "$@"
 #
 # Arguments:
-#   commands_array_name - Name of the COMMANDS array variable (passed by name)
+#   commands_array_name - Name of the SCRIPT_COMMANDS array variable (passed by name)
 #   script_name        - Name of the script (for error messages)
 #   $@                 - All command-line arguments passed to the script
 #
@@ -408,13 +408,13 @@ cmd_framework_find_command() {
 # Exit code: 0 on success, 1 on error
 #
 # Example in cmd-ai.sh:
-#   COMMANDS=(
+#   SCRIPT_COMMANDS=(
 #       "Testing|--test|Test model|cmd_test|true|Enter model name"
 #       "Info|--models|List models|cmd_models|false|"
 #   )
 #
 #   parse_args() {
-#       cmd_framework_parse_args COMMANDS "cmd-ai.sh" "$@"
+#       cmd_framework_parse_args SCRIPT_COMMANDS "cmd-ai.sh" "$@"
 #   }
 #
 #------------------------------------------------------------------------------
@@ -438,7 +438,7 @@ cmd_framework_parse_args() {
         return 0
     fi
 
-    # Look up command in COMMANDS array
+    # Look up command in SCRIPT_COMMANDS array
     local cmd_def
     if ! cmd_def=$(cmd_framework_find_command "$array_name" "$flag"); then
         echo "ERROR: Unknown command: $flag" >&2
@@ -473,7 +473,7 @@ cmd_framework_self_test() {
     echo ""
 
     # Test data
-    local TEST_COMMANDS=(
+    local TEST_SCRIPT_COMMANDS=(
         "Information|--models|List all models|cmd_models|false|"
         "Information|--info|Show user info|cmd_info|false|"
         "Testing|--test|Test specific model|cmd_test|true|Enter model name"
@@ -484,7 +484,7 @@ cmd_framework_self_test() {
 
     # Test 1: Parse command
     echo "Test 1: Parse command"
-    local result=$(cmd_framework_parse_command "${TEST_COMMANDS[0]}")
+    local result=$(cmd_framework_parse_command "${TEST_SCRIPT_COMMANDS[0]}")
     if [[ "$result" == "Information|--models|List all models|cmd_models|false|" ]]; then
         echo "  ✅ PASS"
     else
@@ -495,7 +495,7 @@ cmd_framework_self_test() {
 
     # Test 2: Generate help
     echo "Test 2: Generate help"
-    local help_output=$(cmd_framework_generate_help TEST_COMMANDS "test.sh")
+    local help_output=$(cmd_framework_generate_help TEST_SCRIPT_COMMANDS "test.sh")
     if [[ "$help_output" == *"Information Commands:"* ]] && [[ "$help_output" == *"Testing Commands:"* ]]; then
         echo "  ✅ PASS"
     else
@@ -506,7 +506,7 @@ cmd_framework_self_test() {
 
     # Test 3: Validate commands
     echo "Test 3: Validate commands"
-    if cmd_framework_validate_commands TEST_COMMANDS 2>/dev/null; then
+    if cmd_framework_validate_commands TEST_SCRIPT_COMMANDS 2>/dev/null; then
         echo "  ✅ PASS"
     else
         echo "  ❌ FAIL: Validation failed"
@@ -516,8 +516,8 @@ cmd_framework_self_test() {
 
     # Test 4: Invalid command format
     echo "Test 4: Invalid command format (should fail)"
-    local INVALID_COMMANDS=("Cat|--flag|Desc|func")  # Only 4 fields
-    if cmd_framework_validate_commands INVALID_COMMANDS 2>/dev/null; then
+    local INVALID_SCRIPT_COMMANDS=("Cat|--flag|Desc|func")  # Only 4 fields
+    if cmd_framework_validate_commands INVALID_SCRIPT_COMMANDS 2>/dev/null; then
         echo "  ❌ FAIL: Should have detected invalid format"
         ((errors++))
     else
@@ -527,7 +527,7 @@ cmd_framework_self_test() {
 
     # Test 5: Get categories
     echo "Test 5: Get categories"
-    local categories=$(cmd_framework_get_categories TEST_COMMANDS)
+    local categories=$(cmd_framework_get_categories TEST_SCRIPT_COMMANDS)
     if [[ "$categories" == *"Information"* ]] && [[ "$categories" == *"Testing"* ]]; then
         echo "  ✅ PASS"
     else
@@ -538,7 +538,7 @@ cmd_framework_self_test() {
 
     # Test 6: Find command
     echo "Test 6: Find command by flag"
-    local found=$(cmd_framework_find_command TEST_COMMANDS "--test")
+    local found=$(cmd_framework_find_command TEST_SCRIPT_COMMANDS "--test")
     if [[ "$found" == *"cmd_test"* ]]; then
         echo "  ✅ PASS"
     else
@@ -549,7 +549,7 @@ cmd_framework_self_test() {
 
     # Test 7: Export JSON
     echo "Test 7: Export JSON"
-    local json_output=$(cmd_framework_export_json TEST_COMMANDS)
+    local json_output=$(cmd_framework_export_json TEST_SCRIPT_COMMANDS)
     if [[ "$json_output" == *'"commands":'* ]] && [[ "$json_output" == *'"flag": "--models"'* ]]; then
         echo "  ✅ PASS"
     else

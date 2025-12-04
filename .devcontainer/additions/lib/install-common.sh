@@ -49,7 +49,7 @@ source "${COMMON_LIB_DIR}/categories.sh"
 #   Reads metadata variables from calling script:
 #   - SCRIPT_ID, SCRIPT_NAME, SCRIPT_DESCRIPTION, SCRIPT_CATEGORY
 #   - SCRIPT_CHECK_COMMAND, SCRIPT_PREREQUISITES
-#   - SCRIPT_USAGE (optional) - Custom usage text, uses default if not provided
+#   - SCRIPT_COMMANDS - Commands array for dynamic help generation
 #   - PACKAGES_SYSTEM, PACKAGES_NODE, PACKAGES_PYTHON, PACKAGES_PWSH
 #   - PACKAGES_GO, PACKAGES_CARGO, PACKAGES_DOTNET, PACKAGES_JAVA
 #   - EXTENSIONS
@@ -59,7 +59,7 @@ source "${COMMON_LIB_DIR}/categories.sh"
 #   - Script metadata
 #   - Installation check command
 #   - Prerequisites
-#   - Available options (--help, --uninstall, etc.)
+#   - Available options (generated from SCRIPT_COMMANDS or fallback)
 #   - Packages to be installed
 #   - Verification commands
 #
@@ -99,13 +99,38 @@ show_script_help() {
         echo ""
     fi
 
-    # Usage
+    # Usage - generate from SCRIPT_COMMANDS if available
     echo "Usage:"
-    if [[ -n "$SCRIPT_USAGE" ]]; then
-        # Use custom usage if defined
-        echo "$SCRIPT_USAGE"
+    if [[ ${#SCRIPT_COMMANDS[@]} -gt 0 ]]; then
+        # Generate usage from SCRIPT_COMMANDS array
+        local script_basename
+        script_basename=$(basename "$0")
+        local current_category=""
+
+        for cmd_def in "${SCRIPT_COMMANDS[@]}"; do
+            IFS='|' read -r category flag description function requires_arg param_prompt <<< "$cmd_def"
+
+            # Print category header when category changes
+            if [[ "$category" != "$current_category" && -n "$category" ]]; then
+                echo ""
+                echo "  $category:"
+                current_category="$category"
+            fi
+
+            # Build usage line
+            local usage_line="  $script_basename"
+            if [[ -n "$flag" ]]; then
+                if [[ "$requires_arg" == "true" ]]; then
+                    usage_line="$usage_line $flag <arg>"
+                else
+                    usage_line="$usage_line $flag"
+                fi
+            fi
+            # Pad to align descriptions
+            printf "    %-35s # %s\n" "$usage_line" "$description"
+        done
     else
-        # Default usage pattern
+        # Default usage pattern if nothing else defined
         echo "  $(basename "$0")              # Install"
         echo "  $(basename "$0") --help       # Show this help"
         echo "  $(basename "$0") --uninstall  # Uninstall (if supported)"

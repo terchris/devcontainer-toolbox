@@ -16,11 +16,12 @@ SCRIPT_DESCRIPTION="Installs Databricks CLI, Python SDK, Connect, and related to
 SCRIPT_CATEGORY="DATA_ANALYTICS"
 SCRIPT_CHECK_COMMAND="command -v databricks >/dev/null 2>&1"
 
-# Custom usage text for --help
-SCRIPT_USAGE="  $(basename "$0")              # Install Databricks tools
-  $(basename "$0") --help       # Show this help
-  $(basename "$0") --uninstall  # Uninstall Databricks tools
-  $(basename "$0") --debug      # Install with debug output"
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Install Databricks development tools||false|"
+    "Action|--uninstall|Uninstall Databricks development tools||false|"
+    "Info|--help|Show help and usage information||false|"
+)
 
 # System packages
 PACKAGES_SYSTEM=()
