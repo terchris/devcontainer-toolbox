@@ -72,10 +72,11 @@
 #
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="cmd-example"  # Unique identifier (must match filename without .sh)
 SCRIPT_NAME="Example Management"
 SCRIPT_VER="0.0.1"  # Script version - displayed in --help
 SCRIPT_DESCRIPTION="Manage and analyze example resources"
-SCRIPT_CATEGORY="UNCATEGORIZED"
+SCRIPT_CATEGORY="INFRA_CONFIG"  # Options: LANGUAGE_DEV, AI_TOOLS, CLOUD_TOOLS, DATA_ANALYTICS, BACKGROUND_SERVICES, INFRA_CONFIG
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
 
 #------------------------------------------------------------------------------

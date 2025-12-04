@@ -19,6 +19,7 @@ SCRIPT_NAME="Nginx Reverse Proxy"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Nginx reverse proxy for LiteLLM (adds Host header)"
 SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="pgrep -x nginx >/dev/null 2>&1"
 SCRIPT_PREREQUISITES=""  # Optional: "config-nginx.sh" if required
 SCRIPT_PREREQUISITE_TOOLS="install-srv-nginx.sh"  # Must be installed first
 

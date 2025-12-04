@@ -559,12 +559,12 @@ check_config_configured() {
 #   additions_dir - Directory containing config-*.sh scripts
 #
 # Output format (tab-separated, one line per config):
-#   script_basename<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND
+#   script_basename<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND<TAB>SCRIPT_PREREQUISITES
 #
 # Exit code: 0 on success, 1 if directory not found
 #
 # Example:
-#   while IFS=$'\t' read -r basename name desc cat check; do
+#   while IFS=$'\t' read -r basename name desc cat check prereqs; do
 #       echo "Config: $name (category: $cat)"
 #   done < <(scan_config_scripts "/workspace/.devcontainer/additions")
 #
@@ -597,6 +597,7 @@ scan_config_scripts() {
         local config_description=$(extract_config_metadata "$script" "SCRIPT_DESCRIPTION")
         local config_category=$(extract_config_metadata "$script" "SCRIPT_CATEGORY")
         local check_command=$(extract_config_metadata "$script" "SCRIPT_CHECK_COMMAND")
+        local prerequisites=$(extract_config_metadata "$script" "SCRIPT_PREREQUISITES")
 
         # Skip if no SCRIPT_NAME found (invalid config)
         if [[ -z "$config_name" ]]; then
@@ -614,12 +615,13 @@ scan_config_scripts() {
         fi
 
         # Output tab-separated values
-        printf "%s\t%s\t%s\t%s\t%s\n" \
+        printf "%s\t%s\t%s\t%s\t%s\t%s\n" \
             "$script_basename" \
             "$config_name" \
             "$config_description" \
             "$config_category" \
-            "$check_command"
+            "$check_command" \
+            "$prerequisites"
     done
 
     return 0

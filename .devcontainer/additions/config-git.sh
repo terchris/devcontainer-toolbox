@@ -7,11 +7,20 @@
 # CONFIG METADATA - For dev-setup.sh integration
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="config-git"
 SCRIPT_NAME="Git Identity"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Set your global Git username and email for commits"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="git config --global user.name >/dev/null 2>&1 && git config --global user.email >/dev/null 2>&1"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Configure Git identity||false|"
+    "Action|--show|Display current Git configuration||false|"
+    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Info|--help|Show help information||false|"
+)
 
 #------------------------------------------------------------------------------
 
@@ -72,6 +81,45 @@ EOF
 
     # Set permissions (readable only by user)
     chmod 600 "$PERSISTENT_FILE"
+}
+
+#------------------------------------------------------------------------------
+# SHOW CONFIG - Display current configuration
+#------------------------------------------------------------------------------
+
+show_config() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📋 Current Configuration: $SCRIPT_NAME"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    local user_name=$(git config --global user.name 2>/dev/null)
+    local user_email=$(git config --global user.email 2>/dev/null)
+
+    if [ -z "$user_name" ] && [ -z "$user_email" ]; then
+        echo "❌ Not configured"
+        echo ""
+        echo "Run: bash $0"
+        return 1
+    fi
+
+    echo "Git Global Config:"
+    echo "  user.name:   ${user_name:-<not set>}"
+    echo "  user.email:  ${user_email:-<not set>}"
+    echo ""
+
+    # Show persistent storage status
+    if [ -f "$PERSISTENT_FILE" ]; then
+        echo "Persistent Storage: ✅ Survives container rebuild"
+        echo "  Location: $PERSISTENT_FILE"
+    else
+        echo "Persistent Storage: ❌ Not saved (won't survive container rebuild)"
+        echo "  Run this script to save: bash $0"
+    fi
+    echo ""
+
+    return 0
 }
 
 #------------------------------------------------------------------------------
@@ -212,11 +260,26 @@ configure_git_identity() {
 #------------------------------------------------------------------------------
 
 main() {
-    # Handle --verify flag for non-interactive validation
-    if [ "${1:-}" = "--verify" ]; then
-        verify_git_identity
-        exit $?
-    fi
+    # Handle flags
+    case "${1:-}" in
+        --show)
+            show_config
+            exit $?
+            ;;
+        --verify)
+            verify_git_identity
+            exit $?
+            ;;
+        --help)
+            echo "Usage: $0 [--show|--verify|--help]"
+            echo ""
+            echo "  (no args)  Configure Git identity interactively"
+            echo "  --show     Display current Git configuration"
+            echo "  --verify   Restore from .devcontainer.secrets (non-interactive)"
+            echo "  --help     Show this help"
+            exit 0
+            ;;
+    esac
 
     # Interactive configuration
     configure_git_identity

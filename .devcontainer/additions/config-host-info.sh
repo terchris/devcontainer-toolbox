@@ -7,11 +7,20 @@
 # CONFIG METADATA - For dev-setup.sh integration
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="config-host-info"
 SCRIPT_NAME="Host Information"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Detect host OS, user, and architecture for telemetry monitoring"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="[ -f /workspace/.devcontainer.secrets/env-vars/.host-info ]"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Detect and save host information||false|"
+    "Action|--show|Display current host information||false|"
+    "Action|--verify|Refresh host information||false|"
+    "Info|--help|Show help information||false|"
+)
 
 #------------------------------------------------------------------------------
 
@@ -166,6 +175,45 @@ EOF
 }
 
 #------------------------------------------------------------------------------
+# SHOW CONFIG - Display current configuration
+#------------------------------------------------------------------------------
+
+show_config() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📋 Current Configuration: $SCRIPT_NAME"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    if [ ! -f "$PERSISTENT_FILE" ]; then
+        echo "❌ Not configured"
+        echo ""
+        echo "Run: bash $0"
+        return 1
+    fi
+
+    # Source and display
+    # shellcheck source=/dev/null
+    source "$PERSISTENT_FILE" 2>/dev/null
+
+    echo "Config file: $PERSISTENT_FILE"
+    echo ""
+    echo "Host Information:"
+    echo "  HOST_OS:       ${HOST_OS:-<not set>}"
+    echo "  HOST_USER:     ${HOST_USER:-<not set>}"
+    echo "  HOST_HOSTNAME: ${HOST_HOSTNAME:-<not set>}"
+    echo "  HOST_DOMAIN:   ${HOST_DOMAIN:-<not set>}"
+    echo "  HOST_CPU_ARCH: ${HOST_CPU_ARCH:-<not set>}"
+    echo ""
+    echo "Docker Statistics:"
+    echo "  Containers:    ${DOCKER_CONTAINERS_TOTAL:-0} (Running: ${DOCKER_CONTAINERS_RUNNING:-0})"
+    echo "  Images:        ${DOCKER_IMAGES_TOTAL:-0}"
+    echo ""
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # VERIFY MODE - Non-interactive validation for container rebuild
 #------------------------------------------------------------------------------
 
@@ -212,11 +260,26 @@ verify_host_info() {
 #------------------------------------------------------------------------------
 
 main() {
-    # Handle --verify flag for non-interactive validation
-    if [ "${1:-}" = "--verify" ]; then
-        verify_host_info
-        exit $?
-    fi
+    # Handle flags
+    case "${1:-}" in
+        --show)
+            show_config
+            exit $?
+            ;;
+        --verify)
+            verify_host_info
+            exit $?
+            ;;
+        --help)
+            echo "Usage: $0 [--show|--verify|--help]"
+            echo ""
+            echo "  (no args)  Detect and save host information"
+            echo "  --show     Display current host information"
+            echo "  --verify   Refresh host information (non-interactive)"
+            echo "  --help     Show this help"
+            exit 0
+            ;;
+    esac
 
     # Interactive mode - show detailed info
     echo ""

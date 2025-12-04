@@ -646,9 +646,18 @@ show_all_services_menu() {
             for service_index in "${INDICES[@]}"; do
                 local service_name="${AVAILABLE_SERVICES[$service_index]}"
                 local service_description="${SERVICE_DESCRIPTIONS[$service_index]}"
+                local service_script="${SERVICE_SCRIPTS[$service_index]}"
                 local prefix="${CATEGORY_PREFIX[$category_key]}"
 
-                menu_options+=("$option_num" "$prefix $service_name" "$service_description")
+                # Check if service is running
+                local status_icon=""
+                if bash "$ADDITIONS_DIR/$service_script" --is-running >/dev/null 2>&1; then
+                    status_icon="✅ "
+                else
+                    status_icon="⏸️ "
+                fi
+
+                menu_options+=("$option_num" "$status_icon$prefix $service_name" "$service_description")
                 MENU_TO_SERVICE_INDEX[$option_num]=$service_index
                 ((option_num++))
             done
@@ -1372,50 +1381,121 @@ show_config_details_and_actions() {
     local config_index=$1
     local config_name="${AVAILABLE_CONFIGS[$config_index]}"
     local config_description="${CONFIG_DESCRIPTIONS[$config_index]}"
+    local script_name="${CONFIG_SCRIPTS[$config_index]}"
+    local script_path="$ADDITIONS_DIR/$script_name"
 
-    # Check if config is configured
-    local is_configured=false
-    if check_config_configured "$config_index"; then
-        is_configured=true
-    fi
+    # Try to extract SCRIPT_COMMANDS array from the script
+    local commands=()
+    while IFS= read -r cmd_def; do
+        commands+=("$cmd_def")
+    done < <(extract_script_commands "$script_path")
 
-    # Build menu based on current state
-    local menu_options=()
-    local status_text
+    # If no SCRIPT_COMMANDS array found, fall back to simple Configure/Back menu
+    if [[ ${#commands[@]} -eq 0 ]]; then
+        # Check if config is configured
+        local is_configured=false
+        if check_config_configured "$config_index"; then
+            is_configured=true
+        fi
 
-    if [[ "$is_configured" = true ]]; then
-        status_text="Status: Configured ✅"
-        menu_options+=("1" "Reconfigure")
-        menu_options+=("2" "Back to configuration list")
-    else
-        status_text="Status: Not configured ❌"
-        menu_options+=("1" "Configure now")
-        menu_options+=("2" "Back to configuration list")
-    fi
+        # Build menu based on current state
+        local menu_options=()
+        local status_text
 
-    # Show config details with available actions
-    local user_choice
-    user_choice=$(dialog --clear \
-        --title "Configuration: $config_name" \
-        --menu "$config_description\n\n$status_text\n\nWhat would you like to do?" \
-        $DIALOG_HEIGHT $DIALOG_WIDTH 6 \
-        "${menu_options[@]}" \
-        2>&1 >/dev/tty)
+        if [[ "$is_configured" = true ]]; then
+            status_text="Status: Configured ✅"
+            menu_options+=("1" "Reconfigure")
+            menu_options+=("2" "Back to configuration list")
+        else
+            status_text="Status: Not configured ❌"
+            menu_options+=("1" "Configure now")
+            menu_options+=("2" "Back to configuration list")
+        fi
 
-    # Handle user choice
-    if [[ $? -ne 0 ]]; then
-        # User pressed ESC - go back
+        # Show config details with available actions
+        local user_choice
+        user_choice=$(dialog --clear \
+            --title "Configuration: $config_name" \
+            --menu "$config_description\n\n$status_text\n\nWhat would you like to do?" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH 6 \
+            "${menu_options[@]}" \
+            2>&1 >/dev/tty)
+
+        # Handle user choice
+        if [[ $? -ne 0 ]]; then
+            # User pressed ESC - go back
+            return 0
+        fi
+
+        case $user_choice in
+            1)
+                execute_config_script "$config_index"
+                ;;
+            2|"")
+                # Go back to config list
+                ;;
+        esac
         return 0
     fi
 
-    case $user_choice in
-        1)
-            execute_config_script "$config_index"
-            ;;
-        2|"")
-            # Go back to config list
-            ;;
-    esac
+    # Show submenu with SCRIPT_COMMANDS (same pattern as show_tool_details_and_confirm)
+    while true; do
+        # Extract additional metadata for display
+        local script_id=$(extract_script_metadata "$script_path" "SCRIPT_ID")
+        local script_ver=$(extract_script_metadata "$script_path" "SCRIPT_VER")
+
+        # Check if configured
+        local config_status="Not configured"
+        if check_config_configured "$config_index"; then
+            config_status="Configured"
+        fi
+
+        # Build info text for menu header
+        local menu_text="ID: $script_id | Version: $script_ver | Status: $config_status\n\n$config_description"
+
+        # Build menu with category prefixes
+        local menu_options=()
+        local menu_actions=()
+        local option_num=1
+
+        for cmd_def in "${commands[@]}"; do
+            IFS='|' read -r category flag description function requires_arg param_prompt <<< "$cmd_def"
+
+            # Add command with category prefix
+            local display_text="[$category] $description"
+            menu_options+=("$option_num" "$display_text")
+            menu_actions[$option_num]="$flag|$requires_arg|$param_prompt"
+            ((option_num++))
+        done
+
+        # Add back option
+        menu_options+=("0" "Back to configuration list")
+
+        # Show submenu
+        local choice
+        choice=$(dialog --clear \
+            --title "$config_name" \
+            --menu "$menu_text" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH $MENU_HEIGHT \
+            "${menu_options[@]}" \
+            2>&1 >/dev/tty)
+
+        # Check if user cancelled (ESC)
+        if [[ $? -ne 0 ]]; then
+            return 0
+        fi
+
+        # Handle back option
+        if [[ $choice -eq 0 || -z "$choice" ]]; then
+            return 0
+        fi
+
+        # Execute selected command
+        local action_def="${menu_actions[$choice]}"
+        if [[ -n "$action_def" ]]; then
+            execute_config_action "$config_index" "$action_def"
+        fi
+    done
 }
 
 execute_config_script() {
@@ -1449,6 +1529,96 @@ execute_config_script() {
 
     echo ""
     read -p "Press Enter to continue..." -r
+}
+
+# Execute a config action based on the SCRIPT_COMMANDS array entry
+# Similar to execute_tool_action() but for config scripts
+# Handles empty flag (default action = run with no arguments)
+execute_config_action() {
+    local config_index=$1
+    local action_def="$2"
+    local config_name="${AVAILABLE_CONFIGS[$config_index]}"
+    local script_name="${CONFIG_SCRIPTS[$config_index]}"
+    local script_path="$ADDITIONS_DIR/$script_name"
+
+    IFS='|' read -r flag requires_arg param_prompt <<< "$action_def"
+
+    # Build command arguments (empty flag = no arguments)
+    local cmd_args=()
+    if [[ -n "$flag" ]]; then
+        cmd_args+=("$flag")
+    fi
+
+    # Prompt for parameter if needed
+    if [[ "$requires_arg" = "true" ]]; then
+        local param_value
+        param_value=$(dialog --clear \
+            --title "Parameter Required" \
+            --inputbox "$param_prompt:" \
+            8 60 \
+            2>&1 >/dev/tty)
+
+        # Check if user cancelled
+        if [[ $? -ne 0 ]]; then
+            return 0
+        fi
+
+        if [[ -n "$param_value" ]]; then
+            cmd_args+=("$param_value")
+        else
+            dialog --msgbox "Parameter required - command cancelled" 6 40
+            clear
+            return 1
+        fi
+    fi
+
+    # Special handling for --help flag (show in dialog)
+    if [[ "$flag" = "--help" ]]; then
+        clear
+        local help_output
+        help_output=$("$script_path" --help 2>&1)
+        dialog --title "$config_name - Help" \
+            --msgbox "$help_output" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH
+        clear
+        return 0
+    fi
+
+    # Log the action
+    local action_desc="${flag:-configure}"
+    log_user_choice "Setup & Configuration" "Action: $config_name $action_desc"
+
+    # Execute command
+    clear
+    if [[ -n "$flag" ]]; then
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Executing: $script_name ${cmd_args[*]}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    else
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Running Configuration: $config_name"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    fi
+    echo ""
+
+    # Make script executable and run
+    chmod +x "$script_path"
+
+    if "$script_path" "${cmd_args[@]}"; then
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "✅ Command completed successfully"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    else
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "❌ Command failed"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    fi
+
+    echo ""
+    read -p "Press Enter to continue..." -r
+    clear
 }
 
 #------------------------------------------------------------------------------

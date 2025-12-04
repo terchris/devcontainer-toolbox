@@ -14,11 +14,20 @@
 # CONFIGURATION - Metadata for dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="config-devcontainer-identity"
 SCRIPT_NAME="Developer Identity"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Configure your identity for devcontainer monitoring (required for tracking your activity in Grafana dashboards)"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="[ -f ~/.devcontainer-identity ] && grep -q '^export DEVELOPER_ID=' ~/.devcontainer-identity"
+
+# Commands for dev-setup.sh menu integration
+SCRIPT_COMMANDS=(
+    "Action||Configure developer identity||false|"
+    "Action|--show|Display current identity||false|"
+    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Info|--help|Show help information||false|"
+)
 
 #------------------------------------------------------------------------------
 
@@ -266,6 +275,52 @@ setup_persistent_storage() {
 }
 
 #------------------------------------------------------------------------------
+# SHOW CONFIG - Display current configuration
+#------------------------------------------------------------------------------
+
+show_config() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📋 Current Configuration: $SCRIPT_NAME"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    if [ ! -f "$IDENTITY_FILE" ]; then
+        echo "❌ Not configured"
+        echo ""
+        echo "Run: bash $0"
+        return 1
+    fi
+
+    # Source and display
+    # shellcheck source=/dev/null
+    source "$IDENTITY_FILE" 2>/dev/null
+
+    echo "Config file: $IDENTITY_FILE"
+    if [ -L "$IDENTITY_FILE" ]; then
+        echo "Symlink to:  $(readlink -f "$IDENTITY_FILE")"
+    fi
+    echo ""
+    echo "Variables:"
+    echo "  DEVELOPER_ID:     ${DEVELOPER_ID:-<not set>}"
+    echo "  DEVELOPER_EMAIL:  ${DEVELOPER_EMAIL:-<not set>}"
+    echo "  PROJECT_NAME:     ${PROJECT_NAME:-<not set>}"
+    echo "  TS_HOSTNAME:      ${TS_HOSTNAME:-<not set>}"
+    echo ""
+
+    # Show persistent storage status
+    if [ -f "$PERSISTENT_FILE" ]; then
+        echo "Persistent Storage: ✅ Survives container rebuild"
+        echo "  Location: $PERSISTENT_FILE"
+    else
+        echo "Persistent Storage: ❌ Will be lost on rebuild"
+    fi
+    echo ""
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # VERIFY MODE - Non-interactive validation for container rebuild
 #------------------------------------------------------------------------------
 
@@ -324,11 +379,26 @@ else
 fi
 
 main() {
-    # Handle --verify flag for non-interactive validation
-    if [ "${1:-}" = "--verify" ]; then
-        verify_identity
-        exit $?
-    fi
+    # Handle flags
+    case "${1:-}" in
+        --show)
+            show_config
+            exit $?
+            ;;
+        --verify)
+            verify_identity
+            exit $?
+            ;;
+        --help)
+            echo "Usage: $0 [--show|--verify|--help]"
+            echo ""
+            echo "  (no args)  Configure developer identity interactively"
+            echo "  --show     Display current identity configuration"
+            echo "  --verify   Restore from .devcontainer.secrets (non-interactive)"
+            echo "  --help     Show this help"
+            exit 0
+            ;;
+    esac
 
     # Setup persistent storage (symlink)
     setup_persistent_storage

@@ -18,6 +18,7 @@
 # SCRIPT METADATA - For dev-setup.sh discovery
 #------------------------------------------------------------------------------
 
+SCRIPT_ID="cmd-ai"  # Unique identifier (must match filename without .sh)
 SCRIPT_NAME="AI Management"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Manage AI models, spending, and usage through LiteLLM"

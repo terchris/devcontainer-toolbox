@@ -40,7 +40,7 @@ PACKAGES_CARGO=(
 EXTENSIONS=(
     "Rust Analyzer (rust-lang.rust-analyzer) - Rust language support with rust-analyzer"
     "CodeLLDB (vadimcn.vscode-lldb) - Native debugger for Rust"
-    "Crates (serayuzgur.crates) - Helps manage Rust dependencies"
+    "Dependi (serayuzgur.dependi) - Replacement for Crates; manages Rust dependencies"
 )
 
 #------------------------------------------------------------------------------
