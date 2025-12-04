@@ -102,7 +102,7 @@ SCRIPT_ID="[category-name]"  # Unique identifier (e.g., dev-python, tool-azure, 
 SCRIPT_VER="0.0.1"           # Script version - displayed in --help and during install/uninstall
 SCRIPT_NAME="[Name]"
 SCRIPT_DESCRIPTION="[Brief description of what this script installs and its purpose]"
-SCRIPT_CATEGORY="DEV_TOOLS"  # Options: DEV_TOOLS, INFRA_CONFIG, AI_TOOLS, MONITORING, DATABASE, CLOUD
+SCRIPT_CATEGORY="LANGUAGE_DEV"  # Options: LANGUAGE_DEV, AI_TOOLS, CLOUD_TOOLS, DATA_ANALYTICS, BACKGROUND_SERVICES, INFRA_CONFIG
 SCRIPT_CHECK_COMMAND="command -v [tool-name] >/dev/null 2>&1"  # Command to check if already installed
 
 #------------------------------------------------------------------------------

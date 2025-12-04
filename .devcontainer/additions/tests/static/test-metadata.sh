@@ -138,11 +138,13 @@ test_cmd_scripts_metadata() {
         local missing=""
 
         # Check required fields (all scripts use SCRIPT_* prefix)
+        local script_id=$(grep -m 1 "^SCRIPT_ID=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_name=$(grep -m 1 "^SCRIPT_NAME=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_ver=$(grep -m 1 "^SCRIPT_VER=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_desc=$(grep -m 1 "^SCRIPT_DESCRIPTION=" "$script" 2>/dev/null | cut -d'"' -f2)
         local script_cat=$(grep -m 1 "^SCRIPT_CATEGORY=" "$script" 2>/dev/null | cut -d'"' -f2)
 
+        [[ -z "$script_id" ]] && missing+="SCRIPT_ID "
         [[ -z "$script_name" ]] && missing+="SCRIPT_NAME "
         [[ -z "$script_ver" ]] && missing+="SCRIPT_VER "
         [[ -z "$script_desc" ]] && missing+="SCRIPT_DESCRIPTION "

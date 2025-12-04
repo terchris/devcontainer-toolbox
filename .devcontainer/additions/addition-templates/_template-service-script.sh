@@ -89,9 +89,13 @@ SCRIPT_ID="service-example"  # Unique identifier (must match filename without .s
 SCRIPT_NAME="Example Service"
 SCRIPT_VER="0.0.1"  # Script version - displayed in --help
 SCRIPT_DESCRIPTION="Example background service for demonstration"
-SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CATEGORY="BACKGROUND_SERVICES"  # Use: BACKGROUND_SERVICES, INFRA_CONFIG
 SCRIPT_CHECK_COMMAND="pgrep -f 'example-service' >/dev/null 2>&1"  # Check if service is running
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
+
+# Supervisor integration - controls startup order and dependencies
+SERVICE_PRIORITY="50"  # Lower numbers start first (10=first, 99=last). nginx=20, otel=30
+SERVICE_DEPENDS=""     # Comma-separated service IDs this depends on. Example: "service-nginx"
 
 #------------------------------------------------------------------------------
 # SCRIPT_COMMANDS DEFINITIONS - Single source of truth
