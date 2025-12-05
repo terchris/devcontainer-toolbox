@@ -40,7 +40,7 @@
 # Usage:
 #   Start: source ~/.devcontainer-identity && \
 #          otelcol-contrib --config=/workspace/.devcontainer/additions/otel/otelcol-metrics-config.yaml
-#   Or use: /workspace/.devcontainer/additions/start-otel-monitoring.sh
+#   Or use: service-otel-monitoring.sh --start
 #
 # Logs: Collector's internal logs go to stdout/stderr (captured by start script)
 #       Final destination: /var/log/otelcol-metrics.log
@@ -75,20 +75,14 @@ receivers:
       # Network metrics
       network:
 
-  # Prometheus receiver: Scrape script_exporter for container cgroup metrics
-  # script_exporter runs /workspace/.devcontainer/additions/otel/scripts/metrics-devcontainer.sh
-  # This provides ACTUAL container resource usage (not host metrics)
-  prometheus/cgroup:
-    config:
-      scrape_configs:
-        - job_name: 'devcontainer-cgroup-metrics'
-          scrape_interval: 10s
-          scrape_timeout: 5s
-          static_configs:
-            - targets: ['localhost:9469']
-          params:
-            script: ['cgroup_metrics']
-          metrics_path: '/probe'
+  # Docker stats receiver: Collect container metrics from Docker API
+  # Monitors ALL containers visible via docker socket (devcontainer + K3s pods)
+  # Replaces the old prometheus/cgroup receiver that used metrics-devcontainer.sh
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+    collection_interval: 10s
+    timeout: 5s
+    # Metrics collected: container.cpu.*, container.memory.*, container.network.io.*, container.blockio.*
 
   # Prometheus receiver: Scrape script_exporter for devcontainer information
   # script_exporter runs /workspace/.devcontainer/additions/otel/scripts/devcontainer-info.sh
@@ -105,10 +99,8 @@ receivers:
             script: ['devcontainer_info']
           metrics_path: '/probe'
 
-  # NOTE: docker_stats receiver removed due to:
-  # 1. Pipeline cycling issue when combined with hostmetrics in OTel Collector v0.113.0
-  # 2. A container cannot monitor itself via Docker API anyway
-  # 3. User requirement: only monitor what's inside the devcontainer, not other containers
+  # NOTE: docker_stats receiver re-enabled in v0.140.1
+  # Previous issues in v0.113.0 have been resolved. Docker socket IS accessible from devcontainer.
 
 # PROCESSORS: Process and enrich metrics before export
 processors:
@@ -116,6 +108,24 @@ processors:
   # Reduces network overhead from 6 exports/min to ~1-2 exports/min
   batch:
     timeout: 5s
+
+  # Transform processor: Rename docker_stats metrics to cAdvisor-compatible names
+  # This allows using existing Grafana community dashboards designed for cAdvisor
+  transform/docker_to_prometheus:
+    metric_statements:
+      - context: metric
+        statements:
+          # CPU metrics
+          - set(name, "container_cpu_usage_seconds_total") where name == "container.cpu.usage.total"
+          - set(name, "container_cpu_user_seconds_total") where name == "container.cpu.usage.usermode"
+          - set(name, "container_cpu_system_seconds_total") where name == "container.cpu.usage.kernelmode"
+          # Memory metrics
+          - set(name, "container_memory_usage_bytes") where name == "container.memory.usage.total"
+          - set(name, "container_memory_limit_bytes") where name == "container.memory.usage.limit"
+          - set(name, "container_memory_rss_bytes") where name == "container.memory.rss"
+          # Network metrics
+          - set(name, "container_network_receive_bytes_total") where name == "container.network.io.usage.rx_bytes"
+          - set(name, "container_network_transmit_bytes_total") where name == "container.network.io.usage.tx_bytes"
 
   # Resource processor: Add identity attributes to all metrics
   # These become Prometheus labels for filtering and grouping
@@ -151,9 +161,8 @@ processors:
         value: ${env:HOST_CPU_ARCH}
         action: upsert
 
-# NOTE: We collect only hostmetrics (system-level metrics from inside the container).
-#       Docker stats receiver was removed due to pipeline cycling issue and because
-#       a container cannot monitor itself via Docker API.
+# NOTE: We collect hostmetrics (system-level) and docker_stats (container-level).
+#       docker_stats monitors ALL containers visible via Docker socket including K3s pods.
 
 # EXPORTERS: Send metrics to backend systems
 exporters:
@@ -193,11 +202,11 @@ service:
       level: none
 
   pipelines:
-    # Metrics pipeline: hostmetrics + cgroup + devcontainer_info → resource → batch → export
+    # Metrics pipeline: hostmetrics + docker_stats + devcontainer_info → resource → batch → export
     metrics:
-      # Collect host-level metrics, container-specific metrics, and static devcontainer info
-      receivers: [hostmetrics, prometheus/cgroup, prometheus/devcontainer_info]
-      # Add developer/project labels, then batch for efficiency
-      processors: [resource, batch]
+      # Collect host-level metrics, container metrics via Docker API, and static devcontainer info
+      receivers: [hostmetrics, docker_stats, prometheus/devcontainer_info]
+      # Transform docker metrics to Prometheus naming, add labels, then batch
+      processors: [transform/docker_to_prometheus, resource, batch]
       # Send to k8s (otlphttp) and local logs (debug)
       exporters: [otlphttp, debug]

@@ -218,7 +218,7 @@ After configuring your identity:
 
 1. **Start monitoring** (if not done during setup):
    ```bash
-   bash /workspace/.devcontainer/additions/start-otel-monitoring.sh
+   service-otel-monitoring.sh --start
    ```
 
 2. **Access Grafana dashboards**: http://grafana.localhost
@@ -329,7 +329,6 @@ flowchart TB
 - **GitHub**: https://github.com/ricoberger/script_exporter
 - **Scripts Exposed**:
   - `devcontainer_info`: Scans installed components from install-*.sh files
-  - `cgroup_metrics`: Collects container-specific metrics from /sys/fs/cgroup
 
 #### A7: Lifecycle Collector
 - **Purpose**: Handles devcontainer lifecycle events and monitoring notifications
@@ -343,13 +342,13 @@ flowchart TB
 - **Why separate**: Pipeline cycling issue in OTel Collector v0.113.0 requires separation from metrics
 
 #### A8: Metrics Collector
-- **Purpose**: Collects system metrics and script exporter metrics, exports to Kubernetes
+- **Purpose**: Collects system metrics, container metrics via Docker API, and exports to Kubernetes
 - **Configuration**: `otelcol-metrics-config.yaml`
 - **Binary**: `otelcol-contrib` from OpenTelemetry Collector Contrib
 - **GitHub**: https://github.com/open-telemetry/opentelemetry-collector-contrib
 - **Receivers**:
   - `hostmetrics`: CPU, memory, disk, network (every 10s)
-  - `prometheus/cgroup`: Container metrics from script_exporter port 9469 (every 10s)
+  - `docker_stats`: Container metrics from Docker API (every 10s) - monitors ALL containers including K3s pods
   - `prometheus/devcontainer_info`: Component installation status from port 9469 (every 30s)
 - **Exporters**: OTLP/HTTP to K8s backend (host.docker.internal, Host: otel.localhost)
 - **Log File**: `/var/log/otelcol-metrics.log`
@@ -419,12 +418,13 @@ receivers:
    - Filesystem usage and inodes
    - **Perspective**: What the processes inside the container see
 
-2. **Container resource usage from cgroup** (prometheus/cgroup receiver, every 10s):
-   - Actual container CPU usage from /sys/fs/cgroup
-   - Actual container memory usage and limits
-   - Container quotas and constraints
-   - **Perspective**: What the container is actually consuming from the host
-   - **Source**: Script exporter runs metrics-devcontainer.sh
+2. **Container resource usage from Docker API** (docker_stats receiver, every 10s):
+   - CPU usage for ALL containers visible via Docker socket
+   - Memory usage and limits per container
+   - Network I/O (bytes received/transmitted) per container
+   - Block I/O per container
+   - **Perspective**: What each container is consuming from the Docker host
+   - **Scope**: Monitors devcontainer + all K3s pods (58+ containers)
 
 3. **Devcontainer configuration info** (prometheus/devcontainer_info receiver, every 30s):
    - Installed components (from install-*.sh files)
@@ -531,8 +531,7 @@ kubectl rollout restart deployment grafana -n monitoring
 .devcontainer/additions/
 ├── config-devcontainer-identity.sh        # Developer: Configure identity (Step 2 of onboarding)
 ├── config-host-info.sh                    # Auto-detect host platform info (OS, user, architecture)
-├── start-otel-monitoring.sh              # Start all monitoring services (lifecycle + metrics collectors)
-├── stop-otel-monitoring.sh               # Stop all monitoring services
+├── service-otel-monitoring.sh            # Start/stop/restart monitoring services (--start, --stop, --status)
 │
 └── otel/
     ├── README-otel.md                    # This file
@@ -552,7 +551,6 @@ kubectl rollout restart deployment grafana -n monitoring
     │
     └── scripts/                          # Helper scripts
         ├── devcontainer-info.sh          # Generate component metrics
-        ├── metrics-devcontainer.sh       # Generate cgroup metrics
         └── send-event-notification.sh    # Send lifecycle events
 ```
 
@@ -584,27 +582,27 @@ The OTEL collector configurations use **native OTEL environment variable expansi
 The monitoring system is typically started automatically when the devcontainer launches. To start manually:
 
 ```bash
-# Start all monitoring services (main collector + metrics collector + script_exporter)
-bash /workspace/.devcontainer/additions/start-otel-monitoring.sh
+# Start all monitoring services
+service-otel-monitoring.sh --start
 ```
 
-This consolidated script will:
+This script will:
 - Start the lifecycle collector (A7 - port 4318 - lifecycle events)
-- Start script_exporter (A6 - port 9469 - provides container cgroup metrics)
-- Start the metrics collector (A8 - scrapes from port 9469 - system resources)
+- Start script_exporter (A6 - port 9469 - provides component info)
+- Start the metrics collector (A8 - uses docker_stats receiver for container metrics)
 - Send startup notification to monitoring backend
 - Verify end-to-end delivery to Loki
 
-**Note**: All three components (lifecycle collector, script_exporter, metrics collector) must be running for full monitoring functionality. If container metrics (uptime, CPU usage rate) are missing, verify script_exporter is running on port 9469: `curl http://localhost:9469/probe?script=cgroup_metrics`
+**Note**: Container metrics (CPU, memory, network I/O) are collected via the docker_stats receiver which monitors ALL containers visible via Docker socket.
 
 ### Stopping the Monitoring System
 
 ```bash
 # Gracefully stop all monitoring services
-bash /workspace/.devcontainer/additions/stop-otel-monitoring.sh
+service-otel-monitoring.sh --stop
 ```
 
-This consolidated script will:
+This script will:
 - Send shutdown notification to monitoring backend
 - Gracefully stop the main OTel collector (SIGTERM, wait up to 5s)
 - Stop the metrics collector
@@ -614,6 +612,9 @@ This consolidated script will:
 ### Verifying the System is Running
 
 ```bash
+# Check status of all monitoring services
+service-otel-monitoring.sh --status
+
 # Check if both collectors are running
 ps aux | grep otelcol-contrib | grep -v grep
 
@@ -621,16 +622,11 @@ ps aux | grep otelcol-contrib | grep -v grep
 # 1. otelcol-contrib --config=.../otelcol-lifecycle-config.yaml (Lifecycle Collector A7 - port 4318)
 # 2. otelcol-contrib --config=.../otelcol-metrics-config.yaml (Metrics Collector A8)
 
-# Check script_exporter is running (REQUIRED for container metrics - A6)
-ps aux | grep script_exporter | grep -v grep
-# Expected: script_exporter --config.files=.../script-exporter-config.yaml
-
-# Verify script_exporter is serving metrics on port 9469
-curl -s http://localhost:9469/probe?script=cgroup_metrics | head
-# Should show container_uptime_seconds, container_cpu_usage_seconds_total, etc.
+# Verify Docker socket is accessible (required for docker_stats receiver)
+docker stats --no-stream | head -3
 
 # Check metrics are reaching Prometheus
-curl -s 'http://prometheus.localhost/api/v1/query?query=devcontainer_component_installed' | jq .
+curl -s 'http://prometheus.localhost/api/v1/query?query=container_memory_usage_bytes' | jq .
 ```
 
 ### Accessing Dashboards
@@ -714,16 +710,13 @@ exporters:
 - **prometheus receivers**: Script exporter scrape configs
 - **Exporters**: OTLP HTTP to K8s backend
 
-**Customize scrape intervals**:
+**Customize collection intervals**:
 ```yaml
 receivers:
   hostmetrics:
     collection_interval: 10s  # System metrics
-  prometheus/cgroup:
-    config:
-      scrape_configs:
-        - job_name: 'cgroup_metrics'
-          scrape_interval: 10s  # Container metrics
+  docker_stats:
+    collection_interval: 10s  # Container metrics from Docker API
   prometheus/devcontainer_info:
     config:
       scrape_configs:
@@ -779,37 +772,33 @@ echo "PROJECT_NAME: $PROJECT_NAME"
 
 **Solution**:
 ```bash
-# Stop any zombie processes
-bash /workspace/.devcontainer/additions/stop-otel-monitoring.sh
-
 # Restart all collectors
-bash /workspace/.devcontainer/additions/start-otel-monitoring.sh
+service-otel-monitoring.sh --restart
 ```
 
 ### Metrics Not Appearing in Prometheus
 
-**Symptom**: Grafana dashboards show "No data" or container metrics (uptime, CPU usage) are missing
+**Symptom**: Grafana dashboards show "No data" or container metrics (memory, CPU usage) are missing
 
 **Diagnosis**:
 ```bash
-# 1. Verify script_exporter is running (CRITICAL for container metrics)
-ps aux | grep script_exporter | grep -v grep
+# 1. Check if metrics collector is running
+ps aux | grep otelcol-contrib | grep metrics
 
-# 2. Verify script_exporter is serving metrics
-curl http://localhost:9469/probe?script=cgroup_metrics | head -20
+# 2. Verify Docker socket is accessible (required for docker_stats receiver)
+ls -la /var/run/docker.sock
+docker stats --no-stream | head -5
 
-# 3. Check if metrics collector is scraping
-tail -100 /var/log/otelcol-metrics.log | grep "container_uptime\|script_success"
+# 3. Check metrics collector logs for docker_stats errors
+tail -100 /var/log/otelcol-metrics.log | grep -i docker
 
 # 4. Query Prometheus directly
-curl -s 'http://prometheus.localhost/api/v1/query?query=container_uptime_seconds' | jq .
+curl -s 'http://prometheus.localhost/api/v1/query?query=container_memory_usage_bytes' | jq .
 ```
 
 **Common causes**:
-1. **script_exporter not running**: This is the most common issue after reboot
-   - Symptoms: Container uptime and CPU usage metrics missing
-   - Fix: Start manually or restart monitoring: `bash /workspace/.devcontainer/additions/start-otel-monitoring.sh`
-2. **Metrics collector (A8) not running**: Restart with `bash /workspace/.devcontainer/additions/start-otel-monitoring.sh`
+1. **Docker socket not accessible**: Check `/var/run/docker.sock` permissions
+2. **Metrics collector (A8) not running**: Restart with `service-otel-monitoring.sh --restart`
 3. **OTLP exporter misconfigured**: Verify `host.docker.internal` resolves correctly
 4. **Prometheus not scraping K8s OTel Collector**: Check K8s backend status
 
@@ -843,16 +832,18 @@ kubectl rollout status deployment grafana -n monitoring
 
 ### Script Exporter Errors
 
-**Symptom**: Metrics endpoint returns errors or no data
+**Symptom**: Component info metrics missing
 
 **Diagnosis**:
 ```bash
-# Test scripts directly
+# Test devcontainer-info script directly
 bash /workspace/.devcontainer/additions/otel/scripts/devcontainer-info.sh
-bash /workspace/.devcontainer/additions/otel/scripts/metrics-devcontainer.sh
 
 # Check script_exporter logs
 tail -50 /tmp/script-exporter.log
+
+# Verify script_exporter is serving devcontainer_info
+curl http://localhost:9469/probe?script=devcontainer_info | head -20
 ```
 
 **Solution**:
@@ -949,8 +940,7 @@ service:
 Then restart the collectors and watch the log output:
 
 ```bash
-bash /workspace/.devcontainer/additions/stop-otel-monitoring.sh
-bash /workspace/.devcontainer/additions/start-otel-monitoring.sh
+service-otel-monitoring.sh --restart
 tail -f /var/log/otelcol-metrics.log
 ```
 
@@ -988,5 +978,5 @@ For issues or questions:
 
 ---
 
-**Last Updated**: 2025-11-17
+**Last Updated**: 2025-12-05
 **Maintained By**: Devcontainer Monitoring Team

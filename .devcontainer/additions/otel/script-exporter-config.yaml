@@ -10,20 +10,14 @@
 # Prometheus scrapes at the interval you define, not on a fixed schedule.
 #
 # Endpoints:
-#   - http://localhost:9469/probe?script=cgroup_metrics
+#   - http://localhost:9469/probe?script=devcontainer_info
 #   - http://localhost:9469/metrics (built-in metrics for script_exporter itself)
 #
+# NOTE: Container cgroup metrics (cgroup_metrics) removed - now collected by
+#       docker_stats receiver in otelcol-metrics-config.yaml
 
 # Define the scripts to be executed
 scripts:
-  # Container cgroup metrics (memory, CPU)
-  # Executed when: Prometheus/OTel scrapes /probe?script=cgroup_metrics
-  # Output: Prometheus exposition format
-  - name: cgroup_metrics
-    command: ["/workspace/.devcontainer/additions/otel/scripts/metrics-devcontainer.sh"]
-    timeout:
-      max_timeout: 5
-
   # Devcontainer information (installed components, OS info)
   # Executed when: Prometheus/OTel scrapes /probe?script=devcontainer_info
   # Output: Prometheus exposition format
