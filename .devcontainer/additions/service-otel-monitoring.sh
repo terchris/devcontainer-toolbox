@@ -451,35 +451,14 @@ service_start() {
 
     echo ""
 
-    # Start lifecycle collector with exec (CRITICAL for supervisord)
-    # This must be last because exec replaces the shell process
-    log_info "Starting Lifecycle Collector (will exec - supervisord mode)..."
+    # Start lifecycle collector in background
+    start_lifecycle_collector || exit 1
 
-    if is_lifecycle_running; then
-        log_warning "Lifecycle collector already running"
-        exit 0
-    fi
+    echo ""
+    log_success "All OTel services started successfully"
 
-    # Ensure log directory exists
-    sudo mkdir -p "$(dirname "$LOG_FILE_LIFECYCLE")"
-    sudo touch "$LOG_FILE_LIFECYCLE"
-    sudo chmod 666 "$LOG_FILE_LIFECYCLE" 2>/dev/null || true
-
-    # Export env vars
-    export DEVELOPER_ID
-    export DEVELOPER_EMAIL
-    export PROJECT_NAME
-    export TS_HOSTNAME
-
-    log_info "Starting lifecycle collector in foreground mode..."
-
-    # Auto-enable for container restart (BEFORE exec)
+    # Auto-enable for container restart
     auto_enable_service
-
-    # CRITICAL: Use exec for supervisord integration
-    exec "$OTEL_BINARY" --config="$CONFIG_FILE_LIFECYCLE"
-
-    # Code after exec will NEVER run
 }
 
 service_stop() {
