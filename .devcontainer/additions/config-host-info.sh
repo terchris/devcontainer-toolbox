@@ -101,6 +101,50 @@ get_docker_server_stats() {
     return 1
 }
 
+# Parse OneDrive path to extract organization name and determine machine ownership
+# OneDrive path examples:
+#   "OneDrive - Norges Røde Kors" -> corporate
+#   "OneDrive - Personal" -> personal
+#   "OneDrive - Acme Consulting" -> external_consultant
+parse_organization_from_onedrive() {
+    local onedrive_path="$1"
+    local logonserver="$2"
+
+    # Extract organization name from OneDrive path (after "OneDrive - ")
+    if [[ "$onedrive_path" == *"OneDrive - "* ]]; then
+        ORGANIZATION_NAME="${onedrive_path##*OneDrive - }"
+    else
+        ORGANIZATION_NAME=""
+    fi
+
+    # Extract organization prefix from LOGONSERVER (e.g., \\NRX-PC -> NRX)
+    if [[ -n "$logonserver" ]]; then
+        # Remove leading backslashes and extract prefix before hyphen
+        local cleaned="${logonserver#\\\\}"
+        cleaned="${cleaned#\\}"
+        ORGANIZATION_PREFIX="${cleaned%%-*}"
+    else
+        ORGANIZATION_PREFIX=""
+    fi
+
+    # Determine machine ownership based on OneDrive org name
+    if [[ -z "$ORGANIZATION_NAME" ]]; then
+        ORGANIZATION_MACHINE_OWNERSHIP=""
+    elif [[ "$ORGANIZATION_NAME" == "Personal" ]]; then
+        ORGANIZATION_MACHINE_OWNERSHIP="personal"
+    elif [[ -n "$ORGANIZATION_PREFIX" ]]; then
+        # Has a corporate prefix like NRX -> corporate machine
+        ORGANIZATION_MACHINE_OWNERSHIP="corporate"
+    else
+        # Has org name but no prefix -> likely external consultant
+        ORGANIZATION_MACHINE_OWNERSHIP="external_consultant"
+    fi
+
+    export ORGANIZATION_NAME
+    export ORGANIZATION_PREFIX
+    export ORGANIZATION_MACHINE_OWNERSHIP
+}
+
 detect_host_info() {
     log_info "Detecting host information for telemetry..."
     echo ""
@@ -111,21 +155,47 @@ detect_host_info() {
         export HOST_USER="$DEV_MAC_USER"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
+        # Non-Windows: set empty values for Windows-specific attributes
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
     elif [ -n "$DEV_LINUX_USER" ]; then
         export HOST_OS="Linux"
         export HOST_USER="$DEV_LINUX_USER"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
+        # Non-Windows: set empty values for Windows-specific attributes
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
     elif [ -n "$DEV_WIN_USERNAME" ]; then
         export HOST_OS="Windows"
         export HOST_USER="$DEV_WIN_USERNAME"
         export HOST_HOSTNAME="${DEV_WIN_COMPUTERNAME:-devcontainer}"
         export HOST_DOMAIN="${DEV_WIN_USERDOMAIN:-none}"
+        # Windows extended variables using OTel semantic conventions
+        export HOST_ARCH="${DEV_WIN_PROCESSOR_ARCHITECTURE:-}"
+        export HOST_CPU_MODEL_NAME="${DEV_WIN_PROCESSOR_IDENTIFIER:-}"
+        export HOST_CPU_LOGICAL_COUNT="${DEV_WIN_NUMBER_OF_PROCESSORS:-}"
+        # Parse organization from OneDrive path
+        parse_organization_from_onedrive "${DEV_WIN_ONEDRIVE:-}" "${DEV_WIN_LOGONSERVER:-}"
     else
         export HOST_OS="unknown"
         export HOST_USER="unknown"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
     fi
 
     # Get architecture using helper function
@@ -141,8 +211,14 @@ detect_host_info() {
     echo "  OS: $HOST_OS"
     echo "  User: $HOST_USER"
     echo "  Hostname: $HOST_HOSTNAME"
-    [ -n "$HOST_DOMAIN" ] && echo "  Domain: $HOST_DOMAIN"
+    [ -n "$HOST_DOMAIN" ] && [ "$HOST_DOMAIN" != "none" ] && echo "  Domain: $HOST_DOMAIN"
     echo "  Architecture: $HOST_CPU_ARCH"
+    # Show Windows extended info if available
+    [ -n "$HOST_CPU_LOGICAL_COUNT" ] && echo "  Processors: $HOST_CPU_LOGICAL_COUNT"
+    [ -n "$HOST_ARCH" ] && echo "  Processor Arch: $HOST_ARCH"
+    [ -n "$ORGANIZATION_NAME" ] && echo "  Organization: $ORGANIZATION_NAME"
+    [ -n "$ORGANIZATION_PREFIX" ] && echo "  Org Prefix: $ORGANIZATION_PREFIX"
+    [ -n "$ORGANIZATION_MACHINE_OWNERSHIP" ] && echo "  Machine Type: $ORGANIZATION_MACHINE_OWNERSHIP"
     echo "  Docker Server:"
     echo "    Containers: $DOCKER_CONTAINERS_TOTAL (Running: $DOCKER_CONTAINERS_RUNNING, Stopped: $DOCKER_CONTAINERS_STOPPED, Paused: $DOCKER_CONTAINERS_PAUSED)"
     echo "    Images: $DOCKER_IMAGES_TOTAL"
@@ -162,6 +238,16 @@ export HOST_USER="$HOST_USER"
 export HOST_HOSTNAME="$HOST_HOSTNAME"
 export HOST_DOMAIN="$HOST_DOMAIN"
 export HOST_CPU_ARCH="$HOST_CPU_ARCH"
+
+# Windows extended variables - using OTel semantic conventions (empty on Mac/Linux)
+export HOST_ARCH="${HOST_ARCH:-}"
+export HOST_CPU_MODEL_NAME="${HOST_CPU_MODEL_NAME:-}"
+export HOST_CPU_LOGICAL_COUNT="${HOST_CPU_LOGICAL_COUNT:-}"
+
+# Organization detection (parsed from Windows OneDrive/LOGONSERVER)
+export ORGANIZATION_NAME="${ORGANIZATION_NAME:-}"
+export ORGANIZATION_PREFIX="${ORGANIZATION_PREFIX:-}"
+export ORGANIZATION_MACHINE_OWNERSHIP="${ORGANIZATION_MACHINE_OWNERSHIP:-}"
 
 # Docker server statistics
 export DOCKER_CONTAINERS_TOTAL="$DOCKER_CONTAINERS_TOTAL"
@@ -227,21 +313,47 @@ verify_host_info() {
         export HOST_USER="$DEV_MAC_USER"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
+        # Non-Windows: set empty values for Windows-specific attributes
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
     elif [ -n "$DEV_LINUX_USER" ]; then
         export HOST_OS="Linux"
         export HOST_USER="$DEV_LINUX_USER"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
+        # Non-Windows: set empty values for Windows-specific attributes
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
     elif [ -n "$DEV_WIN_USERNAME" ]; then
         export HOST_OS="Windows"
         export HOST_USER="$DEV_WIN_USERNAME"
         export HOST_HOSTNAME="${DEV_WIN_COMPUTERNAME:-devcontainer}"
         export HOST_DOMAIN="${DEV_WIN_USERDOMAIN:-none}"
+        # Windows extended variables using OTel semantic conventions
+        export HOST_ARCH="${DEV_WIN_PROCESSOR_ARCHITECTURE:-}"
+        export HOST_CPU_MODEL_NAME="${DEV_WIN_PROCESSOR_IDENTIFIER:-}"
+        export HOST_CPU_LOGICAL_COUNT="${DEV_WIN_NUMBER_OF_PROCESSORS:-}"
+        # Parse organization from OneDrive path
+        parse_organization_from_onedrive "${DEV_WIN_ONEDRIVE:-}" "${DEV_WIN_LOGONSERVER:-}"
     else
         export HOST_OS="unknown"
         export HOST_USER="unknown"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
     fi
 
     # Get architecture using helper function

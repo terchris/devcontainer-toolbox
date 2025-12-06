@@ -5,17 +5,21 @@
 # This config uses OTEL's native environment variable expansion: ${env:VARIABLE_NAME}
 # Variables are automatically sourced by service-otel-monitoring.sh from:
 #   - ~/.devcontainer-identity (DEVELOPER_ID, DEVELOPER_EMAIL, PROJECT_NAME, TS_HOSTNAME)
+#   - ~/.git-identity (GIT_PROVIDER, GIT_ORG, GIT_REPO - for project/org filtering)
 #   - /workspace/.devcontainer.secrets/env-vars/.host-info (HOST_OS, HOST_USER, HOST_HOSTNAME, HOST_DOMAIN, HOST_CPU_ARCH)
+#   - /workspace/.devcontainer.secrets/env-vars/.host-info (HOST_WIN_PROCESSORS, HOST_WIN_PROC_ARCH, HOST_WIN_LOGONSERVER - Windows only)
 #   - ~/.nginx-backend-config (NGINX_OTEL_PORT)
 
 receivers:
   # OTLP receiver - receives telemetry from applications
+  # Security: Bind to localhost only - telemetry should come from within container
+  # Applications send to localhost:4317 (gRPC) or localhost:4318 (HTTP/OTLP)
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: 127.0.0.1:4317
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: 127.0.0.1:4318
 
 processors:
   # Batch processor - batches telemetry for efficient transmission
@@ -37,6 +41,17 @@ processors:
       # Project identity
       - key: project_name
         value: ${env:PROJECT_NAME}
+        action: upsert
+
+      # Git repository information (from config-git.sh / git-identity.sh)
+      - key: git.provider
+        value: ${env:GIT_PROVIDER}
+        action: upsert
+      - key: git.organization
+        value: ${env:GIT_ORG}
+        action: upsert
+      - key: git.repository
+        value: ${env:GIT_REPO}
         action: upsert
 
       # Service identification (using service.name per OpenTelemetry spec)
@@ -72,6 +87,29 @@ processors:
         action: upsert
       - key: host.cpu.arch
         value: ${env:HOST_CPU_ARCH}
+        action: upsert
+
+      # Windows extended variables - using OTel semantic conventions where available
+      # (values are "undefined" on Mac/Linux)
+      - key: host.arch
+        value: ${env:HOST_ARCH}
+        action: upsert
+      - key: host.cpu.model.name
+        value: ${env:HOST_CPU_MODEL_NAME}
+        action: upsert
+      - key: host.cpu.logical.count
+        value: ${env:HOST_CPU_LOGICAL_COUNT}
+        action: upsert
+
+      # Organization detection (from Windows OneDrive/LOGONSERVER)
+      - key: organization.name
+        value: ${env:ORGANIZATION_NAME}
+        action: upsert
+      - key: organization.prefix
+        value: ${env:ORGANIZATION_PREFIX}
+        action: upsert
+      - key: organization.machine.ownership
+        value: ${env:ORGANIZATION_MACHINE_OWNERSHIP}
         action: upsert
 
   # Memory limiter - prevents OOM by limiting memory usage

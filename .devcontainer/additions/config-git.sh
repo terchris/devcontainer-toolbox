@@ -18,7 +18,7 @@ SCRIPT_CHECK_COMMAND="git config --global user.name >/dev/null 2>&1 && git confi
 SCRIPT_COMMANDS=(
     "Action||Configure Git identity||false|"
     "Action|--show|Display current Git configuration||false|"
-    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Action|--verify|Auto-detect git identity and repo info||false|"
     "Info|--help|Show help information||false|"
 )
 
@@ -123,37 +123,45 @@ show_config() {
 }
 
 #------------------------------------------------------------------------------
-# VERIFY MODE - Non-interactive validation for container rebuild
+# VERIFY MODE - Auto-detect git identity and repository info
 #------------------------------------------------------------------------------
 
 verify_git_identity() {
-    # Silent mode - no prompts, just validate and restore if needed
+    # Auto-detect mode - detects git identity, repo info, and calculates TS_HOSTNAME
+    # This is called on every container start via postStartCommand
+
+    # Source the git-identity library
+    local lib_file="${SCRIPT_DIR}/lib/git-identity.sh"
+    if [ ! -f "$lib_file" ]; then
+        echo "⚠️  Git identity library not found: $lib_file"
+        return 1
+    fi
+    # shellcheck source=/dev/null
+    source "$lib_file"
 
     # Setup persistent storage directory
     setup_persistent_storage
 
-    # Load from persistent storage if exists
+    # First, restore basic git config if saved (name/email for commits)
     if load_from_persistent_storage; then
-        # Apply saved identity to git config
-        git config --global user.name "${GIT_USER_NAME}"
-        git config --global user.email "${GIT_USER_EMAIL}"
-        echo "✅ Git identity restored: ${GIT_USER_NAME} <${GIT_USER_EMAIL}>"
-        return 0
+        git config --global user.name "${GIT_USER_NAME}" 2>/dev/null || true
+        git config --global user.email "${GIT_USER_EMAIL}" 2>/dev/null || true
     fi
 
-    # No saved identity - check if git is already configured
-    if git config --global user.name >/dev/null 2>&1 && git config --global user.email >/dev/null 2>&1; then
-        # Git is configured but not saved to persistent storage
-        # This can happen after initial setup - save current config
-        local current_name=$(git config --global user.name)
-        local current_email=$(git config --global user.email)
-        save_to_persistent_storage "$current_name" "$current_email"
-        echo "✅ Git identity saved: ${current_name} <${current_email}>"
-        return 0
-    fi
+    # Now detect full identity including repo info
+    detect_git_identity "/workspace"
 
-    # No identity configured - this is expected on first container creation
-    # Exit silently without error (user will configure via check-configs)
+    # Save complete identity to file (this is the main identity file now)
+    save_git_identity_to_file
+
+    # Display what was detected
+    echo "✅ Git identity detected:"
+    echo "   Email:    ${GIT_USER_EMAIL:-<unknown>}"
+    echo "   Provider: ${GIT_PROVIDER:-local}"
+    echo "   Repo:     ${GIT_REPO_FULL:-<unknown>}"
+    echo "   Branch:   ${GIT_BRANCH:-<unknown>}"
+    echo "   Hostname: ${TS_HOSTNAME:-<unknown>}"
+
     return 0
 }
 

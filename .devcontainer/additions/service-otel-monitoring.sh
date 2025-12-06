@@ -78,13 +78,23 @@ LOG_FILE_LIFECYCLE="/var/log/otelcol-lifecycle.log"
 LOG_FILE_METRICS="/var/log/otelcol-metrics.log"
 LOG_FILE_EXPORTER="/var/log/script-exporter.log"
 
-# Identity file (always use vscode user's home, even when run by supervisord)
-IDENTITY_FILE="/home/vscode/.devcontainer-identity"
+# Identity files
+# New location: .git-identity (auto-detected from git)
+# Legacy location: .devcontainer-identity (manually configured)
+GIT_IDENTITY_FILE="/workspace/.devcontainer.secrets/env-vars/.git-identity"
+LEGACY_IDENTITY_FILE="/home/vscode/.devcontainer-identity"
 
-# Source identity file automatically if it exists
-if [ -f "$IDENTITY_FILE" ]; then
+# Source git identity file first (new auto-detected identity)
+if [ -f "$GIT_IDENTITY_FILE" ]; then
     # shellcheck source=/dev/null
-    source "$IDENTITY_FILE"
+    source "$GIT_IDENTITY_FILE"
+fi
+
+# Source legacy identity file if exists (for backward compatibility)
+# This may override some values if both exist
+if [ -f "$LEGACY_IDENTITY_FILE" ]; then
+    # shellcheck source=/dev/null
+    source "$LEGACY_IDENTITY_FILE"
 fi
 
 # Host information file (for OTEL resource attributes)
@@ -151,14 +161,19 @@ check_prerequisites() {
 }
 
 load_configuration() {
-    # Load identity from file
-    if [ -f "$IDENTITY_FILE" ]; then
+    # Load identity from git-identity file (new auto-detected format)
+    if [ -f "$GIT_IDENTITY_FILE" ]; then
         # shellcheck source=/dev/null
-        source "$IDENTITY_FILE"
-        log_info "Identity loaded from $IDENTITY_FILE"
+        source "$GIT_IDENTITY_FILE"
+        log_info "Identity loaded from $GIT_IDENTITY_FILE"
+    elif [ -f "$LEGACY_IDENTITY_FILE" ]; then
+        # Fallback to legacy file
+        # shellcheck source=/dev/null
+        source "$LEGACY_IDENTITY_FILE"
+        log_info "Identity loaded from $LEGACY_IDENTITY_FILE (legacy)"
     else
-        log_warning "Identity file not found: $IDENTITY_FILE"
-        log_info "Run: bash ${SCRIPT_DIR}/config-devcontainer-identity.sh"
+        log_warning "No identity file found"
+        log_info "Run: bash ${SCRIPT_DIR}/config-git.sh --verify"
     fi
 }
 
@@ -192,6 +207,26 @@ validate_required_variables() {
         export TS_HOSTNAME
         log_info "Generated TS_HOSTNAME: $TS_HOSTNAME"
     fi
+
+    # Set default values for optional variables that OTel configs expect
+    # These are used by both lifecycle and metrics collectors
+    # NOTE: OTel resource processor does not allow empty values, so we use "undefined"
+    # (avoid "n/a" because "/" can cause problems in queries)
+
+    # Windows extended host attributes (using OTel semantic conventions)
+    export HOST_ARCH="${HOST_ARCH:-undefined}"
+    export HOST_CPU_MODEL_NAME="${HOST_CPU_MODEL_NAME:-undefined}"
+    export HOST_CPU_LOGICAL_COUNT="${HOST_CPU_LOGICAL_COUNT:-undefined}"
+
+    # Organization detection (from Windows OneDrive/LOGONSERVER)
+    export ORGANIZATION_NAME="${ORGANIZATION_NAME:-undefined}"
+    export ORGANIZATION_PREFIX="${ORGANIZATION_PREFIX:-undefined}"
+    export ORGANIZATION_MACHINE_OWNERSHIP="${ORGANIZATION_MACHINE_OWNERSHIP:-undefined}"
+
+    # Git repository info (for project/organization filtering in reports)
+    export GIT_PROVIDER="${GIT_PROVIDER:-unknown}"
+    export GIT_ORG="${GIT_ORG:-undefined}"
+    export GIT_REPO="${GIT_REPO:-unknown}"
 
     log_success "All required variables present"
     return 0

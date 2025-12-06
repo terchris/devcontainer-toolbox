@@ -172,8 +172,9 @@ install_project_tools() {
     # Install all tools from enabled-tools.conf using library function
     install_enabled_tools "$ADDITIONS_DIR"
 
-    # Start supervisor services if available
-    start_supervisor_services "$ADDITIONS_DIR"
+    # NOTE: Service starting moved to postStartCommand.sh
+    # Services are started there so they restart on every container start
+    # (not just on first creation)
 }
 
 #------------------------------------------------------------------------------

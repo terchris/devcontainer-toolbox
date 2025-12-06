@@ -13,12 +13,52 @@
 
 # Paths
 readonly AUTO_ENABLE_TOOLS_CONF="/workspace/.devcontainer.extend/enabled-tools.conf"
+readonly EVENT_NOTIFICATION_SCRIPT="/workspace/.devcontainer/additions/otel/scripts/send-event-notification.sh"
 
 # Colors for logging
 readonly TOOL_AUTO_ENABLE_GREEN='\033[0;32m'
 readonly TOOL_AUTO_ENABLE_BLUE='\033[0;34m'
 readonly TOOL_AUTO_ENABLE_YELLOW='\033[1;33m'
 readonly TOOL_AUTO_ENABLE_NC='\033[0m'
+
+#------------------------------------------------------------------------------
+# Event Notification Functions
+#------------------------------------------------------------------------------
+
+# Send tool install/uninstall event to OTel collector
+# Args: $1 - event type (devcontainer.tool.installed or devcontainer.tool.uninstalled)
+#       $2 - tool identifier
+#       $3 - tool display name
+#       $4 - tool version (optional)
+send_tool_event() {
+    local event_type="$1"
+    local tool_id="$2"
+    local tool_name="${3:-$tool_id}"
+    local tool_version="${4:-}"
+
+    # Only send if event script exists
+    if [[ ! -x "$EVENT_NOTIFICATION_SCRIPT" ]]; then
+        return 0
+    fi
+
+    # Build command
+    local cmd=("$EVENT_NOTIFICATION_SCRIPT"
+        --event-type "$event_type"
+        --message "Tool $tool_name ($tool_id) ${event_type##*.}"
+        --component-name "$tool_id"
+        --category "devcontainer.tools"
+        --quiet
+    )
+
+    # Add version if provided
+    if [[ -n "$tool_version" ]]; then
+        cmd+=(--component-version "$tool_version")
+    fi
+
+    # Send event synchronously to avoid race condition with script exit
+    # The --quiet flag keeps it fast, and curl has a short timeout
+    "${cmd[@]}" 2>/dev/null || true
+}
 
 #------------------------------------------------------------------------------
 # Auto-Enable Functions
@@ -80,6 +120,9 @@ EOF
     echo -e "${TOOL_AUTO_ENABLE_GREEN}✅ Auto-enabled '$tool_name' for container rebuild${TOOL_AUTO_ENABLE_NC}"
     echo -e "${TOOL_AUTO_ENABLE_BLUE}ℹ️  Remove from enabled-tools.conf to disable: $tool_id${TOOL_AUTO_ENABLE_NC}"
 
+    # Send install event notification (non-blocking)
+    send_tool_event "devcontainer.tool.installed" "$tool_id" "$tool_name" "${SCRIPT_VER:-}"
+
     return 0
 }
 
@@ -134,6 +177,9 @@ disable_tool_autoinstall() {
     mv "$temp_file" "$AUTO_ENABLE_TOOLS_CONF"
 
     echo -e "${TOOL_AUTO_ENABLE_GREEN}✅ Disabled auto-install for '$tool_name'${TOOL_AUTO_ENABLE_NC}"
+
+    # Send uninstall event notification (non-blocking)
+    send_tool_event "devcontainer.tool.uninstalled" "$tool_id" "$tool_name" "${SCRIPT_VER:-}"
 
     return 0
 }
