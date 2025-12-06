@@ -15,7 +15,12 @@
             "DEV_WIN_USERDOMAIN_ROAMINGPROFILE": "${localEnv:USERDOMAIN_ROAMINGPROFILE}",
             "DEV_WIN_USERNAME": "${localEnv:USERNAME}",
             "DEV_WIN_COMPUTERNAME": "${localEnv:COMPUTERNAME}",
-            "DEV_WIN_OS": "${localEnv:OS}"
+            "DEV_WIN_OS": "${localEnv:OS}",
+            "DEV_WIN_NUMBER_OF_PROCESSORS": "${localEnv:NUMBER_OF_PROCESSORS}",
+            "DEV_WIN_PROCESSOR_ARCHITECTURE": "${localEnv:PROCESSOR_ARCHITECTURE}",
+            "DEV_WIN_PROCESSOR_IDENTIFIER": "${localEnv:PROCESSOR_IDENTIFIER}",
+            "DEV_WIN_ONEDRIVE": "${localEnv:OneDrive}",
+            "DEV_WIN_LOGONSERVER": "${localEnv:LOGONSERVER}"
         }
     },
     // these are needed for setting up vpn in the container
@@ -59,5 +64,7 @@
     "updateRemoteUserUID": true,
     "init": true,
     // main orchestration script that calls project-installs.sh for custom installations
-    "postCreateCommand": "bash .devcontainer/manage/postCreateCommand.sh"
+    "postCreateCommand": "bash .devcontainer/manage/postCreateCommand.sh",
+    // runs on EVERY container start - starts services and refreshes dynamic values
+    "postStartCommand": "bash .devcontainer/manage/postStartCommand.sh"
 }

@@ -145,17 +145,35 @@ load_identity() {
         hostname="${TS_HOSTNAME:-unknown}"
     fi
 
+    # Load git identity (for project/org filtering in reports)
+    local git_provider="${GIT_PROVIDER:-}"
+    local git_org="${GIT_ORG:-}"
+    local git_repo="${GIT_REPO:-}"
+
+    if [ -z "$git_provider" ] && [ -f "$HOME/.git-identity" ]; then
+        source "$HOME/.git-identity" 2>/dev/null || true
+        git_provider="${GIT_PROVIDER:-}"
+        git_org="${GIT_ORG:-}"
+        git_repo="${GIT_REPO:-}"
+    fi
+
     # Set defaults if still empty
     dev_id="${dev_id:-unknown}"
     dev_email="${dev_email:-unknown}"
     project="${project:-unknown}"
     hostname="${hostname:-unknown}"
+    git_provider="${git_provider:-unknown}"
+    git_org="${git_org:-}"
+    git_repo="${git_repo:-unknown}"
 
     # Export for use in JSON template
     export DEVELOPER_ID="$dev_id"
     export DEVELOPER_EMAIL="$dev_email"
     export PROJECT_NAME="$project"
     export TS_HOSTNAME="$hostname"
+    export GIT_PROVIDER="$git_provider"
+    export GIT_ORG="$git_org"
+    export GIT_REPO="$git_repo"
 }
 
 build_attributes_json() {
@@ -210,7 +228,10 @@ send_notification() {
                         {\"key\": \"developer_id\", \"value\": {\"stringValue\": \"${DEVELOPER_ID}\"}},
                         {\"key\": \"developer_email\", \"value\": {\"stringValue\": \"${DEVELOPER_EMAIL}\"}},
                         {\"key\": \"project_name\", \"value\": {\"stringValue\": \"${PROJECT_NAME}\"}},
-                        {\"key\": \"host_name\", \"value\": {\"stringValue\": \"${TS_HOSTNAME}\"}}
+                        {\"key\": \"host_name\", \"value\": {\"stringValue\": \"${TS_HOSTNAME}\"}},
+                        {\"key\": \"git.provider\", \"value\": {\"stringValue\": \"${GIT_PROVIDER}\"}},
+                        {\"key\": \"git.organization\", \"value\": {\"stringValue\": \"${GIT_ORG}\"}},
+                        {\"key\": \"git.repository\", \"value\": {\"stringValue\": \"${GIT_REPO}\"}}
                     ]
                 },
                 \"scopeLogs\": [{

@@ -26,6 +26,15 @@ scripts:
     timeout:
       max_timeout: 5
 
+  # K8s status detection (resource waste monitoring)
+  # Executed when: Prometheus/OTel scrapes /probe?script=k8s_status
+  # Output: Prometheus exposition format
+  # Detects: disabled, enabled_unused, enabled_active
+  - name: k8s_status
+    command: ["/workspace/.devcontainer/additions/otel/scripts/rancher-vm-k8s-status.sh"]
+    timeout:
+      max_timeout: 10
+
 # HTTP server configuration
 # The exporter listens on this address for Prometheus scrapes
 # Default: :9469
