@@ -786,9 +786,13 @@ alias dev-web='bash /workspace/.devcontainer/additions/service-web-ui.sh --url'
 | `additions/web-ui/server.js` | New | ~150 | Node.js API server |
 | `additions/web-ui/index.html` | New | ~350 | Self-contained HTML/CSS/JS |
 | `docs/web-ui-guide.md` | New | ~100 | User documentation |
+| `tests/static/test-web-ui-scripts.sh` | New | ~60 | Static metadata tests |
+| `tests/unit/test-scanner-json.sh` | New | ~80 | JSON output tests |
+| `tests/unit/test-web-ui-service.sh` | New | ~50 | Service script tests |
+| `tests/integration/test-web-ui-api.sh` | New | ~180 | API & security tests |
 
-**Total new code:** ~1180 lines
-**Total effort:** 14-18 hours
+**Total new code:** ~1550 lines
+**Total effort:** 16-21 hours
 
 ---
 
@@ -823,12 +827,457 @@ Week 2:
 │   ├── CLI command
 │   └── Documentation
 │
-└── Phase 5: Testing & Polish (2-3h)
-    ├── End-to-end tests
-    ├── Security tests
-    ├── Browser testing
-    └── Bug fixes
+├── Phase 5: Testing & Polish (2-3h)
+│   ├── End-to-end tests
+│   ├── Security tests
+│   ├── Browser testing
+│   └── Bug fixes
+│
+└── Phase 6: Automated Tests (2-3h)
+    ├── Static tests for web UI scripts
+    ├── Unit tests for scanner JSON output
+    ├── Unit tests for service-web-ui.sh
+    └── Integration tests for API endpoints
 ```
+
+---
+
+## Phase 6: Automated Tests
+
+**Goal:** Add automated tests following the existing test framework in `additions/tests/`
+
+### 6.1 Test Structure
+
+New test files to create:
+
+```
+tests/
+├── static/
+│   └── test-web-ui-scripts.sh      # Validate web UI script metadata
+├── unit/
+│   ├── test-scanner-json.sh        # Test component-scanner.sh --json
+│   └── test-web-ui-service.sh      # Test service-web-ui.sh commands
+└── integration/
+    └── test-web-ui-api.sh          # Test API endpoints (requires running server)
+```
+
+### 6.2 Static Tests: test-web-ui-scripts.sh
+
+**File:** `.devcontainer/additions/tests/static/test-web-ui-scripts.sh`
+
+Tests for the new scripts (config-web-ui.sh, install-srv-web-ui.sh, service-web-ui.sh):
+
+```bash
+#!/bin/bash
+# Test web UI scripts have correct metadata
+
+source "$SCRIPT_DIR/../lib/test-framework.sh"
+
+test_web_ui_scripts_have_metadata() {
+    local scripts=(
+        "config-web-ui.sh"
+        "install-srv-web-ui.sh"
+        "service-web-ui.sh"
+    )
+    local required_fields=(
+        "SCRIPT_ID"
+        "SCRIPT_NAME"
+        "SCRIPT_DESCRIPTION"
+        "SCRIPT_CATEGORY"
+        "SCRIPT_CHECK_COMMAND"
+    )
+
+    local has_issues=0
+    for script in "${scripts[@]}"; do
+        local script_path="$ADDITIONS_DIR/$script"
+        [[ ! -f "$script_path" ]] && continue
+
+        for field in "${required_fields[@]}"; do
+            if ! grep -q "^${field}=" "$script_path"; then
+                echo "  ✗ $script: missing $field"
+                has_issues=1
+            fi
+        done
+    done
+
+    return $has_issues
+}
+
+test_service_script_has_commands() {
+    local script="$ADDITIONS_DIR/service-web-ui.sh"
+    [[ ! -f "$script" ]] && skip_test "service-web-ui.sh not found"
+
+    local required_commands=(
+        "--start"
+        "--stop"
+        "--status"
+        "--is-running"
+    )
+
+    local has_issues=0
+    for cmd in "${required_commands[@]}"; do
+        if ! grep -q "$cmd" "$script"; then
+            echo "  ✗ Missing command: $cmd"
+            has_issues=1
+        fi
+    done
+
+    return $has_issues
+}
+
+run_test "Web UI scripts have required metadata" test_web_ui_scripts_have_metadata
+run_test "Service script has required commands" test_service_script_has_commands
+```
+
+### 6.3 Unit Tests: test-scanner-json.sh
+
+**File:** `.devcontainer/additions/tests/unit/test-scanner-json.sh`
+
+Tests for `component-scanner.sh --json` output:
+
+```bash
+#!/bin/bash
+# Test component-scanner.sh JSON output
+
+source "$SCRIPT_DIR/../lib/test-framework.sh"
+source_libs "component-scanner.sh"
+
+test_json_output_is_valid() {
+    local output
+    output=$("$ADDITIONS_DIR/lib/component-scanner.sh" --json all 2>/dev/null)
+
+    if ! echo "$output" | jq . >/dev/null 2>&1; then
+        echo "  ✗ Invalid JSON output"
+        echo "  Output: ${output:0:200}..."
+        return 1
+    fi
+    return 0
+}
+
+test_json_has_required_fields() {
+    local output
+    output=$("$ADDITIONS_DIR/lib/component-scanner.sh" --json all 2>/dev/null)
+
+    local required=("version" "categories" "install" "config" "service")
+    local has_issues=0
+
+    for field in "${required[@]}"; do
+        if ! echo "$output" | jq -e ".$field" >/dev/null 2>&1; then
+            echo "  ✗ Missing field: $field"
+            has_issues=1
+        fi
+    done
+
+    return $has_issues
+}
+
+test_json_install_scripts_have_commands() {
+    local output
+    output=$("$ADDITIONS_DIR/lib/component-scanner.sh" --json install 2>/dev/null)
+
+    # Check first script has commands array
+    local has_commands
+    has_commands=$(echo "$output" | jq -e '.scripts[0].commands | length > 0' 2>/dev/null)
+
+    if [[ "$has_commands" != "true" ]]; then
+        echo "  ✗ Install scripts missing commands array"
+        return 1
+    fi
+    return 0
+}
+
+test_json_config_scripts_have_interactive_flag() {
+    local output
+    output=$("$ADDITIONS_DIR/lib/component-scanner.sh" --json config 2>/dev/null)
+
+    # Check config scripts have interactive flag on commands
+    local has_interactive
+    has_interactive=$(echo "$output" | jq -e '.scripts[0].commands[0] | has("interactive")' 2>/dev/null)
+
+    if [[ "$has_interactive" != "true" ]]; then
+        echo "  ✗ Config scripts missing interactive flag on commands"
+        return 1
+    fi
+    return 0
+}
+
+run_test "JSON output is valid" test_json_output_is_valid
+run_test "JSON has required fields" test_json_has_required_fields
+run_test "Install scripts have commands array" test_json_install_scripts_have_commands
+run_test "Config scripts have interactive flag" test_json_config_scripts_have_interactive_flag
+```
+
+### 6.4 Unit Tests: test-web-ui-service.sh
+
+**File:** `.devcontainer/additions/tests/unit/test-web-ui-service.sh`
+
+Tests for `service-web-ui.sh`:
+
+```bash
+#!/bin/bash
+# Test service-web-ui.sh commands
+
+source "$SCRIPT_DIR/../lib/test-framework.sh"
+
+SERVICE_SCRIPT="$ADDITIONS_DIR/service-web-ui.sh"
+
+test_service_help_works() {
+    [[ ! -f "$SERVICE_SCRIPT" ]] && skip_test "service-web-ui.sh not found"
+
+    local output
+    output=$(bash "$SERVICE_SCRIPT" --help 2>&1)
+
+    if [[ $? -ne 0 ]] || [[ -z "$output" ]]; then
+        echo "  ✗ --help failed or empty"
+        return 1
+    fi
+
+    # Check output contains expected sections
+    if ! echo "$output" | grep -q "start"; then
+        echo "  ✗ --help missing start command"
+        return 1
+    fi
+
+    return 0
+}
+
+test_service_status_works() {
+    [[ ! -f "$SERVICE_SCRIPT" ]] && skip_test "service-web-ui.sh not found"
+
+    # --status should work even if service not running
+    bash "$SERVICE_SCRIPT" --status >/dev/null 2>&1
+    # Exit codes: 0 = running, 1 = stopped, both are valid
+    return 0
+}
+
+test_service_is_running_returns_code() {
+    [[ ! -f "$SERVICE_SCRIPT" ]] && skip_test "service-web-ui.sh not found"
+
+    # --is-running should return exit code only (silent)
+    local output
+    output=$(bash "$SERVICE_SCRIPT" --is-running 2>&1)
+
+    # Output should be empty or minimal (silent check)
+    if [[ ${#output} -gt 50 ]]; then
+        echo "  ✗ --is-running should be silent, got: ${output:0:100}"
+        return 1
+    fi
+    return 0
+}
+
+run_test "Service --help works" test_service_help_works
+run_test "Service --status works" test_service_status_works
+run_test "Service --is-running returns exit code" test_service_is_running_returns_code
+```
+
+### 6.5 Integration Tests: test-web-ui-api.sh
+
+**File:** `.devcontainer/additions/tests/integration/test-web-ui-api.sh`
+
+Tests for the running web server API:
+
+```bash
+#!/bin/bash
+# Integration tests for web UI API
+# These tests require the web UI server to be running
+
+source "$SCRIPT_DIR/../lib/test-framework.sh"
+
+# Configuration
+PORT="${WEB_UI_PORT:-8888}"
+BASE_URL="http://127.0.0.1:$PORT"
+
+# Check if server is running before tests
+check_server_running() {
+    if ! curl -s "$BASE_URL/api/health" >/dev/null 2>&1; then
+        echo "Web UI server not running on port $PORT"
+        echo "Start it with: bash .devcontainer/additions/service-web-ui.sh --start &"
+        exit 77  # Skip all tests
+    fi
+}
+
+#------------------------------------------------------------------------------
+# API Tests
+#------------------------------------------------------------------------------
+
+test_health_endpoint() {
+    local response
+    response=$(curl -s "$BASE_URL/api/health")
+
+    if ! echo "$response" | jq -e '.status == "ok"' >/dev/null 2>&1; then
+        echo "  ✗ /api/health should return status: ok"
+        echo "  Response: $response"
+        return 1
+    fi
+    return 0
+}
+
+test_scripts_endpoint_returns_json() {
+    local response
+    response=$(curl -s "$BASE_URL/api/scripts")
+
+    if ! echo "$response" | jq . >/dev/null 2>&1; then
+        echo "  ✗ /api/scripts should return valid JSON"
+        return 1
+    fi
+
+    # Check has expected structure
+    if ! echo "$response" | jq -e '.install' >/dev/null 2>&1; then
+        echo "  ✗ /api/scripts missing install array"
+        return 1
+    fi
+
+    return 0
+}
+
+test_categories_endpoint() {
+    local response
+    response=$(curl -s "$BASE_URL/api/categories")
+
+    if ! echo "$response" | jq -e '.[0].id' >/dev/null 2>&1; then
+        echo "  ✗ /api/categories should return array with id field"
+        return 1
+    fi
+    return 0
+}
+
+#------------------------------------------------------------------------------
+# Security Tests
+#------------------------------------------------------------------------------
+
+test_csrf_blocks_wrong_origin() {
+    local response
+    local http_code
+
+    # POST with wrong Origin header should be rejected
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+        -X POST "$BASE_URL/api/execute" \
+        -H "Origin: http://evil.com" \
+        -H "Content-Type: application/json" \
+        -d '{"script":"install-dev-python.sh","args":["--help"]}')
+
+    if [[ "$http_code" != "403" ]]; then
+        echo "  ✗ Wrong Origin should return 403, got: $http_code"
+        return 1
+    fi
+    return 0
+}
+
+test_invalid_script_name_rejected() {
+    local response
+    local http_code
+
+    # Script with path traversal should be rejected
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+        -X POST "$BASE_URL/api/execute" \
+        -H "Origin: http://127.0.0.1:$PORT" \
+        -H "Content-Type: application/json" \
+        -d '{"script":"../../../etc/passwd","args":[]}')
+
+    if [[ "$http_code" != "400" ]]; then
+        echo "  ✗ Path traversal should return 400, got: $http_code"
+        return 1
+    fi
+    return 0
+}
+
+test_shell_injection_in_args_rejected() {
+    local response
+    local http_code
+
+    # Args with shell metacharacters should be rejected
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+        -X POST "$BASE_URL/api/execute" \
+        -H "Origin: http://127.0.0.1:$PORT" \
+        -H "Content-Type: application/json" \
+        -d '{"script":"install-dev-python.sh","args":["--help; rm -rf /"]}')
+
+    if [[ "$http_code" != "400" ]]; then
+        echo "  ✗ Shell injection should return 400, got: $http_code"
+        return 1
+    fi
+    return 0
+}
+
+#------------------------------------------------------------------------------
+# Execution Tests
+#------------------------------------------------------------------------------
+
+test_execute_help_returns_sse() {
+    local response
+
+    # Execute --help and check SSE format
+    response=$(curl -s -N \
+        -X POST "$BASE_URL/api/execute" \
+        -H "Origin: http://127.0.0.1:$PORT" \
+        -H "Content-Type: application/json" \
+        -d '{"script":"install-dev-python.sh","args":["--help"]}' \
+        --max-time 5 2>/dev/null | head -20)
+
+    # Should have SSE event format
+    if ! echo "$response" | grep -q "^event:"; then
+        echo "  ✗ Response should be SSE format with 'event:' lines"
+        return 1
+    fi
+
+    # Should have exit event
+    if ! echo "$response" | grep -q "event: exit"; then
+        echo "  ✗ Response should include 'event: exit'"
+        return 1
+    fi
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
+# Main
+#------------------------------------------------------------------------------
+
+# Check server first
+check_server_running
+
+print_header "Web UI API Integration Tests"
+
+run_test "Health endpoint returns ok" test_health_endpoint
+run_test "Scripts endpoint returns JSON" test_scripts_endpoint_returns_json
+run_test "Categories endpoint works" test_categories_endpoint
+run_test "CSRF blocks wrong Origin" test_csrf_blocks_wrong_origin
+run_test "Invalid script name rejected" test_invalid_script_name_rejected
+run_test "Shell injection in args rejected" test_shell_injection_in_args_rejected
+run_test "Execute returns SSE stream" test_execute_help_returns_sse
+```
+
+### 6.6 Running the Tests
+
+Add to test orchestrator or run individually:
+
+```bash
+# Run static tests for web UI scripts
+./run-all-tests.sh static config-web-ui.sh
+./run-all-tests.sh static install-srv-web-ui.sh
+./run-all-tests.sh static service-web-ui.sh
+
+# Run unit tests for scanner JSON
+./run-all-tests.sh unit
+
+# Run integration tests (server must be running)
+bash .devcontainer/additions/service-web-ui.sh --start &
+sleep 2
+bash .devcontainer/additions/tests/integration/test-web-ui-api.sh
+bash .devcontainer/additions/service-web-ui.sh --stop
+```
+
+### 6.7 Test File Summary
+
+| File | Test Level | Tests | Description |
+|------|------------|-------|-------------|
+| `static/test-web-ui-scripts.sh` | 1 (static) | 2 | Metadata validation |
+| `unit/test-scanner-json.sh` | 2 (unit) | 4 | JSON output validation |
+| `unit/test-web-ui-service.sh` | 2 (unit) | 3 | Service script commands |
+| `integration/test-web-ui-api.sh` | - | 7 | API endpoints & security |
+
+**Total new tests:** 16 tests
+**Estimated effort:** 2-3 hours
 
 ---
 
@@ -870,7 +1319,7 @@ After initial implementation, consider:
 
 ---
 
-**Document Version:** 1.3
+**Document Version:** 1.4
 **Created:** 2024-12-07
 **Updated:** 2024-12-07
 **Status:** Ready for Implementation
