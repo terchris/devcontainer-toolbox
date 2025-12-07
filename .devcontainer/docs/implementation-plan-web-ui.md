@@ -11,6 +11,17 @@ This plan outlines the steps to implement a browser-based management interface t
 - **Full compatibility** - Call existing scripts without modification
 - **Real-time feedback** - Stream script output via Server-Sent Events (SSE)
 - **Consistent UX** - Mirror the terminal menu structure and status indicators
+- **Service pattern** - Follow `service-*.sh` pattern, managed by supervisord
+- **Localhost only** - Bound to 127.0.0.1, accessible only to devcontainer user
+
+### Decisions Made
+
+| Decision | Resolution |
+|----------|------------|
+| **Port** | 8888 (default, configurable) |
+| **Service management** | Use `install-srv-web-ui.sh` + `service-web-ui.sh` pattern with supervisord |
+| **Security** | Localhost only - user's own devcontainer, no auth needed |
+| **Interactive prompts** | Skip in web UI - show "Use terminal" message with command to run |
 
 ---
 
@@ -111,13 +122,78 @@ Outputs all script types in a single JSON response:
 
 ---
 
-## Phase 2: Create Web Server
+## Phase 2: Create Web Server Service
 
-**Goal:** Minimal Node.js server with API endpoints and SSE streaming
+**Goal:** Minimal Node.js server following the service-*.sh pattern for supervisord management
 
-### 2.1 Server Structure
+### 2.1 File Structure
 
-**File:** `.devcontainer/manage/web-server.js`
+Following the existing service pattern (like nginx), we create:
+
+```
+.devcontainer/additions/
+├── install-srv-web-ui.sh      # Installation script
+├── service-web-ui.sh          # Service management (start/stop/status/etc.)
+└── web-ui/                    # Web UI files
+    ├── server.js              # Node.js server (~100 lines)
+    └── index.html             # Self-contained UI
+```
+
+### 2.2 Install Script
+
+**File:** `.devcontainer/additions/install-srv-web-ui.sh`
+
+```bash
+SCRIPT_ID="srv-web-ui"
+SCRIPT_NAME="Web UI Service"
+SCRIPT_DESCRIPTION="Browser-based management interface for DevContainer Setup"
+SCRIPT_CATEGORY="BACKGROUND_SERVICES"
+SCRIPT_CHECK_COMMAND="[ -f /workspace/.devcontainer/additions/web-ui/server.js ]"
+
+# No system packages needed - uses Node.js built-in modules
+PACKAGES_SYSTEM=()
+```
+
+The install script:
+- Copies server.js and index.html to correct locations
+- Sets correct permissions
+- Verifies Node.js is available (pre-installed in base image)
+
+### 2.3 Service Script
+
+**File:** `.devcontainer/additions/service-web-ui.sh`
+
+```bash
+SCRIPT_ID="service-web-ui"
+SCRIPT_NAME="Web UI Service"
+SCRIPT_DESCRIPTION="Browser-based DevContainer Setup interface on port 8888"
+SCRIPT_CATEGORY="BACKGROUND_SERVICES"
+SCRIPT_CHECK_COMMAND="pgrep -f 'node.*web-ui/server.js' >/dev/null 2>&1"
+SCRIPT_PREREQUISITE_TOOLS="install-srv-web-ui.sh"
+
+SERVICE_PRIORITY="90"  # Start late, after other services
+SERVICE_DEPENDS=""
+SERVICE_AUTO_RESTART="true"
+
+SCRIPT_COMMANDS=(
+    "Control|--start|Start web UI server (foreground for supervisord)|service_start|false|"
+    "Control|--stop|Stop web UI server|service_stop|false|"
+    "Control|--restart|Restart web UI server|service_restart|false|"
+    "Status|--status|Check if web UI is running|service_status|false|"
+    "Status|--is-running|Silent running check|service_is_running|false|"
+    "Status|--url|Show web UI URL|service_url|false|"
+    "Debug|--logs|Show server logs|service_logs|false|"
+)
+```
+
+Key implementation:
+- `service_start()` uses `exec node server.js` for supervisord foreground mode
+- Binds to `127.0.0.1:8888` only (localhost)
+- Auto-enables for container restart
+
+### 2.4 Server Implementation
+
+**File:** `.devcontainer/additions/web-ui/server.js`
 
 **Dependencies:** Node.js built-in modules only
 - `http` - HTTP server
@@ -126,7 +202,7 @@ Outputs all script types in a single JSON response:
 - `child_process` - Execute scripts
 - `url` - Parse URLs
 
-### 2.2 API Endpoints
+### 2.5 API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -137,7 +213,7 @@ Outputs all script types in a single JSON response:
 | `POST` | `/api/execute` | Execute script with streaming output |
 | `GET` | `/api/categories` | Get category definitions |
 
-### 2.3 Script Execution with SSE
+### 2.6 Script Execution with SSE
 
 **Request:**
 ```json
@@ -163,13 +239,12 @@ event: exit
 data: {"code": 0, "duration": 45.2}
 ```
 
-### 2.4 Server Code Outline
+### 2.7 Server Code Outline
 
 ```javascript
 #!/usr/bin/env node
-// File: .devcontainer/manage/web-server.js
+// File: .devcontainer/additions/web-ui/server.js
 // Web UI server for DevContainer Additions System
-// Usage: node web-server.js [port]
 
 const http = require('http');
 const fs = require('fs');
@@ -177,8 +252,9 @@ const path = require('path');
 const { spawn } = require('child_process');
 const url = require('url');
 
-const PORT = process.argv[2] || 8888;
-const ADDITIONS_DIR = path.join(__dirname, '../additions');
+const PORT = process.env.WEB_UI_PORT || 8888;
+const HOST = '127.0.0.1';  // Localhost only for security
+const ADDITIONS_DIR = path.join(__dirname, '..');
 const SCANNER = path.join(ADDITIONS_DIR, 'lib/component-scanner.sh');
 
 // Routes
@@ -189,19 +265,21 @@ const routes = {
   'POST /api/execute': executeScript,
 };
 
-// Server implementation (~100 lines)
-// ...
+// Bind to localhost only
+server.listen(PORT, HOST, () => {
+  console.log(`Web UI running at http://${HOST}:${PORT}`);
+});
 ```
 
-### 2.5 Security Considerations
+### 2.8 Security Considerations
 
 - Only allow execution of scripts in `additions/` directory
 - Validate script filenames against allowlist
 - Sanitize arguments (no shell injection)
-- Bind to localhost only by default
-- Optional: Add simple token authentication
+- Bind to `127.0.0.1` only (not `0.0.0.0`)
+- No authentication needed - localhost access only
 
-### 2.6 Testing
+### 2.9 Testing
 
 - [ ] Server starts without errors
 - [ ] `/api/scripts` returns valid JSON
@@ -325,22 +403,29 @@ function onRefresh() { /* Refresh all statuses */ }
 
 ## Phase 4: Integration
 
-**Goal:** Integrate web UI into devcontainer startup and documentation
+**Goal:** Integrate web UI service into devcontainer using existing patterns
 
-### 4.1 Add Startup Command
+### 4.1 Supervisord Integration
 
-**File:** `.devcontainer/manage/postCreateCommand.sh`
+The service follows the standard supervisord pattern used by other services (nginx, otel).
 
-Add optional web server startup:
+**Auto-start behavior:**
+- When user enables the service, it's added to `enabled-services.conf`
+- On container restart, supervisord starts the service automatically
+- Service runs in foreground mode via `exec node server.js`
+
+**Manual control:**
 ```bash
-# Start web UI server (optional, disabled by default)
-if [ "${DEVCONTAINER_WEB_UI:-false}" = "true" ]; then
-    echo "Starting web UI server on port 8888..."
-    node /workspace/.devcontainer/manage/web-server.js 8888 &
-fi
+# Start/stop via service script
+bash .devcontainer/additions/service-web-ui.sh --start
+bash .devcontainer/additions/service-web-ui.sh --stop
+bash .devcontainer/additions/service-web-ui.sh --status
+
+# Or via dev-services menu
+dev-services
 ```
 
-### 4.2 Add to devcontainer.json
+### 4.2 Port Forwarding
 
 **File:** `.devcontainer/devcontainer.json`
 
@@ -356,28 +441,12 @@ fi
 }
 ```
 
-### 4.3 Add CLI Command
+### 4.3 CLI Convenience Command
 
-**File:** `.devcontainer/manage/dev-web.sh`
+Add alias in postCreateCommand.sh or user's .bashrc:
 
 ```bash
-#!/bin/bash
-# Start web UI for DevContainer Setup
-# Usage: dev-web [port]
-
-PORT="${1:-8888}"
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-
-echo "Starting DevContainer Setup Web UI..."
-echo "Open: http://localhost:$PORT"
-echo "Press Ctrl+C to stop"
-
-node "$SCRIPT_DIR/web-server.js" "$PORT"
-```
-
-Add to PATH in postCreateCommand or .bashrc:
-```bash
-alias dev-web='bash /workspace/.devcontainer/manage/dev-web.sh'
+alias dev-web='bash /workspace/.devcontainer/additions/service-web-ui.sh --status && echo "Open: http://localhost:8888"'
 ```
 
 ### 4.4 Update Documentation
@@ -427,13 +496,14 @@ alias dev-web='bash /workspace/.devcontainer/manage/dev-web.sh'
 
 | File | Type | Lines (est.) | Description |
 |------|------|--------------|-------------|
-| `lib/component-scanner.sh` | Modified | +100 | Add JSON output functions |
-| `manage/web-server.js` | New | ~100 | Node.js API server |
-| `manage/web-ui.html` | New | ~300 | Self-contained HTML/CSS/JS |
-| `manage/dev-web.sh` | New | ~15 | CLI launcher script |
+| `additions/lib/component-scanner.sh` | Modified | +100 | Add JSON output functions |
+| `additions/install-srv-web-ui.sh` | New | ~80 | Install script for web UI |
+| `additions/service-web-ui.sh` | New | ~200 | Service management script |
+| `additions/web-ui/server.js` | New | ~100 | Node.js API server |
+| `additions/web-ui/index.html` | New | ~300 | Self-contained HTML/CSS/JS |
 | `docs/web-ui-guide.md` | New | ~100 | User documentation |
 
-**Total new code:** ~500 lines
+**Total new code:** ~880 lines
 **Total effort:** 12-17 hours
 
 ---
@@ -486,16 +556,59 @@ After initial implementation, consider:
 
 ---
 
-## Questions to Resolve
+## Handling Interactive Config Scripts
 
-1. **Port selection** - Default 8888? Configurable?
-2. **Auto-start** - Start web server automatically or on-demand?
-3. **Security** - Localhost only or allow network access?
-4. **Interactive scripts** - How to handle stdin prompts in web UI?
-5. **Long operations** - Timeout? Cancel button?
+Config scripts that require interactive input (stdin prompts) cannot be run directly from the web UI.
+
+### Solution for v1
+
+The web UI will detect interactive config scripts and display a message instead of action buttons:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ ⚙️  Developer Identity                                       │
+│ Configure your identity for devcontainer monitoring          │
+│                                                              │
+│ ⚠️  Interactive configuration required                       │
+│                                                              │
+│ Run in terminal:                                             │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ bash .devcontainer/additions/config-identity.sh         │ │
+│ └─────────────────────────────────────────────────────────┘ │
+│                                     [Copy Command]           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### What Works in Web UI
+
+| Script Type | Action | Web UI Support |
+|-------------|--------|----------------|
+| `config-*.sh` | Default (interactive) | ❌ Show terminal command |
+| `config-*.sh` | `--show` | ✅ Display output |
+| `config-*.sh` | `--verify` | ✅ Run and show result |
+| `install-*.sh` | All actions | ✅ Full support |
+| `service-*.sh` | All actions | ✅ Full support |
+| `cmd-*.sh` | Non-interactive | ✅ Full support |
+
+### Future Enhancement (v2)
+
+For a future version, consider:
+- Form-based input that maps to script parameters
+- Pre-defined prompts in SCRIPT_COMMANDS metadata
+- WebSocket-based pseudo-terminal (complex)
 
 ---
 
-**Document Version:** 1.0
+## Open Items
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Long operations timeout | Deferred | No timeout for v1, add cancel button later |
+| Multiple concurrent executions | Deferred | Allow for v1, add queue/lock later if needed |
+
+---
+
+**Document Version:** 1.1
 **Created:** 2024-12-07
-**Status:** Draft
+**Updated:** 2024-12-07
+**Status:** Ready for Implementation
