@@ -133,13 +133,49 @@ Following the existing service pattern (like nginx), we create:
 ```
 .devcontainer/additions/
 ├── install-srv-web-ui.sh      # Installation script
+├── config-web-ui.sh           # Port configuration (optional)
 ├── service-web-ui.sh          # Service management (start/stop/status/etc.)
 └── web-ui/                    # Web UI files
     ├── server.js              # Node.js server (~100 lines)
     └── index.html             # Self-contained UI
 ```
 
-### 2.2 Install Script
+### 2.2 Config Script
+
+**File:** `.devcontainer/additions/config-web-ui.sh`
+
+```bash
+SCRIPT_ID="config-web-ui"
+SCRIPT_NAME="Web UI Configuration"
+SCRIPT_DESCRIPTION="Configure web UI port (default: 8888)"
+SCRIPT_CATEGORY="BACKGROUND_SERVICES"
+SCRIPT_CHECK_COMMAND="[ -f ~/.web-ui-config ]"
+
+SCRIPT_COMMANDS=(
+    "Action||Configure web UI port interactively||false|"
+    "Action|--show|Display current configuration||false|"
+    "Action|--verify|Restore from .devcontainer.secrets||false|"
+    "Info|--help|Show help information||false|"
+)
+```
+
+**Config file location:** `/workspace/.devcontainer.secrets/web-ui-config`
+**Symlink:** `~/.web-ui-config`
+
+**Config file format:**
+```bash
+# Web UI Configuration
+WEB_UI_PORT=8888
+```
+
+The config script:
+- Prompts for port number (default: 8888)
+- Validates port is numeric and in valid range (1024-65535)
+- Saves to `.devcontainer.secrets/web-ui-config` for persistence
+- Creates symlink at `~/.web-ui-config`
+- Supports `--verify` for automatic restoration on rebuild
+
+### 2.3 Install Script
 
 **File:** `.devcontainer/additions/install-srv-web-ui.sh`
 
@@ -187,9 +223,19 @@ SCRIPT_COMMANDS=(
 ```
 
 Key implementation:
+- Loads port from `~/.web-ui-config` (default: 8888)
 - `service_start()` uses `exec node server.js` for supervisord foreground mode
-- Binds to `127.0.0.1:8888` only (localhost)
+- Binds to `127.0.0.1:$WEB_UI_PORT` only (localhost)
 - Auto-enables for container restart
+
+**Loading config in service script:**
+```bash
+# Load port configuration
+WEB_UI_PORT=8888  # Default
+if [ -f "$HOME/.web-ui-config" ]; then
+    source "$HOME/.web-ui-config"
+fi
+```
 
 ### 2.4 Server Implementation
 
@@ -492,13 +538,14 @@ alias dev-web='bash /workspace/.devcontainer/additions/service-web-ui.sh --statu
 | File | Type | Lines (est.) | Description |
 |------|------|--------------|-------------|
 | `additions/lib/component-scanner.sh` | Modified | +100 | Add JSON output functions |
+| `additions/config-web-ui.sh` | New | ~120 | Port configuration script |
 | `additions/install-srv-web-ui.sh` | New | ~80 | Install script for web UI |
 | `additions/service-web-ui.sh` | New | ~200 | Service management script |
 | `additions/web-ui/server.js` | New | ~100 | Node.js API server |
 | `additions/web-ui/index.html` | New | ~300 | Self-contained HTML/CSS/JS |
 | `docs/web-ui-guide.md` | New | ~100 | User documentation |
 
-**Total new code:** ~880 lines
+**Total new code:** ~1000 lines
 **Total effort:** 12-17 hours
 
 ---
