@@ -427,19 +427,14 @@ dev-services
 
 ### 4.2 Port Forwarding
 
-**File:** `.devcontainer/devcontainer.json`
+VS Code automatically detects when a process listens on a port inside the container and forwards it to the host. No `devcontainer.json` changes required.
 
-```json
-{
-  "forwardPorts": [8888],
-  "portsAttributes": {
-    "8888": {
-      "label": "DevContainer Setup UI",
-      "onAutoForward": "silent"
-    }
-  }
-}
-```
+**How it works:**
+1. Web UI server starts, listens on `127.0.0.1:8888`
+2. VS Code detects the port and auto-forwards it
+3. Developer opens `http://localhost:8888` in their browser on the host
+
+**Note:** VS Code may show a notification offering to open the URL. The `onAutoForward` behavior is controlled by VS Code user settings, not devcontainer.json.
 
 ### 4.3 CLI Convenience Command
 
