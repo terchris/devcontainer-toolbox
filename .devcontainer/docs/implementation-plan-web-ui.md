@@ -369,7 +369,7 @@ const PORT = parseInt(process.env.WEB_UI_PORT) || 8888;
 const HOST = '127.0.0.1';  // Localhost only for security
 const ADDITIONS_DIR = path.join(__dirname, '..');
 const SCANNER = path.join(ADDITIONS_DIR, 'lib/component-scanner.sh');
-const LOG_FILE = '/tmp/web-ui-server.log';
+const LOG_FILE = '/tmp/devcontainer-install/web-ui-server.log';  // Managed by cmd-logs.sh
 
 // Simple logging
 function log(msg) {
@@ -465,13 +465,45 @@ function validateAndExecute(scriptName, args) {
 
 ### 2.10 Logging
 
-Server logs go to `/tmp/web-ui-server.log`:
-- Startup/shutdown events
-- Request logging (method, path, response code)
-- Script execution (script name, args, exit code, duration)
-- Errors
+The server uses the existing log management system (`cmd-logs.sh`) to prevent log growth.
 
-Service script `--logs` command displays these logs.
+**Log location:** `/tmp/devcontainer-install/web-ui-server.log`
+
+This location is automatically managed by `cmd-logs.sh`:
+- Files in `/tmp/devcontainer-install/` older than 7 days are deleted
+- The scheduled cleanup runs every 24 hours
+
+**Add to cmd-logs.sh TRUNCATE_LOGS array:**
+```bash
+TRUNCATE_LOGS=(
+    # ... existing entries ...
+    "/tmp/devcontainer-install/web-ui-server.log:5"  # Truncate at 5MB
+)
+```
+
+**Server logging:**
+```javascript
+const LOG_FILE = '/tmp/devcontainer-install/web-ui-server.log';
+
+function log(msg) {
+  const timestamp = new Date().toISOString();
+  const line = `${timestamp} ${msg}\n`;
+  fs.appendFileSync(LOG_FILE, line);
+  console.log(line.trim());  // Also output to stdout for supervisord
+}
+```
+
+Service script `--logs` command uses:
+```bash
+service_logs() {
+    local log_file="/tmp/devcontainer-install/web-ui-server.log"
+    if [ -f "$log_file" ]; then
+        tail -50 "$log_file"
+    else
+        echo "No logs found"
+    fi
+}
+```
 
 ### 2.11 Testing
 
@@ -747,6 +779,7 @@ alias dev-web='bash /workspace/.devcontainer/additions/service-web-ui.sh --url'
 | File | Type | Lines (est.) | Description |
 |------|------|--------------|-------------|
 | `additions/lib/component-scanner.sh` | Modified | +150 | Add JSON output functions |
+| `additions/cmd-logs.sh` | Modified | +1 | Add web-ui log to TRUNCATE_LOGS |
 | `additions/config-web-ui.sh` | New | ~120 | Port configuration script |
 | `additions/install-srv-web-ui.sh` | New | ~60 | Install script (validates prereqs) |
 | `additions/service-web-ui.sh` | New | ~250 | Service management script |
@@ -837,7 +870,7 @@ After initial implementation, consider:
 
 ---
 
-**Document Version:** 1.2
+**Document Version:** 1.3
 **Created:** 2024-12-07
 **Updated:** 2024-12-07
 **Status:** Ready for Implementation
