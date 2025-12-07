@@ -319,11 +319,54 @@ server.listen(PORT, HOST, () => {
 
 ### 2.8 Security Considerations
 
-- Only allow execution of scripts in `additions/` directory
-- Validate script filenames against allowlist
-- Sanitize arguments (no shell injection)
+**Binding & Access:**
 - Bind to `127.0.0.1` only (not `0.0.0.0`)
 - No authentication needed - localhost access only
+
+**CSRF Protection:**
+- Check `Origin` header on all POST requests
+- Reject requests where Origin is not `http://localhost:8888` or `http://127.0.0.1:8888`
+- This prevents malicious websites from making requests to the API
+
+**Script Execution Safety:**
+- Validate script filenames with regex: `^(install|config|service|cmd)-[a-z0-9-]+\.sh$`
+- Resolve path and verify it's within `additions/` directory (prevent path traversal)
+- Use `spawn()` with array arguments, NOT `exec()` with string (prevent shell injection)
+- Validate arguments: alphanumeric, dots, dashes, underscores only
+
+**Implementation example:**
+```javascript
+// CSRF check
+function checkOrigin(req) {
+  const origin = req.headers.origin || req.headers.referer || '';
+  const allowed = ['http://localhost:8888', 'http://127.0.0.1:8888'];
+  return allowed.some(a => origin.startsWith(a));
+}
+
+// Safe script execution
+function executeScript(scriptName, args) {
+  // Validate script name
+  if (!/^(install|config|service|cmd)-[a-z0-9-]+\.sh$/.test(scriptName)) {
+    throw new Error('Invalid script name');
+  }
+
+  // Validate args (alphanumeric, dots, dashes, underscores, equals)
+  for (const arg of args) {
+    if (!/^[a-zA-Z0-9._=-]+$/.test(arg)) {
+      throw new Error('Invalid argument: ' + arg);
+    }
+  }
+
+  // Resolve and verify path
+  const scriptPath = path.resolve(ADDITIONS_DIR, scriptName);
+  if (!scriptPath.startsWith(ADDITIONS_DIR)) {
+    throw new Error('Path traversal detected');
+  }
+
+  // Use spawn with array (no shell interpretation)
+  return spawn('bash', [scriptPath, ...args]);
+}
+```
 
 ### 2.9 Testing
 
