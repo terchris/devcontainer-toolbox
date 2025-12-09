@@ -357,6 +357,262 @@ data:
             "type": "prometheus",
             "uid": "prometheus"
           },
+          "description": "Distribution of developers by organization",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "tooltip": false,
+                  "viz": false,
+                  "legend": false
+                }
+              },
+              "mappings": []
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 8
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true,
+              "values": ["value", "percent"]
+            },
+            "pieType": "pie",
+            "tooltip": {
+              "mode": "single"
+            },
+            "displayLabels": ["name", "percent"]
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count by (organization_name) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_name=~\"$organization_name\", organization_machine_ownership=~\"$organization_machine_ownership\"})",
+              "refId": "A",
+              "legendFormat": "{{organization_name}}"
+            }
+          ],
+          "title": "Organization Distribution",
+          "type": "piechart"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Distribution of machine ownership (corporate vs personal)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "tooltip": false,
+                  "viz": false,
+                  "legend": false
+                }
+              },
+              "mappings": []
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 8
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true,
+              "values": ["value", "percent"]
+            },
+            "pieType": "pie",
+            "tooltip": {
+              "mode": "single"
+            },
+            "displayLabels": ["name", "percent"]
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count by (organization_machine_ownership) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_name=~\"$organization_name\", organization_machine_ownership=~\"$organization_machine_ownership\"})",
+              "refId": "A",
+              "legendFormat": "{{organization_machine_ownership}}"
+            }
+          ],
+          "title": "Machine Ownership Distribution",
+          "type": "piechart"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Count of developers by organization and ownership type",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 16,
+            "y": 8
+          },
+          "id": 9,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value_and_name"
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count(count by (host_user) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_machine_ownership=\"corporate\"}))",
+              "refId": "A",
+              "legendFormat": "Corporate"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count(count by (host_user) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_machine_ownership=\"personal\"}))",
+              "refId": "B",
+              "legendFormat": "Personal"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count(count by (host_user) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_machine_ownership=\"unknown\"}))",
+              "refId": "C",
+              "legendFormat": "Unknown"
+            }
+          ],
+          "title": "Developers by Ownership",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Organization prefix codes detected",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 16,
+            "y": 12
+          },
+          "id": 10,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value_and_name"
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count by (organization_prefix) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_prefix!=\"\", organization_name=~\"$organization_name\", organization_machine_ownership=~\"$organization_machine_ownership\"})",
+              "refId": "A",
+              "legendFormat": "{{organization_prefix}}"
+            }
+          ],
+          "title": "Organization Prefixes",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "description": "Detailed view of all developers grouped by OS, user, hostname, and architecture",
           "fieldConfig": {
             "defaults": {
@@ -531,7 +787,7 @@ data:
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 8
+            "y": 16
           },
           "id": 6,
           "options": {
@@ -559,7 +815,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "count by (host_os, host_user, host_hostname, host_domain, host_cpu_arch) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"})",
+              "expr": "count by (host_os, host_user, host_hostname, host_domain, host_cpu_arch, organization_name, organization_machine_ownership) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", organization_name=~\"$organization_name\", organization_machine_ownership=~\"$organization_machine_ownership\"})",
               "format": "table",
               "instant": true,
               "refId": "A"
@@ -577,12 +833,14 @@ data:
                   "service_name": true
                 },
                 "indexByName": {
-                  "Time": 5,
+                  "Time": 7,
                   "host_os": 0,
                   "host_user": 1,
                   "host_hostname": 2,
                   "host_domain": 3,
-                  "host_cpu_arch": 4
+                  "host_cpu_arch": 4,
+                  "organization_name": 5,
+                  "organization_machine_ownership": 6
                 },
                 "renameByName": {
                   "Time": "Last Seen",
@@ -590,7 +848,9 @@ data:
                   "host_user": "User",
                   "host_hostname": "Hostname",
                   "host_domain": "Domain",
-                  "host_cpu_arch": "Architecture"
+                  "host_cpu_arch": "Architecture",
+                  "organization_name": "Organization",
+                  "organization_machine_ownership": "Ownership"
                 }
               }
             }
@@ -607,7 +867,64 @@ data:
         "platform"
       ],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "allValue": ".*",
+            "current": {
+              "selected": true,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}, organization_name)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Organization",
+            "multi": true,
+            "name": "organization_name",
+            "options": [],
+            "query": {
+              "query": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}, organization_name)",
+              "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "allValue": ".*",
+            "current": {
+              "selected": true,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}, organization_machine_ownership)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Machine Ownership",
+            "multi": true,
+            "name": "organization_machine_ownership",
+            "options": [],
+            "query": {
+              "query": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}, organization_machine_ownership)",
+              "refId": "PrometheusVariableQueryEditor-VariableQuery"
+            },
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
+          }
+        ]
       },
       "time": {
         "from": "now-1h",

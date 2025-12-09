@@ -56,7 +56,7 @@ data:
           },
           "gridPos": {
             "h": 4,
-            "w": 8,
+            "w": 6,
             "x": 0,
             "y": 0
           },
@@ -83,7 +83,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "count(count by (developer_id) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}))",
+              "expr": "count(count by (developer_id) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}))",
               "refId": "A"
             }
           ],
@@ -121,8 +121,8 @@ data:
           },
           "gridPos": {
             "h": 4,
-            "w": 8,
-            "x": 8,
+            "w": 6,
+            "x": 6,
             "y": 0
           },
           "id": 2,
@@ -148,7 +148,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "count(sum by (developer_id) (rate(system_network_io_bytes_total{direction=\"transmit\"}[5m])) > 10*1024*1024)",
+              "expr": "count(sum by (developer_id) (rate(system_network_io_bytes_total{service_name=\"devcontainer-monitor\", direction=\"transmit\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}[5m])) > 10*1024*1024)",
               "refId": "A"
             }
           ],
@@ -191,8 +191,8 @@ data:
           },
           "gridPos": {
             "h": 4,
-            "w": 8,
-            "x": 16,
+            "w": 6,
+            "x": 12,
             "y": 0
           },
           "id": 3,
@@ -218,11 +218,80 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "sum(rate(system_network_errors_total{service_name=\"devcontainer-monitor\"}[5m]))",
+              "expr": "sum(rate(system_network_errors_total{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}[5m]))",
               "refId": "A"
             }
           ],
           "title": "Network Errors (per sec)",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Developers with Kubernetes enabled in Rancher Desktop but not actively using it (wasting resources)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1
+                  },
+                  {
+                    "color": "red",
+                    "value": 3
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 18,
+            "y": 0
+          },
+          "id": 5,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "value"
+          },
+          "pluginVersion": "10.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "expr": "count(devcontainer_k8s_status{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"} == 1)",
+              "refId": "A"
+            }
+          ],
+          "title": "K8s Waste (enabled unused)",
           "type": "stat"
         },
         {
@@ -503,7 +572,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "count by (developer_id, project_name) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"})",
+              "expr": "count by (developer_id, project_name, git_repository) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"})",
               "format": "table",
               "instant": true,
               "refId": "A"
@@ -513,7 +582,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "sum by (developer_id) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}) / 1024 / 1024 / 1024",
+              "expr": "sum by (developer_id) (system_memory_usage_bytes{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}) / 1024 / 1024 / 1024",
               "format": "table",
               "instant": true,
               "refId": "B"
@@ -523,7 +592,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "sum by (developer_id) (container_memory_current_bytes{service_name=\"devcontainer-monitor\"}) / 1024 / 1024 / 1024",
+              "expr": "sum by (developer_id) (container_memory_usage_bytes{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}) / 1024 / 1024 / 1024",
               "format": "table",
               "instant": true,
               "refId": "C"
@@ -533,7 +602,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "max by (developer_id) (container_uptime_seconds{service_name=\"devcontainer-monitor\"})",
+              "expr": "max by (developer_id) (container_uptime_seconds{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"})",
               "format": "table",
               "instant": true,
               "refId": "D"
@@ -543,7 +612,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "sum by (developer_id) (rate(container_cpu_usage_seconds_total{service_name=\"devcontainer-monitor\"}[5m]))",
+              "expr": "sum by (developer_id) (rate(container_cpu_usage_seconds_total{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}[5m]))",
               "format": "table",
               "instant": true,
               "refId": "E"
@@ -553,7 +622,7 @@ data:
                 "type": "prometheus",
                 "uid": "prometheus"
               },
-              "expr": "sum by (developer_id) (rate(system_network_io_bytes_total{service_name=\"devcontainer-monitor\"}[5m])) / 1024 / 1024",
+              "expr": "sum by (developer_id) (rate(system_network_io_bytes_total{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\", git_repository=~\"$git_repository\"}[5m])) / 1024 / 1024",
               "format": "table",
               "instant": true,
               "refId": "F"
@@ -594,12 +663,13 @@ data:
                 "indexByName": {
                   "developer_id": 0,
                   "project_name": 1,
-                  "Time": 2,
-                  "Value #B": 3,
-                  "Value #C": 4,
-                  "Value #D": 5,
-                  "Value #E": 6,
-                  "Value #F": 7
+                  "git_repository": 2,
+                  "Time": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "Value #D": 6,
+                  "Value #E": 7,
+                  "Value #F": 8
                 },
                 "renameByName": {
                   "Time": "Last Seen",
@@ -609,7 +679,8 @@ data:
                   "Value #E": "CPU Usage (cores)",
                   "Value #F": "Network Traffic (MB/s)",
                   "developer_id": "Developer ID",
-                  "project_name": "Project Name"
+                  "project_name": "Project Name",
+                  "git_repository": "Git Repository"
                 }
               }
             }
@@ -626,7 +697,62 @@ data:
         "security"
       ],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "current": {
+              "selected": true,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}, git_organization)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Git Organization",
+            "multi": false,
+            "name": "git_organization",
+            "options": [],
+            "query": {
+              "query": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\"}, git_organization)",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "current": {
+              "selected": true,
+              "text": "All",
+              "value": "$__all"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\"}, git_repository)",
+            "hide": 0,
+            "includeAll": true,
+            "label": "Git Repository",
+            "multi": false,
+            "name": "git_repository",
+            "options": [],
+            "query": {
+              "query": "label_values(system_memory_usage_bytes{service_name=\"devcontainer-monitor\", git_organization=~\"$git_organization\"}, git_repository)",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 1,
+            "type": "query"
+          }
+        ]
       },
       "time": {
         "from": "now-1h",
@@ -643,12 +769,7 @@ kind: ConfigMap
 metadata:
   annotations:
     grafana_folder: "Devcontainer"
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"devcontainer-overview.json":"{\n  \"annotations\": {\n    \"list\": [\n      {\n        \"builtIn\": 1,\n        \"datasource\": {\n          \"type\": \"grafana\",\n          \"uid\": \"-- Grafana --\"\n        },\n        \"enable\": true,\n        \"hide\": true,\n        \"iconColor\": \"rgba(0, 211, 255, 1)\",\n        \"name\": \"Annotations \u0026 Alerts\",\n        \"type\": \"dashboard\"\n      }\n    ]\n  },\n  \"editable\": true,\n  \"fiscalYearStartMonth\": 0,\n  \"graphTooltip\": 1,\n  \"id\": null,\n  \"links\": [],\n  \"liveNow\": false,\n  \"panels\": [\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Number of developers currently connected and sending metrics\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"red\",\n                \"value\": null\n              },\n              {\n                \"color\": \"green\",\n                \"value\": 1\n              }\n            ]\n          },\n          \"unit\": \"short\"\n        },\n        \"overrides\": []\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 8,\n        \"x\": 0,\n        \"y\": 0\n      },\n      \"id\": 1,\n      \"options\": {\n        \"colorMode\": \"background\",\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ],\n          \"fields\": \"\",\n          \"values\": false\n        },\n        \"text\": {},\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"count(count by (developer_id) (system_memory_usage_bytes{service_name=\\\"devcontainer-monitor\\\"}))\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Active Developers\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Number of developers uploading more than 10 MB/s (potential data exfiltration)\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"green\",\n                \"value\": null\n              },\n              {\n                \"color\": \"red\",\n                \"value\": 1\n              }\n            ]\n          },\n          \"unit\": \"short\"\n        },\n        \"overrides\": []\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 8,\n        \"x\": 8,\n        \"y\": 0\n      },\n      \"id\": 2,\n      \"options\": {\n        \"colorMode\": \"background\",\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ],\n          \"fields\": \"\",\n          \"values\": false\n        },\n        \"text\": {},\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"count(sum by (developer_id) (rate(system_network_io_bytes_total{direction=\\\"transmit\\\"}[5m])) \u003e 10*1024*1024)\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Upload Alert (\u003e10 MB/s)\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Network errors per second across all devcontainers\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"green\",\n                \"value\": null\n              },\n              {\n                \"color\": \"yellow\",\n                \"value\": 1\n              },\n              {\n                \"color\": \"red\",\n                \"value\": 10\n              }\n            ]\n          },\n          \"unit\": \"short\",\n          \"decimals\": 1\n        },\n        \"overrides\": []\n      },\n      \"gridPos\": {\n        \"h\": 4,\n        \"w\": 8,\n        \"x\": 16,\n        \"y\": 0\n      },\n      \"id\": 3,\n      \"options\": {\n        \"colorMode\": \"background\",\n        \"graphMode\": \"none\",\n        \"justifyMode\": \"center\",\n        \"orientation\": \"auto\",\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ],\n          \"fields\": \"\",\n          \"values\": false\n        },\n        \"text\": {},\n        \"textMode\": \"value\"\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum(rate(system_network_errors_total{service_name=\\\"devcontainer-monitor\\\"}[5m]))\",\n          \"refId\": \"A\"\n        }\n      ],\n      \"title\": \"Network Errors (per sec)\",\n      \"type\": \"stat\"\n    },\n    {\n      \"datasource\": {\n        \"type\": \"prometheus\",\n        \"uid\": \"prometheus\"\n      },\n      \"description\": \"Comprehensive view of all active developers showing project assignment, memory usage, CPU, network, and uptime\",\n      \"fieldConfig\": {\n        \"defaults\": {\n          \"color\": {\n            \"mode\": \"thresholds\"\n          },\n          \"custom\": {\n            \"align\": \"auto\",\n            \"cellOptions\": {\n              \"type\": \"auto\"\n            },\n            \"inspect\": false\n          },\n          \"mappings\": [],\n          \"thresholds\": {\n            \"mode\": \"absolute\",\n            \"steps\": [\n              {\n                \"color\": \"green\",\n                \"value\": null\n              }\n            ]\n          }\n        },\n        \"overrides\": [\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Last Seen\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"dateTimeAsIso\"\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 180\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Developer ID\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Project Name\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Docker RAM (GB)\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"decgbytes\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 2\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Devcontainer RAM usage\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"decgbytes\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 2\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 190\n              },\n              {\n                \"id\": \"custom.cellOptions\",\n                \"value\": {\n                  \"type\": \"color-background\"\n                }\n              },\n              {\n                \"id\": \"thresholds\",\n                \"value\": {\n                  \"mode\": \"absolute\",\n                  \"steps\": [\n                    {\n                      \"color\": \"green\",\n                      \"value\": null\n                    },\n                    {\n                      \"color\": \"yellow\",\n                      \"value\": 8\n                    },\n                    {\n                      \"color\": \"red\",\n                      \"value\": 10\n                    }\n                  ]\n                }\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Container Uptime\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"dtdurations\"\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"CPU Usage (cores)\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"short\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 3\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 150\n              },\n              {\n                \"id\": \"custom.cellOptions\",\n                \"value\": {\n                  \"type\": \"color-background\"\n                }\n              },\n              {\n                \"id\": \"thresholds\",\n                \"value\": {\n                  \"mode\": \"absolute\",\n                  \"steps\": [\n                    {\n                      \"color\": \"green\",\n                      \"value\": null\n                    },\n                    {\n                      \"color\": \"yellow\",\n                      \"value\": 2\n                    },\n                    {\n                      \"color\": \"red\",\n                      \"value\": 3\n                    }\n                  ]\n                }\n              }\n            ]\n          },\n          {\n            \"matcher\": {\n              \"id\": \"byName\",\n              \"options\": \"Network Traffic (MB/s)\"\n            },\n            \"properties\": [\n              {\n                \"id\": \"unit\",\n                \"value\": \"MBs\"\n              },\n              {\n                \"id\": \"decimals\",\n                \"value\": 2\n              },\n              {\n                \"id\": \"custom.width\",\n                \"value\": 170\n              },\n              {\n                \"id\": \"custom.cellOptions\",\n                \"value\": {\n                  \"type\": \"color-background\"\n                }\n              },\n              {\n                \"id\": \"thresholds\",\n                \"value\": {\n                  \"mode\": \"absolute\",\n                  \"steps\": [\n                    {\n                      \"color\": \"green\",\n                      \"value\": null\n                    },\n                    {\n                      \"color\": \"yellow\",\n                      \"value\": 5\n                    },\n                    {\n                      \"color\": \"red\",\n                      \"value\": 10\n                    }\n                  ]\n                }\n              }\n            ]\n          }\n        ]\n      },\n      \"gridPos\": {\n        \"h\": 10,\n        \"w\": 24,\n        \"x\": 0,\n        \"y\": 4\n      },\n      \"id\": 4,\n      \"options\": {\n        \"cellHeight\": \"sm\",\n        \"footer\": {\n          \"countRows\": false,\n          \"fields\": \"\",\n          \"reducer\": [\n            \"sum\"\n          ],\n          \"show\": false\n        },\n        \"showHeader\": true,\n        \"sortBy\": [\n          {\n            \"desc\": true,\n            \"displayName\": \"Last Seen\"\n          }\n        ]\n      },\n      \"pluginVersion\": \"10.0.0\",\n      \"targets\": [\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"count by (developer_id, project_name) (system_memory_usage_bytes{service_name=\\\"devcontainer-monitor\\\"})\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"A\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (system_memory_usage_bytes{service_name=\\\"devcontainer-monitor\\\"}) / 1024 / 1024 / 1024\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"B\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (container_memory_current_bytes{service_name=\\\"devcontainer-monitor\\\"}) / 1024 / 1024 / 1024\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"C\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"max by (developer_id) (container_uptime_seconds{service_name=\\\"devcontainer-monitor\\\"})\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"D\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (rate(container_cpu_usage_seconds_total{service_name=\\\"devcontainer-monitor\\\"}[5m]))\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"E\"\n        },\n        {\n          \"datasource\": {\n            \"type\": \"prometheus\",\n            \"uid\": \"prometheus\"\n          },\n          \"expr\": \"sum by (developer_id) (rate(system_network_io_bytes_total{service_name=\\\"devcontainer-monitor\\\"}[5m])) / 1024 / 1024\",\n          \"format\": \"table\",\n          \"instant\": true,\n          \"refId\": \"F\"\n        }\n      ],\n      \"title\": \"Developers by Project\",\n      \"transformations\": [\n        {\n          \"id\": \"organize\",\n          \"options\": {\n            \"excludeByName\": {\n              \"state\": true,\n              \"cluster_name\": true,\n              \"instance\": true,\n              \"job\": true,\n              \"service_name\": true\n            },\n            \"indexByName\": {},\n            \"renameByName\": {}\n          }\n        },\n        {\n          \"id\": \"merge\",\n          \"options\": {}\n        },\n        {\n          \"id\": \"organize\",\n          \"options\": {\n            \"excludeByName\": {\n              \"Time 1\": true,\n              \"Time 2\": true,\n              \"Time 3\": true,\n              \"Time 4\": true,\n              \"Time 5\": true,\n              \"Time 6\": true,\n              \"Value #A\": true\n            },\n            \"indexByName\": {\n              \"developer_id\": 0,\n              \"project_name\": 1,\n              \"Time\": 2,\n              \"Value #B\": 3,\n              \"Value #C\": 4,\n              \"Value #D\": 5,\n              \"Value #E\": 6,\n              \"Value #F\": 7\n            },\n            \"renameByName\": {\n              \"Time\": \"Last Seen\",\n              \"Value #B\": \"Docker RAM (GB)\",\n              \"Value #C\": \"Devcontainer RAM usage\",\n              \"Value #D\": \"Container Uptime\",\n              \"Value #E\": \"CPU Usage (cores)\",\n              \"Value #F\": \"Network Traffic (MB/s)\",\n              \"developer_id\": \"Developer ID\",\n              \"project_name\": \"Project Name\"\n            }\n          }\n        }\n      ],\n      \"type\": \"table\"\n    }\n  ],\n  \"refresh\": \"30s\",\n  \"schemaVersion\": 38,\n  \"style\": \"dark\",\n  \"tags\": [\n    \"devcontainer\",\n    \"monitoring\",\n    \"security\"\n  ],\n  \"templating\": {\n    \"list\": []\n  },\n  \"time\": {\n    \"from\": \"now-1h\",\n    \"to\": \"now\"\n  },\n  \"timepicker\": {},\n  \"timezone\": \"browser\",\n  \"title\": \"Dashboard 1: Developer Activity Overview\",\n  \"uid\": \"devcontainer-dashboard-1\",\n  \"version\": 10,\n  \"weekStart\": \"\"\n}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"grafana_dashboard":"1"},"name":"grafana-dashboard-devcontainer-activity","namespace":"monitoring"}}
-  creationTimestamp: "2025-11-13T21:52:54Z"
   labels:
     grafana_dashboard: "1"
   name: grafana-dashboard-devcontainer-overview
   namespace: monitoring
-  resourceVersion: "939974"
-  uid: 7d0a95bd-fc77-4339-a153-0d66b0d65416

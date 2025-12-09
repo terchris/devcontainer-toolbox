@@ -73,6 +73,9 @@ processors:
         action: upsert
 
       # Host machine information (from config-host-info.sh)
+      - key: host.name
+        value: ${env:TS_HOSTNAME}
+        action: upsert
       - key: host.os
         value: ${env:HOST_OS}
         action: upsert
