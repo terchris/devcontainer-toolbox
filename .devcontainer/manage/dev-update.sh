@@ -87,18 +87,20 @@ fi
 EXTEND_BACKED_UP=false
 if [ -d ".devcontainer.extend" ]; then
     echo "Backing up .devcontainer.extend..."
-    rm -rf .devcontainer.extend.backup
-    mv .devcontainer.extend .devcontainer.extend.backup
+    sudo rm -rf .devcontainer.extend.backup
+    sudo mv .devcontainer.extend .devcontainer.extend.backup
     EXTEND_BACKED_UP=true
 fi
 
-# Replace .devcontainer
+# Replace .devcontainer (use sudo for mounted volume permissions)
 echo "Updating .devcontainer..."
-rm -rf .devcontainer
-cp -r "$TEMP_DIR/extract/.devcontainer" .
+sudo rm -rf .devcontainer
+sudo cp -r "$TEMP_DIR/extract/.devcontainer" .
+sudo chown -R "$(id -u):$(id -g)" .devcontainer
 
 # Install fresh .devcontainer.extend
-cp -r "$TEMP_DIR/extract/.devcontainer.extend" .
+sudo cp -r "$TEMP_DIR/extract/.devcontainer.extend" .
+sudo chown -R "$(id -u):$(id -g)" .devcontainer.extend
 
 # Cleanup
 rm -rf "$TEMP_DIR"
