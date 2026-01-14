@@ -190,6 +190,12 @@ main() {
     # Create command symlinks for easy access
     setup_command_symlinks
 
+    # Install welcome message for new terminals
+    if [[ -f "$SCRIPT_DIR/dev-welcome.sh" ]]; then
+        sudo cp "$SCRIPT_DIR/dev-welcome.sh" /etc/profile.d/dev-welcome.sh
+        sudo chmod +x /etc/profile.d/dev-welcome.sh
+    fi
+
     # Mark the git folder as safe
     mark_git_folder_as_safe
 
