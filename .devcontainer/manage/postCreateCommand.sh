@@ -105,7 +105,7 @@ check_missing_configs() {
         done
         echo ""
         echo "📋 To configure these settings, run:"
-        echo "   check-configs"
+        echo "   dev-check"
         echo ""
         echo "This will guide you through setting up your developer identity"
         echo "and other required configurations."
@@ -232,9 +232,9 @@ main() {
     printf_msg "📋 Quick Start:"
     printf "\r\n"
     printf_msg "   dev-setup                 Main menu - install tools, manage services"
-    printf_msg "   check-configs             Configure required settings (Git identity, etc.)"
+    printf_msg "   dev-check             Configure required settings (Git identity, etc.)"
     printf_msg "   dev-template              Initialize project from template"
-    printf_msg "   show-environment          Show detailed environment status"
+    printf_msg "   dev-env          Show detailed environment status"
     printf "\r\n"
     printf_line 61
     printf "\r\n"
@@ -249,7 +249,7 @@ main() {
         printf_msg "   This is required before you can make Git commits."
         printf "\r\n"
         printf_msg "   Run this command to configure it:"
-        printf_msg "     check-configs"
+        printf_msg "     dev-check"
         printf "\r\n"
         printf_line 61
         printf "\r\n"

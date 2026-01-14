@@ -33,30 +33,53 @@ The DevContainer Toolbox provides:
 
 ### How to set it up in your project
 
-For windows users the recommended approach for developing is to clone the project
-inside your WSL distribution. The described method below works for testing but will
-drastically decrease the overall perfomance of your machine. Read more about how
-to run containers on Windows inside WSL [here](.devcontainer/wsl-readme.md).
+For Windows users, the recommended approach is to clone the project inside your WSL distribution. Read more about running containers on Windows inside WSL [here](.devcontainer/wsl-readme.md).
 
-1. Open the directory where you would like to store the devcontainers repository.
-2. Open a terminal window and execute the following command to fetch and execute the download script. The script will download 2 folders into your current working folder, .devcontainer and .devcontainer.extend.
+1. Open a terminal in the directory where you want to add devcontainer support.
+2. Run the install command for your platform:
 
-If you are using windows
-
-```powershell
-wget https://raw.githubusercontent.com/norwegianredcross/devcontainer-toolbox/refs/heads/main/update-devcontainer.ps1 -O update-devcontainer.ps1; .\update-devcontainer.ps1
-```
-
-If you are using Mac/Linux
+**Mac/Linux:**
 
 ```bash
-wget https://raw.githubusercontent.com/norwegianredcross/devcontainer-toolbox/refs/heads/main/update-devcontainer.sh -O update-devcontainer.sh && chmod +x update-devcontainer.sh && ./update-devcontainer.sh
+curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
 ```
 
-3. Open your repository in VS Code by running `code .`
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+```
+
+If you see "running scripts is disabled on this system", use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex"
+```
+
+3. Open the folder in VS Code: `code .`
 4. When prompted, click "Reopen in Container"
 
-(More detailed if you want [Copy the devcontainer-toolbox](.devcontainer/copy-devcontainer-toolbox.md) folder to your repository)
+### Updating
+
+Updates are done from inside the devcontainer. Open your project in VS Code, start the devcontainer, then run:
+
+```bash
+dev-update
+```
+
+This checks for updates and applies them if available. Use `dev-update --force` to force an update.
+
+### Available Commands
+
+Inside the devcontainer, type `dev-` and press Tab to see all available commands:
+
+- `dev-setup` - Configure which tools to enable
+- `dev-services` - Manage development services
+- `dev-template` - Create files from templates
+- `dev-update` - Update devcontainer-toolbox
+- `dev-help` - Show all available commands
+
+(More detailed: [Copy the devcontainer-toolbox](.devcontainer/copy-devcontainer-toolbox.md))
 
 Setting up the devcontainer:
 
@@ -74,13 +97,13 @@ Here you will find examples on how to write web applications in C#, Python, Go, 
 
 Check out the [Urbalurba Dev template library](https://github.com/terchris/urbalurba-dev-templates) for more information.
 
-To selec a template just run the following command in your terminal:
+To select a template, run the following command inside the devcontainer:
 
 ```bash
-.devcontainer/dev/dev-template.sh
+dev-template
 ```
 
-This will give you a list of all available templates. Select the one you want to use and it will be downloaded to your current working directory.
+This will show you a list of all available templates. Select the one you want and it will be downloaded to your current working directory.
 
 ## How to extend the devcontainer
 

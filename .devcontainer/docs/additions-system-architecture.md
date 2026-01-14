@@ -612,7 +612,11 @@ SCRIPT_COMMANDS=(
 │   ├── dev-services.sh               # Service management helpers
 │   ├── dev-template.sh               # Project template system
 │   ├── postCreateCommand.sh          # Container startup script
-│   ├── check-configs.sh              # Config validation
+│   ├── dev-check.sh                  # Config validation
+│   ├── dev-clean.sh                  # Container cleanup
+│   ├── dev-env.sh                    # Environment info
+│   ├── dev-help.sh                   # Help command
+│   ├── dev-update.sh                 # Update toolbox
 │   └── generate-manual.sh            # Documentation generator
 │
 ├── additions/                        # Additions system

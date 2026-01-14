@@ -463,7 +463,7 @@ The devcontainer uses a two-layer approach for managing configurations and prere
   ❌ AWS Credentials (run: bash .../config-aws-credentials.sh)
 
 💡 To fix:
-   1. Run: check-configs
+   1. Run: dev-check
    2. Then re-run: bash .../project-installs.sh
 
 ❌ My Tool - installation skipped (prerequisites not met)
@@ -524,7 +524,7 @@ PREREQUISITE_CONFIGS="config-devcontainer-identity.sh config-aws-credentials.sh"
   ❌ AWS Credentials (run: bash /workspace/.devcontainer/additions/config-aws-credentials.sh)
 
 💡 To fix:
-   1. Run: check-configs (configures all missing items)
+   1. Run: dev-check (configures all missing items)
    2. Or run each config script listed above
    3. Then re-run: bash /workspace/.devcontainer.extend/project-installs.sh
 

@@ -80,7 +80,7 @@
 #       ❌ Developer Identity (run: bash .../config-devcontainer-identity.sh)
 #
 #     💡 To fix:
-#        1. Run: check-configs
+#        1. Run: dev-check
 #        2. Then re-run: bash .../project-installs.sh
 #
 #   Leave empty if no prerequisites needed (most tools don't need this).

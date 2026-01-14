@@ -83,7 +83,7 @@ install_single_tool() {
             show_missing_prerequisites "$prerequisite_configs" "$additions_dir"
             echo ""
             echo "  💡 To fix:"
-            echo "     1. Run: check-configs (configures all missing items)"
+            echo "     1. Run: dev-check (configures all missing items)"
             echo "     2. Or run each config script listed above"
             echo "     3. Then retry the installation"
             echo ""

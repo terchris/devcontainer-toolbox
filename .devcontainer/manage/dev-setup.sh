@@ -2415,7 +2415,7 @@ show_main_menu() {
                 ;;
             7)
                 clear
-                bash "$ADDITIONS_DIR/show-environment.sh"
+                bash "$ADDITIONS_DIR/dev-env.sh"
                 read -p "Press Enter to return to menu..." -r
                 clear
                 ;;

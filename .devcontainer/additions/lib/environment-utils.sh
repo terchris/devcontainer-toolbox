@@ -1,7 +1,7 @@
 #!/bin/bash
 # File: .devcontainer/additions/lib/environment-utils.sh
 # Purpose: Shared library for environment setup and validation
-# Used by: postCreateCommand.sh, show-environment.sh
+# Used by: postCreateCommand.sh, dev-env.sh
 #
 # This library provides common functions for setting up the devcontainer environment,
 # managing PATH, creating command symlinks, and validating installed tools.
@@ -37,7 +37,7 @@ fi
 # Setup PATH to include .devcontainer directory for custom commands
 #
 # This adds /workspace/.devcontainer to the PATH so that commands like
-# dev-setup, check-configs, etc. are available without full paths.
+# dev-setup, dev-check, etc. are available without full paths.
 #
 # Parameters:
 #   None
@@ -87,9 +87,11 @@ setup_devcontainer_path() {
 #   - dev-setup         -> manage/dev-setup.sh
 #   - dev-services      -> manage/dev-services.sh
 #   - dev-template      -> manage/dev-template.sh
-#   - check-configs     -> manage/check-configs.sh
-#   - clean-devcontainer -> manage/clean-devcontainer.sh
-#   - show-environment  -> additions/show-environment.sh
+#   - dev-update        -> manage/dev-update.sh
+#   - dev-check         -> manage/dev-check.sh
+#   - dev-clean         -> manage/dev-clean.sh
+#   - dev-env           -> manage/dev-env.sh
+#   - dev-help          -> manage/dev-help.sh
 #
 # Parameters:
 #   None
@@ -105,9 +107,11 @@ setup_command_symlinks() {
         "dev-setup"
         "dev-services"
         "dev-template"
-        "check-configs"
-        "clean-devcontainer"
-        "show-environment"
+        "dev-update"
+        "dev-check"
+        "dev-clean"
+        "dev-env"
+        "dev-help"
     )
 
     local created=0

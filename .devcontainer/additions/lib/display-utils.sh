@@ -1,7 +1,7 @@
 #!/bin/bash
 # File: .devcontainer/additions/lib/display-utils.sh
 # Purpose: Shared library for display formatting and box drawing
-# Used by: postCreateCommand.sh, dev-setup.sh, show-environment.sh
+# Used by: postCreateCommand.sh, dev-setup.sh, dev-env.sh
 #
 # This library provides common functions for consistent visual formatting across
 # all devcontainer management scripts.
@@ -21,7 +21,7 @@
 #------------------------------------------------------------------------------
 
 # Default widths for different output contexts
-# show-environment.sh uses 67 chars (wider for detailed info)
+# dev-env.sh uses 67 chars (wider for detailed info)
 # postCreateCommand.sh uses 61 chars (narrower for terminal output)
 # dev-setup.sh uses dialog (no box drawing needed)
 

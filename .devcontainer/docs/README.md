@@ -56,11 +56,13 @@ to see more info about the script >
 
 ```bash
 dev-services status       # Quick check: what services are running?
-check-configs             # Setup Git identity and credentials
-show-environment          # See what's installed
+dev-check                 # Setup Git identity and credentials
+dev-env                   # See what's installed
+dev-update                # Update devcontainer-toolbox
+dev-help                  # Show all available commands
 ```
 
-<TODO: the great thing about working in a devcontainer is that you can install and messup the whole system and then just get back to the starting position by rebuilding the container. Use the ´clean-devcontainer´command to delete the devcontainer so that you get back to a fresh container when you start it again>
+The great thing about working in a devcontainer is that you can install and mess up the whole system and then just get back to the starting position by rebuilding the container. Use `dev-clean` to delete the devcontainer so that you get back to a fresh container when you start it again.
 
 ## Customizing for Your Project
 
@@ -97,7 +99,7 @@ This runs automatically when the container is created. Perfect for:
 
 **Git identity not configured?**
 ```bash
-check-configs
+dev-check
 ```
 
 **Tool not working?**
@@ -176,7 +178,7 @@ Done! Start developing
 
 - **"How do I install [tool]?"** → Run `dev-setup`
 - **"How do I start [service]?"** → Run `dev-setup`
-- **"How do I configure [setting]?"** → Run `check-configs`
+- **"How do I configure [setting]?"** → Run `dev-check`
 - **"Where do I put project setup?"** → Edit `.devcontainer.extend/project-installs.sh`
 - **"Something's broken!"** → Check the troubleshooting section above
 

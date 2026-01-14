@@ -1,7 +1,7 @@
 #!/bin/bash
-# File: .devcontainer/manage/check-configs.sh
+# File: .devcontainer/manage/dev-check.sh
 # Purpose: Check and configure all required prerequisites
-# Usage: bash check-required-configs.sh
+# Usage: dev-check
 #
 # This script:
 # - Checks status of all required configurations

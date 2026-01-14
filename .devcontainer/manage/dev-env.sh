@@ -1,8 +1,8 @@
 #!/bin/bash
-# File: .devcontainer/additions/show-environment.sh
+# File: .devcontainer/manage/dev-env.sh
 #
 # Purpose: Display comprehensive development environment information
-# Usage: bash show-environment.sh [--short]
+# Usage: dev-env [--short]
 #
 # Shows:
 #   - System information (container, OS, disk space)
