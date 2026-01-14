@@ -3,6 +3,7 @@
     // or watch this video intro: https://www.youtube.com/watch?v=b1RavPr_878&t=38s
     // NEWER edit this file. It is the same for all projects. Extend in the .devcontainer.extend folder
     "name": "DevContainer Toolbox",
+    "_toolboxVersion": "TOOLBOX_VERSION_PLACEHOLDER",
     "build": {
         "dockerfile": "Dockerfile.base",
         "args": {

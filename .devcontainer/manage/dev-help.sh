@@ -1,30 +1,18 @@
 #!/bin/bash
 # dev-help.sh - Show available dev-* commands
 
-# Get version and repo from .version file
-# Note: Use BASH_SOURCE[0] instead of $0 to handle PATH-based invocation
+# Get script directory and source version utilities
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-# .version is in .devcontainer/ - handle both direct and manage/ subfolder locations
-VERSION_FILE="$SCRIPT_DIR/.version"
-if [ ! -f "$VERSION_FILE" ]; then
-    VERSION_FILE="$SCRIPT_DIR/../.version"
-fi
-VERSION="unknown"
-REPO=""
-if [ -f "$VERSION_FILE" ]; then
-    VERSION=$(grep "^VERSION=" "$VERSION_FILE" 2>/dev/null | cut -d= -f2)
-    REPO=$(grep "^REPO=" "$VERSION_FILE" 2>/dev/null | cut -d= -f2)
+
+# Handle both direct (.devcontainer/) and manage/ subfolder locations
+if [ -f "$SCRIPT_DIR/lib/version-utils.sh" ]; then
+    source "$SCRIPT_DIR/lib/version-utils.sh"
+elif [ -f "$SCRIPT_DIR/manage/lib/version-utils.sh" ]; then
+    source "$SCRIPT_DIR/manage/lib/version-utils.sh"
 fi
 
-echo "DevContainer Toolbox v$VERSION"
-
-# Check for updates (quick, non-blocking)
-if [ -n "$REPO" ]; then
-    REMOTE_VERSION=$(curl -fsSL --connect-timeout 2 "https://raw.githubusercontent.com/$REPO/main/version.txt" 2>/dev/null || echo "")
-    if [ -n "$REMOTE_VERSION" ] && [ "$REMOTE_VERSION" != "$VERSION" ]; then
-        echo "  ⬆️  Update available: v$REMOTE_VERSION (run 'dev-update')"
-    fi
-fi
+# Show version and update status
+show_version_info
 
 echo ""
 cat << 'EOF'

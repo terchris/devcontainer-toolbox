@@ -44,6 +44,9 @@ jobs:
           echo "REPO=$REPO" >> .devcontainer/.version
           echo "UPDATED=$(date +%Y-%m-%d)" >> .devcontainer/.version
 
+          # Update version in devcontainer.json (triggers VS Code rebuild prompt on update)
+          sed -i "s|TOOLBOX_VERSION_PLACEHOLDER|$VERSION|g" .devcontainer/devcontainer.json
+
       - name: 📦 Archive dev_containers folders
         run: |
           zip -r dev_containers.zip .devcontainer .devcontainer.extend

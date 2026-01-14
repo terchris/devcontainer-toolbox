@@ -116,11 +116,12 @@ if [ "$EXTEND_BACKED_UP" = true ]; then
     echo "  - Run: dev-setup"
 fi
 
+echo ""
+echo "🔄 Rebuild the container to apply all changes:"
+echo "   VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
 if [ "$REBUILD_NEEDED" = true ]; then
     echo ""
-    echo "devcontainer.json has changed."
-    echo "Rebuild the container for changes to take effect:"
-    echo "  VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
+    echo "   ⚠️  devcontainer.json has changed - rebuild is required!"
 fi
 
 echo ""
