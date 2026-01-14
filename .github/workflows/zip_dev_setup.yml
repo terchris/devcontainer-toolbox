@@ -21,6 +21,9 @@ jobs:
           echo "Repository: $REPO"
           echo "Version: $VERSION"
 
+          # Export VERSION to GitHub Actions environment for later steps
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
           # Update dev-update.sh (inside .devcontainer/manage/)
           if [ -f ".devcontainer/manage/dev-update.sh" ]; then
             sed -i "s|TOOLBOX_REPO_PLACEHOLDER|$REPO|g" .devcontainer/manage/dev-update.sh
