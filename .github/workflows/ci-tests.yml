@@ -19,11 +19,17 @@ on:
     paths:
       - '.devcontainer/**'
       - '.github/workflows/ci-tests.yml'
+      - 'docs/tools.md'
+      - 'docs/tools-details.md'
+      - 'README.md'
   pull_request:
     branches: [main]
     paths:
       - '.devcontainer/**'
       - '.github/workflows/ci-tests.yml'
+      - 'docs/tools.md'
+      - 'docs/tools-details.md'
+      - 'README.md'
   workflow_dispatch:
     inputs:
       run_unit_tests:
@@ -32,6 +38,36 @@ on:
         default: true
 
 jobs:
+  # ===========================================================================
+  # Stage 0: Check generated documentation is up to date
+  # ===========================================================================
+  docs-check:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run generate-manual.sh
+        run: |
+          chmod +x .devcontainer/manage/generate-manual.sh
+          .devcontainer/manage/generate-manual.sh
+
+      - name: Check for uncommitted changes
+        run: |
+          if [ -n "$(git status --porcelain docs/tools.md docs/tools-details.md README.md)" ]; then
+            echo "::error::Documentation is out of date. Run '.devcontainer/manage/generate-manual.sh' and commit the changes."
+            echo ""
+            echo "Changed files:"
+            git status --porcelain docs/tools.md docs/tools-details.md README.md
+            echo ""
+            echo "Diff:"
+            git diff docs/tools.md docs/tools-details.md README.md
+            exit 1
+          fi
+          echo "Documentation is up to date."
+
   # ===========================================================================
   # Stage 1: Build the devcontainer image
   # ===========================================================================
@@ -149,7 +185,7 @@ jobs:
   test-summary:
     name: Test Summary
     runs-on: ubuntu-latest
-    needs: [static-tests, shellcheck, unit-tests]
+    needs: [docs-check, static-tests, shellcheck, unit-tests]
     if: always()
 
     steps:
@@ -157,6 +193,12 @@ jobs:
         run: |
           echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.docs-check.result }}" == "success" ]; then
+            echo "- ✅ Documentation: UP TO DATE" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ Documentation: OUT OF DATE" >> $GITHUB_STEP_SUMMARY
+          fi
 
           if [ "${{ needs.static-tests.result }}" == "success" ]; then
             echo "- ✅ Static Tests: PASSED" >> $GITHUB_STEP_SUMMARY
@@ -182,5 +224,5 @@ jobs:
           echo "Note: Install cycle tests (Level 3) run locally in the devcontainer only." >> $GITHUB_STEP_SUMMARY
 
       - name: Fail if critical tests failed
-        if: needs.static-tests.result == 'failure' || needs.unit-tests.result == 'failure'
+        if: needs.docs-check.result == 'failure' || needs.static-tests.result == 'failure' || needs.unit-tests.result == 'failure'
         run: exit 1
