@@ -1,12 +1,18 @@
 name: 📦 Zip and Upload Artifacts
 
 on:
-  push:
+  # Run after CI tests complete successfully
+  workflow_run:
+    workflows: ["CI Tests"]
+    types:
+      - completed
     branches:
       - main
 
 jobs:
   zip-folders:
+    # Only run if CI tests passed
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
