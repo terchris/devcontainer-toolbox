@@ -7,7 +7,13 @@ set -e
 REPO="TOOLBOX_REPO_PLACEHOLDER"
 
 # Self-copy pattern: copy to temp and exec from there for safe self-update
+# We must capture WORKSPACE_ROOT before copying, as $0 changes when running from temp
 if [ -z "$DEV_UPDATE_RUNNING_FROM_TEMP" ]; then
+    # Calculate workspace root from original script location
+    # Script is at .devcontainer/dev-update, so go up one level
+    ORIGINAL_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    export DEV_UPDATE_WORKSPACE_ROOT="$(cd "$ORIGINAL_SCRIPT_DIR/.." && pwd)"
+
     TEMP_SCRIPT=$(mktemp)
     cp "$0" "$TEMP_SCRIPT"
     chmod +x "$TEMP_SCRIPT"
@@ -31,10 +37,8 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     exit 0
 fi
 
-# Find workspace root (where .devcontainer is)
-# The script is at .devcontainer/manage/dev-update.sh, so go up two levels
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# Use workspace root captured before self-copy
+WORKSPACE_ROOT="$DEV_UPDATE_WORKSPACE_ROOT"
 cd "$WORKSPACE_ROOT"
 
 echo "Checking for updates from $REPO..."
