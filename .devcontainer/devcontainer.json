@@ -25,7 +25,6 @@
     },
     // these are needed for setting up vpn in the container
     "runArgs": [
-        "--name=devcontainer-toolbox",
         "--cap-add=NET_ADMIN",
         "--cap-add=NET_RAW",
         "--cap-add=SYS_ADMIN",
