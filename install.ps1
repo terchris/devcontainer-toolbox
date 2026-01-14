@@ -4,7 +4,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$repo = "TOOLBOX_REPO_PLACEHOLDER"
+$repo = "terchris/devcontainer-toolbox"
 $url = "https://github.com/$repo/releases/download/latest/dev_containers.zip"
 $tempZip = Join-Path $env:TEMP "dev_containers.zip"
 $tempExtract = Join-Path $env:TEMP "dev_containers_extract"

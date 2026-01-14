@@ -3,7 +3,7 @@
 # Run with: curl -fsSL https://raw.githubusercontent.com/REPO/main/install.sh | bash
 set -e
 
-REPO="TOOLBOX_REPO_PLACEHOLDER"
+REPO="terchris/devcontainer-toolbox"
 URL="https://github.com/$REPO/releases/download/latest/dev_containers.zip"
 TEMP_DIR=$(mktemp -d)
 
