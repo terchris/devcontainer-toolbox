@@ -191,7 +191,14 @@ main() {
     setup_command_symlinks
 
     # Install welcome message for new terminals
+    # Note: Using /etc/bash.bashrc because VS Code terminal is non-login shell
     if [[ -f "$SCRIPT_DIR/dev-welcome.sh" ]]; then
+        # Append source command to system bashrc if not already there
+        if ! grep -q "dev-welcome.sh" /etc/bash.bashrc 2>/dev/null; then
+            echo "" | sudo tee -a /etc/bash.bashrc > /dev/null
+            echo "# DevContainer Toolbox welcome message" | sudo tee -a /etc/bash.bashrc > /dev/null
+            echo "source /etc/profile.d/dev-welcome.sh 2>/dev/null || true" | sudo tee -a /etc/bash.bashrc > /dev/null
+        fi
         sudo cp "$SCRIPT_DIR/dev-welcome.sh" /etc/profile.d/dev-welcome.sh
         sudo chmod +x /etc/profile.d/dev-welcome.sh
     fi
