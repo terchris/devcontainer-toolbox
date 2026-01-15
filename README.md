@@ -16,6 +16,15 @@ curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/
 irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
+<details>
+<summary>Prefer to inspect first? Download the zip manually</summary>
+
+1. Download [dev_containers.zip](https://github.com/terchris/devcontainer-toolbox/releases/download/latest/dev_containers.zip)
+2. Extract to your project folder
+3. The zip contains `.devcontainer/` and `.devcontainer.extend/`
+
+</details>
+
 **2. Open in VS Code:**
 ```bash
 code .
@@ -24,6 +33,18 @@ code .
 **3. Click "Reopen in Container"** when prompted.
 
 Done! Start coding.
+
+## What Gets Installed
+
+The install script adds three folders to your project:
+
+| Folder | Purpose | Git |
+|--------|---------|-----|
+| `.devcontainer/` | The toolbox (don't edit, updated via `dev-update`) | Commit |
+| `.devcontainer.extend/` | Your project config - share with team | Commit |
+| `.devcontainer.secrets/` | API keys and credentials | Ignored |
+
+See [Getting Started](docs/getting-started.md) for details.
 
 ## What You Get
 
@@ -47,12 +68,13 @@ dev-setup
 
 ![dev-setup menu](docs/dev-setup.png)
 
-See [docs/tools-details.md](docs/tools-details.md) for detailed installation options.
+See [docs/tools.md](docs/tools.md) for detailed installation options.
 
 ## Why DevContainer Toolbox?
 
 - **"Works on my machine"** - Now it works on everyone's machine
-- **New developer?** - Full setup in minutes, not days
+- **New developer on the project?** - Full setup in minutes, not days
+- **Production bug?** - Ops team can clone, open, and debug immediately - no setup delays
 - **Try new tools** - Experiment safely without breaking your system
 - **Team consistency** - Everyone uses the same versions
 
@@ -68,11 +90,31 @@ Inside the devcontainer:
 | `dev-template` | Create project from templates |
 | `dev-services` | Manage background services |
 
+## New to Containers?
+
+A **container** is like a lightweight virtual machine that runs your development environment. Instead of installing Python, Node, Go, etc. on your computer, everything runs inside the container.
+
+A **devcontainer** is VS Code's way of developing inside a container. Your code stays on your computer, but all the tools run in the container.
+
+**Benefits:**
+- Install nothing on your computer (except Docker)
+- Can't break your system by experimenting
+- Delete the container and start fresh anytime
+- Same environment for everyone on the team
+
+**Learn more:** [VS Code Devcontainers Guide](https://code.visualstudio.com/docs/devcontainers/containers) | [5-minute video tutorial](https://www.youtube.com/watch?v=b1RavPr_878)
+
 ## Prerequisites
 
-- **Docker** - We recommend [Rancher Desktop](https://rancherdesktop.io/) (free, open source)
+- **Docker** - Install [Rancher Desktop](https://rancherdesktop.io/) (free and open source)
+  - *Why not Docker Desktop?* Docker Desktop requires a [paid subscription](https://www.docker.com/pricing/) for companies. Rancher Desktop is 100% free.
 - **VS Code** with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- **Windows users** - Use WSL for best experience
+- **Windows users** - First install WSL, then Rancher Desktop:
+  ```powershell
+  # Run in PowerShell as Administrator
+  wsl --install
+  # Restart your computer, then install Rancher Desktop
+  ```
 
 ## Project Templates
 
@@ -84,21 +126,12 @@ dev-template
 
 Templates for React, Next.js, Spring Boot, Express, and more. See the [template library](https://github.com/terchris/urbalurba-dev-templates).
 
-## Customize for Your Project
-
-Add your project's dependencies to `.devcontainer.extend/project-installs.sh`:
-
-```bash
-#!/bin/bash
-npm install           # or pip install -r requirements.txt
-```
-
-Every developer gets the same setup automatically.
-
 ## Documentation
 
-- [User Guide](docs/README.md) - Commands, configuration, troubleshooting
+- [Getting Started](docs/getting-started.md) - Installation and first steps
+- [Configuration](docs/configuration.md) - Customize for your project
 - [Available Tools](docs/tools.md) - All installable tools
+- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
 ## Contributing
 

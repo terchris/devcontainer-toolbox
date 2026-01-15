@@ -2,7 +2,9 @@
 
 How plans become implemented features.
 
-**Related:** [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
+**Related:**
+- [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
+- [CI-CD.md](../contributors/CI-CD.md) - What to check before merging to main
 
 ---
 
@@ -156,6 +158,18 @@ Claude will:
    > - Review it on GitHub
    > - Ask someone to review it
    > - Merge it when ready"
+
+**Before merging the PR**, Claude will ask:
+
+6. **Check version bump**:
+   > "Should we bump the version before merging?
+   > - Current version: 1.0.3
+   > - If yes, what should the new version be?"
+
+7. **Check documentation** (if install scripts changed):
+   > "Install scripts were modified. I'll run `generate-manual.sh` to update the documentation."
+
+See [CI-CD.md](../contributors/CI-CD.md) for details on what happens after merge.
 
 ---
 

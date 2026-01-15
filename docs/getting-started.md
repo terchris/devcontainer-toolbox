@@ -15,10 +15,29 @@ A ready-to-use development environment that works the same on Windows, Mac, and 
 
 ## Prerequisites
 
-Install Docker, preferably via [Rancher Desktop](https://rancherdesktop.io/) instead of Docker Desktop.
+### All Platforms
 
-- **Windows**: Install inside WSL. See [setup-windows.md](../.devcontainer/setup/setup-windows.md)
-- **Mac/Linux**: See [setup-mac.md](../.devcontainer/setup/setup-mac.md)
+1. **Docker** - Install [Rancher Desktop](https://rancherdesktop.io/) (free and open source)
+   - *Why not Docker Desktop?* Docker Desktop requires a [paid subscription](https://www.docker.com/pricing/) for companies. Rancher Desktop is 100% free.
+
+2. **VS Code** with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+### Windows Users
+
+Before installing Rancher Desktop, you need WSL (Windows Subsystem for Linux):
+
+```powershell
+# Run in PowerShell as Administrator
+wsl --install
+```
+
+Restart your computer after the command completes, then install Rancher Desktop.
+
+**Note:** This works on Windows 10 (build 19041+) and Windows 11. For detailed setup, see [setup-windows.md](../.devcontainer/setup/setup-windows.md).
+
+### Mac/Linux Users
+
+Just install Rancher Desktop - no additional setup needed. See [setup-mac.md](../.devcontainer/setup/setup-mac.md) for details.
 
 ## Installation (3 Steps)
 
@@ -52,6 +71,56 @@ code .
 When VS Code prompts "Reopen in Container", click it. First time takes a few minutes.
 
 That's it! You're ready to start developing.
+
+## What Gets Installed
+
+After installation, your project will have these folders:
+
+```
+your-project/
+├── .devcontainer/              # The toolbox (do not edit)
+├── .devcontainer.extend/       # Your project config (commit to git)
+├── .devcontainer.secrets/      # Credentials (git-ignored)
+└── .devcontainer.backup/       # Backup of previous .devcontainer (if any)
+```
+
+### .devcontainer/ - The Toolbox
+
+Contains all devcontainer-toolbox files. Updated via `dev-update`.
+
+| Folder | Contents |
+|--------|----------|
+| `manage/` | Commands (`dev-setup`, `dev-help`, etc.) |
+| `additions/` | Install scripts, services, and libraries |
+| `setup/` | Platform setup guides (Windows, Mac) |
+
+**Do not edit** - your changes will be overwritten on update.
+
+### .devcontainer.extend/ - Project Config
+
+Your project-specific customizations. **Commit this to git** so your team gets the same setup.
+
+| File | Purpose |
+|------|---------|
+| `enabled-tools.conf` | Tools to auto-install on container rebuild |
+| `enabled-services.conf` | Services to auto-start |
+| `project-installs.sh` | Your custom setup script (npm install, etc.) |
+
+### .devcontainer.secrets/ - Credentials
+
+Stores sensitive configuration outside git. Survives container rebuilds.
+
+| Example | Purpose |
+|---------|---------|
+| `devcontainer-identity` | Git user name and email |
+| `nginx-config/` | Nginx backend configuration |
+| API keys, tokens | Various tool credentials |
+
+**Git-ignored** - never committed.
+
+### .devcontainer.backup/ - Backup
+
+If you had an existing `.devcontainer/` folder before installing, it's backed up here. You can safely delete this after verifying your setup works.
 
 ## Using the DevContainer
 

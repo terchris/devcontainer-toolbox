@@ -17,15 +17,18 @@ docs/contributors/
 ├── libraries.md                   # Library functions reference
 │
 ├── architecture.md                # System architecture
+├── menu-system.md                 # Dialog tool usage
 ├── categories.md                  # Tool category reference
-├── service-dependencies.md        # Service dependency flow
+├── services-dependencies.md       # Service dependency flow
 │
-├── infrastructure.md              # Infrastructure services index
-├── infrastructure-nginx.md        # Nginx reverse proxy
-├── infrastructure-otel.md         # OTEL monitoring
+├── services.md                    # Services documentation index
+├── services-nginx.md              # Nginx reverse proxy service
+├── services-otel.md               # OTEL monitoring service
 │
-├── testing.md                     # Test framework
-└── monitoring-requirements.md     # Container monitoring requirements
+├── testing.md                     # Running tests, adding tests
+├── testing-maintenance.md         # Maintaining the test framework
+├── CI-CD.md                       # GitHub Actions and release automation
+└── services-monitoring-requirements.md  # Container monitoring requirements
 ```
 
 ---
@@ -46,18 +49,19 @@ docs/contributors/
 | Document | Purpose |
 |----------|---------|
 | [architecture.md](architecture.md) | System architecture, script types, metadata |
+| [menu-system.md](menu-system.md) | Dialog tool usage and widgets |
 | [categories.md](categories.md) | Tool category definitions |
-| [service-dependencies.md](service-dependencies.md) | Service startup order and dependencies |
+| [services-dependencies.md](services-dependencies.md) | Service startup order and dependencies |
 
 ---
 
-## Infrastructure
+## Services
 
 | Document | Purpose |
 |----------|---------|
-| [infrastructure.md](infrastructure.md) | Infrastructure services overview |
-| [infrastructure-nginx.md](infrastructure-nginx.md) | Nginx reverse proxy documentation |
-| [infrastructure-otel.md](infrastructure-otel.md) | OTEL monitoring documentation |
+| [services.md](services.md) | Services overview |
+| [services-nginx.md](services-nginx.md) | Nginx reverse proxy service |
+| [services-otel.md](services-otel.md) | OTEL monitoring service |
 
 ---
 
@@ -65,9 +69,11 @@ docs/contributors/
 
 | Document | Purpose |
 |----------|---------|
-| [testing.md](testing.md) | Test framework and how to run tests |
+| [testing.md](testing.md) | Running tests and adding tests for scripts |
+| [testing-maintenance.md](testing-maintenance.md) | Maintaining the test framework |
+| [CI-CD.md](CI-CD.md) | GitHub Actions and pre-merge checklist |
 | [RELEASING.md](RELEASING.md) | How to bump versions and create releases |
-| [monitoring-requirements.md](monitoring-requirements.md) | Container monitoring requirements |
+| [services-monitoring-requirements.md](services-monitoring-requirements.md) | Container monitoring requirements |
 
 ---
 

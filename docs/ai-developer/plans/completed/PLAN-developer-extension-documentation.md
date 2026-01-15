@@ -1,6 +1,6 @@
 # Plan: Developer Extension Documentation
 
-## Status: Active
+## Status: Completed
 
 **Goal**: Consolidate and improve documentation for developers who want to extend devcontainer-toolbox with new tools, making it easy to contribute.
 
@@ -169,18 +169,29 @@ User confirms README-additions.md is concise and links to proper documentation.
 ```
 docs/contributors/
 ├── README.md                      # Index
+├── RELEASING.md                   # Release process
 ├── adding-tools.md                # Overview + links
 ├── creating-install-scripts.md    # How to create install-*.sh
 ├── creating-service-scripts.md    # How to create service-*.sh
 ├── libraries.md                   # Library functions reference
-├── architecture.md                # System architecture (existing)
-├── categories.md                  # Category definitions (existing)
-├── testing.md                     # Test framework
-├── infrastructure.md              # Infrastructure index
-├── infrastructure-nginx.md        # Nginx documentation
-├── infrastructure-otel.md         # OTEL documentation
-├── service-dependencies.md        # Service dependencies (existing)
-└── ...
+├── architecture.md                # System architecture
+├── menu-system.md                 # Dialog tool usage (split from architecture)
+├── categories.md                  # Category definitions
+├── services.md                    # Services index (renamed from infrastructure)
+├── services-nginx.md              # Nginx service
+├── services-otel.md               # OTEL service
+├── services-dependencies.md       # Service dependencies
+├── services-monitoring-requirements.md  # Monitoring requirements
+├── testing.md                     # Running tests
+├── testing-maintenance.md         # Maintaining test framework
+└── CI-CD.md                       # GitHub Actions and CI
+
+docs/ai-developer/
+├── README.md                      # AI developer index
+├── WORKFLOW.md                    # Plan to implementation flow
+├── PLANS.md                       # Plan structure and templates
+├── CREATING-SCRIPTS.md            # AI guide for creating scripts
+└── plans/                         # Implementation plans
 ```
 
 ---
@@ -221,3 +232,74 @@ docs/contributors/
 - `.devcontainer/additions/otel/README-otel.md`
 - `.devcontainer/additions/tests/README.md`
 - `.devcontainer/additions/tests/integration/README.md`
+
+---
+
+## Additional Work (Beyond Original Scope)
+
+During implementation, additional improvements were made based on user feedback and validation.
+
+### Documentation Restructuring
+
+- **Split architecture.md** - Moved Dialog tool content to `menu-system.md`
+- **Renamed infrastructure → services** - Better reflects content:
+  - `infrastructure.md` → `services.md`
+  - `infrastructure-nginx.md` → `services-nginx.md`
+  - `infrastructure-otel.md` → `services-otel.md`
+  - `service-dependencies.md` → `services-dependencies.md`
+  - `monitoring-requirements.md` → `services-monitoring-requirements.md`
+
+### New Documentation Created
+
+- **CI-CD.md** (contributors/) - GitHub Actions, versioning, pre-merge checklist - single source of truth
+- **testing-maintenance.md** - How to maintain the test framework (for framework maintainers)
+- **CREATING-SCRIPTS.md** (ai-developer/) - AI guide for creating scripts with metadata reference
+
+### README.md Improvements (New User Experience)
+
+- **"What Gets Installed" table** - Explains folder structure at a glance
+- **"New to Containers?" section** - Explains containers/devcontainers for newcomers
+- **Collapsible manual zip download** - Option for users who prefer not to run curl|bash
+- **Simpler Windows prerequisites** - Updated to `wsl --install` (works on Windows 10 19041+ and 11)
+- **Rancher Desktop explanation** - Notes it's free vs Docker Desktop paid for companies
+- **"Production bug?" benefit** - Added ops team use case
+- **Removed duplicate content** - "Customize for Your Project" moved to configuration.md only
+
+### getting-started.md Improvements
+
+- **Clearer Windows vs Mac/Linux instructions** - Separate sections
+- **Simplified WSL installation** - Single `wsl --install` command
+- **"What Gets Installed" section** - Detailed folder structure explanation
+
+### Contributor Documentation Improvements
+
+- **adding-tools.md** - Added "Run inside the devcontainer" clarification
+- **adding-tools.md** - Added "Submitting Your Contribution" section with full PR workflow
+- **CREATING-SCRIPTS.md** - Added "Run inside the devcontainer" note in Testing section
+- **CREATING-SCRIPTS.md** - Added "After Adding a Script" section (generate-manual.sh requirement)
+- **Library guidance** - Changed from "don't modify" to guidance on when to create new libraries
+
+### Cross-Reference Updates
+
+- All files updated to use new service-* names
+- testing.md references CI-CD.md instead of workflow files directly
+- AI developer docs emphasize "tests must pass" and CI will reject failing PRs
+- WORKFLOW.md updated with pre-merge version check steps
+- Both adding-tools.md and CREATING-SCRIPTS.md now have consistent contribution guidance
+
+---
+
+## Completion Summary
+
+**Original scope**: Move scattered documentation from `.devcontainer/additions/` to `docs/contributors/`
+
+**Delivered**:
+1. All 5 phases completed as planned
+2. Significant improvements to new user onboarding (README.md, getting-started.md)
+3. Clear contribution workflow for both human developers and AI assistants
+4. CI/CD documentation as single source of truth
+5. Test framework maintenance documentation for maintainers
+6. Consistent naming conventions (services-* prefix)
+7. Clean separation of concerns (architecture vs menu-system)
+
+**Lines of documentation**: ~3,500 lines moved/created/updated

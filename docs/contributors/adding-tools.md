@@ -129,6 +129,8 @@ Available in `.devcontainer/additions/addition-templates/`:
 
 ## Testing
 
+Run these inside the devcontainer:
+
 ```bash
 # Test help
 .devcontainer/additions/install-mytool.sh --help
@@ -143,9 +145,14 @@ dev-setup
 # Test uninstall
 .devcontainer/additions/install-mytool.sh --uninstall
 
+# Run automated tests
+.devcontainer/additions/tests/run-all-tests.sh static install-mytool.sh
+
 # Run shellcheck
 shellcheck .devcontainer/additions/install-mytool.sh
 ```
+
+See [testing.md](testing.md) for more details on the test framework.
 
 ---
 
@@ -161,10 +168,37 @@ Some documentation files live alongside code (not in `docs/`) because they're me
 
 ## After Adding a Script
 
-Regenerate documentation:
+Regenerate documentation (run inside the devcontainer):
 
 ```bash
 .devcontainer/manage/generate-manual.sh
 ```
 
 This updates `docs/tools.md` so users can see the new tool.
+
+---
+
+## Submitting Your Contribution
+
+1. **Fork the repository** on GitHub
+
+2. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/add-elixir-support
+   ```
+
+3. **Make your changes:**
+   - Add your script
+   - Run tests: `.devcontainer/additions/tests/run-all-tests.sh static`
+   - Regenerate docs: `.devcontainer/manage/generate-manual.sh`
+
+4. **Commit and push:**
+   ```bash
+   git add .
+   git commit -m "feat: add Elixir development environment"
+   git push -u origin feature/add-elixir-support
+   ```
+
+5. **Create a Pull Request** on GitHub
+
+See [CI-CD.md](CI-CD.md) for what checks run on your PR.

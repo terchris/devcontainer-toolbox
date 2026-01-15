@@ -1,15 +1,15 @@
-# Infrastructure Documentation
+# Services Documentation
 
-Documentation for the built-in infrastructure services in devcontainer-toolbox.
+Documentation for the built-in services in devcontainer-toolbox.
 
 ---
 
-## Services
+## Available Services
 
 | Service | Description | Documentation |
 |---------|-------------|---------------|
-| **Nginx** | Reverse proxy for routing to local services | [infrastructure-nginx.md](infrastructure-nginx.md) |
-| **OTEL** | OpenTelemetry monitoring and observability | [infrastructure-otel.md](infrastructure-otel.md) |
+| **Nginx** | Reverse proxy for routing to local services | [services-nginx.md](services-nginx.md) |
+| **OTEL** | OpenTelemetry monitoring and observability | [services-otel.md](services-otel.md) |
 
 ---
 
@@ -23,7 +23,7 @@ The nginx service provides a reverse proxy that routes requests to services runn
 - SSL/TLS support
 - WebSocket support
 
-See [infrastructure-nginx.md](infrastructure-nginx.md) for full documentation.
+See [services-nginx.md](services-nginx.md) for full documentation.
 
 ---
 
@@ -37,12 +37,13 @@ The OpenTelemetry (OTEL) stack provides monitoring, logging, and tracing for the
 - Distributed tracing
 - Grafana dashboards
 
-See [infrastructure-otel.md](infrastructure-otel.md) for full documentation.
+See [services-otel.md](services-otel.md) for full documentation.
 
 ---
 
 ## Related Documentation
 
-- [Service Dependencies](service-dependencies.md) - How services depend on each other
+- [Services Dependencies](services-dependencies.md) - How services depend on each other
+- [Services Monitoring Requirements](services-monitoring-requirements.md) - Container monitoring requirements
 - [Creating Service Scripts](creating-service-scripts.md) - How to create new services
 - [Architecture](architecture.md) - System architecture overview

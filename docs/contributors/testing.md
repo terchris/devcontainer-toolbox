@@ -2,6 +2,8 @@
 
 Automated tests for validating install scripts, config scripts, and libraries.
 
+**For maintaining the test framework itself, see [testing-maintenance.md](testing-maintenance.md).**
+
 ---
 
 ## Quick Start
@@ -158,12 +160,14 @@ Tests run automatically in CI on every PR:
 - **Unit tests**: Always run (safe execution)
 - **Install tests**: Run locally only (require devcontainer)
 
-See `.github/workflows/ci-tests.yml` for CI configuration.
+See [CI-CD.md](CI-CD.md) for details on GitHub Actions and what CI checks.
 
 ---
 
 ## Related Documentation
 
+- [testing-maintenance.md](testing-maintenance.md) - How to maintain the test framework
+- [CI-CD.md](CI-CD.md) - GitHub Actions and CI pipeline
 - [Creating Install Scripts](creating-install-scripts.md) - How to create scripts
 - [Libraries Reference](libraries.md) - Library functions to test
 - [Architecture](architecture.md) - System overview
