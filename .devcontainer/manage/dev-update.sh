@@ -96,24 +96,37 @@ if [ -f ".devcontainer/devcontainer.json" ] && [ -f "$TEMP_DIR/extract/.devconta
     fi
 fi
 
-# Handle existing .devcontainer.extend
-EXTEND_BACKED_UP=false
-if [ -d ".devcontainer.extend" ]; then
-    echo "Backing up .devcontainer.extend..."
-    sudo rm -rf .devcontainer.extend.backup
-    sudo mv .devcontainer.extend .devcontainer.extend.backup
-    EXTEND_BACKED_UP=true
-fi
-
 # Replace .devcontainer (use sudo for mounted volume permissions)
 echo "Updating .devcontainer..."
 sudo rm -rf .devcontainer
 sudo cp -r "$TEMP_DIR/extract/.devcontainer" .
 sudo chown -R "$(id -u):$(id -g)" .devcontainer
 
-# Install fresh .devcontainer.extend
-sudo cp -r "$TEMP_DIR/extract/.devcontainer.extend" .
-sudo chown -R "$(id -u):$(id -g)" .devcontainer.extend
+# Handle .devcontainer.extend based on format
+EXTEND_BACKED_UP=false
+if [ -d ".devcontainer.extend" ]; then
+    # Check if it's new format (has *.conf files) or old format (no *.conf files)
+    if ls .devcontainer.extend/*.conf 1>/dev/null 2>&1; then
+        # New format with *.conf files - preserve user config
+        echo "Preserving existing .devcontainer.extend configuration..."
+    else
+        # Old format without *.conf files - back it up and install fresh
+        echo "Detected old .devcontainer.extend format (no *.conf files)..."
+        echo "Backing up to .devcontainer.extend.backup..."
+        sudo rm -rf .devcontainer.extend.backup
+        sudo mv .devcontainer.extend .devcontainer.extend.backup
+        EXTEND_BACKED_UP=true
+
+        echo "Installing new .devcontainer.extend..."
+        sudo cp -r "$TEMP_DIR/extract/.devcontainer.extend" .
+        sudo chown -R "$(id -u):$(id -g)" .devcontainer.extend
+    fi
+else
+    # No .devcontainer.extend exists - install fresh
+    echo "Installing default .devcontainer.extend..."
+    sudo cp -r "$TEMP_DIR/extract/.devcontainer.extend" .
+    sudo chown -R "$(id -u):$(id -g)" .devcontainer.extend
+fi
 
 # Cleanup
 rm -rf "$TEMP_DIR"
@@ -123,10 +136,10 @@ echo "Updated to version $REMOTE_VERSION"
 
 if [ "$EXTEND_BACKED_UP" = true ]; then
     echo ""
-    echo "Your previous .devcontainer.extend was backed up."
-    echo "Review .devcontainer.extend.backup and reconfigure:"
-    echo "  - Edit .devcontainer.extend/enabled-tools.conf"
-    echo "  - Run: dev-setup"
+    echo "⚠️  Your old .devcontainer.extend was backed up to .devcontainer.extend.backup"
+    echo "   The old format is no longer supported. Please reconfigure:"
+    echo "   - Edit .devcontainer.extend/enabled-tools.conf"
+    echo "   - Run: dev-setup"
 fi
 
 echo ""

@@ -1,112 +1,122 @@
 # Commands Reference
 
+> **Auto-generated** | Last updated: 2026-01-15 13:36:41  
+> Regenerate with: `dev-docs`
+
 All commands available inside the devcontainer. Type `dev-` and press Tab to see them.
 
-## Main Commands
+## Quick Reference
 
-### dev-setup
-
-Interactive menu for managing your development environment.
-
-```bash
-dev-setup
-```
-
-From this menu you can:
-- Browse and install development tools
-- Manage background services
-- Configure settings
-- View environment status
-
-### dev-help
-
-Show all available commands and version info.
-
-```bash
-dev-help
-```
-
-### dev-update
-
-Update devcontainer-toolbox to the latest version.
-
-```bash
-dev-update           # Check and update if newer version available
-dev-update --force   # Force update even if same version
-```
-
-After updating, VS Code will prompt to rebuild the container.
+| Command | Description |
+|---------|-------------|
+| [`dev-check`](#dev-check) | Configure and validate Git identity and credentials |
+| [`dev-clean`](#dev-clean) | Clean up devcontainer resources |
+| [`dev-env`](#dev-env) | Show installed tools and environment info |
+| [`dev-help`](#dev-help) | Show available commands and version info |
+| [`dev-services`](#dev-services) | Manage background services (start, stop, status, logs) |
+| [`dev-template`](#dev-template) | Create project files from templates |
+| [`dev-update`](#dev-update) | Update devcontainer-toolbox to latest version |
+| [`dev-setup`](#dev-setup) | Interactive menu for installing tools and managing services |
+| [`dev-docs`](#dev-docs) | Generate documentation (tools.md, commands.md) |
+| [`dev-test`](#dev-test) | Run static, unit, and install tests |
 
 ---
 
-## Service Management
-
-### dev-services
-
-Manage background services (nginx, OTEL, etc.).
-
-```bash
-dev-services status          # Show status of all services
-dev-services start <name>    # Start a service
-dev-services stop <name>     # Stop a service
-dev-services restart <name>  # Restart a service
-dev-services logs <name>     # View service logs
-```
-
----
-
-## Configuration
+## System Commands
 
 ### dev-check
 
-Configure and verify Git identity and credentials.
+Configure and validate Git identity and credentials
 
 ```bash
-dev-check            # Interactive configuration
-dev-check --show     # Show current configuration
+dev-check
+dev-check --show    # Show current configuration
 ```
-
-Settings are saved to `.devcontainer.secrets/` and restored on container rebuild.
-
-### dev-env
-
-Show what's installed in the current environment.
-
-```bash
-dev-env
-```
-
----
-
-## Templates
-
-### dev-template
-
-Create project files from templates.
-
-```bash
-dev-template
-```
-
-Shows a menu of available templates from the [template library](https://github.com/terchris/urbalurba-dev-templates).
-
----
-
-## Maintenance
 
 ### dev-clean
 
-Delete the devcontainer to start fresh.
+Clean up devcontainer resources
 
 ```bash
 dev-clean
 ```
 
-After running this, reopen in VS Code to get a clean container.
+### dev-env
+
+Show installed tools and environment info
+
+```bash
+dev-env
+```
+
+### dev-help
+
+Show available commands and version info
+
+```bash
+dev-help
+```
+
+### dev-services
+
+Manage background services (start, stop, status, logs)
+
+```bash
+dev-services
+dev-services status          # Show status of all services
+dev-services start <name>    # Start a service
+dev-services stop <name>     # Stop a service
+dev-services logs <name>     # View service logs
+```
+
+### dev-template
+
+Create project files from templates
+
+```bash
+dev-template
+```
+
+### dev-update
+
+Update devcontainer-toolbox to latest version
+
+```bash
+dev-update
+dev-update --force   # Force update even if same version
+```
+
+### dev-setup
+
+Interactive menu for installing tools and managing services
+
+```bash
+dev-setup
+```
 
 ---
 
-## Running Scripts Directly
+## Contributor Tools
+
+### dev-docs
+
+Generate documentation (tools.md, commands.md)
+
+```bash
+dev-docs
+```
+
+### dev-test
+
+Run static, unit, and install tests
+
+```bash
+dev-test
+```
+
+---
+
+## Running Install Scripts Directly
 
 All install scripts can also be run directly:
 
