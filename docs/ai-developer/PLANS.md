@@ -9,7 +9,7 @@ How we plan, track, and implement features and fixes.
 ## Folder Structure
 
 ```
-docs/contributors/plans/
+docs/ai-developer/plans/
 ├── backlog/      # Approved plans waiting for implementation
 ├── active/       # Currently being worked on (max 1-2 at a time)
 └── completed/    # Done - kept for reference
@@ -198,7 +198,7 @@ Technical details, gotchas, code patterns to follow.
 
 1. Update status: `## Status: Completed`
 2. Add completion date: `**Completed**: 2026-01-14`
-3. Move file: `mv docs/contributors/plans/active/PLAN-xyz.md docs/contributors/plans/completed/`
+3. Move file: `mv docs/ai-developer/plans/active/PLAN-xyz.md docs/ai-developer/plans/completed/`
 4. (Optional) Close GitHub issue if using issue tracking
 
 ---

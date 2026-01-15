@@ -4,9 +4,9 @@ Project-specific instructions for Claude Code when working on devcontainer-toolb
 
 ## Plan Workflow
 
-**IMPORTANT:** Read `docs/contributors/PLANS.md` for full plan structure, templates, and best practices.
+**IMPORTANT:** Read `docs/ai-developer/PLANS.md` for full plan structure, templates, and best practices.
 
-When implementing a plan from `docs/contributors/plans/`:
+When implementing a plan from `docs/ai-developer/plans/`:
 
 1. **Read the full plan first** - understand all phases before starting
 2. **Work phase by phase** - never skip ahead
@@ -21,10 +21,11 @@ When implementing a plan from `docs/contributors/plans/`:
 
 When user requests a new feature or fix:
 
-1. Read `docs/contributors/PLANS.md` for templates and structure
-2. Create plan file in `docs/contributors/plans/backlog/`
+1. Read `docs/ai-developer/PLANS.md` for templates and structure
+2. Create plan file in `docs/ai-developer/plans/backlog/`
 3. Ask user to review the plan before implementing
-4. Only move to `active/` after user approves
+4. When user approves, ask: "Do you want to work on a feature branch? (recommended)"
+5. Only move to `active/` after user approves
 
 ## Git Commits
 
@@ -36,7 +37,8 @@ When user requests a new feature or fix:
 
 - User docs: `docs/`
 - Contributor docs: `docs/contributors/`
-- Plans: `docs/contributors/plans/`
+- AI developer docs: `docs/ai-developer/`
+- Plans: `docs/ai-developer/plans/`
 
 ## Key Files
 

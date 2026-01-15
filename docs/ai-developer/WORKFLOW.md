@@ -61,7 +61,7 @@ Tell Claude what you want to do:
 
 Claude will:
 
-1. **Create plan file** in `docs/contributors/plans/backlog/`:
+1. **Create plan file** in `docs/ai-developer/plans/backlog/`:
    - `PLAN-*.md` if the solution is clear
    - `INVESTIGATE-*.md` if research is needed first
 2. **Ask you to review** the plan
@@ -95,7 +95,7 @@ Claude will:
 
 1. **Move plan to active/**:
    ```bash
-   mv docs/contributors/plans/backlog/PLAN-xyz.md docs/contributors/plans/active/
+   mv docs/ai-developer/plans/backlog/PLAN-xyz.md docs/ai-developer/plans/active/
    ```
 
 2. **Ask about feature branch** (recommended):
@@ -180,7 +180,7 @@ Claude will:
 YOU: I want to add SCRIPT_VER to all install scripts
 
 CLAUDE: I'll create a plan for that.
-        Created docs/contributors/plans/backlog/PLAN-script-version-variable.md
+        Created docs/ai-developer/plans/backlog/PLAN-script-version-variable.md
 
         Please review the plan and let me know if it looks good
         or needs changes.
