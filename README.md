@@ -78,18 +78,6 @@ See [docs/tools.md](docs/tools.md) for detailed installation options.
 - **Try new tools** - Experiment safely without breaking your system
 - **Team consistency** - Everyone uses the same versions
 
-## Commands
-
-Inside the devcontainer:
-
-| Command | What it does |
-|---------|--------------|
-| `dev-setup` | Interactive menu to install tools and services |
-| `dev-help` | Show all commands and version info |
-| `dev-update` | Update to latest version |
-| `dev-template` | Create project from templates |
-| `dev-services` | Manage background services |
-
 ## New to Containers?
 
 A **container** is like a lightweight virtual machine that runs your development environment. Instead of installing Python, Node, Go, etc. on your computer, everything runs inside the container.
@@ -128,8 +116,9 @@ Templates for React, Next.js, Spring Boot, Express, and more. See the [template 
 
 ## Documentation
 
+- [Full Documentation](docs/README.md) - Complete documentation index
 - [Getting Started](docs/getting-started.md) - Installation and first steps
-- [Configuration](docs/configuration.md) - Customize for your project
+- [Commands](docs/commands.md) - All `dev-*` commands
 - [Available Tools](docs/tools.md) - All installable tools
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
