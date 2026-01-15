@@ -100,7 +100,7 @@ The `dev-setup` main menu is dynamically generated:
    chmod +x .devcontainer/manage/dev-newcmd.sh
    ```
 
-4. Regenerate documentation:
+4. Documentation is auto-updated by CI after merge. To preview locally:
    ```bash
    dev-docs
    ```

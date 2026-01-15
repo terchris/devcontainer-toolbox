@@ -38,7 +38,7 @@ SCRIPT_CHECK_COMMAND="command -v mytool >/dev/null 2>&1"
 .devcontainer/additions/install-mytool.sh --help
 .devcontainer/additions/install-mytool.sh
 
-# 4. Update docs
+# 4. (Optional) Preview docs locally - CI auto-updates after merge
 dev-docs
 ```
 
@@ -146,10 +146,10 @@ dev-setup
 .devcontainer/additions/install-mytool.sh --uninstall
 
 # Run automated tests
-.devcontainer/additions/tests/run-all-tests.sh static install-mytool.sh
+dev-test static install-mytool.sh
 
-# Run shellcheck
-shellcheck .devcontainer/additions/install-mytool.sh
+# Run shellcheck (included in dev-test lint)
+dev-test lint
 ```
 
 See [testing.md](testing.md) for more details on the test framework.
@@ -168,13 +168,13 @@ Some documentation files live alongside code (not in `docs/`) because they're me
 
 ## After Adding a Script
 
-Regenerate documentation (run inside the devcontainer):
+Documentation is **auto-updated by CI** after you merge your PR. No manual step needed.
+
+To preview docs locally before merging:
 
 ```bash
 dev-docs
 ```
-
-This updates `docs/tools.md` so users can see the new tool.
 
 ---
 
@@ -189,8 +189,8 @@ This updates `docs/tools.md` so users can see the new tool.
 
 3. **Make your changes:**
    - Add your script
-   - Run tests: `.devcontainer/additions/tests/run-all-tests.sh static`
-   - Regenerate docs: `dev-docs`
+   - Run tests: `dev-test static`
+   - (Optional) Preview docs: `dev-docs` - CI auto-updates after merge
 
 4. **Commit and push:**
    ```bash

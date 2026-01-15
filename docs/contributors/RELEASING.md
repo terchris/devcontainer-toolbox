@@ -2,15 +2,7 @@
 
 How to create and publish new versions of devcontainer-toolbox.
 
-## Before Releasing
-
-If any install scripts were added or modified, regenerate the tools documentation:
-
-```bash
-dev-docs
-```
-
-This updates `docs/tools.md` with current script information.
+**See also:** [CI-CD.md](CI-CD.md) for the full workflow diagram and details.
 
 ---
 
@@ -46,15 +38,16 @@ git push
 
 ### 3. Automatic Release
 
-When you push to `main`, GitHub Actions automatically:
+When you merge a PR to `main`, GitHub Actions automatically:
 
 1. Runs CI tests (`.github/workflows/ci-tests.yml`)
-2. If tests pass, creates a release (`.github/workflows/zip_dev_setup.yml`):
+2. Auto-updates documentation if needed (commits directly to main)
+3. If tests pass, creates a release (`.github/workflows/zip_dev_setup.yml`):
    - Reads version from `version.txt`
    - Creates `.devcontainer/.version` file with `VERSION=1.0.4`
    - Updates `devcontainer.json` with the version (triggers VS Code rebuild prompt)
-   - Packages everything into `dev_setup.zip`
-   - Creates GitHub release tagged with the version
+   - Packages everything into `dev_containers.zip`
+   - Creates GitHub release tagged "latest"
 
 ---
 
@@ -73,9 +66,11 @@ Use semantic versioning: `MAJOR.MINOR.PATCH`
 ## How Updates Reach Users
 
 ```
-You push to main
+You merge PR to main
        ↓
-GitHub Actions creates release with dev_setup.zip
+CI Tests run → If pass → Release workflow runs
+       ↓
+GitHub creates release with dev_containers.zip
        ↓
 User runs `dev-update` in their container
        ↓
@@ -85,6 +80,8 @@ Compares with local .devcontainer/.version
        ↓
 If newer: downloads and installs update
 ```
+
+For the full two-stage workflow (PR validation vs. release), see [CI-CD.md](CI-CD.md).
 
 ---
 
