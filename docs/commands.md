@@ -1,6 +1,6 @@
 # Commands Reference
 
-> **Auto-generated** | Last updated: 2026-01-15 13:36:41  
+> **Auto-generated** - Do not edit manually  
 > Regenerate with: `dev-docs`
 
 All commands available inside the devcontainer. Type `dev-` and press Tab to see them.

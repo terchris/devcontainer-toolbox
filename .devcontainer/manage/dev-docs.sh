@@ -367,7 +367,7 @@ format_help_output() {
     fi
 
     # Filter out associative array errors and other bash errors
-    help_output=$(echo "$help_output" | grep -v "declare: -A: invalid option" | grep -v "declare: usage:" | grep -v "syntax error: invalid arithmetic operator")
+    help_output=$(echo "$help_output" | grep -v "declare: -A: invalid option" | grep -v "declare: usage:" | grep -v "syntax error: invalid arithmetic operator" | grep -v "Logging to:")
 
     # Extract just the main help section (skip the logging header)
     # The help output starts with a separator line and script info
@@ -429,12 +429,11 @@ generate_category_section() {
 # Generate commands.md content from manage script metadata
 generate_commands_md() {
     local content=""
-    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
     log_info "Generating commands.md..."
 
     content+="# Commands Reference\n\n"
-    content+="> **Auto-generated** | Last updated: $timestamp  \n"
+    content+="> **Auto-generated** - Do not edit manually  \n"
     content+="> Regenerate with: \`dev-docs\`\n\n"
     content+="All commands available inside the devcontainer. Type \`dev-\` and press Tab to see them.\n\n"
 
@@ -571,13 +570,11 @@ generate_manual() {
         return 1
     fi
 
-    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-
     # ===== Generate tools.md (overview) =====
     log_info "Generating tools.md (overview)..."
     output+="# Available Tools\n\n"
-    output+="> **Auto-generated** | Last updated: $timestamp  \n"
-    output+="> Regenerate with: \`.devcontainer/manage/generate-manual.sh\`\n\n"
+    output+="> **Auto-generated** - Do not edit manually  \n"
+    output+="> Regenerate with: \`dev-docs\`\n\n"
     output+="All tools can be installed via \`dev-setup\` or by running the install script directly.\n\n"
 
     # Generate categories list
@@ -605,8 +602,8 @@ generate_manual() {
     local details=""
     log_info "Generating tools-details.md (detailed help)..."
     details+="# Tool Details\n\n"
-    details+="> **Auto-generated** | Last updated: $timestamp  \n"
-    details+="> Regenerate with: \`.devcontainer/manage/generate-manual.sh\`\n\n"
+    details+="> **Auto-generated** - Do not edit manually  \n"
+    details+="> Regenerate with: \`dev-docs\`\n\n"
     details+="Detailed installation options for each tool. See [tools.md](tools.md) for the overview.\n\n"
     details+="---\n\n"
 

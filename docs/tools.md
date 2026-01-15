@@ -1,7 +1,7 @@
 # Available Tools
 
-> **Auto-generated** | Last updated: 2026-01-15 13:36:40  
-> Regenerate with: `.devcontainer/manage/generate-manual.sh`
+> **Auto-generated** - Do not edit manually  
+> Regenerate with: `dev-docs`
 
 All tools can be installed via `dev-setup` or by running the install script directly.
 
