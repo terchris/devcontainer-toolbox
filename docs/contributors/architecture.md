@@ -636,7 +636,7 @@ SCRIPT_COMMANDS=(
 │   │   ├── _template-config-script.sh
 │   │   ├── _template-service-script.sh
 │   │   ├── _template-cmd-script.sh
-│   │   └── README-additions-template.md
+│   │   └── README-secrets.md            # User-facing secrets docs
 │   │
 │   ├── install-*.sh                  # Tool installers
 │   ├── config-*.sh                   # Configuration scripts
@@ -787,10 +787,11 @@ CATEGORY_TABLE="
 ## References
 
 - [Dialog Manual](https://invisible-island.net/dialog/dialog.html)
-- [README-additions.md](../additions/README-additions.md) - User guide
-- [README-additions-template.md](../additions/addition-templates/README-additions-template.md) - Template guide
-- [categories.sh](../additions/lib/categories.sh) - Category definitions
-- [component-scanner.sh](../additions/lib/component-scanner.sh) - Scanner library
+- [Creating Install Scripts](creating-install-scripts.md) - Complete install script guide
+- [Creating Service Scripts](creating-service-scripts.md) - Service script guide
+- [Libraries Reference](libraries.md) - Library functions documentation
+- [categories.sh](../../.devcontainer/additions/lib/categories.sh) - Category definitions
+- [component-scanner.sh](../../.devcontainer/additions/lib/component-scanner.sh) - Scanner library
 
 ---
 

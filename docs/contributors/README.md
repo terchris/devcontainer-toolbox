@@ -1,30 +1,75 @@
 # Contributor Documentation
 
-This folder contains technical documentation for developers who maintain and extend devcontainer-toolbox.
+Technical documentation for developers who maintain and extend devcontainer-toolbox.
+
+---
 
 ## Structure
 
 ```
 docs/contributors/
-├── README.md                 # This file
-├── RELEASING.md              # How to create new versions
-├── adding-tools.md           # How to add new install scripts
-├── architecture.md           # System architecture overview
-├── categories.md             # Tool category reference
-├── service-dependencies.md   # Service dependency flow
-└── monitoring-requirements.md # Container monitoring requirements
+├── README.md                      # This file
+├── RELEASING.md                   # How to create new versions
+│
+├── adding-tools.md                # Overview + quick start
+├── creating-install-scripts.md   # Complete install script guide
+├── creating-service-scripts.md   # Complete service script guide
+├── libraries.md                   # Library functions reference
+│
+├── architecture.md                # System architecture
+├── categories.md                  # Tool category reference
+├── service-dependencies.md        # Service dependency flow
+│
+├── infrastructure.md              # Infrastructure services index
+├── infrastructure-nginx.md        # Nginx reverse proxy
+├── infrastructure-otel.md         # OTEL monitoring
+│
+├── testing.md                     # Test framework
+└── monitoring-requirements.md     # Container monitoring requirements
 ```
 
-## Key Documents
+---
+
+## Getting Started
 
 | Document | Purpose |
 |----------|---------|
-| `RELEASING.md` | How to bump versions and create releases |
-| `adding-tools.md` | How to add new install scripts |
-| `architecture.md` | System architecture, script types, metadata, libraries |
-| `categories.md` | Tool category definitions |
-| `service-dependencies.md` | Service startup order and dependencies |
-| `monitoring-requirements.md` | Container monitoring requirements |
+| [adding-tools.md](adding-tools.md) | Quick start for adding new scripts |
+| [creating-install-scripts.md](creating-install-scripts.md) | Complete guide to install-*.sh scripts |
+| [creating-service-scripts.md](creating-service-scripts.md) | Complete guide to service-*.sh scripts |
+| [libraries.md](libraries.md) | Shared library functions reference |
+
+---
+
+## Architecture & Reference
+
+| Document | Purpose |
+|----------|---------|
+| [architecture.md](architecture.md) | System architecture, script types, metadata |
+| [categories.md](categories.md) | Tool category definitions |
+| [service-dependencies.md](service-dependencies.md) | Service startup order and dependencies |
+
+---
+
+## Infrastructure
+
+| Document | Purpose |
+|----------|---------|
+| [infrastructure.md](infrastructure.md) | Infrastructure services overview |
+| [infrastructure-nginx.md](infrastructure-nginx.md) | Nginx reverse proxy documentation |
+| [infrastructure-otel.md](infrastructure-otel.md) | OTEL monitoring documentation |
+
+---
+
+## Testing & Release
+
+| Document | Purpose |
+|----------|---------|
+| [testing.md](testing.md) | Test framework and how to run tests |
+| [RELEASING.md](RELEASING.md) | How to bump versions and create releases |
+| [monitoring-requirements.md](monitoring-requirements.md) | Container monitoring requirements |
+
+---
 
 ## AI Developer Documentation
 

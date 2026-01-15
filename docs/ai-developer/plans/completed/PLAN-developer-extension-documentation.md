@@ -1,6 +1,6 @@
 # Plan: Developer Extension Documentation
 
-## Status: Backlog
+## Status: Active
 
 **Goal**: Consolidate and improve documentation for developers who want to extend devcontainer-toolbox with new tools, making it easy to contribute.
 
@@ -52,13 +52,13 @@ Goal:
 
 ---
 
-## Phase 1: Create Library Documentation
+## Phase 1: Create Library Documentation — ✅ DONE
 
 Document the shared libraries that scripts use.
 
 ### Tasks
 
-- [ ] 1.1 Create `docs/contributors/libraries.md` with overview of all libraries:
+- [x] 1.1 Create `docs/contributors/libraries.md` with overview of all libraries:
   - component-scanner.sh - Script discovery
   - prerequisite-check.sh - Dependency validation
   - logging.sh - Automatic logging
@@ -68,7 +68,7 @@ Document the shared libraries that scripts use.
   - install-common.sh - Shared install patterns
   - core-install-*.sh - Package installers
 
-- [ ] 1.2 Document key functions with examples:
+- [x] 1.2 Document key functions with examples:
   - `scan_install_scripts()` - Returns script metadata
   - `check_prerequisite_configs()` - Check dependencies
   - `auto_enable_tool()` / `auto_disable_tool()`
@@ -80,23 +80,23 @@ User confirms docs/contributors/libraries.md covers all essential functions.
 
 ---
 
-## Phase 2: Move Template Documentation
+## Phase 2: Move Template Documentation — ✅ DONE
 
 Move script creation guides to docs/contributors/.
 
 ### Tasks
 
-- [ ] 2.1 Move `README-additions-template.md` content to `docs/contributors/creating-install-scripts.md`
+- [x] 2.1 Move `README-additions-template.md` content to `docs/contributors/creating-install-scripts.md`
 
-- [ ] 2.2 Move `README-service-template.md` content to `docs/contributors/creating-service-scripts.md`
+- [x] 2.2 Move `README-service-template.md` content to `docs/contributors/creating-service-scripts.md`
 
-- [ ] 2.3 Update `docs/contributors/adding-tools.md` to be an index page linking to:
+- [x] 2.3 Update `docs/contributors/adding-tools.md` to be an index page linking to:
   - creating-install-scripts.md
   - creating-service-scripts.md
   - libraries.md
   - architecture.md
 
-- [ ] 2.4 Delete moved .md files from `.devcontainer/additions/addition-templates/`
+- [x] 2.4 Delete moved .md files from `.devcontainer/additions/addition-templates/`
   - Keep README-secrets.md (user-facing, stays with .devcontainer.secrets)
 
 ### Validation
@@ -105,19 +105,19 @@ User confirms all links in adding-tools.md work correctly.
 
 ---
 
-## Phase 3: Move Infrastructure Documentation
+## Phase 3: Move Infrastructure Documentation — ✅ DONE
 
 Move nginx and OTEL docs to docs/contributors/.
 
 ### Tasks
 
-- [ ] 3.1 Move `nginx/README-nginx.md` to `docs/contributors/infrastructure-nginx.md`
+- [x] 3.1 Move `nginx/README-nginx.md` to `docs/contributors/infrastructure-nginx.md`
 
-- [ ] 3.2 Move `otel/README-otel.md` to `docs/contributors/infrastructure-otel.md`
+- [x] 3.2 Move `otel/README-otel.md` to `docs/contributors/infrastructure-otel.md`
 
-- [ ] 3.3 Create `docs/contributors/infrastructure.md` as index for infrastructure docs
+- [x] 3.3 Create `docs/contributors/infrastructure.md` as index for infrastructure docs
 
-- [ ] 3.4 Delete moved .md files from `.devcontainer/additions/nginx/` and `otel/`
+- [x] 3.4 Delete moved .md files from `.devcontainer/additions/nginx/` and `otel/`
 
 ### Validation
 
@@ -125,17 +125,17 @@ User confirms infrastructure documentation is accessible from docs/contributors/
 
 ---
 
-## Phase 4: Move Test Documentation
+## Phase 4: Move Test Documentation — ✅ DONE
 
 Consolidate test documentation.
 
 ### Tasks
 
-- [ ] 4.1 Move `tests/README.md` content to `docs/contributors/testing.md`
+- [x] 4.1 Move `tests/README.md` content to `docs/contributors/testing.md`
 
-- [ ] 4.2 Merge `tests/integration/README.md` into testing.md
+- [x] 4.2 Merge `tests/integration/README.md` into testing.md
 
-- [ ] 4.3 Delete moved .md files from `.devcontainer/additions/tests/`
+- [x] 4.3 Delete moved .md files from `.devcontainer/additions/tests/`
 
 ### Validation
 
@@ -143,20 +143,20 @@ User confirms test documentation is complete in docs/contributors/testing.md.
 
 ---
 
-## Phase 5: Update Main Additions README
+## Phase 5: Update Main Additions README — ✅ DONE
 
 Simplify README-additions.md to focus on usage, not development.
 
 ### Tasks
 
-- [ ] 5.1 Slim down `README-additions.md` to user-focused content only:
+- [x] 5.1 Slim down `README-additions.md` to user-focused content only:
   - How to use dev-setup menu
   - Available script types
   - Links to docs/contributors/ for development
 
-- [ ] 5.2 Update `docs/contributors/README.md` to list all new documentation
+- [x] 5.2 Update `docs/contributors/README.md` to list all new documentation
 
-- [ ] 5.3 Update cross-references in architecture.md
+- [x] 5.3 Update cross-references in architecture.md
 
 ### Validation
 
@@ -187,12 +187,12 @@ docs/contributors/
 
 ## Acceptance Criteria
 
-- [ ] All script creation documentation in docs/contributors/
-- [ ] Library functions documented with examples
-- [ ] Clear learning path: adding-tools.md → specific guides
-- [ ] No orphaned documentation in .devcontainer/additions/
-- [ ] README-additions.md is slim and user-focused
-- [ ] All cross-references updated and working
+- [x] All script creation documentation in docs/contributors/
+- [x] Library functions documented with examples
+- [x] Clear learning path: adding-tools.md → specific guides
+- [x] No orphaned documentation in .devcontainer/additions/
+- [x] README-additions.md is slim and user-focused (705 → 98 lines)
+- [x] All cross-references updated and working
 
 ---
 
