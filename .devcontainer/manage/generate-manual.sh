@@ -2,7 +2,7 @@
 # file: .devcontainer/manage/generate-manual.sh
 #
 # Generates comprehensive documentation by running all install scripts with --help
-# Output: .devcontainer/docs/README-manual.md
+# Output: docs/tools.md (overview), docs/tools-details.md (detailed), README.md (updated)
 #
 # Usage:
 #   ./generate-manual.sh              # Generate full manual
@@ -17,8 +17,10 @@ set -euo pipefail
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 readonly SCRIPT_DIR
 readonly ADDITIONS_DIR="${SCRIPT_DIR}/../additions"
-readonly DOCS_DIR="${SCRIPT_DIR}/../docs"
-readonly OUTPUT_FILE="${DOCS_DIR}/README-manual.md"
+readonly WORKSPACE_ROOT="${SCRIPT_DIR}/../.."
+readonly OUTPUT_FILE="${WORKSPACE_ROOT}/docs/tools.md"
+readonly OUTPUT_FILE_DETAILS="${WORKSPACE_ROOT}/docs/tools-details.md"
+readonly README_FILE="${WORKSPACE_ROOT}/README.md"
 
 # Source logging library
 # shellcheck source=/dev/null
@@ -56,7 +58,9 @@ Usage:
   ./generate-manual.sh --verbose    # Show detailed progress
 
 Output:
-  .devcontainer/docs/README-manual.md
+  docs/tools.md         - Overview table with links
+  docs/tools-details.md - Detailed help for each tool
+  README.md             - Tools summary (between markers)
 
 Categories:
   LANGUAGE_DEV    - $(get_category_short_description "LANGUAGE_DEV")
@@ -186,7 +190,7 @@ generate_toc() {
         fi
     done
 
-    toc+="\n---\n\n"
+    toc+="\n---\n"
     echo -e "$toc"
 }
 
@@ -212,6 +216,124 @@ generate_categories_overview() {
 
     overview+="---\n\n"
     echo -e "$overview"
+}
+
+# Generate tools summary table
+generate_tools_summary() {
+    local summary=""
+
+    summary+="| Name | ID | Category | Description |\n"
+    summary+="|------|----|---------|--------------|\n"
+
+    for category in "${CATEGORY_ORDER[@]}"; do
+        local scripts=$(get_category_scripts "$category")
+        if [[ -n "$scripts" ]]; then
+            local category_name=$(get_category_display_name "$category")
+
+            for script_path in $scripts; do
+                local script_name=$(grep "^SCRIPT_NAME=" "$script_path" | head -1 | cut -d'"' -f2 | cut -d"'" -f2)
+                local script_id=$(grep "^SCRIPT_ID=" "$script_path" | head -1 | cut -d'"' -f2 | cut -d"'" -f2)
+                local script_desc=$(grep "^SCRIPT_DESCRIPTION=" "$script_path" | head -1 | cut -d'"' -f2 | cut -d"'" -f2)
+
+                # Create anchor link to tools-details.md
+                local anchor=$(echo "$script_name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
+
+                summary+="| [$script_name](tools-details.md#$anchor) | \`$script_id\` | $category_name | $script_desc |\n"
+            done
+        fi
+    done
+
+    summary+="\n"
+    echo -e "$summary"
+}
+
+# Generate README tools summary (category-based overview)
+generate_readme_tools_content() {
+    local content=""
+    local total_scripts=$(count_total_scripts)
+
+    content+="**${total_scripts}+ development tools** ready to install with one click:\n\n"
+    content+="| Category | Tools |\n"
+    content+="|----------|-------|\n"
+
+    for category in "${CATEGORY_ORDER[@]}"; do
+        local scripts=$(get_category_scripts "$category")
+        if [[ -n "$scripts" ]]; then
+            local category_name=$(get_category_display_name "$category")
+            local tool_names=""
+
+            for script_path in $scripts; do
+                local script_name=$(grep "^SCRIPT_NAME=" "$script_path" | head -1 | cut -d'"' -f2 | cut -d"'" -f2)
+                # Shorten name for README (remove common suffixes - order matters!)
+                script_name=$(echo "$script_name" | \
+                    sed 's/ Runtime & Development Tools//g' | \
+                    sed 's/ Development Tools//g' | \
+                    sed 's/ Tools$//g' | \
+                    sed 's/Data & Analytics/Data Analytics/g' | \
+                    sed 's/API Development/API/g' | \
+                    sed 's/Infrastructure as Code/Terraform, Ansible/g' | \
+                    sed 's/Development Utilities/Dev Utilities/g' | \
+                    sed 's/Okta Identity Management/Okta/g' | \
+                    sed 's/Microsoft Power Platform/Power Platform/g' | \
+                    sed 's/Azure Application Development/Azure Dev/g' | \
+                    sed 's/Azure Operations & Infrastructure Management/Azure Ops/g')
+                if [[ -n "$tool_names" ]]; then
+                    tool_names+=", "
+                fi
+                tool_names+="$script_name"
+            done
+
+            content+="| **$category_name** | $tool_names |\n"
+        fi
+    done
+
+    echo -e "$content"
+}
+
+# Update README.md with tools content between markers
+update_readme() {
+    log_info "Updating README.md..."
+
+    if [[ ! -f "$README_FILE" ]]; then
+        log_warn "README.md not found, skipping update"
+        return 0
+    fi
+
+    # Check for markers
+    if ! grep -q "<!-- TOOLS_START" "$README_FILE"; then
+        log_warn "TOOLS_START marker not found in README.md, skipping update"
+        return 0
+    fi
+
+    if ! grep -q "<!-- TOOLS_END -->" "$README_FILE"; then
+        log_warn "TOOLS_END marker not found in README.md, skipping update"
+        return 0
+    fi
+
+    # Generate the new content to a temp file
+    local content_file
+    content_file=$(mktemp)
+    generate_readme_tools_content > "$content_file"
+
+    # Create output file
+    local temp_file
+    temp_file=$(mktemp)
+
+    # Extract before, insert new content, extract after
+    # 1. Get everything up to and including TOOLS_START marker
+    sed -n '1,/<!-- TOOLS_START/p' "$README_FILE" > "$temp_file"
+
+    # 2. Add the new content
+    cat "$content_file" >> "$temp_file"
+
+    # 3. Get everything from TOOLS_END marker onwards
+    sed -n '/<!-- TOOLS_END/,$p' "$README_FILE" >> "$temp_file"
+
+    # Replace original file
+    mv "$temp_file" "$README_FILE"
+    rm -f "$content_file"
+
+    log_info "Updated: $README_FILE"
 }
 
 # Format help output from a script
@@ -256,7 +378,7 @@ generate_category_section() {
 
     log_info "  Generating section: $category_name"
 
-    section+="## $category_name\n\n"
+    section+="\n\n## $category_name\n\n"
 
     # Process each script in this category
     local script_count=0
@@ -305,61 +427,80 @@ generate_manual() {
         return 1
     fi
 
-    # Generate header
-    log_info "Generating manual header..."
-    output+="# DevContainer Additions Manual\n\n"
-    output+="> **Auto-generated documentation for all installation scripts**  \n"
-    output+="> Last updated: $(date '+%Y-%m-%d %H:%M:%S')  \n"
-    output+="> Generated by: \`.devcontainer/manage/generate-manual.sh\`\n\n"
-    output+="This manual provides comprehensive documentation for all available installation scripts in the devcontainer additions.\n\n"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
-    # Generate categories overview
-    log_info "Generating categories overview..."
-    output+="$(generate_categories_overview)"
+    # ===== Generate tools.md (overview) =====
+    log_info "Generating tools.md (overview)..."
+    output+="# Available Tools\n\n"
+    output+="> **Auto-generated** | Last updated: $timestamp  \n"
+    output+="> Regenerate with: \`.devcontainer/manage/generate-manual.sh\`\n\n"
+    output+="All tools can be installed via \`dev-setup\` or by running the install script directly.\n\n"
 
-    # Generate table of contents
+    # Generate categories list
+    log_info "Generating categories list..."
+    output+="## Categories\n\n"
+    for category in "${CATEGORY_ORDER[@]}"; do
+        local scripts=$(get_category_scripts "$category")
+        if [[ -n "$scripts" ]]; then
+            local category_name=$(get_category_display_name "$category")
+            local script_count=$(echo $scripts | wc -w | tr -d ' ')
+            local tool_word="tools"
+            [[ "$script_count" -eq 1 ]] && tool_word="tool"
+            output+="- **$category_name** ($script_count $tool_word)\n"
+        fi
+    done
+    output+="\n"
+
+    # Generate tools summary table
+    output+="## All Tools\n\n"
+    output+="Click on a tool name to see detailed installation options.\n\n"
+    log_info "Generating tools summary table..."
+    output+="$(generate_tools_summary)"
+
+    # ===== Generate tools-details.md (detailed help) =====
+    local details=""
+    log_info "Generating tools-details.md (detailed help)..."
+    details+="# Tool Details\n\n"
+    details+="> **Auto-generated** | Last updated: $timestamp  \n"
+    details+="> Regenerate with: \`.devcontainer/manage/generate-manual.sh\`\n\n"
+    details+="Detailed installation options for each tool. See [tools.md](tools.md) for the overview.\n\n"
+    details+="---\n\n"
+
+    # Generate table of contents for details
     log_info "Generating table of contents..."
-    output+="$(generate_toc)"
+    details+="$(generate_toc)"
 
     # Generate sections for each category
     for category in "${CATEGORY_ORDER[@]}"; do
         local scripts=$(get_category_scripts "$category")
         if [[ -n "$scripts" ]]; then
-            output+="$(generate_category_section "$category")"
+            details+="$(generate_category_section "$category")"
         fi
     done
 
-    # Generate footer
-    output+="\n---\n\n"
-    output+="## About This Manual\n\n"
-    output+="This manual was automatically generated from the \`--help\` output of all installation scripts.\n\n"
-    output+="**To regenerate this manual:**\n"
-    output+="\`\`\`bash\n"
-    output+="cd .devcontainer/manage\n"
-    output+="./generate-manual.sh\n"
-    output+="\`\`\`\n\n"
-    output+="**To see help for a specific script:**\n"
-    output+="\`\`\`bash\n"
-    output+="cd .devcontainer/additions\n"
-    output+="./install-<name>.sh --help\n"
-    output+="\`\`\`\n\n"
-    output+="For more information about the devcontainer toolbox, see the main README.\n"
-
     # Output result
     if [[ $DRY_RUN -eq 1 ]]; then
-        log_info "DRY RUN - Manual content preview:"
-        echo -e "$output" | head -100
+        log_info "DRY RUN - tools.md preview:"
+        echo -e "$output" | head -50
         echo "..."
-        echo "[Content truncated in dry-run mode]"
-        log_info "Total length: $(echo -e "$output" | wc -l) lines"
+        log_info "DRY RUN - tools-details.md preview:"
+        echo -e "$details" | head -50
+        echo "..."
+        log_info "Total length: tools.md=$(echo -e "$output" | wc -l) lines, tools-details.md=$(echo -e "$details" | wc -l) lines"
     else
         # Ensure docs directory exists
-        mkdir -p "$DOCS_DIR"
+        mkdir -p "$(dirname "$OUTPUT_FILE")"
 
-        # Write to file
+        # Write tools.md
         echo -e "$output" > "$OUTPUT_FILE"
-        log_info "Manual written to: $OUTPUT_FILE"
-        log_info "Total size: $(wc -l < "$OUTPUT_FILE") lines, $(wc -c < "$OUTPUT_FILE") bytes"
+        log_info "Written: $OUTPUT_FILE ($(wc -l < "$OUTPUT_FILE") lines)"
+
+        # Write tools-details.md
+        echo -e "$details" > "$OUTPUT_FILE_DETAILS"
+        log_info "Written: $OUTPUT_FILE_DETAILS ($(wc -l < "$OUTPUT_FILE_DETAILS") lines)"
+
+        # Update README.md
+        update_readme
     fi
 
     return 0
