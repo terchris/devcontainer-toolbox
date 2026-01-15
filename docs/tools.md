@@ -7,7 +7,7 @@ All tools can be installed via `dev-setup` or by running the install script dire
 
 ## Categories
 
-- **Development Tools** (9 tools)
+- **Development Tools** (10 tools)
 - **AI & Machine Learning Tools** (1 tool)
 - **Cloud & Infrastructure Tools** (5 tools)
 - **Data & Analytics Tools** (2 tools)
@@ -19,6 +19,7 @@ Click on a tool name to see detailed installation options.
 
 | Name | ID | Category | Description |
 |------|----|---------|--------------|
+| [Bash Development Tools](tools-details.md#bash-development-tools) | `dev-bash` | Development Tools | Adds shellcheck, shfmt, bash-language-server, and VS Code extensions for Bash development |
 | [C/C++ Development Tools](tools-details.md#cc-development-tools) | `dev-cpp` | Development Tools | Installs GCC, Clang, build tools, debuggers, and VS Code extensions for C/C++ development |
 | [C# Development Tools](tools-details.md#c-development-tools) | `dev-csharp` | Development Tools | Installs .NET SDK, ASP.NET Core Runtime, and VS Code extensions for C# development |
 | [Fortran Development Tools](tools-details.md#fortran-development-tools) | `dev-fortran` | Development Tools | Installs GNU Fortran compiler (gfortran), build tools, and VS Code extensions for Fortran development |
