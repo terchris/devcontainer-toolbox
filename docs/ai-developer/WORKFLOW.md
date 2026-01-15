@@ -173,6 +173,23 @@ See [CI-CD.md](../contributors/CI-CD.md) for details on what happens after merge
 
 ---
 
+## Version Management (MANDATORY)
+
+**CRITICAL:** Before pushing to GitHub or creating a PR, Claude MUST:
+
+1. **Ask the user:** "Should we bump the version for this change?"
+2. **If yes:** Update `version.txt` with the new version number
+3. **Version types:**
+   - PATCH (1.0.x → 1.0.y): Bug fixes, small improvements
+   - MINOR (1.x.0 → 1.y.0): New features, documentation improvements
+   - MAJOR (x.0.0 → y.0.0): Breaking changes
+
+**Why this matters:** Users running `dev-update` will only see updates if the version number changes. Without a version bump, changes will never reach users.
+
+See [RELEASING.md](../contributors/RELEASING.md) for full release process.
+
+---
+
 ## Quick Reference
 
 ### Commands to give Claude:

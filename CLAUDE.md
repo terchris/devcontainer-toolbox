@@ -33,6 +33,21 @@ When user requests a new feature or fix:
 - Use feature branches for multi-phase work
 - Commit after each phase (with user approval)
 
+## Version Management (MANDATORY)
+
+**CRITICAL:** Before pushing to GitHub or creating a PR, you MUST:
+
+1. **Ask the user:** "Should we bump the version for this change?"
+2. **If yes:** Update `version.txt` with the new version number
+3. **Version types:**
+   - PATCH (1.0.x → 1.0.y): Bug fixes, small improvements
+   - MINOR (1.x.0 → 1.y.0): New features, documentation improvements
+   - MAJOR (x.0.0 → y.0.0): Breaking changes
+
+**Why this matters:** Users running `dev-update` will only see updates if the version number changes. Without a version bump, your changes will never reach users.
+
+See `docs/contributors/RELEASING.md` for full release process.
+
 ## Documentation
 
 - User docs: `docs/`
