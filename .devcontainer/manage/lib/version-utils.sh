@@ -14,18 +14,25 @@ _get_devcontainer_dir() {
     echo "$(cd "$script_dir/../.." && pwd)"
 }
 
-# Read version info from .version file
+# Read version info from .version file or version.txt
 # Sets: TOOLBOX_VERSION, TOOLBOX_REPO
 _load_version_info() {
     local devcontainer_dir="$(_get_devcontainer_dir)"
     local version_file="$devcontainer_dir/.version"
+    local workspace_root="$devcontainer_dir/.."
+    local version_txt="$workspace_root/version.txt"
 
     TOOLBOX_VERSION="unknown"
     TOOLBOX_REPO=""
 
+    # First try .devcontainer/.version (created by dev-update for installed users)
     if [ -f "$version_file" ]; then
         TOOLBOX_VERSION=$(grep "^VERSION=" "$version_file" 2>/dev/null | cut -d= -f2)
         TOOLBOX_REPO=$(grep "^REPO=" "$version_file" 2>/dev/null | cut -d= -f2)
+    # Fall back to version.txt in workspace root (for development/fresh clones)
+    elif [ -f "$version_txt" ]; then
+        TOOLBOX_VERSION=$(cat "$version_txt" 2>/dev/null | tr -d '[:space:]')
+        TOOLBOX_REPO="terchris/devcontainer-toolbox"
     fi
 }
 
