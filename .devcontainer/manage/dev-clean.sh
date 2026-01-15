@@ -1,7 +1,7 @@
 #!/bin/bash
 # File: .devcontainer/manage/dev-clean.sh
 # ⚠️  DEVCONTAINER COMPLETE CLEANUP SCRIPT ⚠️
-# 
+#
 # This script will PERMANENTLY DELETE:
 # - The devcontainer container (devcontainer-toolbox)
 # - All Docker volumes associated with this project
@@ -14,6 +14,15 @@
 # - Your source code (lives on your host machine, not in the container)
 #
 # After cleanup, rebuild with: code .
+
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-clean"
+SCRIPT_NAME="Clean"
+SCRIPT_DESCRIPTION="Clean up devcontainer resources"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
 
 set -e
 

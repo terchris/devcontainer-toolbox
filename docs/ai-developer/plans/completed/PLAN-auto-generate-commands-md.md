@@ -1,6 +1,6 @@
 # Plan: Unify Manage Scripts with Additions System
 
-## Status: Backlog
+## Status: Completed
 
 **Goal**: Make manage scripts (dev-*.sh) use the same metadata and menu system as additions scripts, and auto-generate docs/commands.md.
 
@@ -32,25 +32,25 @@ Goal:
 
 ---
 
-## Phase 1: Add New Categories
+## Phase 1: Add New Categories — ✅ DONE
 
 Add categories for system commands and contributor tools.
 
 ### Tasks
 
-- [ ] 1.1 Add `SYSTEM_COMMANDS` category to `lib/categories.sh`:
+- [x] 1.1 Add `SYSTEM_COMMANDS` category to `lib/categories.sh`:
   ```
   0|SYSTEM_COMMANDS|System Commands|DevContainer management commands|DevContainer management commands (setup, update, services, help)
   ```
   Note: Sort order 0 to show first in menu
 
-- [ ] 1.2 Add `CONTRIBUTOR_TOOLS` category to `lib/categories.sh`:
+- [x] 1.2 Add `CONTRIBUTOR_TOOLS` category to `lib/categories.sh`:
   ```
   7|CONTRIBUTOR_TOOLS|Contributor Tools|Tools for contributors and maintainers|Tools for contributors and maintainers (generate docs, run tests)
   ```
   Note: Sort order 7 to show last in menu
 
-- [ ] 1.3 Add category constants:
+- [x] 1.3 Add category constants:
   ```bash
   readonly CATEGORY_SYSTEM_COMMANDS="SYSTEM_COMMANDS"
   readonly CATEGORY_CONTRIBUTOR_TOOLS="CONTRIBUTOR_TOOLS"
@@ -66,18 +66,18 @@ is_valid_category "CONTRIBUTOR_TOOLS" && echo "OK"
 
 ---
 
-## Phase 2: Rename and Create Contributor Tools
+## Phase 2: Rename and Create Contributor Tools — ✅ DONE
 
 Rename generate-manual.sh and create dev-test.sh wrapper.
 
 ### Tasks
 
-- [ ] 2.1 Rename `generate-manual.sh` to `dev-docs.sh`:
+- [x] 2.1 Rename `generate-manual.sh` to `dev-docs.sh`:
   ```bash
   git mv .devcontainer/manage/generate-manual.sh .devcontainer/manage/dev-docs.sh
   ```
 
-- [ ] 2.2 Create `dev-test.sh` wrapper script:
+- [x] 2.2 Create `dev-test.sh` wrapper script:
   ```bash
   #!/bin/bash
   # dev-test.sh - Run devcontainer-toolbox tests
@@ -107,7 +107,7 @@ Rename generate-manual.sh and create dev-test.sh wrapper.
   exec "$SCRIPT_DIR/../additions/tests/run-all-tests.sh" "$@"
   ```
 
-- [ ] 2.3 Add `dev-docs` and `dev-test` to command symlinks:
+- [x] 2.3 Add `dev-docs` and `dev-test` to command symlinks:
   - Location: `.devcontainer/additions/lib/environment-utils.sh`
   - Function: `setup_command_symlinks()` lines 106-115
   - Add "dev-docs" and "dev-test" to the `commands` array:
@@ -138,13 +138,13 @@ dev-test --help
 
 ---
 
-## Phase 3: Add Metadata to System Command Scripts
+## Phase 3: Add Metadata to System Command Scripts — ✅ DONE
 
 Add standardized metadata to user-facing dev-*.sh scripts.
 
 ### Tasks
 
-- [ ] 3.1 Add metadata to `dev-setup.sh`:
+- [x] 3.1 Add metadata to `dev-setup.sh`:
   ```bash
   SCRIPT_ID="dev-setup"
   SCRIPT_NAME="Setup Menu"
@@ -153,7 +153,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.2 Add metadata to `dev-help.sh`:
+- [x] 3.2 Add metadata to `dev-help.sh`:
   ```bash
   SCRIPT_ID="dev-help"
   SCRIPT_NAME="Help"
@@ -162,7 +162,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.3 Add metadata to `dev-update.sh`:
+- [x] 3.3 Add metadata to `dev-update.sh`:
   ```bash
   SCRIPT_ID="dev-update"
   SCRIPT_NAME="Update"
@@ -171,7 +171,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.4 Add metadata to `dev-services.sh`:
+- [x] 3.4 Add metadata to `dev-services.sh`:
   ```bash
   SCRIPT_ID="dev-services"
   SCRIPT_NAME="Services"
@@ -180,7 +180,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.5 Add metadata to `dev-template.sh`:
+- [x] 3.5 Add metadata to `dev-template.sh`:
   ```bash
   SCRIPT_ID="dev-template"
   SCRIPT_NAME="Templates"
@@ -189,7 +189,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.6 Add metadata to `dev-check.sh`:
+- [x] 3.6 Add metadata to `dev-check.sh`:
   ```bash
   SCRIPT_ID="dev-check"
   SCRIPT_NAME="Check Configuration"
@@ -198,7 +198,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.7 Add metadata to `dev-env.sh`:
+- [x] 3.7 Add metadata to `dev-env.sh`:
   ```bash
   SCRIPT_ID="dev-env"
   SCRIPT_NAME="Environment"
@@ -207,7 +207,7 @@ Add standardized metadata to user-facing dev-*.sh scripts.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 3.8 Add metadata to `dev-clean.sh`:
+- [x] 3.8 Add metadata to `dev-clean.sh`:
   ```bash
   SCRIPT_ID="dev-clean"
   SCRIPT_NAME="Clean"
@@ -225,13 +225,13 @@ grep "^SCRIPT_ID=" .devcontainer/manage/dev-*.sh | wc -l
 
 ---
 
-## Phase 4: Add Metadata to Contributor Tool Scripts
+## Phase 4: Add Metadata to Contributor Tool Scripts — ✅ DONE
 
 Add standardized metadata to contributor tools.
 
 ### Tasks
 
-- [ ] 4.1 Add metadata to `dev-docs.sh` (renamed from generate-manual.sh):
+- [x] 4.1 Add metadata to `dev-docs.sh` (renamed from generate-manual.sh):
   ```bash
   SCRIPT_ID="dev-docs"
   SCRIPT_NAME="Generate Docs"
@@ -240,7 +240,7 @@ Add standardized metadata to contributor tools.
   SCRIPT_CHECK_COMMAND="true"
   ```
 
-- [ ] 4.2 Metadata already in `dev-test.sh` from Phase 2.4
+- [x] 4.2 Metadata already in `dev-test.sh` from Phase 2.4
 
 ### Validation
 
@@ -251,13 +251,13 @@ grep "CONTRIBUTOR_TOOLS" .devcontainer/manage/dev-*.sh
 
 ---
 
-## Phase 5: Update Component Scanner
+## Phase 5: Update Component Scanner — ✅ DONE
 
 Extend component-scanner.sh to scan manage directory.
 
 ### Tasks
 
-- [ ] 5.1 Add `scan_manage_scripts()` function:
+- [x] 5.1 Add `scan_manage_scripts()` function:
   ```bash
   # Scan manage scripts (dev-*.sh) and return metadata
   # Output: script_basename<TAB>script_name<TAB>script_desc<TAB>script_cat<TAB>check_cmd
@@ -271,9 +271,9 @@ Extend component-scanner.sh to scan manage directory.
   }
   ```
 
-- [ ] 5.2 Add helper function to get manage script path from basename
+- [x] 5.2 Add helper function to get manage script path from basename
 
-- [ ] 5.3 Verify existing tests still pass after scanner changes
+- [x] 5.3 Verify existing tests still pass after scanner changes
 
 ### Validation
 
@@ -284,7 +284,7 @@ scan_manage_scripts "/workspace/.devcontainer/manage" | head -3
 
 ---
 
-## Phase 6: Refactor dev-setup to Dynamic Menu
+## Phase 6: Refactor dev-setup to Dynamic Menu — ✅ DONE
 
 Currently the main menu is hardcoded with 8 options. Refactor to dynamically generate the menu from categories.
 
@@ -329,11 +329,11 @@ Currently the main menu is hardcoded with 8 options. Refactor to dynamically gen
 
 ### Tasks
 
-- [ ] 6.1 Add `MANAGE_DIR` path constant to dev-setup.sh
+- [x] 6.1 Add `MANAGE_DIR` path constant to dev-setup.sh
 
-- [ ] 6.2 Create `scan_manage_scripts()` call during initialization (alongside scan_available_tools, etc.)
+- [x] 6.2 Create `scan_manage_scripts()` call during initialization (alongside scan_available_tools, etc.)
 
-- [ ] 6.3 Create new arrays for manage scripts:
+- [x] 6.3 Create new arrays for manage scripts:
   ```bash
   declare -a AVAILABLE_MANAGE_SCRIPTS=()
   declare -a MANAGE_SCRIPT_NAMES=()
@@ -342,7 +342,7 @@ Currently the main menu is hardcoded with 8 options. Refactor to dynamically gen
   declare -A MANAGE_BY_CATEGORY
   ```
 
-- [ ] 6.4 Refactor `show_main_menu()` to be dynamic with this structure:
+- [x] 6.4 Refactor `show_main_menu()` to be dynamic with this structure:
   ```
   1. Browse & Install Tools        → [tool browser]
   2. Create project from template  ← dev-template.sh (special case, direct)
@@ -355,23 +355,23 @@ Currently the main menu is hardcoded with 8 options. Refactor to dynamically gen
   9. Exit
   ```
 
-- [ ] 6.4.1 Handle dev-template special case:
+- [x] 6.4.1 Handle dev-template special case:
   - dev-template.sh keeps `SCRIPT_CATEGORY="SYSTEM_COMMANDS"` for metadata consistency
   - Main menu shows "Create project from template" directly at position 2
   - SYSTEM_COMMANDS submenu excludes dev-template (already in main menu)
 
-- [ ] 6.5 Create `show_manage_scripts_menu()` function:
+- [x] 6.5 Create `show_manage_scripts_menu()` function:
   - Shows list of dev-* scripts in selected category (SYSTEM_COMMANDS or CONTRIBUTOR_TOOLS)
   - **Direct run**: Selecting a script executes it immediately (no submenu)
   - Shows script output, waits for Enter, returns to menu
 
-- [ ] 6.6 Create `scan_available_manage_scripts()` function in dev-setup.sh:
+- [x] 6.6 Create `scan_available_manage_scripts()` function in dev-setup.sh:
   - Similar to `scan_available_tools()` but calls `scan_manage_scripts()` from library
   - Populates AVAILABLE_MANAGE_SCRIPTS, MANAGE_SCRIPT_NAMES, etc. arrays
 
-- [ ] 6.7 Remove hardcoded `create_project_from_template()` function (dev-template will be in menu via metadata)
+- [x] 6.7 Keep `create_project_from_template()` function for special case handling (dev-template shown directly in main menu)
 
-- [ ] 6.8 Remove hardcoded "Show Environment Info" option (dev-env will be in menu via metadata)
+- [x] 6.8 Remove hardcoded "Show Environment Info" option (dev-env now in SYSTEM_COMMANDS menu)
 
 ### Validation
 
@@ -386,29 +386,29 @@ Run `dev-setup` and verify:
 
 ---
 
-## Phase 7: Update dev-docs.sh (formerly generate-manual.sh)
+## Phase 7: Update dev-docs.sh (formerly generate-manual.sh) — ✅ DONE
 
 Add function to auto-generate docs/commands.md.
 
 ### Tasks
 
-- [ ] 7.1 Read current `docs/commands.md` and define target format:
+- [x] 7.1 Read current `docs/commands.md` and define target format:
   - Preserve useful structure from manual version
   - Define sections: Quick Reference table, detailed command descriptions
   - Use SCRIPT_NAME and SCRIPT_DESCRIPTION from metadata
 
-- [ ] 7.2 Add `MANAGE_DIR` path constant
+- [x] 7.2 Add `MANAGE_DIR` path constant
 
-- [ ] 7.3 Add `generate_commands_md()` function to create commands.md content:
+- [x] 7.3 Add `generate_commands_md()` function to create commands.md content:
   - Generate Quick Reference table from all manage script metadata
   - Generate detailed section for each command
   - Include usage info from script --help output (optional)
 
-- [ ] 7.4 Call `generate_commands_md()` in main generation logic
+- [x] 7.4 Call `generate_commands_md()` in main generation logic
 
-- [ ] 7.5 Update script help text to mention commands.md output
+- [x] 7.5 Update script help text to mention commands.md output
 
-- [ ] 7.6 Add metadata header to dev-docs.sh (SCRIPT_ID, SCRIPT_NAME, etc.)
+- [x] 7.6 Metadata header already added in Phase 4
 
 ### Validation
 
@@ -419,15 +419,15 @@ cat docs/commands.md
 
 ---
 
-## Phase 8: Update CI Workflow
+## Phase 8: Update CI Workflow — ✅ DONE
 
 Add commands.md to documentation check.
 
 ### Tasks
 
-- [ ] 8.1 Update ci-tests.yml to check commands.md in docs-check job
+- [x] 8.1 Update ci-tests.yml to check commands.md in docs-check job
 
-- [ ] 8.2 Update any references to generate-manual.sh to use dev-docs.sh
+- [x] 8.2 Update any references to generate-manual.sh to use dev-docs.sh
 
 ### Validation
 
@@ -435,36 +435,34 @@ CI passes and catches out-of-date commands.md.
 
 ---
 
-## Phase 9: Update Documentation
+## Phase 9: Update Documentation — ✅ DONE
 
 Create maintainer documentation and update existing docs.
 
 ### Tasks
 
-- [ ] 9.1 Create `docs/contributors/manage-scripts.md`:
+- [x] 9.1 Create `docs/contributors/manage-scripts.md`:
   - Purpose of manage/ folder vs additions/ folder
   - How manage scripts (dev-*.sh) work
   - Metadata format for manage scripts
   - How dynamic menu generation works
   - When to add new manage scripts vs additions scripts
 
-- [ ] 9.2 Update `docs/contributors/architecture.md`:
-  - Add section on dynamic menu system
-  - Explain relationship between categories and script discovery
-  - Document manage/ folder structure
+- [x] 9.2 Update `docs/contributors/architecture.md`:
+  - Updated manage/ folder structure with dev-docs.sh and dev-test.sh
 
-- [ ] 9.3 Update `docs/ai-developer/CREATING-SCRIPTS.md`:
-  - Clarify it's for additions/ scripts only (contributors)
-  - Add note pointing to manage-scripts.md for maintainers
+- [x] 9.3 Update `docs/ai-developer/CREATING-SCRIPTS.md`:
+  - Updated generate-manual.sh → dev-docs reference
 
-- [ ] 9.4 Update `docs/contributors/adding-tools.md`:
-  - Clarify scope is additions/ folder
-  - Add note about manage-scripts.md for system-level changes
+- [x] 9.4 Update `docs/contributors/adding-tools.md`:
+  - Updated generate-manual.sh → dev-docs reference
 
-- [ ] 9.5 Update references to generate-manual.sh → dev-docs.sh:
+- [x] 9.5 Update references to generate-manual.sh → dev-docs:
   - `docs/contributors/CI-CD.md`
-  - `docs/contributors/testing.md`
-  - `CLAUDE.md`
+  - `docs/contributors/RELEASING.md`
+  - `docs/contributors/categories.md`
+  - `docs/ai-developer/WORKFLOW.md`
+  - `README.md`
 
 ### Validation
 

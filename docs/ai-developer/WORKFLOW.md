@@ -167,7 +167,7 @@ Claude will:
    > - If yes, what should the new version be?"
 
 7. **Check documentation** (if install scripts changed):
-   > "Install scripts were modified. I'll run `generate-manual.sh` to update the documentation."
+   > "Install scripts were modified. I'll run `dev-docs` to update the documentation."
 
 See [CI-CD.md](../contributors/CI-CD.md) for details on what happens after merge.
 

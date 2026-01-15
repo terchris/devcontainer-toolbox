@@ -3,6 +3,15 @@
 # Purpose: Manage devcontainer services via supervisord
 # Usage: dev-services {status|start|stop|restart|logs|enable|disable|list-enabled} [service]
 
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-services"
+SCRIPT_NAME="Services"
+SCRIPT_DESCRIPTION="Manage background services (start, stop, status, logs)"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
+
 set -e
 
 # Colors

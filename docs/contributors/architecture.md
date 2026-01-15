@@ -474,7 +474,8 @@ SCRIPT_COMMANDS=(
 │   ├── dev-env.sh                    # Environment info
 │   ├── dev-help.sh                   # Help command
 │   ├── dev-update.sh                 # Update toolbox
-│   └── generate-manual.sh            # Documentation generator
+│   ├── dev-docs.sh                   # Documentation generator
+│   └── dev-test.sh                   # Test runner
 │
 ├── additions/                        # Additions system
 │   ├── lib/                          # Shared libraries

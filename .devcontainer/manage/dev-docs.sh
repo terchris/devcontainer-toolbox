@@ -1,25 +1,36 @@
 #!/bin/bash
-# file: .devcontainer/manage/generate-manual.sh
+# file: .devcontainer/manage/dev-docs.sh
 #
 # Generates comprehensive documentation by running all install scripts with --help
 # Output: docs/tools.md (overview), docs/tools-details.md (detailed), README.md (updated)
 #
 # Usage:
-#   ./generate-manual.sh              # Generate full manual
-#   ./generate-manual.sh --help       # Show this help
-#   ./generate-manual.sh --dry-run    # Preview without writing
-#   ./generate-manual.sh --category LANGUAGE_DEV  # Only specific category
-#   ./generate-manual.sh --verbose    # Show detailed progress
+#   dev-docs                          # Generate full manual
+#   dev-docs --help                   # Show this help
+#   dev-docs --dry-run                # Preview without writing
+#   dev-docs --category LANGUAGE_DEV  # Only specific category
+#   dev-docs --verbose                # Show detailed progress
+
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-docs"
+SCRIPT_NAME="Generate Docs"
+SCRIPT_DESCRIPTION="Generate documentation (tools.md, commands.md)"
+SCRIPT_CATEGORY="CONTRIBUTOR_TOOLS"
+SCRIPT_CHECK_COMMAND="true"
 
 set -euo pipefail
 
 # Script directory and paths
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 readonly SCRIPT_DIR
+readonly MANAGE_DIR="${SCRIPT_DIR}"
 readonly ADDITIONS_DIR="${SCRIPT_DIR}/../additions"
 readonly WORKSPACE_ROOT="${SCRIPT_DIR}/../.."
 readonly OUTPUT_FILE="${WORKSPACE_ROOT}/docs/tools.md"
 readonly OUTPUT_FILE_DETAILS="${WORKSPACE_ROOT}/docs/tools-details.md"
+readonly OUTPUT_FILE_COMMANDS="${WORKSPACE_ROOT}/docs/commands.md"
 readonly README_FILE="${WORKSPACE_ROOT}/README.md"
 
 # Source logging library
@@ -29,6 +40,10 @@ source "${ADDITIONS_DIR}/lib/logging.sh"
 # Source categories library
 # shellcheck source=/dev/null
 source "${ADDITIONS_DIR}/lib/categories.sh"
+
+# Source component scanner library (for scan_manage_scripts)
+# shellcheck source=/dev/null
+source "${ADDITIONS_DIR}/lib/component-scanner.sh"
 
 # Options
 DRY_RUN=0
@@ -48,18 +63,19 @@ SCRIPTS_INFRA_CONFIG=""
 
 show_help() {
     cat << EOF
-Generate Manual - Create comprehensive documentation from install scripts
+dev-docs - Generate comprehensive documentation
 
 Usage:
-  ./generate-manual.sh              # Generate full manual
-  ./generate-manual.sh --help       # Show this help
-  ./generate-manual.sh --dry-run    # Preview without writing file
-  ./generate-manual.sh --category LANGUAGE_DEV  # Only specific category
-  ./generate-manual.sh --verbose    # Show detailed progress
+  dev-docs                          # Generate full documentation
+  dev-docs --help                   # Show this help
+  dev-docs --dry-run                # Preview without writing files
+  dev-docs --category LANGUAGE_DEV  # Only specific category
+  dev-docs --verbose                # Show detailed progress
 
 Output:
-  docs/tools.md         - Overview table with links
-  docs/tools-details.md - Detailed help for each tool
+  docs/tools.md         - Overview table with links to tool details
+  docs/tools-details.md - Detailed help for each install tool
+  docs/commands.md      - Command reference (dev-* commands)
   README.md             - Tools summary (between markers)
 
 Categories:
@@ -70,14 +86,14 @@ Categories:
   INFRA_CONFIG    - $(get_category_short_description "INFRA_CONFIG")
 
 Examples:
-  # Generate full manual
-  ./generate-manual.sh
+  # Generate full documentation
+  dev-docs
 
   # Preview what would be generated
-  ./generate-manual.sh --dry-run
+  dev-docs --dry-run
 
   # Only generate development tools section
-  ./generate-manual.sh --category LANGUAGE_DEV --verbose
+  dev-docs --category LANGUAGE_DEV --verbose
 
 EOF
 }
@@ -407,6 +423,134 @@ generate_category_section() {
 }
 
 #------------------------------------------------------------------------------
+# Commands.md Generation (manage scripts)
+#------------------------------------------------------------------------------
+
+# Generate commands.md content from manage script metadata
+generate_commands_md() {
+    local content=""
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+
+    log_info "Generating commands.md..."
+
+    content+="# Commands Reference\n\n"
+    content+="> **Auto-generated** | Last updated: $timestamp  \n"
+    content+="> Regenerate with: \`dev-docs\`\n\n"
+    content+="All commands available inside the devcontainer. Type \`dev-\` and press Tab to see them.\n\n"
+
+    # Build arrays from scan_manage_scripts output
+    declare -a cmd_names=()
+    declare -a cmd_ids=()
+    declare -a cmd_descriptions=()
+    declare -a cmd_categories=()
+    declare -a cmd_basenames=()
+
+    while IFS=$'\t' read -r basename script_id name desc category check; do
+        cmd_basenames+=("$basename")
+        cmd_ids+=("$script_id")
+        cmd_names+=("$name")
+        cmd_descriptions+=("$desc")
+        cmd_categories+=("$category")
+    done < <(scan_manage_scripts "$MANAGE_DIR")
+
+    # Add dev-setup manually (excluded from scanner to avoid recursion)
+    cmd_basenames+=("dev-setup.sh")
+    cmd_ids+=("dev-setup")
+    cmd_names+=("Setup Menu")
+    cmd_descriptions+=("Interactive menu for installing tools and managing services")
+    cmd_categories+=("SYSTEM_COMMANDS")
+
+    log_info "  Found ${#cmd_ids[@]} manage commands"
+
+    # Quick Reference table
+    content+="## Quick Reference\n\n"
+    content+="| Command | Description |\n"
+    content+="|---------|-------------|\n"
+
+    # Sort by category, then by name within category
+    # First SYSTEM_COMMANDS, then CONTRIBUTOR_TOOLS
+    for cat in "SYSTEM_COMMANDS" "CONTRIBUTOR_TOOLS"; do
+        for i in "${!cmd_ids[@]}"; do
+            if [[ "${cmd_categories[$i]}" == "$cat" ]]; then
+                local cmd_id="${cmd_ids[$i]}"
+                local desc="${cmd_descriptions[$i]}"
+                # Create anchor from command id
+                local anchor=$(echo "$cmd_id" | tr -d '[:space:]')
+                content+="| [\`$cmd_id\`](#$anchor) | $desc |\n"
+            fi
+        done
+    done
+    content+="\n---\n\n"
+
+    # Detailed sections by category
+    for cat in "SYSTEM_COMMANDS" "CONTRIBUTOR_TOOLS"; do
+        local cat_name=$(get_category_display_name "$cat")
+        local has_commands=0
+
+        # Check if category has any commands
+        for i in "${!cmd_ids[@]}"; do
+            if [[ "${cmd_categories[$i]}" == "$cat" ]]; then
+                has_commands=1
+                break
+            fi
+        done
+
+        [[ $has_commands -eq 0 ]] && continue
+
+        content+="## $cat_name\n\n"
+
+        for i in "${!cmd_ids[@]}"; do
+            if [[ "${cmd_categories[$i]}" == "$cat" ]]; then
+                local cmd_id="${cmd_ids[$i]}"
+                local cmd_name="${cmd_names[$i]}"
+                local desc="${cmd_descriptions[$i]}"
+                local basename="${cmd_basenames[$i]}"
+
+                content+="### $cmd_id\n\n"
+                content+="$desc\n\n"
+                content+="\`\`\`bash\n"
+                content+="$cmd_id\n"
+
+                # Add common flags if applicable
+                case "$cmd_id" in
+                    dev-update)
+                        content+="$cmd_id --force   # Force update even if same version\n"
+                        ;;
+                    dev-services)
+                        content+="$cmd_id status          # Show status of all services\n"
+                        content+="$cmd_id start <name>    # Start a service\n"
+                        content+="$cmd_id stop <name>     # Stop a service\n"
+                        content+="$cmd_id logs <name>     # View service logs\n"
+                        ;;
+                    dev-check)
+                        content+="$cmd_id --show    # Show current configuration\n"
+                        ;;
+                esac
+
+                content+="\`\`\`\n\n"
+            fi
+        done
+
+        content+="---\n\n"
+    done
+
+    # Add section about running install scripts directly
+    content+="## Running Install Scripts Directly\n\n"
+    content+="All install scripts can also be run directly:\n\n"
+    content+="\`\`\`bash\n"
+    content+="# Show help for a script\n"
+    content+=".devcontainer/additions/install-dev-python.sh --help\n\n"
+    content+="# Install with specific version\n"
+    content+=".devcontainer/additions/install-dev-golang.sh --version 1.22.0\n\n"
+    content+="# Uninstall\n"
+    content+=".devcontainer/additions/install-dev-golang.sh --uninstall\n"
+    content+="\`\`\`\n\n"
+    content+="Use \`dev-setup\` for the interactive menu, or run scripts directly for automation.\n"
+
+    echo -e "$content"
+}
+
+#------------------------------------------------------------------------------
 # Main Generation Logic
 #------------------------------------------------------------------------------
 
@@ -478,6 +622,10 @@ generate_manual() {
         fi
     done
 
+    # ===== Generate commands.md (manage scripts) =====
+    local commands
+    commands=$(generate_commands_md)
+
     # Output result
     if [[ $DRY_RUN -eq 1 ]]; then
         log_info "DRY RUN - tools.md preview:"
@@ -486,7 +634,10 @@ generate_manual() {
         log_info "DRY RUN - tools-details.md preview:"
         echo -e "$details" | head -50
         echo "..."
-        log_info "Total length: tools.md=$(echo -e "$output" | wc -l) lines, tools-details.md=$(echo -e "$details" | wc -l) lines"
+        log_info "DRY RUN - commands.md preview:"
+        echo -e "$commands" | head -50
+        echo "..."
+        log_info "Total length: tools.md=$(echo -e "$output" | wc -l) lines, tools-details.md=$(echo -e "$details" | wc -l) lines, commands.md=$(echo -e "$commands" | wc -l) lines"
     else
         # Ensure docs directory exists
         mkdir -p "$(dirname "$OUTPUT_FILE")"
@@ -498,6 +649,10 @@ generate_manual() {
         # Write tools-details.md
         echo -e "$details" > "$OUTPUT_FILE_DETAILS"
         log_info "Written: $OUTPUT_FILE_DETAILS ($(wc -l < "$OUTPUT_FILE_DETAILS") lines)"
+
+        # Write commands.md
+        echo -e "$commands" > "$OUTPUT_FILE_COMMANDS"
+        log_info "Written: $OUTPUT_FILE_COMMANDS ($(wc -l < "$OUTPUT_FILE_COMMANDS") lines)"
 
         # Update README.md
         update_readme

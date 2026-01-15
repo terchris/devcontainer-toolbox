@@ -24,12 +24,14 @@
 # Only declare if not already set (prevents errors when sourced multiple times)
 if [[ -z "${CATEGORY_TABLE+x}" ]]; then
     readonly CATEGORY_TABLE="
+0|SYSTEM_COMMANDS|System Commands|DevContainer management commands|DevContainer management commands (setup, update, services, help)
 1|LANGUAGE_DEV|Development Tools|Development tools (Python, TypeScript, Go, etc.)|Programming language development environments and tools (Python, TypeScript, Go, Rust, C#, Java, PHP)
 2|AI_TOOLS|AI & Machine Learning Tools|AI and ML tools (Claude Code, etc.)|AI and machine learning development tools (Claude Code, etc.)
 3|CLOUD_TOOLS|Cloud & Infrastructure Tools|Cloud infrastructure (Azure, etc.)|Cloud platform tools and SDKs (Azure, AWS, GCP)
 4|DATA_ANALYTICS|Data & Analytics Tools|Data analysis and platforms|Data analysis, visualization, data engineering tools, and data platforms (Jupyter, pandas, DBT, Databricks, Snowflake)
 5|BACKGROUND_SERVICES|Background Services & Daemons|Background services (nginx, OTEL, etc.)|Background services and daemons (nginx reverse proxy, OTEL collector, monitoring services)
 6|INFRA_CONFIG|Infrastructure & Configuration|Infrastructure and configuration tools|Infrastructure as Code, configuration management, and DevOps tools (Ansible, Kubernetes, Terraform)
+7|CONTRIBUTOR_TOOLS|Contributor Tools|Tools for contributors and maintainers|Tools for contributors and maintainers (generate docs, run tests)
 "
 fi
 
@@ -144,12 +146,14 @@ show_categories_table() {
 
 # Only declare if not already set (prevents errors when sourced multiple times)
 if [[ -z "${CATEGORY_LANGUAGE_DEV+x}" ]]; then
+    readonly CATEGORY_SYSTEM_COMMANDS="SYSTEM_COMMANDS"
     readonly CATEGORY_LANGUAGE_DEV="LANGUAGE_DEV"
     readonly CATEGORY_AI_TOOLS="AI_TOOLS"
     readonly CATEGORY_CLOUD_TOOLS="CLOUD_TOOLS"
     readonly CATEGORY_DATA_ANALYTICS="DATA_ANALYTICS"
     readonly CATEGORY_BACKGROUND_SERVICES="BACKGROUND_SERVICES"
     readonly CATEGORY_INFRA_CONFIG="INFRA_CONFIG"
+    readonly CATEGORY_CONTRIBUTOR_TOOLS="CONTRIBUTOR_TOOLS"
 fi
 
 # Array of all category IDs in sort order (for iteration)

@@ -1,6 +1,6 @@
 # Tool Details
 
-> **Auto-generated** | Last updated: 2026-01-14 17:07:58  
+> **Auto-generated** | Last updated: 2026-01-15 13:36:40  
 > Regenerate with: `.devcontainer/manage/generate-manual.sh`
 
 Detailed installation options for each tool. See [tools.md](tools.md) for the overview.
@@ -26,7 +26,7 @@ Detailed installation options for each tool. See [tools.md](tools.md) for the ov
 **Command:** `.devcontainer/additions/install-dev-cpp.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-cpp-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-cpp-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -85,7 +85,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-csharp.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-csharp-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-csharp-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -125,7 +125,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-fortran.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-fortran-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-fortran-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -172,7 +172,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-golang.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-golang-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-golang-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -218,7 +218,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-java.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-java-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-java-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -266,7 +266,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-php-laravel.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-php-laravel-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-php-laravel-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -310,7 +310,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-python.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-python-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-python-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -356,7 +356,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-rust.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-rust-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-rust-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -405,7 +405,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-typescript.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-typescript-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-typescript-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -451,7 +451,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-dev-ai-claudecode.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-dev-ai-claudecode-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-dev-ai-claudecode-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -493,7 +493,7 @@ Node.js Packages (NPM):
 **Command:** `.devcontainer/additions/install-tool-api-dev.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-api-dev-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-api-dev-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -531,7 +531,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-azure-dev.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-azure-dev-20260114-170758.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-azure-dev-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -582,7 +582,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-azure-ops.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-azure-ops-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-azure-ops-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -635,7 +635,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-okta.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-okta-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-okta-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -675,7 +675,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-powerplatform.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-powerplatform-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-powerplatform-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -717,7 +717,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-dataanalytics.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-dataanalytics-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-dataanalytics-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -770,7 +770,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-databricks.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-databricks-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-databricks-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -822,7 +822,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-dev-utils.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-dev-utils-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-dev-utils-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -864,7 +864,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-iac.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-iac-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-iac-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
@@ -908,7 +908,7 @@ VS Code Extensions:
 **Command:** `.devcontainer/additions/install-tool-kubernetes.sh --help`
 
 ```
-📝 Logging to: /tmp/devcontainer-install/install-tool-kubernetes-20260114-170759.log
+📝 Logging to: /tmp/devcontainer-install/install-tool-kubernetes-20260115-133641.log
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 

@@ -793,6 +793,172 @@ scan_cmd_scripts() {
 }
 
 #------------------------------------------------------------------------------
+# MANAGE SCRIPT FUNCTIONS
+#------------------------------------------------------------------------------
+
+# Extract metadata from a manage script file
+#
+# Usage: extract_manage_metadata <script_path> <metadata_field>
+#
+# Arguments:
+#   script_path      - Absolute path to the dev-*.sh script
+#   metadata_field   - Field name to extract (SCRIPT_ID, SCRIPT_NAME, SCRIPT_DESCRIPTION,
+#                      SCRIPT_CATEGORY, SCRIPT_CHECK_COMMAND)
+#
+# Returns: The value of the requested field via stdout (empty if not found)
+# Exit code: 0 on success, 1 if script not found
+#
+# Example:
+#   script_name=$(extract_manage_metadata "/path/to/dev-help.sh" "SCRIPT_NAME")
+#   # Returns: "Help"
+#
+extract_manage_metadata() {
+    local script_path="$1"
+    local field_name="$2"
+
+    # Validate inputs
+    if [[ -z "$script_path" || -z "$field_name" ]]; then
+        echo "" >&2
+        return 1
+    fi
+
+    # Check if script exists
+    if [[ ! -f "$script_path" ]]; then
+        echo "" >&2
+        return 1
+    fi
+
+    # Extract the field value (first match only)
+    local value=$(grep -m 1 "^${field_name}=" "$script_path" 2>/dev/null | cut -d'"' -f2)
+
+    # Output the value (may be empty)
+    echo "$value"
+    return 0
+}
+
+# Scan manage scripts (dev-*.sh) and return metadata
+#
+# Usage: scan_manage_scripts <manage_dir>
+#
+# Arguments:
+#   manage_dir - Directory containing dev-*.sh scripts
+#
+# Output format (tab-separated, one line per script):
+#   script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND
+#
+# Excludes:
+#   - dev-welcome.sh (internal, runs on container start)
+#   - dev-setup.sh (excluded to avoid recursion when called from menu)
+#   - postStartCommand.sh, postCreateCommand.sh (devcontainer hooks)
+#
+# Exit code: 0 on success, 1 if directory not found
+#
+# Example:
+#   while IFS=$'\t' read -r basename script_id name desc cat check; do
+#       echo "Manage script: $name (ID: $script_id, category: $cat)"
+#   done < <(scan_manage_scripts "/workspace/.devcontainer/manage")
+#
+scan_manage_scripts() {
+    local manage_dir="$1"
+
+    # Validate input
+    if [[ -z "$manage_dir" ]]; then
+        echo "Error: manage_dir parameter is required" >&2
+        return 1
+    fi
+
+    # Check if directory exists
+    if [[ ! -d "$manage_dir" ]]; then
+        echo "Error: Directory not found: $manage_dir" >&2
+        return 1
+    fi
+
+    # Scan for dev-*.sh scripts
+    for script in "$manage_dir"/dev-*.sh; do
+        # Skip if it's a directory or doesn't exist
+        [[ ! -f "$script" ]] && continue
+
+        local script_basename=$(basename "$script")
+
+        # Skip excluded scripts
+        case "$script_basename" in
+            dev-welcome.sh)     continue ;;  # internal, runs on container start
+            dev-setup.sh)       continue ;;  # excluded to avoid recursion
+        esac
+
+        # Extract metadata
+        local script_id=$(extract_manage_metadata "$script" "SCRIPT_ID")
+        local script_name=$(extract_manage_metadata "$script" "SCRIPT_NAME")
+        local script_description=$(extract_manage_metadata "$script" "SCRIPT_DESCRIPTION")
+        local script_category=$(extract_manage_metadata "$script" "SCRIPT_CATEGORY")
+        local check_command=$(extract_manage_metadata "$script" "SCRIPT_CHECK_COMMAND")
+
+        # Skip if no SCRIPT_ID or SCRIPT_NAME found (invalid script)
+        if [[ -z "$script_id" || -z "$script_name" ]]; then
+            continue
+        fi
+
+        # Default category if not specified
+        if [[ -z "$script_category" ]]; then
+            script_category="UNCATEGORIZED"
+        fi
+
+        # Default description if not specified
+        if [[ -z "$script_description" ]]; then
+            script_description="No description available"
+        fi
+
+        # Output tab-separated values
+        printf "%s\t%s\t%s\t%s\t%s\t%s\n" \
+            "$script_basename" \
+            "$script_id" \
+            "$script_name" \
+            "$script_description" \
+            "$script_category" \
+            "$check_command"
+    done
+
+    return 0
+}
+
+# Get the full path to a manage script from its basename
+#
+# Usage: get_manage_script_path <manage_dir> <script_basename>
+#
+# Arguments:
+#   manage_dir      - Directory containing dev-*.sh scripts
+#   script_basename - The basename of the script (e.g., "dev-help.sh")
+#
+# Returns: Full path to the script via stdout
+# Exit code: 0 on success, 1 if script not found
+#
+# Example:
+#   script_path=$(get_manage_script_path "/workspace/.devcontainer/manage" "dev-help.sh")
+#   # Returns: "/workspace/.devcontainer/manage/dev-help.sh"
+#
+get_manage_script_path() {
+    local manage_dir="$1"
+    local script_basename="$2"
+
+    # Validate inputs
+    if [[ -z "$manage_dir" || -z "$script_basename" ]]; then
+        echo "" >&2
+        return 1
+    fi
+
+    local script_path="$manage_dir/$script_basename"
+
+    # Check if script exists
+    if [[ ! -f "$script_path" ]]; then
+        echo "" >&2
+        return 1
+    fi
+
+    echo "$script_path"
+    return 0
+}
+
+#------------------------------------------------------------------------------
 # LIBRARY INITIALIZATION
 #------------------------------------------------------------------------------
 
