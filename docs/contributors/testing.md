@@ -9,17 +9,18 @@ Automated tests for validating install scripts, config scripts, and libraries.
 ## Quick Start
 
 ```bash
-# Run all tests (static + unit)
-.devcontainer/additions/tests/run-all-tests.sh
+# Run all tests (static + unit + lint)
+dev-test
 
 # Run specific test level
-.devcontainer/additions/tests/run-all-tests.sh static    # Fast, no execution
-.devcontainer/additions/tests/run-all-tests.sh unit      # Safe execution (--help, --verify)
-.devcontainer/additions/tests/run-all-tests.sh install   # Full install/uninstall cycle (slow)
+dev-test static    # Fast, no execution
+dev-test unit      # Safe execution (--help, --verify)
+dev-test install   # Full install/uninstall cycle (slow)
+dev-test lint      # ShellCheck linting
 
 # Test a specific script
-.devcontainer/additions/tests/run-all-tests.sh static install-dev-python.sh
-.devcontainer/additions/tests/run-all-tests.sh install install-dev-python.sh
+dev-test static install-dev-python.sh
+dev-test install install-dev-python.sh
 ```
 
 ---
@@ -63,13 +64,13 @@ When creating new scripts, run tests to validate:
 ```bash
 # 1. Create script following template
 # 2. Run static tests
-.devcontainer/additions/tests/run-all-tests.sh static install-dev-newlang.sh
+dev-test static install-dev-newlang.sh
 
 # 3. Run unit tests
-.devcontainer/additions/tests/run-all-tests.sh unit install-dev-newlang.sh
+dev-test unit install-dev-newlang.sh
 
 # 4. Run install cycle test
-.devcontainer/additions/tests/run-all-tests.sh install install-dev-newlang.sh
+dev-test install install-dev-newlang.sh
 ```
 
 ---

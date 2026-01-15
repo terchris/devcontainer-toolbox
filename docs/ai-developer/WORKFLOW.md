@@ -166,8 +166,7 @@ Claude will:
    > - Current version: 1.0.3
    > - If yes, what should the new version be?"
 
-7. **Check documentation** (if install scripts changed):
-   > "Install scripts were modified. I'll run `dev-docs` to update the documentation."
+7. **Documentation**: CI auto-updates docs after merge - no manual step needed.
 
 See [CI-CD.md](../contributors/CI-CD.md) for details on what happens after merge.
 

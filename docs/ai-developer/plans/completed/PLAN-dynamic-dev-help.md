@@ -7,7 +7,7 @@
 
 # Plan: Dynamic dev-help Command List
 
-## Status: READY FOR IMPLEMENTATION
+## Status: COMPLETED
 
 **Goal**: Replace static command list in `dev-help` with dynamically generated list using existing `scan_manage_scripts` function.
 

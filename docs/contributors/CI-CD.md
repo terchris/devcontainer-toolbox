@@ -1,25 +1,57 @@
 # CI/CD and GitHub Actions
 
-What happens when code is pushed to GitHub, and what you need to do before merging to main.
+What happens when code is pushed to GitHub, and how changes get released to users.
+
+---
+
+## The Two-Stage Process
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  STAGE 1: Pull Request (Validation)                             │
+│                                                                 │
+│  You create a PR                                                │
+│         ↓                                                       │
+│  CI Tests run on your branch                                    │
+│         ↓                                                       │
+│  ✅ Tests pass = Safe to merge                                  │
+│  ❌ Tests fail = Fix issues before merging                      │
+│                                                                 │
+│  ⚠️  NO release is created. This is just validation.            │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+                        You click "Merge"
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│  STAGE 2: After Merge to Main (Release)                         │
+│                                                                 │
+│  CI Tests run again on main                                     │
+│         ↓                                                       │
+│  If tests pass → Release workflow runs automatically            │
+│         ↓                                                       │
+│  Creates dev_containers.zip with new version                    │
+│         ↓                                                       │
+│  Users can now run `dev-update` to get your changes             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key point:** Users only get your changes AFTER you merge the PR. The PR stage is your safety check.
 
 ---
 
 ## Before Merging to Main
 
-**Always check before merging a PR to main:**
+**Always check before merging a PR:**
 
 1. **Version bump needed?**
    - If this is a new feature or bug fix that users should receive, bump the version
    - Edit `version.txt` with new version number
+   - Without a version bump, users won't see your changes when running `dev-update`
    - See [RELEASING.md](RELEASING.md) for version numbering guidelines
 
-2. **Documentation regeneration needed?**
-   - If any install scripts were added or modified, run:
-     ```bash
-     .devcontainer/manage/dev-docs
-     ```
-   - This updates `docs/tools.md`, `docs/tools-details.md`, and `README.md`
-   - CI will fail if this is out of date
+2. **CI passing?**
+   - All tests must pass before merging
+   - Documentation is auto-updated by CI after merge (no manual step needed)
 
 ---
 
@@ -35,20 +67,19 @@ Two workflows run automatically:
 
 | Stage | Name | What it checks |
 |-------|------|----------------|
-| 0 | Documentation Check | `dev-docs` output matches committed files |
+| 0 | Documentation Update | Auto-regenerates and commits docs (main branch only) |
 | 1 | Build Container | Builds the devcontainer image |
 | 2 | Static Tests | Syntax, metadata, categories, flags |
 | 3 | ShellCheck | Linting (warnings only, doesn't fail) |
 | 4 | Unit Tests | `--help` execution, `--verify`, library functions |
 
 **If it fails:**
-- Documentation out of date → Run `dev-docs` and commit
 - Static tests failed → Check script metadata and syntax
 - Unit tests failed → Check `--help` and `--verify` implementations
 
 ### 2. Release Workflow (`.github/workflows/zip_dev_setup.yml`)
 
-**Triggers:** After CI Tests pass on main branch
+**Triggers:** After CI Tests pass on main branch (not on PRs)
 
 **What it does:**
 
@@ -59,22 +90,6 @@ Two workflows run automatically:
 5. Creates GitHub release tagged "latest" with the zip file
 
 **Result:** Users can run `dev-update` to get the new version.
-
----
-
-## The Release Flow
-
-```
-You merge PR to main
-       ↓
-CI Tests run automatically
-       ↓
-If tests pass → Release workflow runs
-       ↓
-Creates GitHub release with dev_containers.zip
-       ↓
-Users run `dev-update` to get the update
-```
 
 ---
 
