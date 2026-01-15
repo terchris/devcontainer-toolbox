@@ -4,7 +4,10 @@ Project-specific instructions for Claude Code when working on devcontainer-toolb
 
 ## Plan Workflow
 
-**IMPORTANT:** Read `docs/ai-developer/PLANS.md` for full plan structure, templates, and best practices.
+**BEFORE implementing any plan, read these files for context:**
+- `docs/ai-developer/PLANS.md` - Plan structure, templates, and best practices
+- `docs/ai-developer/WORKFLOW.md` - Implementation workflow and process
+- `docs/ai-developer/CREATING-SCRIPTS.md` - Script conventions and metadata format
 
 When implementing a plan from `docs/ai-developer/plans/`:
 
