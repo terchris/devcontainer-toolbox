@@ -1,30 +1,81 @@
 # Contributor Documentation
 
-This folder contains technical documentation for developers who maintain and extend devcontainer-toolbox.
+Technical documentation for developers who maintain and extend devcontainer-toolbox.
+
+---
 
 ## Structure
 
 ```
 docs/contributors/
-├── README.md                 # This file
-├── RELEASING.md              # How to create new versions
-├── adding-tools.md           # How to add new install scripts
-├── architecture.md           # System architecture overview
-├── categories.md             # Tool category reference
-├── service-dependencies.md   # Service dependency flow
-└── monitoring-requirements.md # Container monitoring requirements
+├── README.md                      # This file
+├── RELEASING.md                   # How to create new versions
+│
+├── adding-tools.md                # Overview + quick start
+├── creating-install-scripts.md   # Complete install script guide
+├── creating-service-scripts.md   # Complete service script guide
+├── libraries.md                   # Library functions reference
+│
+├── architecture.md                # System architecture
+├── menu-system.md                 # Dialog tool usage
+├── categories.md                  # Tool category reference
+├── services-dependencies.md       # Service dependency flow
+│
+├── services.md                    # Services documentation index
+├── services-nginx.md              # Nginx reverse proxy service
+├── services-otel.md               # OTEL monitoring service
+│
+├── testing.md                     # Running tests, adding tests
+├── testing-maintenance.md         # Maintaining the test framework
+├── CI-CD.md                       # GitHub Actions and release automation
+└── services-monitoring-requirements.md  # Container monitoring requirements
 ```
 
-## Key Documents
+---
+
+## Getting Started
 
 | Document | Purpose |
 |----------|---------|
-| `RELEASING.md` | How to bump versions and create releases |
-| `adding-tools.md` | How to add new install scripts |
-| `architecture.md` | System architecture, script types, metadata, libraries |
-| `categories.md` | Tool category definitions |
-| `service-dependencies.md` | Service startup order and dependencies |
-| `monitoring-requirements.md` | Container monitoring requirements |
+| [adding-tools.md](adding-tools.md) | Quick start for adding new scripts |
+| [creating-install-scripts.md](creating-install-scripts.md) | Complete guide to install-*.sh scripts |
+| [creating-service-scripts.md](creating-service-scripts.md) | Complete guide to service-*.sh scripts |
+| [libraries.md](libraries.md) | Shared library functions reference |
+
+---
+
+## Architecture & Reference
+
+| Document | Purpose |
+|----------|---------|
+| [architecture.md](architecture.md) | System architecture, script types, metadata |
+| [menu-system.md](menu-system.md) | Dialog tool usage and widgets |
+| [categories.md](categories.md) | Tool category definitions |
+| [services-dependencies.md](services-dependencies.md) | Service startup order and dependencies |
+
+---
+
+## Services
+
+| Document | Purpose |
+|----------|---------|
+| [services.md](services.md) | Services overview |
+| [services-nginx.md](services-nginx.md) | Nginx reverse proxy service |
+| [services-otel.md](services-otel.md) | OTEL monitoring service |
+
+---
+
+## Testing & Release
+
+| Document | Purpose |
+|----------|---------|
+| [testing.md](testing.md) | Running tests and adding tests for scripts |
+| [testing-maintenance.md](testing-maintenance.md) | Maintaining the test framework |
+| [CI-CD.md](CI-CD.md) | GitHub Actions and pre-merge checklist |
+| [RELEASING.md](RELEASING.md) | How to bump versions and create releases |
+| [services-monitoring-requirements.md](services-monitoring-requirements.md) | Container monitoring requirements |
+
+---
 
 ## AI Developer Documentation
 

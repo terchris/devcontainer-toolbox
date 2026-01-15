@@ -2,7 +2,9 @@
 
 How plans become implemented features.
 
-**Related:** [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
+**Related:**
+- [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
+- [CI-CD.md](../contributors/CI-CD.md) - What to check before merging to main
 
 ---
 
@@ -156,6 +158,35 @@ Claude will:
    > - Review it on GitHub
    > - Ask someone to review it
    > - Merge it when ready"
+
+**Before merging the PR**, Claude will ask:
+
+6. **Check version bump**:
+   > "Should we bump the version before merging?
+   > - Current version: 1.0.3
+   > - If yes, what should the new version be?"
+
+7. **Check documentation** (if install scripts changed):
+   > "Install scripts were modified. I'll run `generate-manual.sh` to update the documentation."
+
+See [CI-CD.md](../contributors/CI-CD.md) for details on what happens after merge.
+
+---
+
+## Version Management (MANDATORY)
+
+**CRITICAL:** Before pushing to GitHub or creating a PR, Claude MUST:
+
+1. **Ask the user:** "Should we bump the version for this change?"
+2. **If yes:** Update `version.txt` with the new version number
+3. **Version types:**
+   - PATCH (1.0.x → 1.0.y): Bug fixes, small improvements
+   - MINOR (1.x.0 → 1.y.0): New features, documentation improvements
+   - MAJOR (x.0.0 → y.0.0): Breaking changes
+
+**Why this matters:** Users running `dev-update` will only see updates if the version number changes. Without a version bump, changes will never reach users.
+
+See [RELEASING.md](../contributors/RELEASING.md) for full release process.
 
 ---
 

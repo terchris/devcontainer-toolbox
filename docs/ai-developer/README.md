@@ -10,6 +10,8 @@ Instructions for AI coding assistants (Claude, Copilot, etc.) working on devcont
 |----------|---------|
 | [WORKFLOW.md](WORKFLOW.md) | End-to-end flow from idea to implemented feature (start here) |
 | [PLANS.md](PLANS.md) | Plan structure, templates, and how to write plans |
+| [CREATING-SCRIPTS.md](CREATING-SCRIPTS.md) | How to create new install/service/config scripts |
+| [CI-CD.md](../contributors/CI-CD.md) | GitHub Actions, versioning, and pre-merge checklist |
 
 ---
 
@@ -53,6 +55,13 @@ plans/
 
 1. Move plan to `plans/completed/`
 2. Create Pull Request if on feature branch
+
+### When creating new tools or services:
+
+1. Read [CREATING-SCRIPTS.md](CREATING-SCRIPTS.md) for patterns and templates
+2. Follow the metadata requirements exactly
+3. **Tests must pass** - Run before committing: `.devcontainer/additions/tests/run-all-tests.sh static <script>`
+4. CI will reject PRs with failing tests
 
 ---
 

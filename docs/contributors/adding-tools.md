@@ -1,49 +1,95 @@
 # Adding New Tools
 
-How to add new install scripts to devcontainer-toolbox.
+How to extend devcontainer-toolbox with new tools, configurations, and services.
 
-**Related:** [architecture.md](architecture.md) - Full technical details on script types and metadata
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Creating Install Scripts](creating-install-scripts.md) | Complete guide to `install-*.sh` scripts |
+| [Creating Service Scripts](creating-service-scripts.md) | Complete guide to `service-*.sh` scripts |
+| [Libraries Reference](libraries.md) | Shared library functions |
+| [Architecture](architecture.md) | System architecture overview |
+| [Categories](categories.md) | Tool category definitions |
 
 ---
 
 ## Quick Start
 
-1. Copy the template
-2. Update metadata
-3. Add installation logic
-4. Test it
-5. Regenerate documentation
+### Install Script (install-*.sh)
 
----
-
-## Step 1: Copy the Template
+Install tools, runtimes, or development environments.
 
 ```bash
+# 1. Copy template
 cp .devcontainer/additions/addition-templates/_template-install-script.sh \
    .devcontainer/additions/install-mytool.sh
+
+# 2. Edit metadata
+SCRIPT_ID="mytool"
+SCRIPT_NAME="My Tool"
+SCRIPT_DESCRIPTION="Install My Tool"
+SCRIPT_CATEGORY="LANGUAGE_DEV"
+SCRIPT_CHECK_COMMAND="command -v mytool >/dev/null 2>&1"
+
+# 3. Test
+.devcontainer/additions/install-mytool.sh --help
+.devcontainer/additions/install-mytool.sh
+
+# 4. Update docs
+.devcontainer/manage/generate-manual.sh
 ```
 
-Naming convention: `install-<category>-<name>.sh`
-- `install-dev-python.sh` - Development tool
-- `install-tool-kubernetes.sh` - Infrastructure tool
-- `install-srv-nginx.sh` - Service/server
+See [Creating Install Scripts](creating-install-scripts.md) for full details.
+
+### Config Script (config-*.sh)
+
+Configure user settings, credentials, or identities.
+
+```bash
+# 1. Copy template
+cp .devcontainer/additions/addition-templates/_template-config-script.sh \
+   .devcontainer/additions/config-mytool.sh
+
+# 2. Edit metadata
+SCRIPT_NAME="My Tool Configuration"
+SCRIPT_DESCRIPTION="Configure My Tool settings"
+SCRIPT_CATEGORY="INFRA_CONFIG"
+SCRIPT_CHECK_COMMAND="[ -f ~/.mytool-config ]"
+
+# 3. Implement --verify for restoration
+# 4. Implement interactive configuration
+```
+
+See [Creating Install Scripts](creating-install-scripts.md) (config section) for full details.
+
+### Service Script (service-*.sh)
+
+Manage long-running background services.
+
+```bash
+# 1. Copy template
+cp .devcontainer/additions/addition-templates/_template-service-script.sh \
+   .devcontainer/additions/service-myservice.sh
+
+# 2. Edit metadata
+SCRIPT_NAME="My Service"
+SCRIPT_DESCRIPTION="My background service"
+SCRIPT_CATEGORY="BACKGROUND_SERVICES"
+
+# 3. Define SCRIPT_COMMANDS array
+# 4. Implement service functions
+```
+
+See [Creating Service Scripts](creating-service-scripts.md) for full details.
 
 ---
 
-## Step 2: Update Metadata
+## Categories
 
-Edit the metadata section at the top of the script:
-
-```bash
-SCRIPT_ID="mytool"                           # Unique identifier
-SCRIPT_VER="0.0.1"                           # Script version
-SCRIPT_NAME="My Tool"                        # Display name (2-4 words)
-SCRIPT_DESCRIPTION="Install My Tool"         # One-line description
-SCRIPT_CATEGORY="LANGUAGE_DEV"               # Category for menu grouping
-SCRIPT_CHECK_COMMAND="command -v mytool"     # How to check if installed
-```
-
-### Categories
+Scripts are grouped by category in the dev-setup menu:
 
 | Category | Use for |
 |----------|---------|
@@ -51,83 +97,18 @@ SCRIPT_CHECK_COMMAND="command -v mytool"     # How to check if installed
 | `AI_TOOLS` | AI/ML tools |
 | `CLOUD_TOOLS` | Cloud platform tools (Azure, AWS) |
 | `DATA_ANALYTICS` | Data tools (Jupyter, pandas) |
+| `BACKGROUND_SERVICES` | Background services (nginx, monitoring) |
 | `INFRA_CONFIG` | Infrastructure tools (Kubernetes, Terraform) |
 
-See [categories.md](categories.md) for the full list.
-
-### Check Command
-
-The `SCRIPT_CHECK_COMMAND` determines if the tool shows as installed:
-
-```bash
-# Good: Fast, silent, returns 0 or 1
-SCRIPT_CHECK_COMMAND="command -v go >/dev/null 2>&1"
-SCRIPT_CHECK_COMMAND="[ -f /usr/local/bin/mytool ]"
-
-# Check install location OR PATH (works before PATH refresh)
-SCRIPT_CHECK_COMMAND="[ -f /usr/local/go/bin/go ] || command -v go >/dev/null 2>&1"
-```
-
----
-
-## Step 3: Add Installation Logic
-
-Define what packages to install:
-
-```bash
-# System packages (apt-get)
-PACKAGES_SYSTEM=("curl" "git")
-
-# Node packages (npm)
-PACKAGES_NODE=("typescript" "ts-node")
-
-# Python packages (pip)
-PACKAGES_PYTHON=("requests" "pandas")
-
-# VS Code extensions
-EXTENSIONS=("ms-python.python" "ms-toolsai.jupyter")
-```
-
-For custom installation logic, add it in the main section after sourcing the libraries.
-
----
-
-## Step 4: Test It
-
-```bash
-# Show help
-.devcontainer/additions/install-mytool.sh --help
-
-# Install
-.devcontainer/additions/install-mytool.sh
-
-# Verify it appears in menu
-dev-setup
-# Navigate to your category
-
-# Uninstall
-.devcontainer/additions/install-mytool.sh --uninstall
-```
-
----
-
-## Step 5: Regenerate Documentation
-
-After adding or modifying scripts, update the tools documentation:
-
-```bash
-.devcontainer/manage/generate-manual.sh
-```
-
-This updates `docs/tools.md` so users can see the new tool.
+See [categories.md](categories.md) for the full list and descriptions.
 
 ---
 
 ## Script Discovery
 
 Scripts are automatically discovered by `dev-setup` based on:
-- Filename pattern: `install-*.sh`
-- Presence of `SCRIPT_ID` metadata
+- Filename pattern: `install-*.sh`, `config-*.sh`, `service-*.sh`, `cmd-*.sh`
+- Presence of `SCRIPT_ID` or `SCRIPT_NAME` metadata
 
 No registration needed - just create the file with correct metadata.
 
@@ -135,7 +116,7 @@ No registration needed - just create the file with correct metadata.
 
 ## Templates
 
-Available templates in `.devcontainer/additions/addition-templates/`:
+Available in `.devcontainer/additions/addition-templates/`:
 
 | Template | Purpose |
 |----------|---------|
@@ -146,18 +127,78 @@ Available templates in `.devcontainer/additions/addition-templates/`:
 
 ---
 
-## Testing Tips
+## Testing
 
-- Test install and uninstall
-- Test with `--help` flag
-- Verify check command works (shows ✅ in menu after install)
-- Run `shellcheck` on your script
-- Test in fresh container (rebuild)
+Run these inside the devcontainer:
+
+```bash
+# Test help
+.devcontainer/additions/install-mytool.sh --help
+
+# Test install
+.devcontainer/additions/install-mytool.sh
+
+# Verify in menu
+dev-setup
+# Navigate to your category
+
+# Test uninstall
+.devcontainer/additions/install-mytool.sh --uninstall
+
+# Run automated tests
+.devcontainer/additions/tests/run-all-tests.sh static install-mytool.sh
+
+# Run shellcheck
+shellcheck .devcontainer/additions/install-mytool.sh
+```
+
+See [testing.md](testing.md) for more details on the test framework.
 
 ---
 
-## More Information
+## User-Facing Documentation
 
-- [architecture.md](architecture.md) - Full system architecture
-- [categories.md](categories.md) - Category definitions
-- Template READMEs in `.devcontainer/additions/addition-templates/`
+Some documentation files live alongside code (not in `docs/`) because they're meant for end users:
+
+| File | Purpose | When to Update |
+|------|---------|----------------|
+| `.devcontainer.secrets/README-secrets.md` | Explains secrets folder to users | When adding new secret types or changing storage patterns |
+
+---
+
+## After Adding a Script
+
+Regenerate documentation (run inside the devcontainer):
+
+```bash
+.devcontainer/manage/generate-manual.sh
+```
+
+This updates `docs/tools.md` so users can see the new tool.
+
+---
+
+## Submitting Your Contribution
+
+1. **Fork the repository** on GitHub
+
+2. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/add-elixir-support
+   ```
+
+3. **Make your changes:**
+   - Add your script
+   - Run tests: `.devcontainer/additions/tests/run-all-tests.sh static`
+   - Regenerate docs: `.devcontainer/manage/generate-manual.sh`
+
+4. **Commit and push:**
+   ```bash
+   git add .
+   git commit -m "feat: add Elixir development environment"
+   git push -u origin feature/add-elixir-support
+   ```
+
+5. **Create a Pull Request** on GitHub
+
+See [CI-CD.md](CI-CD.md) for what checks run on your PR.

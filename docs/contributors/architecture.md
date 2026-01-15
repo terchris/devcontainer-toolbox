@@ -5,7 +5,6 @@ This document describes the architecture and design patterns of the DevContainer
 ## Table of Contents
 
 - [Overview](#overview)
-- [Menu System - Dialog Tool](#menu-system---dialog-tool)
 - [Script Types](#script-types)
 - [Metadata System](#metadata-system)
 - [Library System](#library-system)
@@ -33,148 +32,6 @@ The Additions System provides:
 - **Self-documenting** - Metadata in scripts serves as both documentation and discovery mechanism
 - **Declarative actions** - `SCRIPT_COMMANDS` array defines available operations
 - **Separation of concerns** - Core logic in libraries, scripts are thin wrappers
-
----
-
-## Menu System - Dialog Tool
-
-### What is Dialog?
-
-The menu system uses **[dialog](https://invisible-island.net/dialog/)** - a tool for creating text-based user interfaces (TUI) in shell scripts. Dialog provides a consistent, accessible interface that works in any terminal.
-
-### Why Dialog?
-
-| Feature | Benefit |
-|---------|---------|
-| **Terminal-based** | Works in SSH, containers, any terminal |
-| **Keyboard navigation** | Arrow keys, Tab, Enter for navigation |
-| **No dependencies** | Part of most Linux distributions |
-| **Accessible** | Works with screen readers |
-| **Scriptable** | Captures user input via exit codes and stdout |
-
-### Dialog Installation
-
-Dialog is installed in the base devcontainer image (Dockerfile.base):
-
-```dockerfile
-RUN apt-get update && apt-get install -y dialog
-```
-
-### Dialog Widgets Used
-
-The system uses these dialog widgets:
-
-#### 1. Menu Widget (`--menu`)
-
-Primary navigation - single selection from a list:
-
-```bash
-choice=$(dialog --clear \
-    --title "Main Menu" \
-    --menu "Choose an option:" \
-    20 80 12 \           # height width menu-height
-    "1" "Browse & Install Tools" \
-    "2" "Manage Services" \
-    "3" "Setup & Configuration" \
-    2>&1 >/dev/tty)
-```
-
-#### 2. Menu with Item Help (`--item-help`)
-
-Adds context-sensitive help text at bottom of screen:
-
-```bash
-choice=$(dialog --clear \
-    --item-help \
-    --title "Select Tool" \
-    --menu "Choose a tool:" \
-    20 80 12 \
-    "1" "Go Runtime" "Install Go development environment" \
-    "2" "Python" "Install Python with pip and tools" \
-    2>&1 >/dev/tty)
-```
-
-#### 3. Checklist Widget (`--checklist`)
-
-Multiple selection with on/off toggles:
-
-```bash
-selected=$(dialog --clear \
-    --title "Auto-Start Services" \
-    --checklist "Select services to auto-start:" \
-    20 80 12 \
-    "1" "Nginx Proxy" "on" \
-    "2" "OTEL Collector" "off" \
-    2>&1 >/dev/tty)
-```
-
-#### 4. Input Box (`--inputbox`)
-
-Text input for parameters:
-
-```bash
-version=$(dialog --clear \
-    --title "Version" \
-    --inputbox "Enter Go version:" \
-    8 60 \
-    2>&1 >/dev/tty)
-```
-
-#### 5. Message Box (`--msgbox`)
-
-Display information or errors:
-
-```bash
-dialog --title "Success" \
-    --msgbox "Installation complete!" \
-    8 50
-```
-
-#### 6. Yes/No Dialog (`--yesno`)
-
-Confirmation prompts:
-
-```bash
-if dialog --title "Confirm" --yesno "Proceed with installation?" 8 50; then
-    # User said yes
-fi
-```
-
-### Dialog Output Handling
-
-Dialog writes selections to stderr (not stdout), so we redirect:
-
-```bash
-# Capture selection
-choice=$(dialog ... 2>&1 >/dev/tty)
-
-# Check exit code
-if [[ $? -ne 0 ]]; then
-    # User pressed ESC or Cancel
-    return
-fi
-```
-
-### Dialog Dimensions
-
-Standard dimensions used in dev-setup.sh:
-
-```bash
-DIALOG_HEIGHT=20   # Total dialog height
-DIALOG_WIDTH=80    # Total dialog width
-MENU_HEIGHT=12     # Number of visible menu items
-```
-
-### Status Icons in Menus
-
-The system uses Unicode/emoji for status display:
-
-| Icon | Meaning |
-|------|---------|
-| `✅` | Installed / Configured / Running |
-| `❌` | Not installed / Not configured / Stopped |
-| `⏸️` | Service stopped |
-| `[AI]`, `[DEV]` | Category prefixes |
 
 ---
 
@@ -636,7 +493,7 @@ SCRIPT_COMMANDS=(
 │   │   ├── _template-config-script.sh
 │   │   ├── _template-service-script.sh
 │   │   ├── _template-cmd-script.sh
-│   │   └── README-additions-template.md
+│   │   └── README-secrets.md            # User-facing secrets docs
 │   │
 │   ├── install-*.sh                  # Tool installers
 │   ├── config-*.sh                   # Configuration scripts
@@ -786,11 +643,12 @@ CATEGORY_TABLE="
 
 ## References
 
-- [Dialog Manual](https://invisible-island.net/dialog/dialog.html)
-- [README-additions.md](../additions/README-additions.md) - User guide
-- [README-additions-template.md](../additions/addition-templates/README-additions-template.md) - Template guide
-- [categories.sh](../additions/lib/categories.sh) - Category definitions
-- [component-scanner.sh](../additions/lib/component-scanner.sh) - Scanner library
+- [Menu System](menu-system.md) - Dialog tool usage and widgets
+- [Creating Install Scripts](creating-install-scripts.md) - Complete install script guide
+- [Creating Service Scripts](creating-service-scripts.md) - Service script guide
+- [Libraries Reference](libraries.md) - Library functions documentation
+- [categories.sh](../../.devcontainer/additions/lib/categories.sh) - Category definitions
+- [component-scanner.sh](../../.devcontainer/additions/lib/component-scanner.sh) - Scanner library
 
 ---
 
