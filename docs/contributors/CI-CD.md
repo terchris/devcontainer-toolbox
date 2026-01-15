@@ -16,7 +16,7 @@ What happens when code is pushed to GitHub, and what you need to do before mergi
 2. **Documentation regeneration needed?**
    - If any install scripts were added or modified, run:
      ```bash
-     .devcontainer/manage/generate-manual.sh
+     .devcontainer/manage/dev-docs
      ```
    - This updates `docs/tools.md`, `docs/tools-details.md`, and `README.md`
    - CI will fail if this is out of date
@@ -35,14 +35,14 @@ Two workflows run automatically:
 
 | Stage | Name | What it checks |
 |-------|------|----------------|
-| 0 | Documentation Check | `generate-manual.sh` output matches committed files |
+| 0 | Documentation Check | `dev-docs` output matches committed files |
 | 1 | Build Container | Builds the devcontainer image |
 | 2 | Static Tests | Syntax, metadata, categories, flags |
 | 3 | ShellCheck | Linting (warnings only, doesn't fail) |
 | 4 | Unit Tests | `--help` execution, `--verify`, library functions |
 
 **If it fails:**
-- Documentation out of date → Run `generate-manual.sh` and commit
+- Documentation out of date → Run `dev-docs` and commit
 - Static tests failed → Check script metadata and syntax
 - Unit tests failed → Check `--help` and `--verify` implementations
 
@@ -93,7 +93,7 @@ Users run `dev-update` to get the update
 ```
 [ ] Tests passing on PR?
 [ ] Version bumped in version.txt? (if releasing changes to users)
-[ ] generate-manual.sh run? (if install scripts changed)
+[ ] dev-docs run? (if install scripts changed)
 [ ] Changes committed and pushed?
 ```
 

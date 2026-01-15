@@ -39,7 +39,7 @@ SCRIPT_CHECK_COMMAND="command -v mytool >/dev/null 2>&1"
 .devcontainer/additions/install-mytool.sh
 
 # 4. Update docs
-.devcontainer/manage/generate-manual.sh
+dev-docs
 ```
 
 See [Creating Install Scripts](creating-install-scripts.md) for full details.
@@ -171,7 +171,7 @@ Some documentation files live alongside code (not in `docs/`) because they're me
 Regenerate documentation (run inside the devcontainer):
 
 ```bash
-.devcontainer/manage/generate-manual.sh
+dev-docs
 ```
 
 This updates `docs/tools.md` so users can see the new tool.
@@ -190,7 +190,7 @@ This updates `docs/tools.md` so users can see the new tool.
 3. **Make your changes:**
    - Add your script
    - Run tests: `.devcontainer/additions/tests/run-all-tests.sh static`
-   - Regenerate docs: `.devcontainer/manage/generate-manual.sh`
+   - Regenerate docs: `dev-docs`
 
 4. **Commit and push:**
    ```bash

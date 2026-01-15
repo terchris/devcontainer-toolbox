@@ -21,6 +21,7 @@ on:
       - '.github/workflows/ci-tests.yml'
       - 'docs/tools.md'
       - 'docs/tools-details.md'
+      - 'docs/commands.md'
       - 'README.md'
   pull_request:
     branches: [main]
@@ -29,6 +30,7 @@ on:
       - '.github/workflows/ci-tests.yml'
       - 'docs/tools.md'
       - 'docs/tools-details.md'
+      - 'docs/commands.md'
       - 'README.md'
   workflow_dispatch:
     inputs:
@@ -49,21 +51,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run generate-manual.sh
+      - name: Run dev-docs
         run: |
-          chmod +x .devcontainer/manage/generate-manual.sh
-          .devcontainer/manage/generate-manual.sh
+          chmod +x .devcontainer/manage/dev-docs.sh
+          .devcontainer/manage/dev-docs.sh
 
       - name: Check for uncommitted changes
         run: |
-          if [ -n "$(git status --porcelain docs/tools.md docs/tools-details.md README.md)" ]; then
-            echo "::error::Documentation is out of date. Run '.devcontainer/manage/generate-manual.sh' and commit the changes."
+          if [ -n "$(git status --porcelain docs/tools.md docs/tools-details.md docs/commands.md README.md)" ]; then
+            echo "::error::Documentation is out of date. Run 'dev-docs' (or .devcontainer/manage/dev-docs.sh) and commit the changes."
             echo ""
             echo "Changed files:"
-            git status --porcelain docs/tools.md docs/tools-details.md README.md
+            git status --porcelain docs/tools.md docs/tools-details.md docs/commands.md README.md
             echo ""
             echo "Diff:"
-            git diff docs/tools.md docs/tools-details.md README.md
+            git diff docs/tools.md docs/tools-details.md docs/commands.md README.md
             exit 1
           fi
           echo "Documentation is up to date."

@@ -1,6 +1,15 @@
 #!/bin/bash
 # dev-help.sh - Show available dev-* commands
 
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-help"
+SCRIPT_NAME="Help"
+SCRIPT_DESCRIPTION="Show available commands and version info"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
+
 # Get script directory and source version utilities
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 

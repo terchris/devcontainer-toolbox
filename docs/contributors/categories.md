@@ -158,9 +158,9 @@ SORT_ORDER|CATEGORY_ID|DISPLAY_NAME|SHORT_DESCRIPTION|LONG_DESCRIPTION
 
 ### Used By
 
-- `.devcontainer/manage/generate-manual.sh` - Documentation generation
+- `dev-docs` (`.devcontainer/manage/dev-docs.sh`) - Documentation generation
+- `dev-setup` - Dynamic menu system
 - `.devcontainer/additions/addition-templates/_template-install-script.sh` - Template documentation
-- Menu system (future implementation)
 - Any script that needs to display or validate categories
 
 This ensures consistency across all tooling and documentation.

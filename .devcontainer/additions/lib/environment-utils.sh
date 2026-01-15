@@ -112,6 +112,8 @@ setup_command_symlinks() {
         "dev-clean"
         "dev-env"
         "dev-help"
+        "dev-docs"
+        "dev-test"
     )
 
     local created=0

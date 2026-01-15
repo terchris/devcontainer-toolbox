@@ -196,7 +196,7 @@ See [CI-CD.md](../contributors/CI-CD.md) for what CI checks.
 Regenerate documentation (run inside the devcontainer):
 
 ```bash
-.devcontainer/manage/generate-manual.sh
+dev-docs
 ```
 
 This updates `docs/tools.md` so users can see the new tool. CI will fail if this is not done.

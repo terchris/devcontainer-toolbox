@@ -2,6 +2,15 @@
 # dev-update.sh - Update devcontainer-toolbox from inside the container
 # Usage: dev-update [--force]
 
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-update"
+SCRIPT_NAME="Update"
+SCRIPT_DESCRIPTION="Update devcontainer-toolbox to latest version"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
+
 set -e
 
 REPO="TOOLBOX_REPO_PLACEHOLDER"

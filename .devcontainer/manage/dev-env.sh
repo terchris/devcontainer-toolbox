@@ -15,13 +15,14 @@
 # Don't use set -e - we want to continue even if scans fail
 
 #------------------------------------------------------------------------------
-# Metadata
+# Script Metadata (for component scanner)
 #------------------------------------------------------------------------------
-
-SCRIPT_NAME="Show Environment Info"
+SCRIPT_ID="dev-env"
+SCRIPT_NAME="Environment"
+SCRIPT_DESCRIPTION="Show installed tools and environment info"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
 SCRIPT_VER="0.0.1"
-SCRIPT_DESCRIPTION="Display development environment status and configuration"
-SCRIPT_CATEGORY="INFRA_CONFIG"
 
 #------------------------------------------------------------------------------
 # Configuration

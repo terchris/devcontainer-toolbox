@@ -13,6 +13,14 @@
 #------------------------------------------------------------------------------
 set -e
 
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-template"
+SCRIPT_NAME="Templates"
+SCRIPT_DESCRIPTION="Create project files from templates"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
 SCRIPT_VERSION="1.3.0"
 
 #------------------------------------------------------------------------------

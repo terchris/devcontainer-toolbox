@@ -7,7 +7,7 @@ How to create and publish new versions of devcontainer-toolbox.
 If any install scripts were added or modified, regenerate the tools documentation:
 
 ```bash
-.devcontainer/manage/generate-manual.sh
+dev-docs
 ```
 
 This updates `docs/tools.md` with current script information.

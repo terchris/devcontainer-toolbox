@@ -9,6 +9,15 @@
 # - Optionally runs missing configuration scripts
 # - Can be run repeatedly until all prerequisites are met
 
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-check"
+SCRIPT_NAME="Check Configuration"
+SCRIPT_DESCRIPTION="Configure and validate Git identity and credentials"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
+
 set -e
 
 # Colors

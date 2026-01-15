@@ -15,9 +15,13 @@
 
 set -e
 
-# Script metadata
+# Script metadata (for component scanner)
+SCRIPT_ID="dev-setup"
+SCRIPT_NAME="Setup Menu"
+SCRIPT_DESCRIPTION="Interactive menu for installing tools and managing services"
+SCRIPT_CATEGORY="SYSTEM_COMMANDS"
+SCRIPT_CHECK_COMMAND="true"
 SCRIPT_VERSION="3.4.0"
-SCRIPT_NAME="DevContainer Setup"
 
 # Get script directory and calculate absolute paths
 # Resolve symlinks to get actual script location
@@ -30,6 +34,7 @@ done
 SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_SOURCE")" && pwd)"
 DEVCONTAINER_DIR="$(dirname "$SCRIPT_DIR")"
 ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
+MANAGE_DIR="$SCRIPT_DIR"
 DEV_TEMPLATE_SCRIPT="$SCRIPT_DIR/dev-template.sh"
 
 # Source component scanner library
@@ -189,6 +194,18 @@ declare -a CONFIG_CHECK_COMMANDS=()
 # Config category organization
 declare -A CONFIGS_BY_CATEGORY  # Maps category to comma-separated config indices
 declare -A CONFIG_CATEGORY_COUNTS  # Maps category to config count
+
+# Global arrays for manage scripts (dev-*.sh in manage directory)
+declare -a AVAILABLE_MANAGE_SCRIPTS=()
+declare -a MANAGE_SCRIPT_BASENAMES=()
+declare -a MANAGE_SCRIPT_IDS=()
+declare -a MANAGE_SCRIPT_NAMES=()
+declare -a MANAGE_SCRIPT_DESCRIPTIONS=()
+declare -a MANAGE_SCRIPT_CATEGORIES=()
+
+# Manage script category organization
+declare -A MANAGE_BY_CATEGORY  # Maps category to comma-separated script indices
+declare -A MANAGE_CATEGORY_COUNTS  # Maps category to script count
 
 # Whiptail dimensions
 DIALOG_HEIGHT=20
@@ -542,6 +559,56 @@ scan_available_cmds() {
         clear
         return 1
     fi
+
+    return 0
+}
+
+#------------------------------------------------------------------------------
+# Manage script discovery (dev-*.sh in manage directory)
+#------------------------------------------------------------------------------
+
+scan_available_manage_scripts() {
+    AVAILABLE_MANAGE_SCRIPTS=()
+    MANAGE_SCRIPT_BASENAMES=()
+    MANAGE_SCRIPT_IDS=()
+    MANAGE_SCRIPT_NAMES=()
+    MANAGE_SCRIPT_DESCRIPTIONS=()
+    MANAGE_SCRIPT_CATEGORIES=()
+
+    # Reset category organization
+    MANAGE_BY_CATEGORY=()
+    MANAGE_CATEGORY_COUNTS=()
+
+    if [[ ! -d "$MANAGE_DIR" ]]; then
+        return 1
+    fi
+
+    local found=0
+
+    # Use library to scan manage scripts
+    # Output format: script_basename<TAB>SCRIPT_ID<TAB>SCRIPT_NAME<TAB>SCRIPT_DESCRIPTION<TAB>SCRIPT_CATEGORY<TAB>SCRIPT_CHECK_COMMAND
+    while IFS=$'\t' read -r script_basename script_id script_name script_description script_category check_command; do
+        # Add to arrays
+        AVAILABLE_MANAGE_SCRIPTS+=("$script_name")
+        MANAGE_SCRIPT_BASENAMES+=("$script_basename")
+        MANAGE_SCRIPT_IDS+=("$script_id")
+        MANAGE_SCRIPT_NAMES+=("$script_name")
+        MANAGE_SCRIPT_DESCRIPTIONS+=("$script_description")
+        MANAGE_SCRIPT_CATEGORIES+=("$script_category")
+
+        # Track script index by category
+        local script_index=$found
+        if [[ -n "${MANAGE_BY_CATEGORY[$script_category]}" ]]; then
+            MANAGE_BY_CATEGORY[$script_category]="${MANAGE_BY_CATEGORY[$script_category]},$script_index"
+        else
+            MANAGE_BY_CATEGORY[$script_category]="$script_index"
+        fi
+
+        # Increment category count
+        MANAGE_CATEGORY_COUNTS[$script_category]=$((${MANAGE_CATEGORY_COUNTS[$script_category]:-0} + 1))
+
+        ((found++))
+    done < <(scan_manage_scripts "$MANAGE_DIR")
 
     return 0
 }
@@ -2253,13 +2320,119 @@ execute_tool_installation() {
 }
 
 #------------------------------------------------------------------------------
+# Manage scripts menu (SYSTEM_COMMANDS and CONTRIBUTOR_TOOLS)
+#------------------------------------------------------------------------------
+
+# Show manage scripts in a category (SYSTEM_COMMANDS or CONTRIBUTOR_TOOLS)
+# Scripts are executed directly (no submenu)
+show_manage_scripts_menu() {
+    local category_key=$1
+    local category_name="${CATEGORIES[$category_key]}"
+
+    # Scan manage scripts if not already done
+    if [[ ${#AVAILABLE_MANAGE_SCRIPTS[@]} -eq 0 ]]; then
+        scan_available_manage_scripts
+    fi
+
+    # Get script indices for this category
+    local script_indices="${MANAGE_BY_CATEGORY[$category_key]}"
+
+    if [[ -z "$script_indices" ]]; then
+        dialog --title "No Scripts" --msgbox "No scripts found in category: $category_name" $DIALOG_HEIGHT $DIALOG_WIDTH
+        clear
+        return 1
+    fi
+
+    while true; do
+        # Build menu with scripts in this category
+        local menu_options=()
+        local option_num=1
+        declare -A MENU_TO_SCRIPT_INDEX
+
+        # Convert comma-separated indices to array
+        IFS=',' read -ra INDICES <<< "$script_indices"
+
+        for script_index in "${INDICES[@]}"; do
+            local script_name="${MANAGE_SCRIPT_NAMES[$script_index]}"
+            local script_description="${MANAGE_SCRIPT_DESCRIPTIONS[$script_index]}"
+            local script_id="${MANAGE_SCRIPT_IDS[$script_index]}"
+
+            # Skip dev-template in SYSTEM_COMMANDS menu (shown directly in main menu)
+            if [[ "$category_key" == "SYSTEM_COMMANDS" && "$script_id" == "dev-template" ]]; then
+                continue
+            fi
+
+            menu_options+=("$option_num" "$script_name" "$script_description")
+            MENU_TO_SCRIPT_INDEX[$option_num]=$script_index
+            ((option_num++))
+        done
+
+        # If no scripts to show (all filtered out)
+        if [[ ${#menu_options[@]} -eq 0 ]]; then
+            dialog --title "No Scripts" --msgbox "No scripts available in: $category_name" $DIALOG_HEIGHT $DIALOG_WIDTH
+            clear
+            return 1
+        fi
+
+        # Show script selection menu
+        local choice
+        choice=$(dialog --clear \
+            --item-help \
+            --title "$category_name" \
+            --menu "Select a command to run (ESC to go back):" \
+            $DIALOG_HEIGHT $DIALOG_WIDTH $MENU_HEIGHT \
+            "${menu_options[@]}" \
+            2>&1 >/dev/tty)
+
+        # Check if user cancelled (ESC)
+        if [[ $? -ne 0 ]]; then
+            return 0
+        fi
+
+        # Get the actual script index from the menu choice
+        local selected_script_index=${MENU_TO_SCRIPT_INDEX[$choice]}
+
+        # Execute the manage script directly
+        execute_manage_script "$selected_script_index"
+    done
+}
+
+# Execute a manage script (dev-*.sh)
+execute_manage_script() {
+    local script_index=$1
+    local script_name="${MANAGE_SCRIPT_NAMES[$script_index]}"
+    local script_basename="${MANAGE_SCRIPT_BASENAMES[$script_index]}"
+    local script_path="$MANAGE_DIR/$script_basename"
+
+    log_user_choice "Manage Scripts" "Execute: $script_name ($script_basename)"
+
+    clear
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "Running: $script_name"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    if [[ -f "$script_path" ]]; then
+        chmod +x "$script_path"
+        bash "$script_path"
+    else
+        echo "❌ Error: Script not found: $script_path"
+    fi
+
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    read -p "Press Enter to continue..." -r
+    clear
+}
+
+#------------------------------------------------------------------------------
 # Template management
 #------------------------------------------------------------------------------
 
 # Create project from template - calls dev-template.sh
 create_project_from_template() {
     clear
-    
+
     if [[ ! -f "$DEV_TEMPLATE_SCRIPT" ]]; then
         echo "❌ Error: dev-template.sh not found at $DEV_TEMPLATE_SCRIPT"
         echo ""
@@ -2360,6 +2533,9 @@ show_main_menu() {
     # Disable exit-on-error for interactive menus
     set +e
 
+    # Scan manage scripts at startup for category menus
+    scan_available_manage_scripts
+
     while true; do
         local choice
         choice=$(dialog --clear \
@@ -2367,13 +2543,14 @@ show_main_menu() {
             --menu "Choose an option:" \
             $DIALOG_HEIGHT $DIALOG_WIDTH $MENU_HEIGHT \
             "1" "Browse & Install Tools" \
-            "2" "Manage Services" \
-            "3" "Setup & Configuration" \
-            "4" "Command Tools" \
-            "5" "Manage Auto-Install Tools" \
-            "6" "Create project from template" \
-            "7" "Show Environment Info" \
-            "8" "Exit" \
+            "2" "Create project from template" \
+            "3" "System Commands" \
+            "4" "Manage Services" \
+            "5" "Setup & Configuration" \
+            "6" "Command Tools" \
+            "7" "Manage Auto-Install Tools" \
+            "8" "Contributor Tools" \
+            "9" "Exit" \
             2>&1 >/dev/tty)
 
         # Check if user cancelled (ESC or Cancel button)
@@ -2393,15 +2570,21 @@ show_main_menu() {
                 install_tools
                 ;;
             2)
-                manage_services
+                create_project_from_template
                 ;;
             3)
-                manage_configs
+                show_manage_scripts_menu "SYSTEM_COMMANDS"
                 ;;
             4)
-                manage_cmds
+                manage_services
                 ;;
             5)
+                manage_configs
+                ;;
+            6)
+                manage_cmds
+                ;;
+            7)
                 log_user_choice "Main Menu" "Manage Auto-Install Tools"
                 if ! scan_available_tools; then
                     dialog --title "Error" --msgbox "Failed to scan tools" 8 50
@@ -2410,16 +2593,10 @@ show_main_menu() {
                 fi
                 manage_autoinstall_tools
                 ;;
-            6)
-                create_project_from_template
-                ;;
-            7)
-                clear
-                bash "$ADDITIONS_DIR/dev-env.sh"
-                read -p "Press Enter to return to menu..." -r
-                clear
-                ;;
             8)
+                show_manage_scripts_menu "CONTRIBUTOR_TOOLS"
+                ;;
+            9)
                 clear
                 echo ""
                 echo "✅ Thanks for using $SCRIPT_NAME! 🚀"
