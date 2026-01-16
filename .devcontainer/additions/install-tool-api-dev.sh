@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Installs Thunder Client REST API client and OpenAPI Editor f
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'rangav.vscode-thunder-client'"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="api rest openapi swagger http client testing"
+SCRIPT_ABSTRACT="API development tools with Thunder Client REST client and OpenAPI/Swagger editor."
+SCRIPT_LOGO="tool-api-dev-logo.webp"
+SCRIPT_WEBSITE="https://www.thunderclient.com"
+SCRIPT_SUMMARY="VS Code extensions for API development including Thunder Client for REST API testing and the OpenAPI Editor for Swagger/OpenAPI specification editing and validation. Lightweight alternatives to Postman and Swagger UI."
+SCRIPT_RELATED="dev-typescript dev-python tool-azure-dev"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install API development tools||false|"

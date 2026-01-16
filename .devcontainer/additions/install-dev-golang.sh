@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Installs Go runtime, common tools, and VS Code extensions fo
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f /usr/local/go/bin/go ] || [ -f /usr/bin/go ] || command -v go >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="go golang gopls delve staticcheck protobuf"
+SCRIPT_ABSTRACT="Go development environment with runtime, language server, debugger, and static analysis tools."
+SCRIPT_LOGO="dev-golang-logo.webp"
+SCRIPT_WEBSITE="https://go.dev"
+SCRIPT_SUMMARY="Complete Go development setup including the Go runtime, gopls language server for IDE features, Delve debugger, and staticcheck for code analysis. Includes VS Code extensions for Go development, test running, and Protocol Buffer support."
+SCRIPT_RELATED="dev-rust dev-typescript dev-python"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Go with default version||false|"

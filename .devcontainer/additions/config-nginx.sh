@@ -21,6 +21,14 @@ SCRIPT_DESCRIPTION="Configure Nginx as reverse proxy so that the devcontainer ca
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="[ -f ~/.nginx-backend-config ] && grep -q '^export BACKEND_URL=' ~/.nginx-backend-config"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="nginx proxy litellm otel backend configuration"
+SCRIPT_ABSTRACT="Configure nginx reverse proxy backend URLs for LiteLLM, OTEL, and other services."
+SCRIPT_LOGO="config-nginx-logo.webp"
+SCRIPT_WEBSITE="https://nginx.org"
+SCRIPT_SUMMARY="Interactive configuration script for nginx reverse proxy that sets up backend URLs for LiteLLM AI proxy, OTEL collector, and Open WebUI. Supports Docker, local WiFi, and Tailscale network configurations with template-based config generation."
+SCRIPT_RELATED="srv-nginx config-ai-claudecode"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Configure Nginx proxy||false|"

@@ -28,17 +28,46 @@ Read these before creating scripts:
 
 ---
 
-## Required Metadata
+## Required Metadata (Core)
 
-Every script MUST have these metadata fields at the top:
+Every script MUST have these metadata fields at the top (used by `dev-setup.sh`):
 
 ```bash
-# SCRIPT_ID: unique-identifier
-# SCRIPT_NAME: Human Readable Name
-# SCRIPT_DESCRIPTION: What this script does
-# SCRIPT_CATEGORY: LANGUAGE_DEV|CLOUD_TOOLS|AI_ML_TOOLS|DATA_ANALYTICS|INFRASTRUCTURE|SERVICES
-# SCRIPT_CHECK_COMMAND: command --version  # How to verify installation
+SCRIPT_ID="unique-identifier"
+SCRIPT_VER="1.0.0"
+SCRIPT_NAME="Human Readable Name"
+SCRIPT_DESCRIPTION="What this script does"
+SCRIPT_CATEGORY="LANGUAGE_DEV"
+SCRIPT_CHECK_COMMAND="command --version"
 ```
+
+---
+
+## Extended Metadata (Website)
+
+These fields are for the **website only** and enable richer documentation. They are NOT used by the terminal-based installer.
+
+```bash
+# --- Extended metadata (for website) ---
+# Required:
+SCRIPT_TAGS="keyword1 keyword2 keyword3"
+SCRIPT_ABSTRACT="Brief 1-2 sentence description (50-150 chars)"
+
+# Optional:
+SCRIPT_LOGO="tool-name-logo.webp"
+SCRIPT_WEBSITE="https://official-website.com"
+SCRIPT_SUMMARY="Detailed description covering features, use cases, and benefits (150-500 chars)"
+SCRIPT_RELATED="related-tool-id-1 related-tool-id-2"
+```
+
+| Field | Required | Purpose | Guidelines |
+|-------|----------|---------|------------|
+| `SCRIPT_TAGS` | Yes | Search keywords | Space-separated, lowercase |
+| `SCRIPT_ABSTRACT` | Yes | Brief description | 50-150 characters, 1-2 sentences |
+| `SCRIPT_LOGO` | No | Logo filename | Place source in `website/static/img/tools/src/` |
+| `SCRIPT_WEBSITE` | No | Official URL | Must start with `https://` |
+| `SCRIPT_SUMMARY` | No | Detailed description | 150-500 characters, 3-5 sentences |
+| `SCRIPT_RELATED` | No | Related tool IDs | Space-separated script IDs |
 
 ---
 
@@ -46,11 +75,22 @@ Every script MUST have these metadata fields at the top:
 
 ```bash
 #!/bin/bash
-# SCRIPT_ID: install-dev-example
-# SCRIPT_NAME: Example Tool
-# SCRIPT_DESCRIPTION: Installs the example tool
-# SCRIPT_CATEGORY: LANGUAGE_DEV
-# SCRIPT_CHECK_COMMAND: example --version
+
+# --- Core metadata (required) ---
+SCRIPT_ID="dev-example"
+SCRIPT_VER="1.0.0"
+SCRIPT_NAME="Example Tool"
+SCRIPT_DESCRIPTION="Installs the example development tool"
+SCRIPT_CATEGORY="LANGUAGE_DEV"
+SCRIPT_CHECK_COMMAND="example --version"
+
+# --- Extended metadata (for website) ---
+SCRIPT_TAGS="example demo development"
+SCRIPT_ABSTRACT="Example development tool with CLI and VS Code integration."
+SCRIPT_LOGO="dev-example-logo.webp"
+SCRIPT_WEBSITE="https://example.com"
+SCRIPT_SUMMARY="Complete example development environment including CLI tools, VS Code extensions, and common utilities. Ideal for learning and testing."
+SCRIPT_RELATED="dev-python dev-typescript"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/logging.sh"
@@ -87,11 +127,22 @@ log_info "Example installed successfully"
 
 ```bash
 #!/bin/bash
-# SCRIPT_ID: service-example
-# SCRIPT_NAME: Example Service
-# SCRIPT_DESCRIPTION: Manages the example background service
-# SCRIPT_CATEGORY: SERVICES
-# SCRIPT_CHECK_COMMAND: pgrep -f example-daemon
+
+# --- Core metadata (required) ---
+SCRIPT_ID="service-example"
+SCRIPT_VER="1.0.0"
+SCRIPT_NAME="Example Service"
+SCRIPT_DESCRIPTION="Manages the example background service"
+SCRIPT_CATEGORY="BACKGROUND_SERVICES"
+SCRIPT_CHECK_COMMAND="pgrep -f example-daemon"
+
+# --- Extended metadata (for website) ---
+SCRIPT_TAGS="service daemon background example"
+SCRIPT_ABSTRACT="Background service for example functionality with auto-restart."
+SCRIPT_LOGO="service-example-logo.webp"
+SCRIPT_WEBSITE="https://example.com/service"
+SCRIPT_SUMMARY="Manages the example background service including start, stop, restart, and status commands. Supports auto-restart on failure and logging."
+SCRIPT_RELATED="service-litellm service-openwebui"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/logging.sh"
@@ -159,12 +210,21 @@ See existing libraries in `.devcontainer/additions/lib/` for patterns.
 
 Before committing a new script:
 
-1. [ ] Metadata fields are complete and valid
+**Core metadata:**
+1. [ ] All core metadata fields are complete (ID, VER, NAME, DESCRIPTION, CATEGORY, CHECK_COMMAND)
 2. [ ] Category is valid (check categories.md)
-3. [ ] `--help` flag works
-4. [ ] `--uninstall` flag works (for install scripts)
-5. [ ] Script is idempotent (safe to run twice)
-6. [ ] **All tests pass** (CI will reject PRs with failing tests)
+
+**Extended metadata:**
+3. [ ] SCRIPT_TAGS is set (space-separated keywords)
+4. [ ] SCRIPT_ABSTRACT is set (50-150 characters)
+5. [ ] SCRIPT_LOGO file exists in `website/static/img/tools/src/` (if specified)
+6. [ ] SCRIPT_RELATED references valid script IDs (if specified)
+
+**Functionality:**
+7. [ ] `--help` flag works
+8. [ ] `--uninstall` flag works (for install scripts)
+9. [ ] Script is idempotent (safe to run twice)
+10. [ ] **All tests pass** (CI will reject PRs with failing tests)
 
 ---
 

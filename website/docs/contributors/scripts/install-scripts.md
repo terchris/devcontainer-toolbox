@@ -75,20 +75,39 @@ echo "mytool" >> /workspace/.devcontainer.extend/enabled-tools.conf
 
 ## Metadata Fields Reference
 
-### Required Fields
+### Core Fields (Required)
+
+These fields are used by `dev-setup.sh` for the terminal-based installer:
 
 | Field | Description | Example |
 |-------|-------------|---------|
+| `SCRIPT_ID` | Unique identifier | `"dev-python"` |
+| `SCRIPT_VER` | Version number | `"1.0.0"` |
 | `SCRIPT_NAME` | Human-readable name (2-4 words) | `"Python Development Tools"` |
 | `SCRIPT_DESCRIPTION` | Brief description (one sentence) | `"Install Python 3.11 and pip"` |
 | `SCRIPT_CATEGORY` | Category for menu organization | `"LANGUAGE_DEV"` |
 | `SCRIPT_CHECK_COMMAND` | Command to check if installed | `"command -v python3 >/dev/null 2>&1"` |
 
-### Optional Fields
+### Core Fields (Optional)
 
 | Field | Description | Example |
 |-------|-------------|---------|
 | `SCRIPT_PREREQUISITES` | Space-separated config scripts | `"config-aws-credentials.sh"` |
+
+### Extended Fields (Website Only)
+
+These fields are for the **documentation website only** and enable richer tool pages:
+
+| Field | Required | Description | Example |
+|-------|----------|-------------|---------|
+| `SCRIPT_TAGS` | Yes | Search keywords (space-separated) | `"python pip venv development"` |
+| `SCRIPT_ABSTRACT` | Yes | Brief description (50-150 chars) | `"Full Python development environment..."` |
+| `SCRIPT_LOGO` | No | Logo filename | `"dev-python-logo.webp"` |
+| `SCRIPT_WEBSITE` | No | Official tool URL | `"https://python.org"` |
+| `SCRIPT_SUMMARY` | No | Detailed description (150-500 chars) | `"Complete Python development setup..."` |
+| `SCRIPT_RELATED` | No | Related tool IDs (space-separated) | `"dev-data-analytics dev-ai"` |
+
+**Logo files:** Place source images in `website/static/img/tools/src/`. They are automatically processed to 512x512 WebP during deployment.
 
 ### Valid Categories
 
@@ -97,6 +116,9 @@ echo "mytool" >> /workspace/.devcontainer.extend/enabled-tools.conf
 - `AI_TOOLS` - AI and machine learning tools
 - `CLOUD_TOOLS` - Cloud provider CLIs
 - `DATA_ANALYTICS` - Data analysis tools
+- `BACKGROUND_SERVICES` - Background services and daemons
+- `CONTRIBUTOR_TOOLS` - Tools for contributors
+- `SYSTEM_COMMANDS` - DevContainer management commands
 
 ---
 
@@ -215,10 +237,21 @@ SCRIPT_PREREQUISITES="config-aws-credentials.sh"
 #!/bin/bash
 # File: install-jq.sh
 
+# --- Core metadata (required) ---
+SCRIPT_ID="dev-jq"
+SCRIPT_VER="1.0.0"
 SCRIPT_NAME="jq JSON Processor"
 SCRIPT_DESCRIPTION="Install jq command-line JSON processor"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v jq >/dev/null 2>&1"
+
+# --- Extended metadata (for website) ---
+SCRIPT_TAGS="jq json processor cli query"
+SCRIPT_ABSTRACT="Command-line JSON processor for parsing and transforming JSON data."
+SCRIPT_LOGO="dev-jq-logo.webp"
+SCRIPT_WEBSITE="https://jqlang.github.io/jq/"
+SCRIPT_SUMMARY="Lightweight command-line JSON processor. Parse, filter, and transform JSON data with a powerful expression syntax. Essential tool for working with APIs and configuration files."
+SCRIPT_RELATED="dev-python dev-typescript"
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 source "${SCRIPT_DIR}/lib/tool-auto-enable.sh"
@@ -251,11 +284,22 @@ main "$@"
 #!/bin/bash
 # File: install-aws-cli.sh
 
+# --- Core metadata (required) ---
+SCRIPT_ID="cloud-aws"
+SCRIPT_VER="1.0.0"
 SCRIPT_NAME="AWS CLI"
 SCRIPT_DESCRIPTION="Install AWS Command Line Interface"
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="command -v aws >/dev/null 2>&1"
 SCRIPT_PREREQUISITES="config-aws-credentials.sh"  # Requires AWS credentials
+
+# --- Extended metadata (for website) ---
+SCRIPT_TAGS="aws amazon cloud cli s3 ec2 lambda"
+SCRIPT_ABSTRACT="AWS Command Line Interface for managing Amazon Web Services."
+SCRIPT_LOGO="cloud-aws-logo.webp"
+SCRIPT_WEBSITE="https://aws.amazon.com/cli/"
+SCRIPT_SUMMARY="Official AWS CLI for interacting with Amazon Web Services. Manage S3, EC2, Lambda, and 200+ AWS services from the command line. Supports profiles, MFA, and SSO authentication."
+SCRIPT_RELATED="cloud-azure cloud-terraform"
 
 # ... installation logic ...
 # Prerequisites are checked automatically!

@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Installs GCC, Clang, build tools, debuggers, and VS Code ext
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v gcc >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="c cpp gcc clang cmake make gdb lldb debugging"
+SCRIPT_ABSTRACT="C/C++ development environment with GCC, Clang, CMake, debuggers, and VS Code extensions."
+SCRIPT_LOGO="dev-cpp-logo.webp"
+SCRIPT_WEBSITE="https://isocpp.org"
+SCRIPT_SUMMARY="Complete C/C++ development setup including GCC and Clang compilers, CMake and Make build systems, GDB and LLDB debuggers, Valgrind for memory analysis, and clang-format/clang-tidy for code quality. Includes VS Code extension pack for C/C++ development."
+SCRIPT_RELATED="dev-rust dev-fortran dev-golang"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install C/C++ development tools||false|"

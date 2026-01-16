@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Installs Java JDK, Maven, Gradle, and VS Code extensions for
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f /usr/bin/java ] || [ -f /usr/lib/jvm/*/bin/java ] || command -v java >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="java jdk maven gradle spring enterprise"
+SCRIPT_ABSTRACT="Java development environment with JDK, Maven, Gradle, and comprehensive VS Code extension pack."
+SCRIPT_LOGO="dev-java-logo.webp"
+SCRIPT_WEBSITE="https://dev.java"
+SCRIPT_SUMMARY="Complete Java development setup including the JDK (supports versions 11, 17, 21), Maven and Gradle build tools, and the VS Code Extension Pack for Java with debugging, test running, Maven integration, and dependency management."
+SCRIPT_RELATED="dev-csharp dev-golang dev-typescript"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Java with default version||false|"

@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Installs .NET SDK, ASP.NET Core Runtime, and VS Code extensi
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f $HOME/.dotnet/dotnet ] || [ -f /usr/bin/dotnet ] || command -v dotnet >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="csharp dotnet aspnet microsoft visual-studio sdk"
+SCRIPT_ABSTRACT="C# and .NET development environment with SDK, ASP.NET Core runtime, and VS Code C# Dev Kit."
+SCRIPT_LOGO="dev-csharp-logo.webp"
+SCRIPT_WEBSITE="https://dotnet.microsoft.com"
+SCRIPT_SUMMARY="Complete C# and .NET development setup including the .NET SDK, ASP.NET Core runtime for web development, and the C# Dev Kit for VS Code providing IntelliSense, debugging, and project management. Supports .NET 8.0 and other versions."
+SCRIPT_RELATED="dev-java dev-typescript dev-python"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install C# / .NET development tools||false|"

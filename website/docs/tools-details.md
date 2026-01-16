@@ -27,12 +27,23 @@ Detailed installation options for each tool. See [Available Tools](tools) for th
 
 ### Bash Development Tools
 
+*Bash scripting environment with shellcheck linting, shfmt formatting, and language server support.*
+
 **Script ID:** `dev-bash`  
 **Script:** `install-dev-bash.sh`  
+**Website:** [https://www.gnu.org/software/bash/](https://www.gnu.org/software/bash/)  
 **Command:** `.devcontainer/additions/install-dev-bash.sh --help`
 
+Complete Bash development setup including shellcheck for static analysis and linting, shfmt for code formatting, and bash-language-server for IDE features like autocomplete and go-to-definition. Includes VS Code extensions for inline warnings and format-on-save.
+
+**Tags:** bash,shell,scripting,shellcheck,shfmt,linting,formatting
+
+**Related:** `dev-python`, `dev-typescript`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -68,16 +79,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### C/C++ Development Tools
 
+*C/C++ development environment with GCC, Clang, CMake, debuggers, and VS Code extensions.*
+
 **Script ID:** `dev-cpp`  
 **Script:** `install-dev-cpp.sh`  
+**Website:** [https://isocpp.org](https://isocpp.org)  
 **Command:** `.devcontainer/additions/install-dev-cpp.sh --help`
 
+Complete C/C++ development setup including GCC and Clang compilers, CMake and Make build systems, GDB and LLDB debuggers, Valgrind for memory analysis, and clang-format/clang-tidy for code quality. Includes VS Code extension pack for C/C++ development.
+
+**Tags:** c,cpp,gcc,clang,cmake,make,gdb,lldb,debugging
+
+**Related:** `dev-rust`, `dev-fortran`, `dev-golang`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -126,16 +150,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### C# Development Tools
 
+*C# and .NET development environment with SDK, ASP.NET Core runtime, and VS Code C# Dev Kit.*
+
 **Script ID:** `dev-csharp`  
 **Script:** `install-dev-csharp.sh`  
+**Website:** [https://dotnet.microsoft.com](https://dotnet.microsoft.com)  
 **Command:** `.devcontainer/additions/install-dev-csharp.sh --help`
 
+Complete C# and .NET development setup including the .NET SDK, ASP.NET Core runtime for web development, and the C# Dev Kit for VS Code providing IntelliSense, debugging, and project management. Supports .NET 8.0 and other versions.
+
+**Tags:** csharp,dotnet,aspnet,microsoft,visual-studio,sdk
+
+**Related:** `dev-java`, `dev-typescript`, `dev-python`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -165,16 +202,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Fortran Development Tools
 
+*Fortran development environment with GNU Fortran, LAPACK, BLAS, and VS Code extensions.*
+
 **Script ID:** `dev-fortran`  
 **Script:** `install-dev-fortran.sh`  
+**Website:** [https://fortran-lang.org](https://fortran-lang.org)  
 **Command:** `.devcontainer/additions/install-dev-fortran.sh --help`
 
+Complete Fortran development setup including GNU Fortran compiler (gfortran), LAPACK and BLAS numerical libraries, CMake build system, and VS Code extensions for Modern Fortran with IntelliSense and debugging support.
+
+**Tags:** fortran,gfortran,scientific,computing,lapack,blas,numerical
+
+**Related:** `dev-cpp`, `dev-python`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -211,16 +261,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Go Runtime & Development Tools
 
+*Go development environment with runtime, language server, debugger, and static analysis tools.*
+
 **Script ID:** `dev-golang`  
 **Script:** `install-dev-golang.sh`  
+**Website:** [https://go.dev](https://go.dev)  
 **Command:** `.devcontainer/additions/install-dev-golang.sh --help`
 
+Complete Go development setup including the Go runtime, gopls language server for IDE features, Delve debugger, and staticcheck for code analysis. Includes VS Code extensions for Go development, test running, and Protocol Buffer support.
+
+**Tags:** go,golang,gopls,delve,staticcheck,protobuf
+
+**Related:** `dev-rust`, `dev-typescript`, `dev-python`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -256,16 +319,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Java Runtime & Development Tools
 
+*Java development environment with JDK, Maven, Gradle, and comprehensive VS Code extension pack.*
+
 **Script ID:** `dev-java`  
 **Script:** `install-dev-java.sh`  
+**Website:** [https://dev.java](https://dev.java)  
 **Command:** `.devcontainer/additions/install-dev-java.sh --help`
 
+Complete Java development setup including the JDK (supports versions 11, 17, 21), Maven and Gradle build tools, and the VS Code Extension Pack for Java with debugging, test running, Maven integration, and dependency management.
+
+**Tags:** java,jdk,maven,gradle,spring,enterprise
+
+**Related:** `dev-csharp`, `dev-golang`, `dev-typescript`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -303,16 +379,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### PHP Laravel Development Tools
 
+*PHP Laravel development environment with PHP 8.4, Composer, Laravel installer, and VS Code extensions.*
+
 **Script ID:** `dev-php-laravel`  
 **Script:** `install-dev-php-laravel.sh`  
+**Website:** [https://laravel.com](https://laravel.com)  
 **Command:** `.devcontainer/additions/install-dev-php-laravel.sh --help`
 
+Complete PHP Laravel development setup including PHP 8.4, Composer package manager, Laravel installer, and comprehensive VS Code extensions for Intelephense, Xdebug, Blade templates, Artisan commands, and namespace resolution.
+
+**Tags:** php,laravel,composer,artisan,blade,web,framework
+
+**Related:** `dev-typescript`, `dev-python`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -346,16 +435,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Python Development Tools
 
+*Python development environment with ipython, pytest-cov, and python-dotenv for enhanced coding and testing.*
+
 **Script ID:** `dev-python`  
 **Script:** `install-dev-python.sh`  
+**Website:** [https://python.org](https://python.org)  
 **Command:** `.devcontainer/additions/install-dev-python.sh --help`
 
+Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, and python-dotenv for environment management. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking.
+
+**Tags:** python,pip,ipython,pytest,coverage,development,venv
+
+**Related:** `dev-typescript`, `dev-golang`, `dev-rust`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -391,16 +493,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Rust Development Tools
 
+*Rust development environment with rustup, cargo tooling, and rust-analyzer for systems programming.*
+
 **Script ID:** `dev-rust`  
 **Script:** `install-dev-rust.sh`  
+**Website:** [https://www.rust-lang.org](https://www.rust-lang.org)  
 **Command:** `.devcontainer/additions/install-dev-rust.sh --help`
 
+Complete Rust setup via rustup including the Rust compiler, Cargo package manager, cargo-edit for dependency management, cargo-watch for auto-rebuild, and cargo-outdated for dependency updates. Includes rust-analyzer and CodeLLDB debugger VS Code extensions.
+
+**Tags:** rust,cargo,rustup,systems,programming,memory,safety
+
+**Related:** `dev-golang`, `dev-cpp`, `dev-typescript`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -439,16 +554,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### TypeScript Development Tools
 
+*TypeScript development environment with compiler, tsx runtime, and essential tooling for modern web development.*
+
 **Script ID:** `dev-typescript`  
 **Script:** `install-dev-typescript.sh`  
+**Website:** [https://www.typescriptlang.org](https://www.typescriptlang.org)  
 **Command:** `.devcontainer/additions/install-dev-typescript.sh --help`
 
+Complete TypeScript setup including the TypeScript compiler (tsc), tsx for running TypeScript directly, ts-node for Node.js integration, and @types/node for Node.js type definitions. Includes Prettier and ESLint VS Code extensions.
+
+**Tags:** typescript,javascript,nodejs,npm,tsc,tsx,eslint,prettier
+
+**Related:** `dev-python`, `dev-golang`, `dev-rust`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -482,18 +610,31 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ## AI & Machine Learning Tools
 
 ### Claude Code
 
+*Claude Code - Anthropic's terminal-based AI coding assistant with agentic capabilities.*
+
 **Script ID:** `dev-ai-claudecode`  
 **Script:** `install-dev-ai-claudecode.sh`  
+**Website:** [https://claude.ai/code](https://claude.ai/code)  
 **Command:** `.devcontainer/additions/install-dev-ai-claudecode.sh --help`
 
+Claude Code is Anthropic's terminal-based AI coding assistant with agentic capabilities. Features include codebase understanding, multi-file editing, shell command execution, and LSP integration for intelligent code assistance directly in your terminal.
+
+**Tags:** claude,anthropic,ai,coding,assistant,agentic,terminal
+
+**Related:** `tool-api-dev`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -523,18 +664,31 @@ Node.js Packages (NPM):
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ## Cloud & Infrastructure Tools
 
 ### API Development Tools
 
+*API development tools with Thunder Client REST client and OpenAPI/Swagger editor.*
+
 **Script ID:** `tool-api-dev`  
 **Script:** `install-tool-api-dev.sh`  
+**Website:** [https://www.thunderclient.com](https://www.thunderclient.com)  
 **Command:** `.devcontainer/additions/install-tool-api-dev.sh --help`
 
+VS Code extensions for API development including Thunder Client for REST API testing and the OpenAPI Editor for Swagger/OpenAPI specification editing and validation. Lightweight alternatives to Postman and Swagger UI.
+
+**Tags:** api,rest,openapi,swagger,http,client,testing
+
+**Related:** `dev-typescript`, `dev-python`, `tool-azure-dev`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -562,16 +716,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Azure Application Development
 
+*Azure application development with CLI, Functions, Azurite emulator, and VS Code extensions.*
+
 **Script ID:** `tool-azure-dev`  
 **Script:** `install-tool-azure-dev.sh`  
+**Website:** [https://azure.microsoft.com](https://azure.microsoft.com)  
 **Command:** `.devcontainer/additions/install-tool-azure-dev.sh --help`
 
+Complete Azure development toolkit including Azure CLI, Functions Core Tools v4, Azurite storage emulator, and VS Code extensions for App Service, Functions, Storage, Service Bus, Cosmos DB, and Bicep infrastructure as code.
+
+**Tags:** azure,microsoft,cloud,functions,azurite,cosmosdb,servicebus,bicep
+
+**Related:** `tool-azure-ops`, `tool-kubernetes`, `tool-iac`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -612,16 +779,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Azure Operations & Infrastructure Management
 
+*Azure operations tools with PowerShell, Az modules, Microsoft Graph, and KQL support.*
+
 **Script ID:** `tool-azure-ops`  
 **Script:** `install-tool-azure-ops.sh`  
+**Website:** [https://azure.microsoft.com](https://azure.microsoft.com)  
 **Command:** `.devcontainer/additions/install-tool-azure-ops.sh --help`
 
+Azure infrastructure and operations management toolkit including PowerShell 7, Az and Microsoft.Graph modules, Exchange Online Management, Azure CLI, and VS Code extensions for Bicep IaC, KQL queries, and Azure policy management.
+
+**Tags:** azure,powershell,operations,infrastructure,management,policy,graph
+
+**Related:** `tool-azure-dev`, `tool-iac`, `tool-kubernetes`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -664,16 +844,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Okta Identity Management Tools
 
+*Okta identity management tools with CLI and VS Code Okta Explorer extension.*
+
 **Script ID:** `tool-okta`  
 **Script:** `install-tool-okta.sh`  
+**Website:** [https://www.okta.com](https://www.okta.com)  
 **Command:** `.devcontainer/additions/install-tool-okta.sh --help`
 
+Okta identity and access management toolkit including the Okta CLI for managing users, groups, and applications, plus the Okta Explorer VS Code extension for browsing and managing Okta organizations directly from the IDE.
+
+**Tags:** okta,identity,authentication,sso,iam,security
+
+**Related:** `tool-azure-ops`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -703,16 +896,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Microsoft Power Platform Tools
 
+*Microsoft Power Platform CLI (pac) for Power Apps, Power Automate, and PCF development.*
+
 **Script ID:** `tool-powerplatform`  
 **Script:** `install-tool-powerplatform.sh`  
+**Website:** [https://powerplatform.microsoft.com](https://powerplatform.microsoft.com)  
 **Command:** `.devcontainer/additions/install-tool-powerplatform.sh --help`
 
+Microsoft Power Platform development toolkit including the Power Platform CLI (pac) as a .NET global tool for managing Power Apps, Power Automate flows, Dataverse solutions, and Power Platform Component Framework (PCF) controls. Requires .NET SDK.
+
+**Tags:** powerplatform,powerapps,powerautomate,microsoft,lowcode,pcf
+
+**Related:** `tool-azure-dev`, `dev-csharp`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -742,18 +948,31 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ## Data & Analytics Tools
 
 ### Data & Analytics Tools
 
+*Data analytics stack with Jupyter, pandas, numpy, matplotlib, scikit-learn, and dbt.*
+
 **Script ID:** `tool-dataanalytics`  
 **Script:** `install-tool-dataanalytics.sh`  
+**Website:** [https://jupyter.org](https://jupyter.org)  
 **Command:** `.devcontainer/additions/install-tool-dataanalytics.sh --help`
 
+Complete data analytics toolkit including Jupyter notebooks and JupyterLab, pandas for data manipulation, numpy for numerical computing, matplotlib and seaborn for visualization, scikit-learn for machine learning, and dbt for data transformation.
+
+**Tags:** jupyter,pandas,numpy,matplotlib,data,science,analytics,dbt
+
+**Related:** `tool-databricks`, `dev-python`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -796,16 +1015,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Databricks Development Tools
 
+*Databricks development tools with CLI, SDK, Connect, PySpark, and Delta Lake support.*
+
 **Script ID:** `tool-databricks`  
 **Script:** `install-tool-databricks.sh`  
+**Website:** [https://www.databricks.com](https://www.databricks.com)  
 **Command:** `.devcontainer/additions/install-tool-databricks.sh --help`
 
+Complete Databricks development environment including Databricks CLI, Python SDK, Databricks Connect for remote development, PySpark and Delta Lake for data processing, and VS Code extensions for Asset Bundles development and workspace integration.
+
+**Tags:** databricks,spark,pyspark,delta,lake,data,engineering
+
+**Related:** `tool-dataanalytics`, `dev-python`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -845,18 +1077,31 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ## Infrastructure & Configuration
 
 ### Development Utilities
 
+*Development utilities for database management, API testing, and Docker container management.*
+
 **Script ID:** `tool-dev-utils`  
 **Script:** `install-tool-dev-utils.sh`  
+**Website:** [https://vscode-sqltools.mteixeira.dev](https://vscode-sqltools.mteixeira.dev)  
 **Command:** `.devcontainer/additions/install-tool-dev-utils.sh --help`
 
+Language-agnostic development utilities including SQLTools for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB), REST Client for HTTP API testing, and Docker extension for container, image, and volume management.
+
+**Tags:** database,sql,docker,containers,rest,http,utilities
+
+**Related:** `tool-api-dev`, `tool-kubernetes`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -888,16 +1133,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Infrastructure as Code Tools
 
+*Infrastructure as Code tools with Terraform, Ansible, and Azure Bicep support.*
+
 **Script ID:** `tool-iac`  
 **Script:** `install-tool-iac.sh`  
+**Website:** [https://www.terraform.io](https://www.terraform.io)  
 **Command:** `.devcontainer/additions/install-tool-iac.sh --help`
 
+Complete Infrastructure as Code toolkit including Terraform for multi-cloud provisioning, Ansible for configuration management and automation, ansible-lint for playbook validation, and Azure Bicep for ARM template development with VS Code extensions.
+
+**Tags:** terraform,ansible,bicep,infrastructure,devops,automation
+
+**Related:** `tool-kubernetes`, `tool-azure-ops`, `tool-azure-dev`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -931,16 +1189,29 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---
 
 ### Kubernetes Development Tools
 
+*Kubernetes development tools with kubectl, k9s terminal UI, and Helm package manager.*
+
 **Script ID:** `tool-kubernetes`  
 **Script:** `install-tool-kubernetes.sh`  
+**Website:** [https://kubernetes.io](https://kubernetes.io)  
 **Command:** `.devcontainer/additions/install-tool-kubernetes.sh --help`
 
+Kubernetes development toolkit including kubectl CLI for cluster management, k9s terminal UI for interactive cluster exploration, Helm for package management, and VS Code Kubernetes extension. Sets up .devcontainer.secrets for secure kubeconfig storage.
+
+**Tags:** kubernetes,kubectl,k9s,helm,containers,orchestration
+
+**Related:** `tool-iac`, `tool-azure-dev`, `tool-dev-utils`
+
+<details>
+<summary>Installation details (click to expand)</summary>
+
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -968,4 +1239,6 @@ VS Code Extensions:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+</details>
+
 ---

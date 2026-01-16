@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'website/**'
+      - '.devcontainer/manage/dev-logos.sh'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch: # Allow manual trigger
 
@@ -37,6 +38,16 @@ jobs:
       - name: Install dependencies
         working-directory: website
         run: npm ci
+
+      - name: Install image processing tools
+        # SYNC NOTE: These packages must match PACKAGES_SYSTEM in:
+        # .devcontainer/additions/install-dev-imagetools.sh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick librsvg2-bin webp
+
+      - name: Process logo assets
+        run: bash .devcontainer/manage/dev-logos.sh
 
       - name: Build website
         working-directory: website

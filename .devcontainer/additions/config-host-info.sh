@@ -14,6 +14,13 @@ SCRIPT_DESCRIPTION="Detect host OS, user, and architecture for telemetry monitor
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="[ -f /workspace/.devcontainer.secrets/env-vars/.host-info ]"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="host system telemetry monitoring architecture"
+SCRIPT_ABSTRACT="Detect and save host machine information for OTEL telemetry and monitoring."
+SCRIPT_LOGO="config-host-info-logo.webp"
+SCRIPT_SUMMARY="Configuration script that detects host OS, username, and architecture information for OpenTelemetry monitoring. Stores host metadata in .devcontainer.secrets for inclusion in telemetry data and Grafana dashboards."
+SCRIPT_RELATED="srv-otel config-devcontainer-identity"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Detect and save host information||false|"

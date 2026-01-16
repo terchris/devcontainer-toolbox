@@ -14,6 +14,14 @@ SCRIPT_DESCRIPTION="Set your global Git username and email for commits"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="git config --global user.name >/dev/null 2>&1 && git config --global user.email >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="git identity username email commits version-control"
+SCRIPT_ABSTRACT="Configure global Git username and email for commits in the devcontainer."
+SCRIPT_LOGO="config-git-logo.webp"
+SCRIPT_WEBSITE="https://git-scm.com"
+SCRIPT_SUMMARY="Interactive configuration script for setting up Git user identity (name and email) globally in the devcontainer. Stores configuration persistently in .devcontainer.secrets for reuse across container rebuilds."
+SCRIPT_RELATED=""
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Configure Git identity||false|"

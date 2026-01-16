@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Installs kubectl, k9s, helm and sets up .devcontainer.secret
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="command -v kubectl >/dev/null 2>&1 || command -v k9s >/dev/null 2>&1 || command -v helm >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="kubernetes kubectl k9s helm containers orchestration"
+SCRIPT_ABSTRACT="Kubernetes development tools with kubectl, k9s terminal UI, and Helm package manager."
+SCRIPT_LOGO="tool-kubernetes-logo.webp"
+SCRIPT_WEBSITE="https://kubernetes.io"
+SCRIPT_SUMMARY="Kubernetes development toolkit including kubectl CLI for cluster management, k9s terminal UI for interactive cluster exploration, Helm for package management, and VS Code Kubernetes extension. Sets up .devcontainer.secrets for secure kubeconfig storage."
+SCRIPT_RELATED="tool-iac tool-azure-dev tool-dev-utils"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Kubernetes development tools||false|"

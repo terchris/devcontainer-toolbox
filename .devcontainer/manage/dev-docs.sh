@@ -32,6 +32,8 @@ readonly OUTPUT_FILE="${WORKSPACE_ROOT}/website/docs/tools/index.md"
 readonly OUTPUT_FILE_DETAILS="${WORKSPACE_ROOT}/website/docs/tools-details.md"
 readonly OUTPUT_FILE_COMMANDS="${WORKSPACE_ROOT}/website/docs/commands.md"
 readonly README_FILE="${WORKSPACE_ROOT}/README.md"
+readonly TOOLS_JSON="${WORKSPACE_ROOT}/website/src/data/tools.json"
+readonly CATEGORIES_JSON="${WORKSPACE_ROOT}/website/src/data/categories.json"
 
 # Source logging library
 # shellcheck source=/dev/null
@@ -73,10 +75,12 @@ Usage:
   dev-docs --verbose                # Show detailed progress
 
 Output:
-  website/docs/tools/index.md - Overview table with links to tool details
+  website/docs/tools/index.md  - Overview table with links to tool details
   website/docs/tools-details.md - Detailed help for each install tool
-  website/docs/commands.md    - Command reference (dev-* commands)
-  README.md                   - Tools summary (between markers)
+  website/docs/commands.md     - Command reference (dev-* commands)
+  website/src/data/tools.json  - Tool metadata for React components
+  website/src/data/categories.json - Category metadata for React components
+  README.md                    - Tools summary (between markers)
 
 Categories:
   LANGUAGE_DEV    - $(get_category_short_description "LANGUAGE_DEV")
@@ -96,6 +100,86 @@ Examples:
   dev-docs --category LANGUAGE_DEV --verbose
 
 EOF
+}
+
+# Detect script type from filename prefix
+# Args: $1=script_path
+# Returns: install, config, service, or unknown
+detect_script_type() {
+    local script_path=$1
+    local basename=$(basename "$script_path")
+
+    if [[ "$basename" == install-* ]]; then
+        echo "install"
+    elif [[ "$basename" == config-* ]]; then
+        echo "config"
+    elif [[ "$basename" == service-* ]] || [[ "$basename" == install-srv-* ]]; then
+        echo "service"
+    else
+        echo "unknown"
+    fi
+}
+
+# Extract a metadata field from a script file
+# Args: $1=script_path, $2=field_name
+# Returns: field value or empty string
+extract_script_field() {
+    local script_path=$1
+    local field_name=$2
+
+    # Extract value between quotes (handles both " and ')
+    local value=$(grep "^${field_name}=" "$script_path" | head -1 | sed 's/^[^=]*=["'"'"']\{0,1\}//' | sed 's/["'"'"']\{0,1\}$//')
+    echo "$value"
+}
+
+# Extract all extended metadata from a script
+# Args: $1=script_path
+# Sets global variables: _SCRIPT_TAGS, _SCRIPT_ABSTRACT, _SCRIPT_LOGO, _SCRIPT_WEBSITE, _SCRIPT_SUMMARY, _SCRIPT_RELATED
+extract_extended_metadata() {
+    local script_path=$1
+
+    _SCRIPT_TAGS=$(extract_script_field "$script_path" "SCRIPT_TAGS")
+    _SCRIPT_ABSTRACT=$(extract_script_field "$script_path" "SCRIPT_ABSTRACT")
+    _SCRIPT_LOGO=$(extract_script_field "$script_path" "SCRIPT_LOGO")
+    _SCRIPT_WEBSITE=$(extract_script_field "$script_path" "SCRIPT_WEBSITE")
+    _SCRIPT_SUMMARY=$(extract_script_field "$script_path" "SCRIPT_SUMMARY")
+    _SCRIPT_RELATED=$(extract_script_field "$script_path" "SCRIPT_RELATED")
+}
+
+# Escape string for JSON output
+json_escape() {
+    local str=$1
+    # Escape backslashes, double quotes, and control characters
+    str="${str//\\/\\\\}"
+    str="${str//\"/\\\"}"
+    str="${str//$'\n'/\\n}"
+    str="${str//$'\r'/\\r}"
+    str="${str//$'\t'/\\t}"
+    echo "$str"
+}
+
+# Convert space-separated string to JSON array
+# Args: $1=space-separated string
+# Returns: JSON array string like ["item1","item2"]
+to_json_array() {
+    local input=$1
+    if [[ -z "$input" ]]; then
+        echo "[]"
+        return
+    fi
+
+    local result="["
+    local first=1
+    for item in $input; do
+        if [[ $first -eq 1 ]]; then
+            first=0
+        else
+            result+=","
+        fi
+        result+="\"$(json_escape "$item")\""
+    done
+    result+="]"
+    echo "$result"
 }
 
 # Add script to appropriate category variable
@@ -352,6 +436,121 @@ update_readme() {
     log_info "Updated: $README_FILE"
 }
 
+#------------------------------------------------------------------------------
+# JSON Generation Functions
+#------------------------------------------------------------------------------
+
+# Generate tools.json with all tool metadata
+generate_tools_json() {
+    log_info "Generating tools.json..."
+
+    local json="{\n  \"tools\": ["
+    local first_tool=1
+
+    for category in "${CATEGORY_ORDER[@]}"; do
+        local scripts=$(get_category_scripts "$category")
+        if [[ -z "$scripts" ]]; then
+            continue
+        fi
+
+        for script_path in $scripts; do
+            # Extract core metadata
+            local script_id=$(extract_script_field "$script_path" "SCRIPT_ID")
+            local script_name=$(extract_script_field "$script_path" "SCRIPT_NAME")
+            local script_desc=$(extract_script_field "$script_path" "SCRIPT_DESCRIPTION")
+            local script_category=$(extract_script_field "$script_path" "SCRIPT_CATEGORY")
+
+            # Extract extended metadata
+            extract_extended_metadata "$script_path"
+
+            # Detect script type
+            local script_type=$(detect_script_type "$script_path")
+
+            # Add comma before tool (except first)
+            if [[ $first_tool -eq 1 ]]; then
+                first_tool=0
+            else
+                json+=","
+            fi
+
+            # Build JSON object for this tool
+            json+="\n    {"
+            json+="\n      \"id\": \"$(json_escape "$script_id")\","
+            json+="\n      \"type\": \"$script_type\","
+            json+="\n      \"name\": \"$(json_escape "$script_name")\","
+            json+="\n      \"description\": \"$(json_escape "$script_desc")\","
+            json+="\n      \"category\": \"$script_category\","
+            json+="\n      \"tags\": $(to_json_array "$_SCRIPT_TAGS"),"
+            json+="\n      \"abstract\": \"$(json_escape "$_SCRIPT_ABSTRACT")\""
+
+            # Add optional fields only if they have values
+            if [[ -n "$_SCRIPT_LOGO" ]]; then
+                json+=",\n      \"logo\": \"$(json_escape "$_SCRIPT_LOGO")\""
+            fi
+            if [[ -n "$_SCRIPT_WEBSITE" ]]; then
+                json+=",\n      \"website\": \"$(json_escape "$_SCRIPT_WEBSITE")\""
+            fi
+            if [[ -n "$_SCRIPT_SUMMARY" ]]; then
+                json+=",\n      \"summary\": \"$(json_escape "$_SCRIPT_SUMMARY")\""
+            fi
+            if [[ -n "$_SCRIPT_RELATED" ]]; then
+                json+=",\n      \"related\": $(to_json_array "$_SCRIPT_RELATED")"
+            fi
+
+            json+="\n    }"
+        done
+    done
+
+    json+="\n  ]\n}"
+
+    echo -e "$json"
+}
+
+# Generate categories.json with all category metadata
+generate_categories_json() {
+    log_info "Generating categories.json..."
+
+    local json="{\n  \"categories\": ["
+    local first_cat=1
+
+    for category_id in "${CATEGORY_ORDER[@]}"; do
+        # Get category metadata using helper functions from categories.sh
+        local cat_name=$(get_category_name "$category_id")
+        local cat_order=$(get_category_order "$category_id")
+        local cat_abstract=$(get_category_abstract "$category_id")
+        local cat_summary=$(get_category_summary "$category_id")
+        local cat_tags=$(get_category_tags "$category_id")
+        local cat_logo=$(get_category_logo "$category_id")
+
+        # Add comma before category (except first)
+        if [[ $first_cat -eq 1 ]]; then
+            first_cat=0
+        else
+            json+=","
+        fi
+
+        # Build JSON object for this category
+        json+="\n    {"
+        json+="\n      \"id\": \"$category_id\","
+        json+="\n      \"name\": \"$(json_escape "$cat_name")\","
+        json+="\n      \"order\": $cat_order,"
+        json+="\n      \"tags\": $(to_json_array "$cat_tags"),"
+        json+="\n      \"abstract\": \"$(json_escape "$cat_abstract")\","
+        json+="\n      \"summary\": \"$(json_escape "$cat_summary")\""
+
+        # Add optional logo field only if it has a value
+        if [[ -n "$cat_logo" ]]; then
+            json+=",\n      \"logo\": \"$(json_escape "$cat_logo")\""
+        fi
+
+        json+="\n    }"
+    done
+
+    json+="\n  ]\n}"
+
+    echo -e "$json"
+}
+
 # Format help output from a script
 format_help_output() {
     local script_path=$1
@@ -370,8 +569,9 @@ format_help_output() {
     help_output=$(echo "$help_output" | grep -v "declare: -A: invalid option" | grep -v "declare: usage:" | grep -v "syntax error: invalid arithmetic operator" | grep -v "Logging to:")
 
     # Extract just the main help section (skip the logging header)
-    # The help output starts with a separator line and script info
-    help_output=$(echo "$help_output" | awk '/^━{50,}/,0' | tail -n +2)
+    # Skip lines until we find the second separator line (after the logging header)
+    # The help output starts with a separator line containing the script name
+    help_output=$(echo "$help_output" | awk '/^━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━/{count++; if(count==2){found=1; next}} found')
 
     # Format as markdown code block
     echo '```'
@@ -404,14 +604,54 @@ generate_category_section() {
         local script_basename=$(basename "$script_path")
 
         section+="### $script_name\n\n"
+
+        # Extract extended metadata
+        extract_extended_metadata "$script_path"
+
+        # Show abstract as lead paragraph if available
+        if [[ -n "$_SCRIPT_ABSTRACT" ]]; then
+            section+="*$_SCRIPT_ABSTRACT*\n\n"
+        fi
+
         section+="**Script ID:** \`$script_id\`  \n"
         section+="**Script:** \`$script_basename\`  \n"
+
+        # Add website link if available
+        if [[ -n "$_SCRIPT_WEBSITE" ]]; then
+            section+="**Website:** [$_SCRIPT_WEBSITE]($_SCRIPT_WEBSITE)  \n"
+        fi
+
         section+="**Command:** \`.devcontainer/additions/$script_basename --help\`\n\n"
 
-        # Add help output
+        # Add summary if available (more detailed than abstract)
+        if [[ -n "$_SCRIPT_SUMMARY" ]]; then
+            section+="$_SCRIPT_SUMMARY\n\n"
+        fi
+
+        # Add tags if available
+        if [[ -n "$_SCRIPT_TAGS" ]]; then
+            local tags_formatted=$(echo "$_SCRIPT_TAGS" | tr ' ' ', ')
+            section+="**Tags:** $tags_formatted\n\n"
+        fi
+
+        # Add related tools if available
+        if [[ -n "$_SCRIPT_RELATED" ]]; then
+            local related_links=""
+            for rel_id in $_SCRIPT_RELATED; do
+                if [[ -n "$related_links" ]]; then
+                    related_links+=", "
+                fi
+                related_links+="\`$rel_id\`"
+            done
+            section+="**Related:** $related_links\n\n"
+        fi
+
+        # Add help output in collapsible section
         local help_content
         help_content=$(format_help_output "$script_path")
+        section+="<details>\n<summary>Installation details (click to expand)</summary>\n\n"
         section+="$help_content\n"
+        section+="</details>\n\n"
 
         section+="---\n\n"
         ((script_count++))
@@ -637,6 +877,13 @@ generate_manual() {
     local commands
     commands=$(generate_commands_md)
 
+    # ===== Generate JSON files for React components =====
+    local tools_json
+    tools_json=$(generate_tools_json)
+
+    local categories_json
+    categories_json=$(generate_categories_json)
+
     # Output result
     if [[ $DRY_RUN -eq 1 ]]; then
         log_info "DRY RUN - tools.md preview:"
@@ -648,10 +895,19 @@ generate_manual() {
         log_info "DRY RUN - commands.md preview:"
         echo -e "$commands" | head -50
         echo "..."
+        log_info "DRY RUN - tools.json preview:"
+        echo -e "$tools_json" | head -30
+        echo "..."
+        log_info "DRY RUN - categories.json preview:"
+        echo -e "$categories_json" | head -30
+        echo "..."
         log_info "Total length: tools.md=$(echo -e "$output" | wc -l) lines, tools-details.md=$(echo -e "$details" | wc -l) lines, commands.md=$(echo -e "$commands" | wc -l) lines"
     else
         # Ensure docs directory exists
         mkdir -p "$(dirname "$OUTPUT_FILE")"
+
+        # Ensure data directory exists for JSON files
+        mkdir -p "$(dirname "$TOOLS_JSON")"
 
         # Write tools.md
         echo -e "$output" > "$OUTPUT_FILE"
@@ -664,6 +920,14 @@ generate_manual() {
         # Write commands.md
         echo -e "$commands" > "$OUTPUT_FILE_COMMANDS"
         log_info "Written: $OUTPUT_FILE_COMMANDS ($(wc -l < "$OUTPUT_FILE_COMMANDS") lines)"
+
+        # Write tools.json
+        echo -e "$tools_json" > "$TOOLS_JSON"
+        log_info "Written: $TOOLS_JSON"
+
+        # Write categories.json
+        echo -e "$categories_json" > "$CATEGORIES_JSON"
+        log_info "Written: $CATEGORIES_JSON"
 
         # Update README.md
         update_readme

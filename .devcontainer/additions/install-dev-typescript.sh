@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Adds TypeScript and development tools (Node.js already in de
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v tsc >/dev/null 2>&1 || npm list -g typescript 2>/dev/null | grep -q typescript"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="typescript javascript nodejs npm tsc tsx eslint prettier"
+SCRIPT_ABSTRACT="TypeScript development environment with compiler, tsx runtime, and essential tooling for modern web development."
+SCRIPT_LOGO="dev-typescript-logo.webp"
+SCRIPT_WEBSITE="https://www.typescriptlang.org"
+SCRIPT_SUMMARY="Complete TypeScript setup including the TypeScript compiler (tsc), tsx for running TypeScript directly, ts-node for Node.js integration, and @types/node for Node.js type definitions. Includes Prettier and ESLint VS Code extensions."
+SCRIPT_RELATED="dev-python dev-golang dev-rust"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install TypeScript development tools||false|"

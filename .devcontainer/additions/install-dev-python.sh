@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Adds ipython, pytest-cov, and VS Code extensions for Python 
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v ipython >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="python pip ipython pytest coverage development venv"
+SCRIPT_ABSTRACT="Python development environment with ipython, pytest-cov, and python-dotenv for enhanced coding and testing."
+SCRIPT_LOGO="dev-python-logo.webp"
+SCRIPT_WEBSITE="https://python.org"
+SCRIPT_SUMMARY="Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, and python-dotenv for environment management. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking."
+SCRIPT_RELATED="dev-typescript dev-golang dev-rust"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Python development tools||false|"
