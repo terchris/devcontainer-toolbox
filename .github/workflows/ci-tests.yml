@@ -60,11 +60,11 @@ jobs:
 
       - name: Commit documentation updates
         run: |
-          if [ -n "$(git status --porcelain docs/tools.md docs/tools-details.md docs/commands.md README.md)" ]; then
+          if [ -n "$(git status --porcelain website/docs/tools/index.md website/docs/tools-details.md website/docs/commands.md README.md)" ]; then
             echo "Documentation needs updating..."
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add docs/tools.md docs/tools-details.md docs/commands.md README.md
+            git add website/docs/tools/index.md website/docs/tools-details.md website/docs/commands.md README.md
             git commit -m "docs: auto-update generated documentation [skip ci]"
             git push
             echo "Documentation updated and committed."

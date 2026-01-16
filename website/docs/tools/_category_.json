@@ -1,0 +1,8 @@
+{
+  "label": "Tools",
+  "position": 7,
+  "link": {
+    "type": "generated-index",
+    "description": "Development tools available in DevContainer Toolbox. Install via dev-setup or run scripts directly."
+  }
+}

@@ -4,6 +4,12 @@
 
 Stop wasting time setting up development environments. DevContainer Toolbox gives you a complete, consistent setup that works on Windows, Mac, and Linux.
 
+[![View Documentation](website/static/img/docs-homepage.jpg)](https://terchris.github.io/devcontainer-toolbox/)
+
+📚 **[View Full Documentation](https://terchris.github.io/devcontainer-toolbox/)** | [Getting Started](https://terchris.github.io/devcontainer-toolbox/docs/getting-started) | [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools)
+
+---
+
 ## Quick Start
 
 **1. Install** (in your project folder):
@@ -16,35 +22,13 @@ curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/
 irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
-<details>
-<summary>Prefer to inspect first? Download the zip manually</summary>
+**2. Open in VS Code** and click **"Reopen in Container"** when prompted.
 
-1. Download [dev_containers.zip](https://github.com/terchris/devcontainer-toolbox/releases/download/latest/dev_containers.zip)
-2. Extract to your project folder
-3. The zip contains `.devcontainer/` and `.devcontainer.extend/`
+Done! Run `dev-setup` to install tools.
 
-</details>
+![dev-setup menu](website/static/img/dev-setup.png)
 
-**2. Open in VS Code:**
-```bash
-code .
-```
-
-**3. Click "Reopen in Container"** when prompted.
-
-Done! Start coding.
-
-## What Gets Installed
-
-The install script adds three folders to your project:
-
-| Folder | Purpose | Git |
-|--------|---------|-----|
-| `.devcontainer/` | The toolbox (don't edit, updated via `dev-update`) | Commit |
-| `.devcontainer.extend/` | Your project config - share with team | Commit |
-| `.devcontainer.secrets/` | API keys and credentials | Ignored |
-
-See [Getting Started](docs/getting-started.md) for details.
+---
 
 ## What You Get
 
@@ -61,70 +45,38 @@ See [Getting Started](docs/getting-started.md) for details.
 
 <!-- TOOLS_END -->
 
-Install any tool via the interactive menu:
-```bash
-dev-setup
-```
+See [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools) for details and installation guides.
 
-![dev-setup menu](docs/dev-setup.png)
+---
 
-See [docs/tools.md](docs/tools.md) for detailed installation options.
+## AI-Assisted Development
 
-## Why DevContainer Toolbox?
+DevContainer Toolbox is built for AI coding assistants. The isolated container keeps the AI safely contained while giving it full access to your project.
 
-- **"Works on my machine"** - Now it works on everyone's machine
-- **New developer on the project?** - Full setup in minutes, not days
-- **Production bug?** - Ops team can clone, open, and debug immediately - no setup delays
-- **Try new tools** - Experiment safely without breaking your system
-- **Team consistency** - Everyone uses the same versions
+![AI implementing a feature](website/static/img/ai-implement-plan-teaser.gif)
 
-## New to Containers?
+This 30-second clip shows an AI adding a new development tool. [Learn how it works](https://terchris.github.io/devcontainer-toolbox/docs/ai-docs/developing-using-ai).
 
-A **container** is like a lightweight virtual machine that runs your development environment. Instead of installing Python, Node, Go, etc. on your computer, everything runs inside the container.
-
-A **devcontainer** is VS Code's way of developing inside a container. Your code stays on your computer, but all the tools run in the container.
-
-**Benefits:**
-- Install nothing on your computer (except Docker)
-- Can't break your system by experimenting
-- Delete the container and start fresh anytime
-- Same environment for everyone on the team
-
-**Learn more:** [VS Code Devcontainers Guide](https://code.visualstudio.com/docs/devcontainers/containers) | [5-minute video tutorial](https://www.youtube.com/watch?v=b1RavPr_878)
+---
 
 ## Prerequisites
 
-- **Docker** - Install [Rancher Desktop](https://rancherdesktop.io/) (free and open source)
-  - *Why not Docker Desktop?* Docker Desktop requires a [paid subscription](https://www.docker.com/pricing/) for companies. Rancher Desktop is 100% free.
+- **Docker** - Install [Rancher Desktop](https://rancherdesktop.io/) (free, no license required)
 - **VS Code** with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- **Windows users** - First install WSL, then Rancher Desktop:
-  ```powershell
-  # Run in PowerShell as Administrator
-  wsl --install
-  # Restart your computer, then install Rancher Desktop
-  ```
+- **Windows users** - Install WSL first: `wsl --install` (run as Administrator, then restart)
 
-## Project Templates
+New to containers? See [What Are DevContainers?](https://terchris.github.io/devcontainer-toolbox/docs/what-are-devcontainers)
 
-Get started fast with ready-made project templates:
-
-```bash
-dev-template
-```
-
-Templates for React, Next.js, Spring Boot, Express, and more. See the [template library](https://github.com/terchris/urbalurba-dev-templates).
+---
 
 ## Documentation
 
-- [Full Documentation](docs/README.md) - Complete documentation index
-- [Getting Started](docs/getting-started.md) - Installation and first steps
-- [Commands](docs/commands.md) - All `dev-*` commands
-- [Available Tools](docs/tools.md) - All installable tools
-- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
-
-## Contributing
-
-We welcome contributions! See the [Contributor Guide](docs/contributors/README.md).
+- [Getting Started](https://terchris.github.io/devcontainer-toolbox/docs/getting-started) - Installation and first steps
+- [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools) - All installable tools
+- [Commands Reference](https://terchris.github.io/devcontainer-toolbox/docs/commands) - All `dev-*` commands
+- [AI Development](https://terchris.github.io/devcontainer-toolbox/docs/ai-docs/developing-using-ai) - Working with AI coding assistants
+- [Troubleshooting](https://terchris.github.io/devcontainer-toolbox/docs/troubleshooting) - Common issues and solutions
+- [Contributing](https://terchris.github.io/devcontainer-toolbox/docs/contributors) - How to contribute
 
 ## License
 

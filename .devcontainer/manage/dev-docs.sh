@@ -2,7 +2,7 @@
 # file: .devcontainer/manage/dev-docs.sh
 #
 # Generates comprehensive documentation by running all install scripts with --help
-# Output: docs/tools.md (overview), docs/tools-details.md (detailed), README.md (updated)
+# Output: website/docs/tools/index.md (overview), website/docs/tools-details.md (detailed), README.md (updated)
 #
 # Usage:
 #   dev-docs                          # Generate full manual
@@ -28,9 +28,9 @@ readonly SCRIPT_DIR
 readonly MANAGE_DIR="${SCRIPT_DIR}"
 readonly ADDITIONS_DIR="${SCRIPT_DIR}/../additions"
 readonly WORKSPACE_ROOT="${SCRIPT_DIR}/../.."
-readonly OUTPUT_FILE="${WORKSPACE_ROOT}/docs/tools.md"
-readonly OUTPUT_FILE_DETAILS="${WORKSPACE_ROOT}/docs/tools-details.md"
-readonly OUTPUT_FILE_COMMANDS="${WORKSPACE_ROOT}/docs/commands.md"
+readonly OUTPUT_FILE="${WORKSPACE_ROOT}/website/docs/tools/index.md"
+readonly OUTPUT_FILE_DETAILS="${WORKSPACE_ROOT}/website/docs/tools-details.md"
+readonly OUTPUT_FILE_COMMANDS="${WORKSPACE_ROOT}/website/docs/commands.md"
 readonly README_FILE="${WORKSPACE_ROOT}/README.md"
 
 # Source logging library
@@ -73,10 +73,10 @@ Usage:
   dev-docs --verbose                # Show detailed progress
 
 Output:
-  docs/tools.md         - Overview table with links to tool details
-  docs/tools-details.md - Detailed help for each install tool
-  docs/commands.md      - Command reference (dev-* commands)
-  README.md             - Tools summary (between markers)
+  website/docs/tools/index.md - Overview table with links to tool details
+  website/docs/tools-details.md - Detailed help for each install tool
+  website/docs/commands.md    - Command reference (dev-* commands)
+  README.md                   - Tools summary (between markers)
 
 Categories:
   LANGUAGE_DEV    - $(get_category_short_description "LANGUAGE_DEV")
@@ -201,7 +201,7 @@ generate_toc() {
         local scripts=$(get_category_scripts "$category")
         if [[ -n "$scripts" ]]; then
             local category_name=$(get_category_display_name "$category")
-            local anchor=$(echo "$category_name" | tr '[:upper:]' '[:lower:]' | tr ' &' '--' | tr -d ',')
+            local anchor=$(echo "$category_name" | tr '[:upper:]' '[:lower:]' | tr -d '&,' | tr -s ' ' | tr ' ' '-')
             toc+="- [$category_name](#$anchor)\n"
         fi
     done
@@ -432,9 +432,13 @@ generate_commands_md() {
 
     log_info "Generating commands.md..."
 
+    content+="---\n"
+    content+="sidebar_position: 4\n"
+    content+="---\n\n"
     content+="# Commands Reference\n\n"
-    content+="> **Auto-generated** - Do not edit manually  \n"
-    content+="> Regenerate with: \`dev-docs\`\n\n"
+    content+=":::note Auto-generated\n"
+    content+="This page is auto-generated. Regenerate with: \`dev-docs\`\n"
+    content+=":::\n\n"
     content+="All commands available inside the devcontainer. Type \`dev-\` and press Tab to see them.\n\n"
 
     # Build arrays from scan_manage_scripts output
@@ -571,10 +575,15 @@ generate_manual() {
     fi
 
     # ===== Generate tools.md (overview) =====
-    log_info "Generating tools.md (overview)..."
+    log_info "Generating tools/index.md (overview)..."
+    output+="---\n"
+    output+="sidebar_position: 7\n"
+    output+="sidebar_label: Tools\n"
+    output+="---\n\n"
     output+="# Available Tools\n\n"
-    output+="> **Auto-generated** - Do not edit manually  \n"
-    output+="> Regenerate with: \`dev-docs\`\n\n"
+    output+=":::note Auto-generated\n"
+    output+="This page is auto-generated. Regenerate with: \`dev-docs\`\n"
+    output+=":::\n\n"
     output+="All tools can be installed via \`dev-setup\` or by running the install script directly.\n\n"
 
     # Generate categories list
@@ -601,10 +610,15 @@ generate_manual() {
     # ===== Generate tools-details.md (detailed help) =====
     local details=""
     log_info "Generating tools-details.md (detailed help)..."
+    details+="---\n"
+    details+="sidebar_position: 8\n"
+    details+="sidebar_label: Tool Details\n"
+    details+="---\n\n"
     details+="# Tool Details\n\n"
-    details+="> **Auto-generated** - Do not edit manually  \n"
-    details+="> Regenerate with: \`dev-docs\`\n\n"
-    details+="Detailed installation options for each tool. See [tools.md](tools.md) for the overview.\n\n"
+    details+=":::note Auto-generated\n"
+    details+="This page is auto-generated. Regenerate with: \`dev-docs\`\n"
+    details+=":::\n\n"
+    details+="Detailed installation options for each tool. See [Available Tools](tools) for the overview.\n\n"
     details+="---\n\n"
 
     # Generate table of contents for details
