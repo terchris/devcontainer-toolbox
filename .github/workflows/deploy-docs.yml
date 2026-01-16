@@ -6,7 +6,9 @@ on:
       - main
     paths:
       - 'website/**'
+      - '.devcontainer/additions/**'
       - '.devcontainer/manage/dev-logos.sh'
+      - '.devcontainer/manage/dev-docs.sh'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch: # Allow manual trigger
 
@@ -48,6 +50,9 @@ jobs:
 
       - name: Process logo assets
         run: bash .devcontainer/manage/dev-logos.sh
+
+      - name: Generate documentation data
+        run: bash .devcontainer/manage/dev-docs.sh
 
       - name: Build website
         working-directory: website
