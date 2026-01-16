@@ -1,6 +1,10 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import fs from 'fs';
+
+// Read version from version.txt at build time
+const version = fs.readFileSync('../version.txt', 'utf8').trim();
 
 // Environment variables for configurable repository URLs
 // - In GitHub Actions: automatically set from repository context
@@ -33,6 +37,11 @@ const config: Config = {
     locales: ['en'],
   },
 
+  // Enable Mermaid diagrams in markdown
+  markdown: {
+    mermaid: true,
+  },
+
   presets: [
     [
       'classic',
@@ -50,6 +59,7 @@ const config: Config = {
   ],
 
   themes: [
+    '@docusaurus/theme-mermaid',
     [
       '@easyops-cn/docusaurus-search-local',
       {
@@ -62,7 +72,18 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    'docusaurus-plugin-image-zoom',
+  ],
+
   themeConfig: {
+    announcementBar: {
+      id: 'v1_4_announcement',
+      content: '📚 New documentation site! <a href="/devcontainer-toolbox/docs/getting-started">Get started</a>',
+      backgroundColor: '#25c2a0',
+      textColor: '#fff',
+      isCloseable: true,
+    },
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
       defaultMode: 'light',
@@ -80,6 +101,11 @@ const config: Config = {
           sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
+        },
+        {
+          type: 'html',
+          position: 'right',
+          value: `<span class="badge badge--secondary">v${version}</span>`,
         },
         {
           href: `https://github.com/${GITHUB_ORG}/${GITHUB_REPO}`,
@@ -133,6 +159,13 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
       additionalLanguages: ['bash', 'powershell', 'json'],
+    },
+    zoom: {
+      selector: '.markdown img',
+      background: {
+        light: 'rgb(255, 255, 255)',
+        dark: 'rgb(50, 50, 50)',
+      },
     },
   } satisfies Preset.ThemeConfig,
 };
