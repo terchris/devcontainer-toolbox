@@ -1,0 +1,143 @@
+---
+title: Azure Application Development
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-azure-dev-logo.webp')}
+    alt="Azure Application Development"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Azure Application Development</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Azure application development with CLI, Functions, Azurite emulator, and VS Code extensions.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>azure</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>microsoft</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>cloud</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>functions</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>azurite</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>cosmosdb</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>servicebus</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>bicep</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Azure development toolkit including Azure CLI, Functions Core Tools v4, Azurite storage emulator, and VS Code extensions for App Service, Functions, Storage, Service Bus, Cosmos DB, and Bicep infrastructure as code.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-azure-dev</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-azure-dev.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://azure.microsoft.com" target="_blank">https://azure.microsoft.com</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [azure-cli](https://packages.debian.org/bookworm/azure-cli) | Installed from Microsoft APT repository |
+
+## Node.js Packages (npm)
+
+| Package | Description |
+|---------|-------------|
+| [azure-functions-core-tools@4](https://www.npmjs.com/package/azure-functions-core-tools@4) | Azure Functions runtime v4 (latest |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Azure Account](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) | Azure account management |
+| [Azure Resources](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups) | View and manage Azure resources |
+| [Azure App Service](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice) | Deploy to Azure App Service |
+| [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions) | Create and deploy Azure Functions |
+| [Azure Storage](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestorage) | Manage Azure Storage accounts |
+| [Service Bus Explorer](https://marketplace.visualstudio.com/items?itemName=digital-molecules.service-bus-explorer) | Browse queues, topics, and messages |
+| [Azure Cosmos DB](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-cosmosdb) | Cosmos DB and database support |
+| [Bicep](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-bicep) | Bicep language support for IaC |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-azure-dev.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Azure Application Development
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-azure-dev
+Name:         Azure Application Development
+Script version: 0.0.1
+Category:     CLOUD_TOOLS, Cloud & Infrastructure Tools
+Description:  Installs Azure CLI, Functions Core Tools, Azurite, and VS Code extensions for building Azure applications, APIs, Service Bus, and Cosmos DB solutions
+
+Usage:
+
+  Action:
+      install-tool-azure-dev.sh         # Install Azure development tools
+      install-tool-azure-dev.sh --uninstall # Uninstall Azure development tools
+
+  Info:
+      install-tool-azure-dev.sh --help  # Show help and usage information
+
+System Packages (APT):
+  - azure-cli
+
+Node.js Packages (NPM):
+  - azure-functions-core-tools@4
+  - azurite
+
+VS Code Extensions:
+  - Azure Account (ms-vscode.azure-account) - Azure account management
+  - Azure Resources (ms-azuretools.vscode-azureresourcegroups) - View and manage Azure resources
+  - Azure App Service (ms-azuretools.vscode-azureappservice) - Deploy to Azure App Service
+  - Azure Functions (ms-azuretools.vscode-azurefunctions) - Create and deploy Azure Functions
+  - Azure Storage (ms-azuretools.vscode-azurestorage) - Manage Azure Storage accounts
+  - Service Bus Explorer (digital-molecules.service-bus-explorer) - Browse queues, topics, and messages
+  - Azure Cosmos DB (ms-azuretools.vscode-cosmosdb) - Cosmos DB and database support
+  - Bicep (ms-azuretools.vscode-bicep) - Bicep language support for IaC
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-azure-ops', 'tool-kubernetes', 'tool-iac']} />

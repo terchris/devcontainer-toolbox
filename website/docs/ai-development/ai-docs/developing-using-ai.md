@@ -1,14 +1,16 @@
 ---
-title: Developing with AI
+title: Developing Using AI
 sidebar_position: 1
 ---
 
-# Developing with AI
+# Developing Using AI
 
-Watch an AI implement a complete feature:
+Watch an AI implement a complete feature in 12 minutes:
 
-![AI implementing a development tool](/img/ai-implement-plan-teaser.gif)
-*30-second teaser at 4x speed. The user mostly just confirms each phase.*
+![AI implementing a development tool](/img/ai-implement-plan.gif)
+*Full implementation at 4x speed (~3 min). The user mostly just confirms each phase.*
+
+> **Side note:** We used an AI to figure out how to create this screen recording. See the [AI Developer section](../ai-developer/) for examples of AI research tasks.
 
 This is Claude Code adding Bash development tools to devcontainer-toolbox. The AI:
 - Created the install script
@@ -64,7 +66,7 @@ Without guidance, AI assistants:
 Instead of "implement feature X", say:
 
 ```
-we need to create a plan for adding a new install script
+we need to create a plan for creating a install-dev-bash.sh
 ```
 
 The AI reads your documentation and creates a structured plan:
@@ -79,15 +81,17 @@ Notice what happens:
 
 The plan is a markdown file. Edit it if something's wrong. Only after you approve does the AI start coding.
 
-:::tip Why Plans Work
+**See the actual plan used in the demo:** The `PLAN-install-dev-bash.md` is in `website/docs/ai-developer/plans/completed/`.
+
+More examples in the [AI Developer plans](../ai-developer/PLANS) section.
+
+### Why Plans Work
+
 **They reduce hallucinations.** The AI follows your documented patterns instead of guessing.
 
 **They enable course correction.** When something goes wrong, point to the plan. There's a shared reference.
 
 **They create documentation.** Completed plans show what was implemented and why.
-:::
-
-Learn more: [Creating Plans](creating-plans)
 
 ---
 
@@ -112,6 +116,41 @@ Tests turn the AI into a self-correcting system.
 
 ---
 
+## Setting Up Your Project
+
+### Planning Documentation
+
+Create docs that tell the AI how to make plans:
+
+| Document | Purpose |
+|----------|---------|
+| [PLANS.md](../ai-developer/PLANS.md) | Plan templates and structure |
+| [WORKFLOW.md](../ai-developer/WORKFLOW.md) | Implementation process |
+| [CREATING-SCRIPTS.md](../ai-developer/CREATING-SCRIPTS.md) | Code conventions |
+
+Plans are stored in `docs/ai-developer/plans/` with subfolders for `backlog/`, `active/`, and `completed/`.
+
+See [docs/ai-developer/](../ai-developer/) for the full setup.
+
+### Tests
+
+Create tests the AI can run:
+
+```bash
+dev-test static    # Validate syntax and metadata
+dev-test unit      # Run safe execution tests
+dev-test lint      # Check code style
+```
+
+### AI Configuration
+
+Add a `CLAUDE.md` that tells the AI:
+- Where to find planning docs
+- What workflow to follow
+- What tests to run
+
+---
+
 ## The Three Layers
 
 | Layer | What it does |
@@ -126,40 +165,8 @@ Tests turn the AI into a self-correcting system.
 
 ---
 
-## Getting Started
+## Related
 
-### 1. Install Claude Code
-
-```bash
-dev-setup
-# Select "Claude Code" from AI & Machine Learning Tools
-```
-
-Or install directly:
-```bash
-.devcontainer/additions/install-dev-ai-claudecode.sh
-```
-
-### 2. Configure API Key
-
-Create the environment file:
-```bash
-mkdir -p .devcontainer.secrets/env-vars
-echo "ANTHROPIC_API_KEY=your-api-key" > .devcontainer.secrets/env-vars/anthropic.env
-```
-
-### 3. Start Using It
-
-```bash
-claude
-```
-
-Then tell it what you want to build. It will create a plan for your review.
-
----
-
-## Next Steps
-
-- [Workflow](workflow) - The full flow from idea to implementation
-- [Creating Plans](creating-plans) - Plan templates and best practices
-- [Claude Code Tool](../tools/ai-machine-learning/ai-claudecode) - Installation and configuration details
+- [AI Developer Docs](../ai-developer/) - Planning templates and workflow
+- [Testing Guide](../../contributors/testing) - How to run and create tests
+- [CLAUDE.md](https://github.com/terchris/devcontainer-toolbox/blob/main/CLAUDE.md) - Project-specific AI configuration (in repo root)

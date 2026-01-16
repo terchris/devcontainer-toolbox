@@ -1,0 +1,143 @@
+---
+title: Azure Operations & Infrastructure Management
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-azure-ops-logo.webp')}
+    alt="Azure Operations & Infrastructure Management"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Azure Operations & Infrastructure Management</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Azure operations tools with PowerShell, Az modules, Microsoft Graph, and KQL support.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>azure</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>powershell</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>operations</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>infrastructure</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>management</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>policy</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>graph</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Azure infrastructure and operations management toolkit including PowerShell 7, Az and Microsoft.Graph modules, Exchange Online Management, Azure CLI, and VS Code extensions for Bicep IaC, KQL queries, and Azure policy management.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-azure-ops</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-azure-ops.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://azure.microsoft.com" target="_blank">https://azure.microsoft.com</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [azure-cli](https://packages.debian.org/bookworm/azure-cli) | Azure command-line interface for resource management |
+
+## PowerShell Modules
+
+| Package | Description |
+|---------|-------------|
+| [Az](https://www.powershellgallery.com/packages/Az) | Azure cloud automation (Resource Manager, Storage, Compute, etc. |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.powershell) | PowerShell language support and debugging |
+| [Azure Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack) | Complete Azure development toolkit |
+| [Azure Account](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) | Azure subscription management and sign-in |
+| [Azure Resources](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups) | View and manage Azure resources |
+| [Bicep](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-bicep) | Bicep language support for IaC |
+| [Azure Policy](https://marketplace.visualstudio.com/items?itemName=AzurePolicy.azurepolicyextension) | View and manage Azure Policy definitions |
+| [Kusto Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=josin.kusto-syntax-highlighting) | KQL syntax highlighting for log queries |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-azure-ops.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Azure Operations & Infrastructure Management
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-azure-ops
+Name:         Azure Operations & Infrastructure Management
+Script version: 0.0.1
+Category:     CLOUD_TOOLS, Cloud & Infrastructure Tools
+Description:  Installs Azure CLI, PowerShell with Az/Graph modules, and VS Code extensions for Azure resource management, policy, Bicep IaC, and KQL queries
+Default:      Version 7.5.4
+
+Usage:
+
+  Action:
+      install-tool-azure-ops.sh         # Install Azure operations tools
+      install-tool-azure-ops.sh --uninstall # Uninstall Azure operations tools
+
+  Info:
+      install-tool-azure-ops.sh --help  # Show help and usage information
+
+System Packages (APT):
+  - azure-cli
+
+PowerShell Modules:
+  - Az
+  - Microsoft.Graph
+  - ExchangeOnlineManagement
+  - PSScriptAnalyzer
+
+VS Code Extensions:
+  - PowerShell (ms-vscode.powershell) - PowerShell language support and debugging
+  - Azure Tools (ms-vscode.vscode-node-azure-pack) - Complete Azure development toolkit
+  - Azure Account (ms-vscode.azure-account) - Azure subscription management and sign-in
+  - Azure Resources (ms-azuretools.vscode-azureresourcegroups) - View and manage Azure resources
+  - Bicep (ms-azuretools.vscode-bicep) - Bicep language support for IaC
+  - Azure Policy (AzurePolicy.azurepolicyextension) - View and manage Azure Policy definitions
+  - Kusto Syntax Highlighting (josin.kusto-syntax-highlighting) - KQL syntax highlighting for log queries
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-azure-dev', 'tool-iac', 'tool-kubernetes']} />

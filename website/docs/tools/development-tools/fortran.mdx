@@ -1,0 +1,132 @@
+---
+title: Fortran Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-fortran-logo.webp')}
+    alt="Fortran Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Fortran Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Fortran development environment with GNU Fortran, LAPACK, BLAS, and VS Code extensions.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>fortran</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>gfortran</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>scientific</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>computing</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>lapack</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>blas</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>numerical</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Fortran development setup including GNU Fortran compiler (gfortran), LAPACK and BLAS numerical libraries, CMake build system, and VS Code extensions for Modern Fortran with IntelliSense and debugging support.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-fortran</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-fortran.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://fortran-lang.org" target="_blank">https://fortran-lang.org</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [gfortran](https://packages.debian.org/bookworm/gfortran) |  |
+| [build-essential](https://packages.debian.org/bookworm/build-essential) |  |
+| [cmake](https://packages.debian.org/bookworm/cmake) |  |
+| [make](https://packages.debian.org/bookworm/make) |  |
+| [liblapack-dev](https://packages.debian.org/bookworm/liblapack-dev) |  |
+| [libblas-dev](https://packages.debian.org/bookworm/libblas-dev) |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Modern Fortran](https://marketplace.visualstudio.com/items?itemName=fortran-lang.linter-gfortran) | Fortran language support with linting and IntelliSense |
+| [Fortran IntelliSense](https://marketplace.visualstudio.com/items?itemName=hansec.fortran-ls) | Language server for Fortran |
+| [Fortran Breakpoint Support](https://marketplace.visualstudio.com/items?itemName=ekibun.fortranbreaker) | Debugging support for Fortran |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-fortran.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Fortran Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-fortran
+Name:         Fortran Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs GNU Fortran compiler (gfortran), build tools, and VS Code extensions for Fortran development
+
+Usage:
+
+  Action:
+      install-dev-fortran.sh            # Install Fortran development tools
+      install-dev-fortran.sh --uninstall # Uninstall Fortran development tools
+
+  Info:
+      install-dev-fortran.sh --help     # Show help and usage information
+
+System Packages (APT):
+  - gfortran
+  - build-essential
+  - cmake
+  - make
+  - liblapack-dev
+  - libblas-dev
+
+VS Code Extensions:
+  - Modern Fortran (fortran-lang.linter-gfortran) - Fortran language support with linting and IntelliSense
+  - Fortran IntelliSense (hansec.fortran-ls) - Language server for Fortran
+  - Fortran Breakpoint Support (ekibun.fortranbreaker) - Debugging support for Fortran
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-cpp', 'dev-python']} />

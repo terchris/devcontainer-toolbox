@@ -1,0 +1,122 @@
+---
+title: PHP Laravel Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-php-laravel-logo.webp')}
+    alt="PHP Laravel Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>PHP Laravel Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>PHP Laravel development environment with PHP 8.4, Composer, Laravel installer, and VS Code extensions.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>php</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>laravel</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>composer</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>artisan</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>blade</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>web</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>framework</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete PHP Laravel development setup including PHP 8.4, Composer package manager, Laravel installer, and comprehensive VS Code extensions for Intelephense, Xdebug, Blade templates, Artisan commands, and namespace resolution.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-php-laravel</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-php-laravel.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://laravel.com" target="_blank">https://laravel.com</a>
+  </div>
+</div>
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [PHP Intelephense](https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client) | Advanced PHP language support with IntelliSense |
+| [PHP Debug](https://marketplace.visualstudio.com/items?itemName=xdebug.php-debug) | Debug PHP applications using Xdebug |
+| [PHP DocBlocker](https://marketplace.visualstudio.com/items?itemName=neilbrayfield.php-docblocker) | Automatically generate PHPDoc comments |
+| [Composer](https://marketplace.visualstudio.com/items?itemName=ikappas.composer) | Composer dependency manager integration |
+| [PHP Namespace Resolver](https://marketplace.visualstudio.com/items?itemName=mehedidracula.php-namespace-resolver) | Auto-import and resolve PHP namespaces |
+| [Laravel Blade Snippets](https://marketplace.visualstudio.com/items?itemName=onecentlin.laravel-blade) | Blade syntax highlighting and snippets |
+| [Laravel Artisan](https://marketplace.visualstudio.com/items?itemName=ryannaddy.laravel-artisan) | Run Laravel Artisan commands from VS Code |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-php-laravel.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 PHP Laravel Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-php-laravel
+Name:         PHP Laravel Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs PHP 8.4, Composer, Laravel installer, and sets up Laravel development environment
+Default:      Version 8.4
+
+Usage:
+
+  Action:
+      install-dev-php-laravel.sh        # Install PHP Laravel development tools
+      install-dev-php-laravel.sh --uninstall # Uninstall PHP Laravel development tools
+
+  Info:
+      install-dev-php-laravel.sh --help # Show help and usage information
+
+VS Code Extensions:
+  - PHP Intelephense (bmewburn.vscode-intelephense-client) - Advanced PHP language support with IntelliSense
+  - PHP Debug (xdebug.php-debug) - Debug PHP applications using Xdebug
+  - PHP DocBlocker (neilbrayfield.php-docblocker) - Automatically generate PHPDoc comments
+  - Composer (ikappas.composer) - Composer dependency manager integration
+  - PHP Namespace Resolver (mehedidracula.php-namespace-resolver) - Auto-import and resolve PHP namespaces
+  - Laravel Blade Snippets (onecentlin.laravel-blade) - Blade syntax highlighting and snippets
+  - Laravel Artisan (ryannaddy.laravel-artisan) - Run Laravel Artisan commands from VS Code
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-typescript', 'dev-python']} />

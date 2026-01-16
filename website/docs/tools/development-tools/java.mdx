@@ -1,0 +1,131 @@
+---
+title: Java Runtime & Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-java-logo.webp')}
+    alt="Java Runtime & Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Java Runtime & Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Java development environment with JDK, Maven, Gradle, and comprehensive VS Code extension pack.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>java</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>jdk</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>maven</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>gradle</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>spring</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>enterprise</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Java development setup including the JDK (supports versions 11, 17, 21), Maven and Gradle build tools, and the VS Code Extension Pack for Java with debugging, test running, Maven integration, and dependency management.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-java</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-java.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://dev.java" target="_blank">https://dev.java</a>
+  </div>
+</div>
+
+## Java Packages
+
+| Package | Description |
+|---------|-------------|
+| `maven` |  |
+| `gradle` |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Language Support for Java](https://marketplace.visualstudio.com/items?itemName=redhat.java) | Core Java language support |
+| [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug) | Debugging support |
+| [Test Runner for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-test) | Test runner and debugger |
+| [Maven for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-maven) | Maven project support |
+| [Dependency Viewer](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-dependency) | View and manage dependencies |
+| [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) | Collection of popular Java extensions |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-java.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Java Runtime & Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-java
+Name:         Java Runtime & Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs Java JDK, Maven, Gradle, and VS Code extensions for Java development.
+Default:      Version 17
+
+Usage:
+
+  Action:
+      install-dev-java.sh               # Install Java with default version
+      install-dev-java.sh --version <arg> # Install specific Java version
+      install-dev-java.sh --uninstall   # Uninstall Java development tools
+
+  Info:
+      install-dev-java.sh --help        # Show help and usage information
+
+Java Build Tools (APT):
+  - maven
+  - gradle
+
+VS Code Extensions:
+  - Language Support for Java (redhat.java) - Core Java language support
+  - Debugger for Java (vscjava.vscode-java-debug) - Debugging support
+  - Test Runner for Java (vscjava.vscode-java-test) - Test runner and debugger
+  - Maven for Java (vscjava.vscode-maven) - Maven project support
+  - Dependency Viewer (vscjava.vscode-java-dependency) - View and manage dependencies
+  - Extension Pack for Java (vscjava.vscode-java-pack) - Collection of popular Java extensions
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-csharp', 'dev-golang', 'dev-typescript']} />

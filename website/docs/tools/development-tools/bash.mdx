@@ -1,0 +1,133 @@
+---
+title: Bash Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-bash-logo.webp')}
+    alt="Bash Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Bash Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Bash scripting environment with shellcheck linting, shfmt formatting, and language server support.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>bash</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>shell</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>scripting</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>shellcheck</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>shfmt</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>linting</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>formatting</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Bash development setup including shellcheck for static analysis and linting, shfmt for code formatting, and bash-language-server for IDE features like autocomplete and go-to-definition. Includes VS Code extensions for inline warnings and format-on-save.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-bash</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-bash.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://www.gnu.org/software/bash/" target="_blank">https://www.gnu.org/software/bash/</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [shellcheck](https://packages.debian.org/bookworm/shellcheck) | Static analysis / linting for shell scripts |
+| [shfmt](https://packages.debian.org/bookworm/shfmt) | Shell script formatter |
+
+## Node.js Packages (npm)
+
+| Package | Description |
+|---------|-------------|
+| [bash-language-server](https://www.npmjs.com/package/bash-language-server) | Autocomplete, go-to-definition, hover docs |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [ShellCheck](https://marketplace.visualstudio.com/items?itemName=timonwong.shellcheck) | Inline shellcheck warnings |
+| [shell-format](https://marketplace.visualstudio.com/items?itemName=foxundermoon.shell-format) | Format on save |
+| [Bash IDE](https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode) | Language server integration |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-bash.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Bash Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-bash
+Name:         Bash Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Adds shellcheck, shfmt, bash-language-server, and VS Code extensions for Bash development
+
+Usage:
+
+  Action:
+      install-dev-bash.sh               # Install Bash development tools
+      install-dev-bash.sh --uninstall   # Uninstall Bash development tools
+
+  Info:
+      install-dev-bash.sh --help        # Show help and usage information
+
+System Packages (APT):
+  - shellcheck
+  - shfmt
+
+Node.js Packages (NPM):
+  - bash-language-server
+
+VS Code Extensions:
+  - ShellCheck (timonwong.shellcheck) - Inline shellcheck warnings
+  - shell-format (foxundermoon.shell-format) - Format on save
+  - Bash IDE (mads-hartmann.bash-ide-vscode) - Language server integration
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-python', 'dev-typescript']} />

@@ -1,0 +1,113 @@
+---
+title: C# Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-csharp-logo.webp')}
+    alt="C# Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>C# Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>C# and .NET development environment with SDK, ASP.NET Core runtime, and VS Code C# Dev Kit.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>csharp</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>dotnet</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>aspnet</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>microsoft</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>visual-studio</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>sdk</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete C# and .NET development setup including the .NET SDK, ASP.NET Core runtime for web development, and the C# Dev Kit for VS Code providing IntelliSense, debugging, and project management. Supports .NET 8.0 and other versions.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-csharp</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-csharp.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://dotnet.microsoft.com" target="_blank">https://dotnet.microsoft.com</a>
+  </div>
+</div>
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) | Complete C# development experience |
+| [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) | C# language support |
+| [.NET Runtime](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscode-dotnet-runtime) | .NET runtime support |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-csharp.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 C# Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-csharp
+Name:         C# Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs .NET SDK, ASP.NET Core Runtime, and VS Code extensions for C# development
+Default:      Version 8.0
+
+Usage:
+
+  Action:
+      install-dev-csharp.sh             # Install C# / .NET development tools
+      install-dev-csharp.sh --uninstall # Uninstall C# / .NET development tools
+
+  Info:
+      install-dev-csharp.sh --help      # Show help and usage information
+
+VS Code Extensions:
+  - C# Dev Kit (ms-dotnettools.csdevkit) - Complete C# development experience
+  - C# (ms-dotnettools.csharp) - C# language support
+  - .NET Runtime (ms-dotnettools.vscode-dotnet-runtime) - .NET runtime support
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-java', 'dev-typescript', 'dev-python']} />

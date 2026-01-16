@@ -1,0 +1,21 @@
+---
+title: Data & Analytics Tools
+hide_title: true
+---
+
+import ToolGrid from '@site/src/components/ToolGrid';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{display: 'flex', alignItems: 'flex-start', gap: '1.5rem', marginBottom: '2rem'}}>
+  <img
+    src={useBaseUrl('/img/categories/data-analytics-logo.webp')}
+    alt="Data & Analytics Tools"
+    style={{width: '120px', height: '120px', objectFit: 'contain'}}
+  />
+  <div>
+    <h1 style={{marginTop: 0}}>Data & Analytics Tools</h1>
+    <p style={{fontSize: '1.1rem', color: 'var(--ifm-color-emphasis-700)'}}>Data analysis, visualization, and data engineering tools including Jupyter, pandas, and database clients. Connect to data platforms.</p>
+  </div>
+</div>
+
+<ToolGrid category="DATA_ANALYTICS" columns={2} />

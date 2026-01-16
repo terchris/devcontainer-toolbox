@@ -1,0 +1,127 @@
+---
+title: TypeScript Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-typescript-logo.webp')}
+    alt="TypeScript Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>TypeScript Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>TypeScript development environment with compiler, tsx runtime, and essential tooling for modern web development.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>typescript</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>javascript</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>nodejs</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>npm</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>tsc</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>tsx</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>eslint</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>prettier</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete TypeScript setup including the TypeScript compiler (tsc), tsx for running TypeScript directly, ts-node for Node.js integration, and @types/node for Node.js type definitions. Includes Prettier and ESLint VS Code extensions.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-typescript</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-typescript.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://www.typescriptlang.org" target="_blank">https://www.typescriptlang.org</a>
+  </div>
+</div>
+
+## Node.js Packages (npm)
+
+| Package | Description |
+|---------|-------------|
+| [typescript](https://www.npmjs.com/package/typescript) |  |
+| [tsx](https://www.npmjs.com/package/tsx) |  |
+| [@types/node](https://www.npmjs.com/package/@types/node) |  |
+| [ts-node](https://www.npmjs.com/package/ts-node) |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | Code formatter for consistent code style |
+| [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | JavaScript and TypeScript linting |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-typescript.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 TypeScript Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-typescript
+Name:         TypeScript Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Adds TypeScript and development tools (Node.js already in devcontainer)
+
+Usage:
+
+  Action:
+      install-dev-typescript.sh         # Install TypeScript development tools
+      install-dev-typescript.sh --uninstall # Uninstall TypeScript development tools
+
+  Info:
+      install-dev-typescript.sh --help  # Show help and usage information
+
+Node.js Packages (NPM):
+  - typescript
+  - tsx
+  - @types/node
+  - ts-node
+
+VS Code Extensions:
+  - Prettier (esbenp.prettier-vscode) - Code formatter for consistent code style
+  - ESLint (dbaeumer.vscode-eslint) - JavaScript and TypeScript linting
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-python', 'dev-golang', 'dev-rust']} />
