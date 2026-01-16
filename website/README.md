@@ -41,6 +41,25 @@ To manually trigger a deploy:
 1. Go to Actions → "Deploy Documentation"
 2. Click "Run workflow"
 
+### Fork Compatibility
+
+The site uses environment variables for GitHub URLs, so it works on any fork without configuration:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `GITHUB_ORG` | `terchris` | GitHub organization/username |
+| `GITHUB_REPO` | `devcontainer-toolbox` | Repository name |
+
+**How it works:**
+- **Local development:** Uses defaults automatically
+- **GitHub Actions:** Auto-detects from repository context (`github.repository_owner`, `github.event.repository.name`)
+- **Forks:** Deploy to your fork's GitHub Pages without any changes
+
+To test with different values locally:
+```bash
+GITHUB_ORG=myorg GITHUB_REPO=myrepo npm run build
+```
+
 ## Documentation Structure
 
 ```
