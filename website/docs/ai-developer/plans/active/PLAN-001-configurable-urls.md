@@ -107,12 +107,12 @@ Documentation added to README and config file.
 
 ---
 
-## Phase 5: Push, Merge, and Verify CI/CD
+## Phase 5: Push, Merge, and Verify CI/CD — IN PROGRESS
 
 ### Tasks
 
-- [ ] 5.1 Create feature branch and commit all changes
-- [ ] 5.2 Create PR to main
+- [x] 5.1 Create feature branch and commit all changes ✓
+- [x] 5.2 Create PR to main ✓ (PR #16)
 - [ ] 5.3 Merge PR (triggers CI/CD pipeline)
 - [ ] 5.4 Monitor GitHub Actions workflow
 - [ ] 5.5 Verify deployed site works correctly
