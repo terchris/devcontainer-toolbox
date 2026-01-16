@@ -1,0 +1,8 @@
+{
+  "label": "AI Development",
+  "position": 3,
+  "link": {
+    "type": "doc",
+    "id": "ai-development/index"
+  }
+}
