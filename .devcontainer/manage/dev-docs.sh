@@ -1235,12 +1235,17 @@ generate_commands_md() {
 
     content+="---\n"
     content+="sidebar_position: 4\n"
+    content+="sidebar_label: Install Tools\n"
     content+="---\n\n"
-    content+="# Commands Reference\n\n"
+    content+="# Install Tools\n\n"
     content+=":::note Auto-generated\n"
     content+="This page is auto-generated. Regenerate with: \`dev-docs\`\n"
     content+=":::\n\n"
-    content+="All commands available inside the devcontainer. Type \`dev-\` and press Tab to see them.\n\n"
+
+    # dev-setup section with image
+    content+="## dev-setup\n\n"
+    content+="Run \`dev-setup\` to install development tools. The interactive menu lets you browse and install any of the available tools.\n\n"
+    content+="![dev-setup menu](/img/dev-setup.png)\n\n"
 
     # Build arrays from scan_manage_scripts output
     declare -a cmd_names=()

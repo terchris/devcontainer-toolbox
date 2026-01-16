@@ -1,6 +1,6 @@
 ---
-sidebar_position: 1
 slug: /
+sidebar_class_name: hidden
 ---
 
 # DevContainer Toolbox

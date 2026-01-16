@@ -111,3 +111,8 @@
 [data-theme='dark'] .markdown table tbody tr:hover {
   background: var(--ifm-color-emphasis-100);
 }
+
+/* Hide sidebar items with hidden class */
+.hidden {
+  display: none;
+}
