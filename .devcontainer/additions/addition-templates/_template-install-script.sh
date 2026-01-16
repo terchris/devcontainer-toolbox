@@ -97,13 +97,23 @@
 # CONFIGURATION - Modify this section for each new script
 #------------------------------------------------------------------------------
 
-# --- Script Metadata ---
-SCRIPT_ID="[category-name]"  # Unique identifier (e.g., dev-python, tool-azure, srv-nginx)
+# --- Core Metadata (required for dev-setup.sh) ---
+SCRIPT_ID="[category-name]"  # Unique identifier (e.g., dev-python, cloud-azure, service-nginx)
 SCRIPT_VER="0.0.1"           # Script version - displayed in --help and during install/uninstall
 SCRIPT_NAME="[Name]"
 SCRIPT_DESCRIPTION="[Brief description of what this script installs and its purpose]"
 SCRIPT_CATEGORY="LANGUAGE_DEV"  # Options: LANGUAGE_DEV, AI_TOOLS, CLOUD_TOOLS, DATA_ANALYTICS, BACKGROUND_SERVICES, INFRA_CONFIG
 SCRIPT_CHECK_COMMAND="command -v [tool-name] >/dev/null 2>&1"  # Command to check if already installed
+
+# --- Extended Metadata (for website documentation) ---
+# These fields are for the documentation website only, NOT used by dev-setup.sh
+SCRIPT_TAGS="[keyword1] [keyword2] [keyword3]"  # Space-separated search keywords
+SCRIPT_ABSTRACT="[Brief 1-2 sentence description, 50-150 characters]"  # For tool cards
+# Optional fields (uncomment if applicable):
+# SCRIPT_LOGO="[script-id]-logo.webp"  # Logo file in website/static/img/tools/src/
+# SCRIPT_WEBSITE="https://[official-website]"  # Official tool URL
+# SCRIPT_SUMMARY="[Detailed 3-5 sentence description, 150-500 characters]"  # For tool detail pages
+# SCRIPT_RELATED="[related-id-1] [related-id-2]"  # Space-separated related tool IDs
 
 #------------------------------------------------------------------------------
 # SCRIPT_COMMANDS ARRAY - For dev-setup.sh menu integration

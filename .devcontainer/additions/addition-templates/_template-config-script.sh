@@ -141,13 +141,24 @@
 # CONFIGURATION METADATA - For dev-setup.sh menu discovery
 #------------------------------------------------------------------------------
 
+# --- Core Metadata (required for dev-setup.sh) ---
 SCRIPT_ID="config-[name]"  # Unique identifier (must match filename without .sh)
-SCRIPT_NAME="[Configuration Name]"
 SCRIPT_VER="0.0.1"  # Script version - displayed during configuration
+SCRIPT_NAME="[Configuration Name]"
 SCRIPT_DESCRIPTION="Configure [setting/credential/identity] for [purpose]"
 SCRIPT_CATEGORY="INFRA_CONFIG"  # Options: LANGUAGE_DEV, AI_TOOLS, CLOUD_TOOLS, DATA_ANALYTICS, BACKGROUND_SERVICES, INFRA_CONFIG
 SCRIPT_CHECK_COMMAND="[ -f ~/.config-file ] && grep -q '^key=value' ~/.config-file"
 SCRIPT_PREREQUISITES=""  # Example: "config-other.sh" or "" if none - comma-separated for multiple
+
+# --- Extended Metadata (for website documentation) ---
+# These fields are for the documentation website only, NOT used by dev-setup.sh
+SCRIPT_TAGS="[keyword1] [keyword2] [keyword3]"  # Space-separated search keywords
+SCRIPT_ABSTRACT="[Brief 1-2 sentence description, 50-150 characters]"  # For tool cards
+# Optional fields (uncomment if applicable):
+# SCRIPT_LOGO="[script-id]-logo.webp"  # Logo file in website/static/img/tools/src/
+# SCRIPT_WEBSITE="https://[official-website]"  # Official tool URL
+# SCRIPT_SUMMARY="[Detailed 3-5 sentence description, 150-500 characters]"  # For tool detail pages
+# SCRIPT_RELATED="[related-id-1] [related-id-2]"  # Space-separated related tool IDs
 
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(

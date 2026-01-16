@@ -21,6 +21,14 @@ SCRIPT_DESCRIPTION="Install OpenTelemetry Collector for devcontainer monitoring 
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
 SCRIPT_CHECK_COMMAND="([ -f /usr/bin/otelcol-contrib ] || command -v otelcol-contrib >/dev/null 2>&1) && ([ -f /usr/local/bin/script_exporter ] || command -v script_exporter >/dev/null 2>&1)"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="opentelemetry otel monitoring observability metrics prometheus"
+SCRIPT_ABSTRACT="OpenTelemetry Collector for devcontainer monitoring with metrics and log collection."
+SCRIPT_LOGO="srv-otel-logo.webp"
+SCRIPT_WEBSITE="https://opentelemetry.io"
+SCRIPT_SUMMARY="OpenTelemetry Collector Contrib with script_exporter for comprehensive devcontainer monitoring. Collects custom metrics via shell scripts, supports Prometheus/Loki/Tempo exporters, and provides resource processors for multi-tenant tagging."
+SCRIPT_RELATED="srv-nginx"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install OpenTelemetry Collector||false|"

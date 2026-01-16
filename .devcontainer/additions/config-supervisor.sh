@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Regenerate supervisor configuration from enabled services"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="test -f /etc/supervisor/supervisord.conf"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="supervisor services process management daemon"
+SCRIPT_ABSTRACT="Auto-generate supervisor configuration from enabled service metadata."
+SCRIPT_LOGO="config-supervisor-logo.webp"
+SCRIPT_WEBSITE="https://supervisord.org"
+SCRIPT_SUMMARY="Configuration script that auto-generates supervisor process management configuration from enabled services. Reads service metadata (commands, priorities, dependencies, auto-restart settings) and creates the appropriate supervisor conf.d files."
+SCRIPT_RELATED="srv-nginx srv-otel"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Regenerate supervisor configuration||false|"

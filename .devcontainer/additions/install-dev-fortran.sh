@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Installs GNU Fortran compiler (gfortran), build tools, and V
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v gfortran >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="fortran gfortran scientific computing lapack blas numerical"
+SCRIPT_ABSTRACT="Fortran development environment with GNU Fortran, LAPACK, BLAS, and VS Code extensions."
+SCRIPT_LOGO="dev-fortran-logo.webp"
+SCRIPT_WEBSITE="https://fortran-lang.org"
+SCRIPT_SUMMARY="Complete Fortran development setup including GNU Fortran compiler (gfortran), LAPACK and BLAS numerical libraries, CMake build system, and VS Code extensions for Modern Fortran with IntelliSense and debugging support."
+SCRIPT_RELATED="dev-cpp dev-python"
+
 # Commands for dev-setup.sh menu integration
 # Format: category|flag|description|function|requires_arg|param_prompt
 # Note: Empty flag means "run with no arguments" (default install action)

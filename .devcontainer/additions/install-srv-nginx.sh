@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Install nginx as reverse proxy for Claude Code ↔ LiteLLM w
 SCRIPT_CATEGORY="BACKGROUND_SERVICES"
 SCRIPT_CHECK_COMMAND="command -v nginx >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="nginx reverse proxy web server http load balancer"
+SCRIPT_ABSTRACT="Nginx reverse proxy for routing requests between Claude Code and LiteLLM services."
+SCRIPT_LOGO="srv-nginx-logo.webp"
+SCRIPT_WEBSITE="https://nginx.org"
+SCRIPT_SUMMARY="Nginx configured as a reverse proxy to route requests between Claude Code and LiteLLM. Handles Host header injection for proper API routing in the devcontainer environment. Uses nginx-light for minimal footprint."
+SCRIPT_RELATED="srv-otel dev-ai-claudecode"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install nginx reverse proxy||false|"

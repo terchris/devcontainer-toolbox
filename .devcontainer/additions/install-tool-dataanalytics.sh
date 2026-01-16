@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Installs Python data analysis libraries, Jupyter notebooks, 
 SCRIPT_CATEGORY="DATA_ANALYTICS"
 SCRIPT_CHECK_COMMAND="[ -f /usr/local/bin/jupyter ] || [ -f $HOME/.local/bin/jupyter ] || command -v jupyter >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="jupyter pandas numpy matplotlib data science analytics dbt"
+SCRIPT_ABSTRACT="Data analytics stack with Jupyter, pandas, numpy, matplotlib, scikit-learn, and dbt."
+SCRIPT_LOGO="tool-dataanalytics-logo.webp"
+SCRIPT_WEBSITE="https://jupyter.org"
+SCRIPT_SUMMARY="Complete data analytics toolkit including Jupyter notebooks and JupyterLab, pandas for data manipulation, numpy for numerical computing, matplotlib and seaborn for visualization, scikit-learn for machine learning, and dbt for data transformation."
+SCRIPT_RELATED="tool-databricks dev-python"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install data analytics tools||false|"

@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Adds shellcheck, shfmt, bash-language-server, and VS Code ex
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v shellcheck >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="bash shell scripting shellcheck shfmt linting formatting"
+SCRIPT_ABSTRACT="Bash scripting environment with shellcheck linting, shfmt formatting, and language server support."
+SCRIPT_LOGO="dev-bash-logo.webp"
+SCRIPT_WEBSITE="https://www.gnu.org/software/bash/"
+SCRIPT_SUMMARY="Complete Bash development setup including shellcheck for static analysis and linting, shfmt for code formatting, and bash-language-server for IDE features like autocomplete and go-to-definition. Includes VS Code extensions for inline warnings and format-on-save."
+SCRIPT_RELATED="dev-python dev-typescript"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Bash development tools||false|"

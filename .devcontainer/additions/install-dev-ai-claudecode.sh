@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Installs Claude Code, Anthropic's terminal-based AI coding a
 SCRIPT_CATEGORY="AI_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f /home/vscode/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="claude anthropic ai coding assistant agentic terminal"
+SCRIPT_ABSTRACT="Claude Code - Anthropic's terminal-based AI coding assistant with agentic capabilities."
+SCRIPT_LOGO="dev-ai-claudecode-logo.webp"
+SCRIPT_WEBSITE="https://claude.ai/code"
+SCRIPT_SUMMARY="Claude Code is Anthropic's terminal-based AI coding assistant with agentic capabilities. Features include codebase understanding, multi-file editing, shell command execution, and LSP integration for intelligent code assistance directly in your terminal."
+SCRIPT_RELATED="tool-api-dev"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Claude Code||false|"

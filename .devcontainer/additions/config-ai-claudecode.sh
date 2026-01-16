@@ -21,6 +21,14 @@ SCRIPT_DESCRIPTION="Configure Claude Code authentication and networking for Lite
 SCRIPT_CATEGORY="AI_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f ~/.claude-code-env ] && grep -q '^export ANTHROPIC_AUTH_TOKEN=' ~/.claude-code-env"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="claude anthropic ai authentication litellm proxy"
+SCRIPT_ABSTRACT="Configure Claude Code authentication and networking for LiteLLM proxy backend."
+SCRIPT_LOGO="config-ai-claudecode-logo.webp"
+SCRIPT_WEBSITE="https://claude.ai/code"
+SCRIPT_SUMMARY="Interactive configuration script for Claude Code that sets up authentication tokens and networking for the LiteLLM proxy. Stores credentials securely in ~/.claude-code-env and integrates with nginx reverse proxy for API routing."
+SCRIPT_RELATED="dev-ai-claudecode srv-nginx config-nginx"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Configure Claude Code environment||false|"

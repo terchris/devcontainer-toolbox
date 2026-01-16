@@ -17,6 +17,14 @@ SCRIPT_DESCRIPTION="Installs Azure CLI, PowerShell with Az/Graph modules, and VS
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="(command -v az >/dev/null 2>&1 && command -v pwsh >/dev/null 2>&1) || [ -f /usr/bin/pwsh ]"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="azure powershell operations infrastructure management policy graph"
+SCRIPT_ABSTRACT="Azure operations tools with PowerShell, Az modules, Microsoft Graph, and KQL support."
+SCRIPT_LOGO="tool-azure-ops-logo.webp"
+SCRIPT_WEBSITE="https://azure.microsoft.com"
+SCRIPT_SUMMARY="Azure infrastructure and operations management toolkit including PowerShell 7, Az and Microsoft.Graph modules, Exchange Online Management, Azure CLI, and VS Code extensions for Bicep IaC, KQL queries, and Azure policy management."
+SCRIPT_RELATED="tool-azure-dev tool-iac tool-kubernetes"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Azure operations tools||false|"

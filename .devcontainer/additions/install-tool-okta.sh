@@ -17,6 +17,14 @@ SCRIPT_DESCRIPTION="Installs Okta CLI and VS Code extensions for Okta identity a
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="command -v okta-cli >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="okta identity authentication sso iam security"
+SCRIPT_ABSTRACT="Okta identity management tools with CLI and VS Code Okta Explorer extension."
+SCRIPT_LOGO="tool-okta-logo.webp"
+SCRIPT_WEBSITE="https://www.okta.com"
+SCRIPT_SUMMARY="Okta identity and access management toolkit including the Okta CLI for managing users, groups, and applications, plus the Okta Explorer VS Code extension for browsing and managing Okta organizations directly from the IDE."
+SCRIPT_RELATED="tool-azure-ops"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Okta identity management tools||false|"

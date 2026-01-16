@@ -21,6 +21,13 @@ SCRIPT_DESCRIPTION="Configure your identity for devcontainer monitoring (require
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="[ -f ~/.devcontainer-identity ] && grep -q '^export DEVELOPER_ID=' ~/.devcontainer-identity"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="identity monitoring telemetry onboarding developer"
+SCRIPT_ABSTRACT="Configure developer identity for devcontainer monitoring and Grafana dashboards."
+SCRIPT_LOGO="config-devcontainer-identity-logo.webp"
+SCRIPT_SUMMARY="Developer onboarding script that decodes an admin-provided identity string and configures environment variables for devcontainer monitoring. Required for tracking activity in Grafana dashboards and telemetry collection."
+SCRIPT_RELATED="srv-otel config-host-info"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Configure developer identity||false|"

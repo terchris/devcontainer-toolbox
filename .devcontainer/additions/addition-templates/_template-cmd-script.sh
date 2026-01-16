@@ -72,12 +72,23 @@
 #
 #------------------------------------------------------------------------------
 
+# --- Core Metadata (required for dev-setup.sh) ---
 SCRIPT_ID="cmd-example"  # Unique identifier (must match filename without .sh)
-SCRIPT_NAME="Example Management"
 SCRIPT_VER="0.0.1"  # Script version - displayed in --help
+SCRIPT_NAME="Example Management"
 SCRIPT_DESCRIPTION="Manage and analyze example resources"
 SCRIPT_CATEGORY="INFRA_CONFIG"  # Options: LANGUAGE_DEV, AI_TOOLS, CLOUD_TOOLS, DATA_ANALYTICS, BACKGROUND_SERVICES, INFRA_CONFIG
 SCRIPT_PREREQUISITES=""  # Example: "config-example.sh" or "" if none
+
+# --- Extended Metadata (for website documentation) ---
+# These fields are for the documentation website only, NOT used by dev-setup.sh
+SCRIPT_TAGS="[keyword1] [keyword2] [keyword3]"  # Space-separated search keywords
+SCRIPT_ABSTRACT="[Brief 1-2 sentence description, 50-150 characters]"  # For tool cards
+# Optional fields (uncomment if applicable):
+# SCRIPT_LOGO="[script-id]-logo.webp"  # Logo file in website/static/img/tools/src/
+# SCRIPT_WEBSITE="https://[official-website]"  # Official tool URL
+# SCRIPT_SUMMARY="[Detailed 3-5 sentence description, 150-500 characters]"  # For tool detail pages
+# SCRIPT_RELATED="[related-id-1] [related-id-2]"  # Space-separated related tool IDs
 
 #------------------------------------------------------------------------------
 # LOGGING NOTE

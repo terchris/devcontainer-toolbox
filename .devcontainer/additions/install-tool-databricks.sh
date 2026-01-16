@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Installs Databricks CLI, Python SDK, Connect, and related to
 SCRIPT_CATEGORY="DATA_ANALYTICS"
 SCRIPT_CHECK_COMMAND="command -v databricks >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="databricks spark pyspark delta lake data engineering"
+SCRIPT_ABSTRACT="Databricks development tools with CLI, SDK, Connect, PySpark, and Delta Lake support."
+SCRIPT_LOGO="tool-databricks-logo.webp"
+SCRIPT_WEBSITE="https://www.databricks.com"
+SCRIPT_SUMMARY="Complete Databricks development environment including Databricks CLI, Python SDK, Databricks Connect for remote development, PySpark and Delta Lake for data processing, and VS Code extensions for Asset Bundles development and workspace integration."
+SCRIPT_RELATED="tool-dataanalytics dev-python"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Databricks development tools||false|"

@@ -17,6 +17,14 @@ SCRIPT_DESCRIPTION="Installs Azure CLI, Functions Core Tools, Azurite, and VS Co
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f /usr/bin/az ] || [ -f /usr/local/bin/az ] || command -v az >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="azure microsoft cloud functions azurite cosmosdb servicebus bicep"
+SCRIPT_ABSTRACT="Azure application development with CLI, Functions, Azurite emulator, and VS Code extensions."
+SCRIPT_LOGO="tool-azure-dev-logo.webp"
+SCRIPT_WEBSITE="https://azure.microsoft.com"
+SCRIPT_SUMMARY="Complete Azure development toolkit including Azure CLI, Functions Core Tools v4, Azurite storage emulator, and VS Code extensions for App Service, Functions, Storage, Service Bus, Cosmos DB, and Bicep infrastructure as code."
+SCRIPT_RELATED="tool-azure-ops tool-kubernetes tool-iac"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Azure development tools||false|"

@@ -16,6 +16,14 @@ SCRIPT_DESCRIPTION="Installs Infrastructure as Code and configuration management
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="command -v ansible >/dev/null 2>&1 || command -v terraform >/dev/null 2>&1 || command -v bicep >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="terraform ansible bicep infrastructure devops automation"
+SCRIPT_ABSTRACT="Infrastructure as Code tools with Terraform, Ansible, and Azure Bicep support."
+SCRIPT_LOGO="tool-iac-logo.webp"
+SCRIPT_WEBSITE="https://www.terraform.io"
+SCRIPT_SUMMARY="Complete Infrastructure as Code toolkit including Terraform for multi-cloud provisioning, Ansible for configuration management and automation, ansible-lint for playbook validation, and Azure Bicep for ARM template development with VS Code extensions."
+SCRIPT_RELATED="tool-kubernetes tool-azure-ops tool-azure-dev"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Infrastructure as Code tools||false|"

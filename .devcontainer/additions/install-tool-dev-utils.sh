@@ -22,6 +22,14 @@ SCRIPT_CATEGORY="INFRA_CONFIG"
 # they don't need to update this check. The extension installer is idempotent anyway.
 SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'mtxr.sqltools'"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="database sql docker containers rest http utilities"
+SCRIPT_ABSTRACT="Development utilities for database management, API testing, and Docker container management."
+SCRIPT_LOGO="tool-dev-utils-logo.webp"
+SCRIPT_WEBSITE="https://vscode-sqltools.mteixeira.dev"
+SCRIPT_SUMMARY="Language-agnostic development utilities including SQLTools for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB), REST Client for HTTP API testing, and Docker extension for container, image, and volume management."
+SCRIPT_RELATED="tool-api-dev tool-kubernetes"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install development utilities||false|"

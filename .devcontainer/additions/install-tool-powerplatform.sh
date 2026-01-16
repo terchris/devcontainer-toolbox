@@ -17,6 +17,14 @@ SCRIPT_DESCRIPTION="Installs Power Platform CLI (pac - dotnet global tool), Powe
 SCRIPT_CATEGORY="CLOUD_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f $HOME/.dotnet/tools/pac ] || command -v pac >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="powerplatform powerapps powerautomate microsoft lowcode pcf"
+SCRIPT_ABSTRACT="Microsoft Power Platform CLI (pac) for Power Apps, Power Automate, and PCF development."
+SCRIPT_LOGO="tool-powerplatform-logo.webp"
+SCRIPT_WEBSITE="https://powerplatform.microsoft.com"
+SCRIPT_SUMMARY="Microsoft Power Platform development toolkit including the Power Platform CLI (pac) as a .NET global tool for managing Power Apps, Power Automate flows, Dataverse solutions, and Power Platform Component Framework (PCF) controls. Requires .NET SDK."
+SCRIPT_RELATED="tool-azure-dev dev-csharp"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Power Platform tools||false|"

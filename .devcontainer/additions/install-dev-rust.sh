@@ -15,6 +15,14 @@ SCRIPT_DESCRIPTION="Installs Rust (latest stable via rustup), cargo, and sets up
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="[ -f $HOME/.cargo/bin/rustc ] || command -v rustc >/dev/null 2>&1"
 
+# --- Extended Metadata (for website documentation) ---
+SCRIPT_TAGS="rust cargo rustup systems programming memory safety"
+SCRIPT_ABSTRACT="Rust development environment with rustup, cargo tooling, and rust-analyzer for systems programming."
+SCRIPT_LOGO="dev-rust-logo.webp"
+SCRIPT_WEBSITE="https://www.rust-lang.org"
+SCRIPT_SUMMARY="Complete Rust setup via rustup including the Rust compiler, Cargo package manager, cargo-edit for dependency management, cargo-watch for auto-rebuild, and cargo-outdated for dependency updates. Includes rust-analyzer and CodeLLDB debugger VS Code extensions."
+SCRIPT_RELATED="dev-golang dev-cpp dev-typescript"
+
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
     "Action||Install Rust development tools||false|"

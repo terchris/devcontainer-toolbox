@@ -6,32 +6,44 @@
 #
 # Usage:
 #   source "${SCRIPT_DIR}/lib/categories.sh"
-#   display_name=$(get_category_display_name "LANGUAGE_DEV")
-#   description=$(get_category_description "LANGUAGE_DEV")
+#   name=$(get_category_name "LANGUAGE_DEV")
+#   abstract=$(get_category_abstract "LANGUAGE_DEV")
+#   summary=$(get_category_summary "LANGUAGE_DEV")
+#   tags=$(get_category_tags "LANGUAGE_DEV")
 
 #------------------------------------------------------------------------------
 # Category Table
 #------------------------------------------------------------------------------
-# Format: SORT_ORDER|CATEGORY_ID|DISPLAY_NAME|SHORT_DESCRIPTION|LONG_DESCRIPTION
+# Format: CATEGORY_ORDER|CATEGORY_ID|CATEGORY_NAME|CATEGORY_ABSTRACT|CATEGORY_SUMMARY|CATEGORY_TAGS|CATEGORY_LOGO
+#
+# Field descriptions:
+#   CATEGORY_ORDER   - Display order (lower numbers first)
+#   CATEGORY_ID      - Unique identifier (UPPERCASE_UNDERSCORE)
+#   CATEGORY_NAME    - Human-readable name for display
+#   CATEGORY_ABSTRACT - Brief description (50-150 chars) for cards
+#   CATEGORY_SUMMARY  - Detailed description (150-500 chars) for detail pages
+#   CATEGORY_TAGS     - Space-separated search keywords
+#   CATEGORY_LOGO     - Logo filename (optional, in website/static/img/categories/src/)
 #
 # To add a new category:
 # 1. Add a new line to the table below
-# 2. Set SORT_ORDER to control display order (lower numbers first)
+# 2. Set CATEGORY_ORDER to control display order (lower numbers first)
 # 3. Use UPPERCASE_UNDERSCORE format for CATEGORY_ID
-# 4. Keep SHORT_DESCRIPTION under 60 characters (for help text)
-# 5. LONG_DESCRIPTION can be more detailed (for documentation)
+# 4. CATEGORY_ABSTRACT should be 50-150 characters
+# 5. CATEGORY_SUMMARY can be more detailed (150-500 characters)
+# 6. CATEGORY_TAGS are space-separated keywords for search
 
 # Only declare if not already set (prevents errors when sourced multiple times)
 if [[ -z "${CATEGORY_TABLE+x}" ]]; then
     readonly CATEGORY_TABLE="
-0|SYSTEM_COMMANDS|System Commands|DevContainer management commands|DevContainer management commands (setup, update, services, help)
-1|LANGUAGE_DEV|Development Tools|Development tools (Python, TypeScript, Go, etc.)|Programming language development environments and tools (Python, TypeScript, Go, Rust, C#, Java, PHP)
-2|AI_TOOLS|AI & Machine Learning Tools|AI and ML tools (Claude Code, etc.)|AI and machine learning development tools (Claude Code, etc.)
-3|CLOUD_TOOLS|Cloud & Infrastructure Tools|Cloud infrastructure (Azure, etc.)|Cloud platform tools and SDKs (Azure, AWS, GCP)
-4|DATA_ANALYTICS|Data & Analytics Tools|Data analysis and platforms|Data analysis, visualization, data engineering tools, and data platforms (Jupyter, pandas, DBT, Databricks, Snowflake)
-5|BACKGROUND_SERVICES|Background Services & Daemons|Background services (nginx, OTEL, etc.)|Background services and daemons (nginx reverse proxy, OTEL collector, monitoring services)
-6|INFRA_CONFIG|Infrastructure & Configuration|Infrastructure and configuration tools|Infrastructure as Code, configuration management, and DevOps tools (Ansible, Kubernetes, Terraform)
-7|CONTRIBUTOR_TOOLS|Contributor Tools|Tools for contributors and maintainers|Tools for contributors and maintainers (generate docs, run tests)
+0|SYSTEM_COMMANDS|System Commands|DevContainer management commands for setup and maintenance.|DevContainer management commands (setup, update, services, help). Essential tools for managing your development environment.|system devcontainer setup management commands|system-commands-logo.webp
+1|LANGUAGE_DEV|Development Tools|Programming language development environments and tools.|Complete development setups for Python, TypeScript, Go, Rust, .NET, and Bash. Each includes language-specific tooling and VS Code extensions.|programming languages code development ide python typescript go rust|language-dev-logo.webp
+2|AI_TOOLS|AI & Machine Learning Tools|AI and machine learning development tools.|AI and machine learning development tools including Claude Code for AI-assisted coding and other ML utilities.|ai artificial intelligence machine learning ml claude code|ai-tools-logo.webp
+3|CLOUD_TOOLS|Cloud & Infrastructure Tools|Cloud platform tools and SDKs.|Cloud platform CLIs and SDKs for Azure, AWS, and GCP. Manage cloud resources directly from your development environment.|cloud azure aws gcp infrastructure sdk cli|cloud-tools-logo.webp
+4|DATA_ANALYTICS|Data & Analytics Tools|Data analysis, visualization, and engineering tools.|Data analysis, visualization, and data engineering tools including Jupyter, pandas, and database clients. Connect to data platforms.|data analytics jupyter pandas visualization database|data-analytics-logo.webp
+5|BACKGROUND_SERVICES|Background Services & Daemons|Background services and daemons for development.|Background services and daemons including nginx reverse proxy, OTEL collector, and monitoring services. Run services locally.|services daemon background nginx monitoring otel|background-services-logo.webp
+6|INFRA_CONFIG|Infrastructure & Configuration|Infrastructure as Code and configuration management.|Infrastructure as Code, configuration management, and DevOps tools including Kubernetes, Terraform, and Ansible.|infrastructure devops kubernetes terraform ansible configuration|infra-config-logo.webp
+7|CONTRIBUTOR_TOOLS|Contributor Tools|Tools for contributors and maintainers.|Tools for contributors and maintainers including documentation generators, test runners, and development utilities.|contributor maintainer development tools testing docs|contributor-tools-logo.webp
 "
 fi
 
@@ -40,19 +52,22 @@ fi
 #------------------------------------------------------------------------------
 
 # Parse category table and return specific field for a category
-# Args: $1=category_id, $2=field_number (1=sort, 2=id, 3=display, 4=short_desc, 5=long_desc)
+# Args: $1=category_id, $2=field_number
+# Fields: 1=order, 2=id, 3=name, 4=abstract, 5=summary, 6=tags, 7=logo
 _get_category_field() {
     local category_id=$1
     local field_num=$2
 
-    echo "$CATEGORY_TABLE" | grep -v "^$" | while IFS='|' read -r sort_order cat_id display_name short_desc long_desc; do
+    echo "$CATEGORY_TABLE" | grep -v "^$" | while IFS='|' read -r cat_order cat_id cat_name cat_abstract cat_summary cat_tags cat_logo; do
         if [[ "$cat_id" == "$category_id" ]]; then
             case $field_num in
-                1) echo "$sort_order" ;;
+                1) echo "$cat_order" ;;
                 2) echo "$cat_id" ;;
-                3) echo "$display_name" ;;
-                4) echo "$short_desc" ;;
-                5) echo "$long_desc" ;;
+                3) echo "$cat_name" ;;
+                4) echo "$cat_abstract" ;;
+                5) echo "$cat_summary" ;;
+                6) echo "$cat_tags" ;;
+                7) echo "$cat_logo" ;;
             esac
             return 0
         fi
@@ -60,8 +75,8 @@ _get_category_field() {
     return 1
 }
 
-# Get display name for a category
-get_category_display_name() {
+# Get name for a category (human-readable display name)
+get_category_name() {
     local category=$1
     local result=$(_get_category_field "$category" 3)
     if [[ -n "$result" ]]; then
@@ -71,22 +86,54 @@ get_category_display_name() {
     fi
 }
 
-# Get long description for a category
-get_category_description() {
-    local category=$1
-    _get_category_field "$category" 5
+# Backward compatibility alias
+get_category_display_name() {
+    get_category_name "$1"
 }
 
-# Get short description for a category (for help text)
-get_category_short_description() {
+# Get abstract for a category (brief description, 50-150 chars)
+get_category_abstract() {
     local category=$1
     _get_category_field "$category" 4
 }
 
-# Get sort order for a category
-get_category_sort_order() {
+# Backward compatibility alias
+get_category_short_description() {
+    get_category_abstract "$1"
+}
+
+# Get summary for a category (detailed description, 150-500 chars)
+get_category_summary() {
+    local category=$1
+    _get_category_field "$category" 5
+}
+
+# Backward compatibility alias
+get_category_description() {
+    get_category_summary "$1"
+}
+
+# Get tags for a category (space-separated keywords)
+get_category_tags() {
+    local category=$1
+    _get_category_field "$category" 6
+}
+
+# Get logo filename for a category
+get_category_logo() {
+    local category=$1
+    _get_category_field "$category" 7
+}
+
+# Get order for a category (display order number)
+get_category_order() {
     local category=$1
     _get_category_field "$category" 1
+}
+
+# Backward compatibility alias
+get_category_sort_order() {
+    get_category_order "$1"
 }
 
 # Get all category IDs in sort order
@@ -101,15 +148,15 @@ is_valid_category() {
 }
 
 # List all categories in table format (machine-readable)
-# Output format: SORT_ORDER|CATEGORY_ID|DISPLAY_NAME|SHORT_DESC|LONG_DESC
+# Output format: CATEGORY_ORDER|CATEGORY_ID|CATEGORY_NAME|CATEGORY_ABSTRACT|CATEGORY_SUMMARY|CATEGORY_TAGS|CATEGORY_LOGO
 list_categories() {
     echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n
 }
 
-# List all categories with just ID and display name
+# List all categories with just ID and name
 list_categories_simple() {
-    echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n | while IFS='|' read -r sort_order cat_id display_name rest; do
-        printf "%-20s %s\n" "$cat_id" "$display_name"
+    echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n | while IFS='|' read -r cat_order cat_id cat_name rest; do
+        printf "%-20s %s\n" "$cat_id" "$cat_name"
     done
 }
 
@@ -121,9 +168,9 @@ list_categories_simple() {
 show_all_categories() {
     echo "Available Script Categories:"
     echo ""
-    echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n | while IFS='|' read -r sort_order cat_id display_name short_desc long_desc; do
-        printf "  %-20s %-30s\n" "$cat_id" "$display_name"
-        printf "  %-20s %s\n" "" "$long_desc"
+    echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n | while IFS='|' read -r cat_order cat_id cat_name cat_abstract cat_summary cat_tags cat_logo; do
+        printf "  %-20s %-30s\n" "$cat_id" "$cat_name"
+        printf "  %-20s %s\n" "" "$cat_summary"
         echo ""
     done
 }
@@ -132,10 +179,10 @@ show_all_categories() {
 show_categories_table() {
     echo "Category Table:"
     echo ""
-    printf "%-5s %-20s %-30s %-60s\n" "SORT" "ID" "DISPLAY NAME" "SHORT DESCRIPTION"
-    printf "%-5s %-20s %-30s %-60s\n" "----" "--" "------------" "-----------------"
-    echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n | while IFS='|' read -r sort_order cat_id display_name short_desc long_desc; do
-        printf "%-5s %-20s %-30s %-60s\n" "$sort_order" "$cat_id" "$display_name" "$short_desc"
+    printf "%-5s %-20s %-30s %-60s\n" "ORDER" "ID" "NAME" "ABSTRACT"
+    printf "%-5s %-20s %-30s %-60s\n" "-----" "--" "----" "--------"
+    echo "$CATEGORY_TABLE" | grep -v "^$" | sort -t'|' -k1 -n | while IFS='|' read -r cat_order cat_id cat_name cat_abstract cat_summary cat_tags cat_logo; do
+        printf "%-5s %-20s %-30s %-60s\n" "$cat_order" "$cat_id" "$cat_name" "$cat_abstract"
     done
 }
 
