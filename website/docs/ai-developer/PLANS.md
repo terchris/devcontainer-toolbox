@@ -41,12 +41,45 @@ For work that is **ready to implement**. The scope is clear, the approach is kno
 - Feature request with clear requirements
 - Refactoring with defined scope
 
-**Naming:** `PLAN-<short-name>.md` or `PLAN-<nn>-<short-name>.md`
+**Naming Conventions:**
+
+| Format | Use Case | Example |
+|--------|----------|---------|
+| `PLAN-<short-name>.md` | Standalone plan, no specific order | `PLAN-docker-path-fix.md` |
+| `PLAN-<nnn>-<short-name>.md` | Ordered sequence, indicates execution order | `PLAN-001-configurable-urls.md` |
+
+#### Ordered Plans (PLAN-nnn-*)
+
+When an investigation produces multiple related plans that should be executed in a specific order, use **three-digit numbering** to indicate the sequence:
+
+```
+PLAN-001-configurable-urls.md      # Must be done first (critical foundation)
+PLAN-002-quick-enhancements.md     # Can start after 001
+PLAN-003-extended-metadata.md      # Depends on 002
+PLAN-004-enhanced-tool-pages.md    # Depends on 003
+PLAN-005-interactive-homepage.md   # Depends on 003, 004
+```
+
+**Benefits of ordered numbering:**
+- Clear execution sequence at a glance
+- Dependencies are implicit in the number order
+- Easy to track progress through a large initiative
+- Files sort naturally in file explorers
+
+**When to use ordered numbering:**
+- Investigation produces 3+ related plans
+- Plans have sequential dependencies
+- Work is part of a larger initiative (e.g., website redesign)
+
+**When NOT to use ordered numbering:**
+- Standalone bug fix or small feature
+- Plans can be executed in any order
+- Single plan from an investigation
 
 Examples:
-- `PLAN-docker-path-fix.md`
-- `PLAN-01-script-version-variable.md`
-- `PLAN-add-drawio-extension.md`
+- `PLAN-docker-path-fix.md` - standalone fix
+- `PLAN-001-configurable-urls.md` - first in a sequence
+- `PLAN-005-interactive-homepage.md` - fifth in a sequence
 
 ### INVESTIGATE-*.md
 
@@ -76,6 +109,10 @@ Every plan has these sections:
 ```markdown
 # Plan Title
 
+> **IMPLEMENTATION RULES:** Before implementing this plan, read and follow:
+> - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
+> - [PLANS.md](../../PLANS.md) - Plan structure and best practices
+
 ## Status: Backlog | Active | Blocked | Completed
 
 **Goal**: One sentence describing what this achieves.
@@ -85,13 +122,17 @@ Every plan has these sections:
 **GitHub Issue**: #42 (optional - if tracking with issues)
 ```
 
+The **IMPLEMENTATION RULES** blockquote ensures Claude Code reads the workflow and plan guidelines before starting work.
+
 ### 2. Dependencies (If applicable)
 
 ```markdown
-**Prerequisites**: Plan 01 must be complete first
-**Blocks**: Plan 03 cannot start until this is done
+**Prerequisites**: PLAN-001 must be complete first
+**Blocks**: PLAN-003 cannot start until this is done
 **Priority**: High | Medium | Low
 ```
+
+For ordered plans (PLAN-nnn-*), dependencies are often implicit in the number order. Only add explicit dependency notes when the relationship is non-obvious.
 
 ### 3. Problem Summary (Required)
 
@@ -252,6 +293,10 @@ Don't force automated validation when it's impractical. User confirmation is val
 ```markdown
 # Fix: [Bug Description]
 
+> **IMPLEMENTATION RULES:** Before implementing this plan, read and follow:
+> - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
+> - [PLANS.md](../../PLANS.md) - Plan structure and best practices
+
 ## Status: Backlog
 
 **Goal**: [One sentence]
@@ -296,6 +341,10 @@ User confirms fix is correct.
 
 ```markdown
 # Feature: [Feature Name]
+
+> **IMPLEMENTATION RULES:** Before implementing this plan, read and follow:
+> - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
+> - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
 ## Status: Backlog
 
@@ -358,6 +407,10 @@ User confirms phase is complete.
 ```markdown
 # Investigate: [Topic]
 
+> **IMPLEMENTATION RULES:** Before implementing this plan, read and follow:
+> - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
+> - [PLANS.md](../../PLANS.md) - Plan structure and best practices
+
 ## Status: Backlog
 
 **Goal**: Determine the best approach for [topic]
@@ -408,6 +461,7 @@ User confirms phase is complete.
 ## Next Steps
 
 - [ ] Create PLAN-xyz.md with chosen approach
+  - For multiple related plans, use ordered naming: PLAN-001-*, PLAN-002-*, etc.
 ```
 
 ---
