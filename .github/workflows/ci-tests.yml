@@ -33,6 +33,11 @@ on:
         type: boolean
         default: true
 
+# Cancel in-progress runs when a new commit is pushed
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 # Permissions needed for auto-committing documentation updates
 permissions:
   contents: write
