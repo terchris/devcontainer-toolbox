@@ -78,6 +78,14 @@ See [docs/tools.md](docs/tools.md) for detailed installation options.
 - **Try new tools** - Experiment safely without breaking your system
 - **Team consistency** - Everyone uses the same versions
 
+## Developing with AI
+
+DevContainer Toolbox is built for AI-assisted development. The isolated container keeps the AI safely contained while giving it full access to your project.
+
+![AI implementing a feature](docs/ai-docs/ai-implement-plan-teaser.gif)
+
+This 30-second clip shows an AI adding a new development tool. [See how it works](docs/ai-docs/developing-using-ai.md).
+
 ## New to Containers?
 
 A **container** is like a lightweight virtual machine that runs your development environment. Instead of installing Python, Node, Go, etc. on your computer, everything runs inside the container.
@@ -121,6 +129,7 @@ Templates for React, Next.js, Spring Boot, Express, and more. See the [template 
 - [Commands](docs/commands.md) - All `dev-*` commands
 - [Available Tools](docs/tools.md) - All installable tools
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+- [Developing Using AI](docs/ai-docs/developing-using-ai.md) - How to work effectively with AI coding assistants
 
 ## Contributing
 

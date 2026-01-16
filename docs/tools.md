@@ -1,3 +1,5 @@
+[← Back to Home](README.md)
+
 # Available Tools
 
 > **Auto-generated** - Do not edit manually  

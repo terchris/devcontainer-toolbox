@@ -50,6 +50,20 @@ For developers extending or maintaining devcontainer-toolbox.
 
 ---
 
+## Developing with AI
+
+DevContainer Toolbox is built for AI-assisted development. The isolated container keeps the AI safely contained while giving it full access to your project.
+
+![AI implementing a feature](docs/ai-docs/ai-implement-plan-teaser.gif)
+
+This 30-second clip shows an AI adding a new development tool. [See how it works](docs/ai-docs/developing-using-ai.md).
+
+
+
+| Document | Description |
+|----------|-------------|
+| [Developing Using AI](ai-docs/developing-using-ai.md) | How to work effectively with AI coding assistants |
+
 ## AI Developer Documentation
 
 For AI assistants (Claude Code) working on devcontainer-toolbox.
