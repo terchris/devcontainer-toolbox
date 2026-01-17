@@ -66,7 +66,7 @@ Tell Claude what you want to do:
 
 Claude will:
 
-1. **Create plan file** in `docs/ai-developer/plans/backlog/`:
+1. **Create plan file** in `website/docs/ai-development/ai-developer/plans/backlog/`:
    - `PLAN-*.md` if the solution is clear
    - `INVESTIGATE-*.md` if research is needed first
 2. **Ask you to review** the plan
@@ -179,7 +179,7 @@ Claude will:
 YOU: I want to add SCRIPT_VER to all install scripts
 
 CLAUDE: I'll create a plan for that.
-        Created docs/ai-developer/plans/backlog/PLAN-script-version-variable.md
+        Created website/docs/ai-development/ai-developer/plans/backlog/PLAN-script-version-variable.md
 
         Please review the plan and let me know if it looks good
         or needs changes.

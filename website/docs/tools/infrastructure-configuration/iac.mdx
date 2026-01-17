@@ -1,0 +1,125 @@
+---
+title: Infrastructure as Code Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-iac-logo.webp')}
+    alt="Infrastructure as Code Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Infrastructure as Code Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Infrastructure as Code tools with Terraform, Ansible, and Azure Bicep support.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>terraform</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>ansible</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>bicep</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>infrastructure</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>devops</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>automation</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Infrastructure as Code toolkit including Terraform for multi-cloud provisioning, Ansible for configuration management and automation, ansible-lint for playbook validation, and Azure Bicep for ARM template development with VS Code extensions.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-iac</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-iac.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://www.terraform.io" target="_blank">https://www.terraform.io</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [ansible](https://packages.debian.org/bookworm/ansible) |  |
+| [ansible-lint](https://packages.debian.org/bookworm/ansible-lint) |  |
+| [terraform](https://packages.debian.org/bookworm/terraform) | Installed from HashiCorp APT repository |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Ansible](https://marketplace.visualstudio.com/items?itemName=redhat.ansible) | Ansible language support and tools |
+| [Terraform](https://marketplace.visualstudio.com/items?itemName=hashicorp.terraform) | Terraform language support and IntelliSense |
+| [Bicep](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-bicep) | Azure Bicep language support |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-iac.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Infrastructure as Code Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-iac
+Name:         Infrastructure as Code Tools
+Script version: 0.0.1
+Category:     INFRA_CONFIG, Infrastructure & Configuration
+Description:  Installs Infrastructure as Code and configuration management tools: Ansible, Terraform, and Bicep
+
+Usage:
+
+  Action:
+      install-tool-iac.sh               # Install Infrastructure as Code tools
+      install-tool-iac.sh --uninstall   # Uninstall Infrastructure as Code tools
+
+  Info:
+      install-tool-iac.sh --help        # Show help and usage information
+
+System Packages (APT):
+  - ansible
+  - ansible-lint
+  - terraform
+
+VS Code Extensions:
+  - Ansible (redhat.ansible) - Ansible language support and tools
+  - Terraform (hashicorp.terraform) - Terraform language support and IntelliSense
+  - Bicep (ms-azuretools.vscode-bicep) - Azure Bicep language support
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-kubernetes', 'tool-azure-ops', 'tool-azure-dev']} />

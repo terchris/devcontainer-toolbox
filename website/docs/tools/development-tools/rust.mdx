@@ -1,0 +1,139 @@
+---
+title: Rust Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-rust-logo.webp')}
+    alt="Rust Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Rust Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Rust development environment with rustup, cargo tooling, and rust-analyzer for systems programming.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>rust</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>cargo</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>rustup</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>systems</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>programming</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>memory</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>safety</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Rust setup via rustup including the Rust compiler, Cargo package manager, cargo-edit for dependency management, cargo-watch for auto-rebuild, and cargo-outdated for dependency updates. Includes rust-analyzer and CodeLLDB debugger VS Code extensions.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-rust</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-rust.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://www.rust-lang.org" target="_blank">https://www.rust-lang.org</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [build-essential](https://packages.debian.org/bookworm/build-essential) |  |
+| [pkg-config](https://packages.debian.org/bookworm/pkg-config) |  |
+| [libssl-dev](https://packages.debian.org/bookworm/libssl-dev) |  |
+
+## Rust Packages (cargo)
+
+| Package | Description |
+|---------|-------------|
+| [cargo-edit](https://crates.io/crates/cargo-edit) |  |
+| [cargo-watch](https://crates.io/crates/cargo-watch) |  |
+| [cargo-outdated](https://crates.io/crates/cargo-outdated) |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Rust Analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) | Rust language support with rust-analyzer |
+| [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb) | Native debugger for Rust |
+| [Dependi](https://marketplace.visualstudio.com/items?itemName=serayuzgur.dependi) | Replacement for Crates; manages Rust dependencies |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-rust.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Rust Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-rust
+Name:         Rust Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs Rust (latest stable via rustup), cargo, and sets up Rust development environment
+
+Usage:
+
+  Action:
+      install-dev-rust.sh               # Install Rust development tools
+      install-dev-rust.sh --uninstall   # Uninstall Rust development tools
+
+  Info:
+      install-dev-rust.sh --help        # Show help and usage information
+
+System Packages (APT):
+  - build-essential
+  - pkg-config
+  - libssl-dev
+
+Rust Packages (cargo install):
+  - cargo-edit
+  - cargo-watch
+  - cargo-outdated
+
+VS Code Extensions:
+  - Rust Analyzer (rust-lang.rust-analyzer) - Rust language support with rust-analyzer
+  - CodeLLDB (vadimcn.vscode-lldb) - Native debugger for Rust
+  - Dependi (serayuzgur.dependi) - Replacement for Crates; manages Rust dependencies
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-golang', 'dev-cpp', 'dev-typescript']} />

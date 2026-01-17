@@ -1,14 +1,19 @@
 ---
 sidebar_position: 4
+sidebar_label: Install Tools
 ---
 
-# Commands Reference
+# Install Tools
 
 :::note Auto-generated
 This page is auto-generated. Regenerate with: `dev-docs`
 :::
 
-All commands available inside the devcontainer. Type `dev-` and press Tab to see them.
+## dev-setup
+
+Run `dev-setup` to install development tools. The interactive menu lets you browse and install any of the available tools.
+
+![dev-setup menu](/img/dev-setup.png)
 
 ## Quick Reference
 

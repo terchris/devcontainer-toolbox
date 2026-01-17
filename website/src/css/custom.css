@@ -28,3 +28,83 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Table styling */
+.markdown table {
+  width: 100% !important;
+  min-width: 100%;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  display: table;
+}
+
+.markdown table thead tr {
+  background: var(--ifm-color-primary);
+}
+
+.markdown table thead th {
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border: none;
+  text-align: left;
+}
+
+.markdown table tbody tr {
+  background: var(--ifm-card-background-color);
+  transition: background-color 0.15s ease;
+}
+
+.markdown table tbody tr:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.markdown table tbody td {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  vertical-align: top;
+}
+
+.markdown table tbody tr:first-child td {
+  border-top: none;
+}
+
+.markdown table tbody td:first-child code {
+  background: var(--ifm-color-emphasis-200);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.markdown table tbody td:first-child a {
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+}
+
+.markdown table tbody td:first-child a:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode table adjustments */
+[data-theme='dark'] .markdown table {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .markdown table tbody tr {
+  background: var(--ifm-background-surface-color);
+}
+
+[data-theme='dark'] .markdown table tbody tr:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Hide sidebar items with hidden class */
+.hidden {
+  display: none;
+}

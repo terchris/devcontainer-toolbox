@@ -1,10 +1,11 @@
 ---
-sidebar_position: 5
+sidebar_position: 7
+sidebar_label: Customization
 ---
 
-# Configuration
+# Customizing Your Project
 
-Configuration files that customize your devcontainer setup.
+Configure your devcontainer to match your project's needs. These settings are stored in your project and shared with your team.
 
 ## File Locations
 

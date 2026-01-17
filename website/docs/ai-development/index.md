@@ -162,4 +162,4 @@ Then tell it what you want to build. It will create a plan for your review.
 
 - [Workflow](workflow) - The full flow from idea to implementation
 - [Creating Plans](creating-plans) - Plan templates and best practices
-- [Claude Code Tool](../tools/claude-code) - Installation and configuration details
+- [Claude Code Tool](../tools/ai-machine-learning/ai-claudecode) - Installation and configuration details

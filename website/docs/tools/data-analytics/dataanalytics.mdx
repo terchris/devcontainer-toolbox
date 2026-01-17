@@ -1,0 +1,145 @@
+---
+title: Data & Analytics Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-dataanalytics-logo.webp')}
+    alt="Data & Analytics Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Data & Analytics Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Data analytics stack with Jupyter, pandas, numpy, matplotlib, scikit-learn, and dbt.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>jupyter</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pandas</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>numpy</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>matplotlib</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>data</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>science</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>analytics</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>dbt</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete data analytics toolkit including Jupyter notebooks and JupyterLab, pandas for data manipulation, numpy for numerical computing, matplotlib and seaborn for visualization, scikit-learn for machine learning, and dbt for data transformation.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-dataanalytics</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-dataanalytics.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://jupyter.org" target="_blank">https://jupyter.org</a>
+  </div>
+</div>
+
+## Python Packages (pip)
+
+| Package | Description |
+|---------|-------------|
+| [pandas](https://pypi.org/project/pandas) |  |
+| [numpy](https://pypi.org/project/numpy) |  |
+| [matplotlib](https://pypi.org/project/matplotlib) |  |
+| [seaborn](https://pypi.org/project/seaborn) |  |
+| [scikit-learn](https://pypi.org/project/scikit-learn) |  |
+| [jupyter](https://pypi.org/project/jupyter) |  |
+| [jupyterlab](https://pypi.org/project/jupyterlab) |  |
+| [notebook](https://pypi.org/project/notebook) |  |
+| [dbt-core](https://pypi.org/project/dbt-core) |  |
+| [dbt-postgres](https://pypi.org/project/dbt-postgres) |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) | Python language support |
+| [Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) | Jupyter notebook support |
+| [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance) | Python language server |
+| [DBT](https://marketplace.visualstudio.com/items?itemName=bastienboutonnet.vscode-dbt) | DBT language support |
+| [DBT Power User](https://marketplace.visualstudio.com/items?itemName=innoverio.vscode-dbt-power-user) | Enhanced DBT support |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-dataanalytics.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Data & Analytics Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-dataanalytics
+Name:         Data & Analytics Tools
+Script version: 0.0.1
+Category:     DATA_ANALYTICS, Data & Analytics Tools
+Description:  Installs Python data analysis libraries, Jupyter notebooks, and related VS Code extensions
+
+Usage:
+
+  Action:
+      install-tool-dataanalytics.sh     # Install data analytics tools
+      install-tool-dataanalytics.sh --uninstall # Uninstall data analytics tools
+
+  Info:
+      install-tool-dataanalytics.sh --help # Show help and usage information
+
+Python Packages (pip):
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - jupyter
+  - jupyterlab
+  - notebook
+  - dbt-core
+  - dbt-postgres
+
+VS Code Extensions:
+  - Python (ms-python.python) - Python language support
+  - Jupyter (ms-toolsai.jupyter) - Jupyter notebook support
+  - Pylance (ms-python.vscode-pylance) - Python language server
+  - DBT (bastienboutonnet.vscode-dbt) - DBT language support
+  - DBT Power User (innoverio.vscode-dbt-power-user) - Enhanced DBT support
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-databricks', 'dev-python']} />

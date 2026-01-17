@@ -1,0 +1,130 @@
+---
+title: Python Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-python-logo.webp')}
+    alt="Python Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Python Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Python development environment with ipython, pytest-cov, and python-dotenv for enhanced coding and testing.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>python</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pip</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>ipython</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pytest</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>coverage</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>development</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>venv</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, and python-dotenv for environment management. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-python</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-python.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://python.org" target="_blank">https://python.org</a>
+  </div>
+</div>
+
+## Python Packages (pip)
+
+| Package | Description |
+|---------|-------------|
+| [ipython](https://pypi.org/project/ipython) | Enhanced interactive Python shell |
+| [pytest-cov](https://pypi.org/project/pytest-cov) | Code coverage for pytest |
+| [python-dotenv](https://pypi.org/project/python-dotenv) | Environment variable management |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) | Python language support |
+| [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance) | Python language server |
+| [Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter) | Python code formatter |
+| [Flake8](https://marketplace.visualstudio.com/items?itemName=ms-python.flake8) | Python linter |
+| [Mypy](https://marketplace.visualstudio.com/items?itemName=ms-python.mypy-type-checker) | Python type checker |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-python.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Python Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-python
+Name:         Python Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Adds ipython, pytest-cov, and VS Code extensions for Python development
+
+Usage:
+
+  Action:
+      install-dev-python.sh             # Install Python development tools
+      install-dev-python.sh --uninstall # Uninstall Python development tools
+
+  Info:
+      install-dev-python.sh --help      # Show help and usage information
+
+Python Packages (pip):
+  - ipython
+  - pytest-cov
+  - python-dotenv
+
+VS Code Extensions:
+  - Python (ms-python.python) - Python language support
+  - Pylance (ms-python.vscode-pylance) - Python language server
+  - Black Formatter (ms-python.black-formatter) - Python code formatter
+  - Flake8 (ms-python.flake8) - Python linter
+  - Mypy (ms-python.mypy-type-checker) - Python type checker
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-typescript', 'dev-golang', 'dev-rust']} />

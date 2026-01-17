@@ -1,0 +1,127 @@
+---
+title: Go Runtime & Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-golang-logo.webp')}
+    alt="Go Runtime & Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Go Runtime & Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Go development environment with runtime, language server, debugger, and static analysis tools.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>go</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>golang</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>gopls</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>delve</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>staticcheck</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>protobuf</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Go development setup including the Go runtime, gopls language server for IDE features, Delve debugger, and staticcheck for code analysis. Includes VS Code extensions for Go development, test running, and Protocol Buffer support.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-golang</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-golang.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://go.dev" target="_blank">https://go.dev</a>
+  </div>
+</div>
+
+## Go Packages
+
+| Package | Description |
+|---------|-------------|
+| [golang.org/x/tools/gopls@latest](https://pkg.go.dev/golang.org/x/tools/gopls@latest) |  |
+| [github.com/go-delve/delve/cmd/dlv@latest](https://pkg.go.dev/github.com/go-delve/delve/cmd/dlv@latest) |  |
+| [honnef.co/go/tools/cmd/staticcheck@latest](https://pkg.go.dev/honnef.co/go/tools/cmd/staticcheck@latest) |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Go](https://marketplace.visualstudio.com/items?itemName=golang.go) | Core Go language support |
+| [Go Test Explorer](https://marketplace.visualstudio.com/items?itemName=premparihar.gotestexplorer) | Test runner and debugger |
+| [Protocol Buffers](https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3) | Protocol Buffer support |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-golang.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Go Runtime & Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-golang
+Name:         Go Runtime & Development Tools
+Script version: 0.0.1
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs Go runtime, common tools, and VS Code extensions for Go development.
+Default:      Version 1.21.0
+
+Usage:
+
+  Action:
+      install-dev-golang.sh             # Install Go with default version
+      install-dev-golang.sh --version <arg> # Install specific Go version
+      install-dev-golang.sh --uninstall # Uninstall Go development tools
+
+  Info:
+      install-dev-golang.sh --help      # Show help and usage information
+
+Go Packages (go install):
+  - golang.org/x/tools/gopls@latest
+  - github.com/go-delve/delve/cmd/dlv@latest
+  - honnef.co/go/tools/cmd/staticcheck@latest
+
+VS Code Extensions:
+  - Go (golang.go) - Core Go language support
+  - Go Test Explorer (premparihar.gotestexplorer) - Test runner and debugger
+  - Protocol Buffers (zxh404.vscode-proto3) - Protocol Buffer support
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['dev-rust', 'dev-typescript', 'dev-python']} />

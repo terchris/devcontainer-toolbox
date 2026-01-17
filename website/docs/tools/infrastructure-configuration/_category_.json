@@ -1,0 +1,8 @@
+{
+  "label": "Infrastructure & Configuration",
+  "position": 5,
+  "link": {
+    "type": "doc",
+    "id": "tools/infrastructure-configuration/index"
+  }
+}

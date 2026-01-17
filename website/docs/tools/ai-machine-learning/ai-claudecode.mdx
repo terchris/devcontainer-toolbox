@@ -1,0 +1,118 @@
+---
+title: Claude Code
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/dev-ai-claudecode-logo.webp')}
+    alt="Claude Code"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Claude Code</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Claude Code - Anthropic's terminal-based AI coding assistant with agentic capabilities.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>claude</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>anthropic</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>ai</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>coding</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>assistant</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>agentic</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>terminal</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Claude Code is Anthropic's terminal-based AI coding assistant with agentic capabilities. Features include codebase understanding, multi-file editing, shell command execution, and LSP integration for intelligent code assistance directly in your terminal.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>dev-ai-claudecode</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-dev-ai-claudecode.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://claude.ai/code" target="_blank">https://claude.ai/code</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [curl](https://packages.debian.org/bookworm/curl) |  |
+
+## Node.js Packages (npm)
+
+| Package | Description |
+|---------|-------------|
+| [@anthropic-ai/claude-code](https://www.npmjs.com/package/@anthropic-ai/claude-code) |  |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-dev-ai-claudecode.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Claude Code
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           dev-ai-claudecode
+Name:         Claude Code
+Script version: 0.0.1
+Category:     AI_TOOLS, AI & Machine Learning Tools
+Description:  Installs Claude Code, Anthropic's terminal-based AI coding assistant with agentic capabilities and LSP integration
+
+Usage:
+
+  Action:
+      install-dev-ai-claudecode.sh      # Install Claude Code
+      install-dev-ai-claudecode.sh --uninstall # Uninstall Claude Code
+
+  Info:
+      install-dev-ai-claudecode.sh --help # Show help and usage information
+
+System Packages (APT):
+  - curl
+
+Node.js Packages (NPM):
+  - @anthropic-ai/claude-code
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-api-dev']} />

@@ -1,0 +1,117 @@
+---
+title: Okta Identity Management Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-okta-logo.webp')}
+    alt="Okta Identity Management Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Okta Identity Management Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Okta identity management tools with CLI and VS Code Okta Explorer extension.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>okta</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>identity</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>authentication</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>sso</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>iam</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>security</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Okta identity and access management toolkit including the Okta CLI for managing users, groups, and applications, plus the Okta Explorer VS Code extension for browsing and managing Okta organizations directly from the IDE.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-okta</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-okta.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://www.okta.com" target="_blank">https://www.okta.com</a>
+  </div>
+</div>
+
+## Python Packages (pip)
+
+| Package | Description |
+|---------|-------------|
+| [okta-cli](https://pypi.org/project/okta-cli) | Okta command-line interface for identity management |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Okta Explorer](https://marketplace.visualstudio.com/items?itemName=OktaDcp.okta-explorer) | Browse and manage Okta organizations, users, and groups |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-okta.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Okta Identity Management Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-okta
+Name:         Okta Identity Management Tools
+Script version: 0.0.3
+Category:     CLOUD_TOOLS, Cloud & Infrastructure Tools
+Description:  Installs Okta CLI and VS Code extensions for Okta identity and access management
+
+Usage:
+
+  Action:
+      install-tool-okta.sh              # Install Okta identity management tools
+      install-tool-okta.sh --uninstall  # Uninstall Okta tools
+
+  Info:
+      install-tool-okta.sh --help       # Show help and usage information
+
+Python Packages (pip):
+  - okta-cli
+
+VS Code Extensions:
+  - Okta Explorer (OktaDcp.okta-explorer) - Browse and manage Okta organizations, users, and groups
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-azure-ops']} />

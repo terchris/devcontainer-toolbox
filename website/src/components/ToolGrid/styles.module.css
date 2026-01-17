@@ -1,0 +1,95 @@
+.toolGridContainer {
+  margin-bottom: 2rem;
+}
+
+.gridTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.toolCount {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 768px) {
+  .toolGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop: 3 columns */
+@media (min-width: 1024px) {
+  .toolGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large desktop: 4 columns */
+@media (min-width: 1400px) {
+  .toolGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.viewAllContainer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.viewAllLink {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.viewAllLink:hover {
+  background: var(--ifm-color-primary);
+  color: white;
+  text-decoration: none;
+}
+
+/* Fixed column variants - override responsive behavior */
+.columns2 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .columns2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.columns3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .columns3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .columns3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

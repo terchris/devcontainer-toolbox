@@ -1,0 +1,8 @@
+{
+  "label": "Cloud & Infrastructure Tools",
+  "position": 3,
+  "link": {
+    "type": "doc",
+    "id": "tools/cloud-infrastructure/index"
+  }
+}

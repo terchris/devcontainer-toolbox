@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 2
 ---
 
 # Getting Started
@@ -65,125 +65,10 @@ When VS Code prompts "Reopen in Container", click it. First time takes a few min
 
 That's it! You're ready to start developing.
 
-## What Gets Installed
+## What's Next?
 
-After installation, your project will have these folders:
+- **[Install Tools](commands)** - Add development tools (Python, TypeScript, Go, etc.)
+- **[Customization](configuration)** - Configure your project settings
+- **[Troubleshooting](troubleshooting)** - Common issues and solutions
 
-```
-your-project/
-├── .devcontainer/              # The toolbox (do not edit)
-├── .devcontainer.extend/       # Your project config (commit to git)
-├── .devcontainer.secrets/      # Credentials (git-ignored)
-└── .devcontainer.backup/       # Backup of previous .devcontainer (if any)
-```
-
-### .devcontainer/ - The Toolbox
-
-Contains all devcontainer-toolbox files. Updated via `dev-update`.
-
-| Folder | Contents |
-|--------|----------|
-| `manage/` | Commands (`dev-setup`, `dev-help`, etc.) |
-| `additions/` | Install scripts, services, and libraries |
-| `setup/` | Platform setup guides (Windows, Mac) |
-
-**Do not edit** - your changes will be overwritten on update.
-
-### .devcontainer.extend/ - Project Config
-
-Your project-specific customizations. **Commit this to git** so your team gets the same setup.
-
-| File | Purpose |
-|------|---------|
-| `enabled-tools.conf` | Tools to auto-install on container rebuild |
-| `enabled-services.conf` | Services to auto-start |
-| `project-installs.sh` | Your custom setup script (npm install, etc.) |
-
-### .devcontainer.secrets/ - Credentials
-
-Stores sensitive configuration outside git. Survives container rebuilds.
-
-| Example | Purpose |
-|---------|---------|
-| `devcontainer-identity` | Git user name and email |
-| `nginx-config/` | Nginx backend configuration |
-| API keys, tokens | Various tool credentials |
-
-**Git-ignored** - never committed.
-
-## Using the DevContainer
-
-After the container starts, you have access to helpful commands.
-
-### Main Command: `dev-setup`
-
-This is your **one-stop menu** for managing your development environment:
-
-```bash
-dev-setup
-```
-
-From this menu you can:
-- Install additional development tools (Python, TypeScript, Go, PHP, C#, Rust, PowerShell, etc.)
-- Manage background services (nginx, OTEL monitoring, etc.)
-- Configure settings (Git identity, credentials)
-- View environment status
-
-### Other Useful Commands
-
-```bash
-dev-help              # Show all available commands
-dev-services status   # Quick check: what services are running?
-dev-check             # Setup Git identity and credentials
-dev-env               # See what's installed
-dev-update            # Update devcontainer-toolbox
-```
-
-See [Commands Reference](commands) for complete command reference.
-
-## Customizing for Your Project
-
-Want to install project-specific packages or run setup scripts?
-
-Edit: `.devcontainer.extend/project-installs.sh`
-
-```bash
-#!/bin/bash
-set -e
-
-printf "Running custom project installations...\n"
-
-# Install your project dependencies
-cd /workspace
-npm install
-
-# Or any other setup you need
-# pip install -r requirements.txt
-# bash scripts/setup-database.sh
-
-printf "Custom project installations complete\n"
-```
-
-This runs automatically when the container is created. Perfect for:
-- Installing npm/pip packages
-- Setting up databases
-- Generating code from schemas
-- Any project-specific setup
-
-## Starting Fresh
-
-The great thing about devcontainers is you can experiment freely. To reset:
-
-```bash
-dev-clean    # Delete the devcontainer
-```
-
-Then reopen in VS Code to get a fresh container.
-
-## Need Help?
-
-See [Troubleshooting](troubleshooting) for common issues, or run:
-
-```bash
-dev-help
-```
+Run `dev-help` in the terminal to see all available commands.

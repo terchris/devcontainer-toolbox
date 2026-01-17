@@ -9,3 +9,23 @@
   height: 200px;
   width: 200px;
 }
+
+.featureLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.featureLink:hover {
+  text-decoration: none;
+  transform: translateY(-4px);
+}
+
+.featureLink h3 {
+  color: var(--ifm-color-primary);
+}
+
+.featureLink p {
+  color: var(--ifm-font-color-base);
+}

@@ -1,0 +1,138 @@
+---
+title: Databricks Development Tools
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-databricks-logo.webp')}
+    alt="Databricks Development Tools"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Databricks Development Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Databricks development tools with CLI, SDK, Connect, PySpark, and Delta Lake support.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>databricks</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>spark</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pyspark</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>delta</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>lake</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>data</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>engineering</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Complete Databricks development environment including Databricks CLI, Python SDK, Databricks Connect for remote development, PySpark and Delta Lake for data processing, and VS Code extensions for Asset Bundles development and workspace integration.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-databricks</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-databricks.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://www.databricks.com" target="_blank">https://www.databricks.com</a>
+  </div>
+</div>
+
+## Python Packages (pip)
+
+| Package | Description |
+|---------|-------------|
+| [databricks-sdk](https://pypi.org/project/databricks-sdk) |  |
+| [databricks-connect](https://pypi.org/project/databricks-connect) |  |
+| [pyspark](https://pypi.org/project/pyspark) |  |
+| [delta-spark](https://pypi.org/project/delta-spark) |  |
+| [pyarrow](https://pypi.org/project/pyarrow) |  |
+| [sqlparse](https://pypi.org/project/sqlparse) |  |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [Databricks](https://marketplace.visualstudio.com/items?itemName=databricks.databricks) | Databricks workspace integration and Asset Bundles |
+| [Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) | Notebook support for Databricks notebooks |
+| [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) | Python language support |
+| [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance) | Python language server |
+| [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) | YAML support for databricks.yml |
+| [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) | Test Databricks REST APIs |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-databricks.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Databricks Development Tools
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-databricks
+Name:         Databricks Development Tools
+Script version: 0.0.1
+Category:     DATA_ANALYTICS, Data & Analytics Tools
+Description:  Installs Databricks CLI, Python SDK, Connect, and related tooling for Asset Bundles development
+
+Usage:
+
+  Action:
+      install-tool-databricks.sh        # Install Databricks development tools
+      install-tool-databricks.sh --uninstall # Uninstall Databricks development tools
+
+  Info:
+      install-tool-databricks.sh --help # Show help and usage information
+
+Python Packages (pip):
+  - databricks-sdk
+  - databricks-connect
+  - pyspark
+  - delta-spark
+  - pyarrow
+  - sqlparse
+
+VS Code Extensions:
+  - Databricks (databricks.databricks) - Databricks workspace integration and Asset Bundles
+  - Jupyter (ms-toolsai.jupyter) - Notebook support for Databricks notebooks
+  - Python (ms-python.python) - Python language support
+  - Pylance (ms-python.vscode-pylance) - Python language server
+  - YAML (redhat.vscode-yaml) - YAML support for databricks.yml
+  - REST Client (humao.rest-client) - Test Databricks REST APIs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-dataanalytics', 'dev-python']} />
