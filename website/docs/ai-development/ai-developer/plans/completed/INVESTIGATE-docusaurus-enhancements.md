@@ -1,10 +1,12 @@
 # Investigate: Docusaurus Website Enhancements
 
-## Status: Active
+## Status: Completed
 
 **Goal:** Research ways to enhance the Docusaurus website - better tool displays, custom theming, images, and useful plugins.
 
-**Last Updated:** 2026-01-16
+**Completed:** 2026-01-17
+
+**Outcome:** Investigation complete. Produced 9 plans (4 completed, 1 cancelled, 4 in backlog).
 
 ---
 
@@ -920,33 +922,21 @@ Each plan delivers a **launchable increment** - the site remains functional afte
 
 ---
 
-### PLAN-005: Interactive Homepage
-**Priority:** Medium
-**Depends on:** PLAN-003 (needs tools.json)
-**Launchable after:** Yes - Dyte-inspired navigation
+### ~~PLAN-005: Interactive Homepage~~ — CANCELLED
+**Status:** ❌ No longer relevant - scope delivered by PLAN-004
 
-**Scope:**
-- Create reusable card components:
-  - `ItemCard` (generic card for tools/templates/packages)
-  - `CategoryCard` (clickable category with count)
-  - `UseCaseCard` (curated combinations)
-- Create `ToolBrowser` component (filter by category)
-- Redesign homepage with card-based sections:
-  - Hero with 3 feature cards
-  - "Get Started" section
-  - Interactive tool browser
-  - Use case cards
+**Reason:** PLAN-004 delivered all the essential homepage functionality:
+- ✅ ToolCard, CategoryFilter, ToolsPage components
+- ✅ Interactive /tools page with category filtering
+- ✅ Homepage features now clickable with navigation links
+- ✅ DevContainer Toolbox sidebar always expanded
 
-**Files to create:**
-- `website/src/components/ItemCard/`
-- `website/src/components/CategoryCard/`
-- `website/src/components/ToolBrowser/`
-- `website/src/pages/index.tsx` (update)
+**Decision:** Homepage is complete. No separate PLAN-005 needed.
 
 ---
 
 ### PLAN-006: Analytics Setup
-**Priority:** Low
+**Priority:** Future (larger scope)
 **Depends on:** Nothing
 **Launchable after:** Yes - tracking enabled
 
@@ -964,8 +954,8 @@ Each plan delivers a **launchable increment** - the site remains functional afte
 ---
 
 ### PLAN-007: Templates Integration
-**Priority:** Medium (after tools are solid)
-**Depends on:** PLAN-003, PLAN-005
+**Priority:** Future (larger scope - requires template repo merge)
+**Depends on:** PLAN-003, PLAN-004
 **Launchable after:** Yes - templates documented alongside tools
 
 **Scope:**
@@ -984,8 +974,8 @@ Each plan delivers a **launchable increment** - the site remains functional afte
 ---
 
 ### PLAN-008: Infrastructure Documentation
-**Priority:** Low (separate repo integration)
-**Depends on:** PLAN-005
+**Priority:** Future (larger scope - cross-repo integration)
+**Depends on:** PLAN-007
 **Launchable after:** Yes - infrastructure docs available
 
 **Scope:**
@@ -1002,68 +992,135 @@ Each plan delivers a **launchable increment** - the site remains functional afte
 
 ---
 
-### PLAN-009: Branding & Polish
-**Priority:** Low
-**Depends on:** All above (final polish)
-**Launchable after:** Yes - professional appearance
+### PLAN-009: Domain, Mission Alignment & Blog
+**Priority:** Next (domain setup + content strategy)
+**Depends on:** PLAN-004 (completed)
+**Launchable after:** Yes - live at dev.sovereignsky.no with blog
+
+**Context: SovereignSky**
+[sovereignsky.no](http://sovereignsky.no) is a digital sovereignty resource hub for Norway, addressing the critical gap where Norwegian digital infrastructure depends on foreign powers (US cloud services, CLOUD Act). Created by [helpers.no](https://helpers.no), it connects to Totalforsvarsåret 2026 (Total Defense Year).
+
+**Key insight from SovereignSky:** "A single political decision in Washington could disrupt Norwegian society more effectively than any military attack."
+
+**DevContainer Toolbox's role:** Provide developers with open-source, locally-runnable, privacy-respecting development environments - reducing dependency on cloud-based dev tools.
+
+**Note:** SovereignSky has no established visual branding yet (uses Hugo Blowfish theme defaults). Focus on mission alignment, not colors/logos.
 
 **Scope:**
-- Design custom logo (replace Docusaurus default)
-- Adjust color scheme (custom primary color)
-- Custom social card image
-- Improve footer with more links
-- Add "Edit this page" links
 
-**Files to modify:**
-- `website/static/img/logo.svg`
-- `website/src/css/custom.css`
-- `website/static/img/social-card.png`
-- `website/docusaurus.config.ts`
+**1. Custom Domain Setup:**
+- Configure custom domain: `dev.sovereignsky.no`
+- Update `docusaurus.config.ts` with new URL
+- Set up DNS (CNAME to GitHub Pages)
+- Configure HTTPS (automatic with GitHub Pages)
+- Update all hardcoded references
+
+**2. Branding (original for DevContainer Toolbox):**
+- Design custom logo for DevContainer Toolbox
+- Define color scheme (supporting sovereignty/independence themes)
+- Create social card image for sharing
+- Design should convey: reliability, openness, independence
+- Add "Edit this page" links (open contribution)
+
+**3. Mission Alignment with SovereignSky:**
+- Add "About" page explaining sovereignty mission
+- Footer links to sovereignsky.no and helpers.no
+- Homepage messaging aligned with sovereignty themes:
+  - "Works Everywhere" → runs locally, no cloud dependency
+  - "Open Source" → transparency, no vendor lock-in
+  - "AI-Ready" → local AI tools, data stays on your machine
+
+**4. Blog Setup:**
+Docusaurus has built-in blog support. Use it to connect dev practices with sovereignty themes:
+
+**Blog post types:**
+| Type | Purpose | Example |
+|------|---------|---------|
+| `releases` | Version announcements | "What's new in v1.5.0" |
+| `tutorials` | How-to guides | "Setting up Python for local AI development" |
+| `sovereignty` | Why this matters | "Why your dev environment shouldn't depend on US clouds" |
+| `tools` | Deep dives | "Claude Code: AI assistance without data leaving your machine" |
+
+**Initial blog posts to write:**
+1. **"Why DevContainer Toolbox exists"** - The sovereignty angle: dev tools that work offline, locally, independently
+2. **"Getting started with sovereign development"** - Practical guide linking to SovereignSky context
+3. **"Totalforsvarsåret 2026: What developers should know"** - Connect to national preparedness
+
+**Blog configuration:**
+```js
+// docusaurus.config.ts
+blog: {
+  showReadingTime: true,
+  blogTitle: 'DevContainer Toolbox Blog',
+  blogDescription: 'Sovereign development tools for Norwegian digital resilience',
+  postsPerPage: 10,
+  blogSidebarTitle: 'Recent posts',
+  blogSidebarCount: 5,
+},
+```
+
+**5. Navigation & Links:**
+- Add Blog to navbar
+- Footer: SovereignSky, helpers.no, GitHub
+- Cross-link: SovereignSky projects page → dev.sovereignsky.no
+
+**Files to modify/create:**
+- `website/docusaurus.config.ts` - Domain, blog config, navbar, footer
+- `website/static/img/logo.svg` - Custom DevContainer Toolbox logo
+- `website/static/img/social-card.png` - Social sharing image
+- `website/src/css/custom.css` - Brand colors
+- `website/src/pages/about.md` - Mission/sovereignty explanation
+- `website/blog/` - Blog posts folder
+- `website/blog/2026-01-xx-why-devcontainer-toolbox.md` - First post
+- `website/static/CNAME` - Custom domain file
+- `README.md` - Update with new domain
+
+**Reference:** SovereignSky site at `/Users/terje.christensen/learn/projects-2025/sovereignsky-site`
 
 ---
 
 ## Plan Dependencies
 
 ```
-PLAN-001 (URLs) ────────────────────────────────────┐
-       │                                            │
-       ▼                                            │
-PLAN-002 (Quick Enhancements)                       │
-                                                    │
-PLAN-003 (Extended Metadata) ───────┬───────────────┤
-       │                            │               │
-       ▼                            ▼               │
-PLAN-004 (Tool Pages)        PLAN-005 (Homepage)    │
-                                    │               │
-                                    ▼               │
-                             PLAN-007 (Templates)   │
-                                    │               │
-                                    ▼               │
-                             PLAN-008 (Infrastructure)
-                                                    │
-PLAN-006 (Analytics) ───────────────────────────────┤
-                                                    │
-                                                    ▼
-                                          PLAN-009 (Branding)
+PLAN-001 (URLs) ✅
+       │
+       ▼
+PLAN-002 (Quick Enhancements) ✅
+       │
+       ▼
+PLAN-003 (Extended Metadata) ✅
+       │
+       ▼
+PLAN-004 (Tool Pages + Homepage) ✅
+       │
+       │  [PLAN-005 cancelled - scope in PLAN-004]
+       │
+       ├──────────────────────────────────────────┐
+       │                                          │
+       ▼                                          ▼
+PLAN-009 (Domain/Mission/Blog) ◀── NEXT   PLAN-007 (Templates) 🔜
+                                                  │
+                                                  ▼
+                                        PLAN-008 (Infrastructure) 🔜
+
+PLAN-006 (Analytics) 🔜  ── Can be done anytime (independent)
 ```
 
-## Recommended Execution Order
+## Execution Status
 
-| Order | Plan | Why |
-|-------|------|-----|
-| 1 | PLAN-001 | Critical - enables contributions |
-| 2 | PLAN-002 | Quick wins, immediate value |
-| 3 | PLAN-003 | Foundation for everything else |
-| 4 | PLAN-004 | Better tool docs |
-| 5 | PLAN-005 | Homepage transformation |
-| 6 | PLAN-006 | Can do anytime |
-| 7 | PLAN-007 | After tools are solid |
-| 8 | PLAN-008 | After homepage done |
-| 9 | PLAN-009 | Final polish |
+| Order | Plan | Status |
+|-------|------|--------|
+| 1 | PLAN-001 | ✅ Completed (PR #16) |
+| 2 | PLAN-002 | ✅ Completed (PR #17) |
+| 3 | PLAN-003 | ✅ Completed (PR #18) |
+| 4 | PLAN-004 | ✅ Completed (PR #19) |
+| 5 | PLAN-005 | ❌ Cancelled - scope delivered by PLAN-004 |
+| 6 | PLAN-009 | 🔲 **Next** - Domain, branding & blog (ready for implementation) |
+| 7 | PLAN-006 | 📝 Draft - Analytics/Umami (definition incomplete) |
+| 8 | PLAN-007 | 📝 Draft - Templates integration (definition incomplete) |
+| 9 | PLAN-008 | 📝 Draft - Infrastructure docs (definition incomplete) |
 
-**Parallel execution possible:**
-- PLAN-002 + PLAN-003 (no dependencies between them)
-- PLAN-006 (independent, can run anytime)
+**Next up:** PLAN-009 (Domain, Mission & Blog) - dev.sovereignsky.no, sovereignty messaging, blog for tutorials & announcements
 
 ---
 
@@ -1083,15 +1140,20 @@ PLAN-006 (Analytics) ───────────────────�
 
 ## Next Steps
 
-Create specific PLAN files in `backlog/` for implementation:
+**Completed plans** (in `completed/`):
+- ✅ `PLAN-001-configurable-urls.md` - Environment variables for GitHub org/repo
+- ✅ `PLAN-002-quick-enhancements.md` - Version badge, Mermaid, image zoom
+- ✅ `PLAN-003-extended-metadata.md` - New script fields, validation, all tools
+- ✅ `PLAN-004-tool-display-components.md` - React components for tool display
 
-1. `PLAN-001-configurable-urls.md` - Environment variables for GitHub org/repo
-2. `PLAN-002-quick-enhancements.md` - Version badge, Mermaid, image zoom
-3. `PLAN-003-extended-metadata.md` - New script fields, validation, all tools
-4. `PLAN-004-enhanced-tool-pages.md` - Richer markdown generation
-5. `PLAN-005-interactive-homepage.md` - Card components, tool browser
-6. `PLAN-006-analytics-setup.md` - Umami integration
-7. `PLAN-007-templates-integration.md` - Merge templates repo
-8. `PLAN-008-infrastructure-docs.md` - Cross-repo documentation
-9. `PLAN-009-branding-polish.md` - Logo, colors, social card
+**Cancelled plans:**
+- ❌ `PLAN-005` - Interactive Homepage (scope delivered by PLAN-004)
+
+**Next plan** (in `backlog/`, ready for implementation):
+- 🔲 `PLAN-009-domain-mission-blog.md` - Custom domain (dev.sovereignsky.no), branding, blog setup
+
+**Future plans** (in `backlog/`, definition incomplete):
+- 📝 `PLAN-006-analytics-setup.md` - Umami analytics (Status: Draft)
+- 📝 `PLAN-007-templates-integration.md` - Merge templates repo (Status: Draft)
+- 📝 `PLAN-008-infrastructure-docs.md` - Cross-repo documentation (Status: Draft)
 
