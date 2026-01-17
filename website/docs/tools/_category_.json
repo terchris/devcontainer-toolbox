@@ -1,6 +1,7 @@
 {
   "label": "DevContainer Toolbox",
   "position": 1,
+  "collapsed": false,
   "link": {
     "type": "doc",
     "id": "tools/index"

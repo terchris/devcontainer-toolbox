@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
@@ -7,6 +8,7 @@ type FeatureItem = {
   title: string;
   Svg: React.ComponentType<React.ComponentProps<'svg'>>;
   description: ReactNode;
+  link: string;
 };
 
 const FeatureList: FeatureItem[] = [
@@ -18,6 +20,7 @@ const FeatureList: FeatureItem[] = [
         Same environment on Windows, Mac, and Linux. No more "works on my machine" problems.
       </>
     ),
+    link: '/docs/what-are-devcontainers',
   },
   {
     title: '20+ Tools Ready',
@@ -27,6 +30,7 @@ const FeatureList: FeatureItem[] = [
         Python, Go, TypeScript, Azure, Kubernetes, AI tools and more. Install with one click via the interactive menu.
       </>
     ),
+    link: '/tools',
   },
   {
     title: 'AI-Ready Development',
@@ -36,19 +40,22 @@ const FeatureList: FeatureItem[] = [
         Safely run AI coding assistants inside the container. They can only access your project, not your whole machine.
       </>
     ),
+    link: '/docs/ai-development/',
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, Svg, description, link}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
-      </div>
+      <Link to={link} className={styles.featureLink}>
+        <div className="text--center">
+          <Svg className={styles.featureSvg} role="img" />
+        </div>
+        <div className="text--center padding-horiz--md">
+          <Heading as="h3">{title}</Heading>
+          <p>{description}</p>
+        </div>
+      </Link>
     </div>
   );
 }

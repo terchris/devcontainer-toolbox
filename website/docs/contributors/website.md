@@ -36,20 +36,26 @@ The `--host 0.0.0.0` flag is **required** for VS Code port forwarding to work. W
 
 ```
 website/
-├── docs/                    # Documentation content (Markdown)
-│   ├── index.md            # Docs home page
-│   ├── getting-started.md  # Installation guide
-│   ├── tools/              # Tool documentation
-│   ├── ai-development/     # AI development guides
-│   └── contributors/       # Contributor guides (you are here)
+├── docs/                       # Documentation content (Markdown)
+│   ├── index.md                # Docs home page
+│   ├── getting-started.md      # Installation guide
+│   ├── commands.md             # Install Tools (auto-generated)
+│   ├── configuration.md        # Customization guide
+│   ├── troubleshooting.md      # Troubleshooting guide
+│   ├── what-are-devcontainers.md  # DevContainers explainer
+│   ├── tools/                  # Tool documentation (auto-generated)
+│   ├── ai-development/         # AI development guides
+│   └── contributors/           # Contributor guides (you are here)
 ├── src/
-│   ├── components/         # React components
-│   ├── css/               # Custom styles
-│   └── pages/             # Custom pages (landing page)
+│   ├── components/             # React components (ToolCard, ToolGrid, etc.)
+│   ├── css/                    # Custom styles
+│   ├── data/                   # JSON data (tools.json, categories.json)
+│   ├── pages/                  # Custom pages (landing page)
+│   └── utils/                  # Utility functions
 ├── static/
-│   └── img/               # Images, GIFs, favicon
-├── docusaurus.config.ts   # Main configuration
-└── sidebars.ts            # Sidebar navigation
+│   └── img/                    # Images, GIFs, logos, favicon
+├── docusaurus.config.ts        # Main configuration
+└── sidebars.ts                 # Sidebar navigation
 ```
 
 ---

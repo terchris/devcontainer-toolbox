@@ -5,11 +5,11 @@ Project-specific instructions for Claude Code when working on devcontainer-toolb
 ## Plan Workflow
 
 **BEFORE implementing any plan, read these files for context:**
-- `website/docs/ai-developer/PLANS.md` - Plan structure, templates, and best practices
-- `website/docs/ai-developer/WORKFLOW.md` - Implementation workflow and process
-- `website/docs/ai-developer/CREATING-SCRIPTS.md` - Script conventions and metadata format
+- `website/docs/ai-development/ai-developer/PLANS.md` - Plan structure, templates, and best practices
+- `website/docs/ai-development/ai-developer/WORKFLOW.md` - Implementation workflow and process
+- `website/docs/ai-development/ai-developer/CREATING-SCRIPTS.md` - Script conventions and metadata format
 
-When implementing a plan from `website/docs/ai-developer/plans/`:
+When implementing a plan from `website/docs/ai-development/ai-developer/plans/`:
 
 1. **Read the full plan first** - understand all phases before starting
 2. **Work phase by phase** - never skip ahead
@@ -24,8 +24,8 @@ When implementing a plan from `website/docs/ai-developer/plans/`:
 
 When user requests a new feature or fix:
 
-1. Read `website/docs/ai-developer/PLANS.md` for templates and structure
-2. Create plan file in `website/docs/ai-developer/plans/backlog/`
+1. Read `website/docs/ai-development/ai-developer/PLANS.md` for templates and structure
+2. Create plan file in `website/docs/ai-development/ai-developer/plans/backlog/`
 3. Ask user to review the plan before implementing
 4. When user approves, ask: "Do you want to work on a feature branch? (recommended)"
 5. Only move to `active/` after user approves
@@ -57,8 +57,8 @@ All documentation is in `website/docs/` (Docusaurus):
 
 - User docs: `website/docs/` (getting-started, tools, commands, etc.)
 - Contributor docs: `website/docs/contributors/`
-- AI developer docs: `website/docs/ai-developer/`
-- Plans: `website/docs/ai-developer/plans/`
+- AI developer docs: `website/docs/ai-development/ai-developer/`
+- Plans: `website/docs/ai-development/ai-developer/plans/`
 
 **When working with documentation:**
 - Read `website/docs/contributors/website.md` for Docusaurus workflow

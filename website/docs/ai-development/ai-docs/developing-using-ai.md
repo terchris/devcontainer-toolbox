@@ -81,7 +81,7 @@ Notice what happens:
 
 The plan is a markdown file. Edit it if something's wrong. Only after you approve does the AI start coding.
 
-**See the actual plan used in the demo:** The `PLAN-install-dev-bash.md` is in `website/docs/ai-developer/plans/completed/`.
+**See the actual plan used in the demo:** The `PLAN-install-dev-bash.md` is in `website/docs/ai-development/ai-developer/plans/completed/`.
 
 More examples in the [AI Developer plans](../ai-developer/PLANS) section.
 
@@ -128,7 +128,7 @@ Create docs that tell the AI how to make plans:
 | [WORKFLOW.md](../ai-developer/WORKFLOW.md) | Implementation process |
 | [CREATING-SCRIPTS.md](../ai-developer/CREATING-SCRIPTS.md) | Code conventions |
 
-Plans are stored in `docs/ai-developer/plans/` with subfolders for `backlog/`, `active/`, and `completed/`.
+Plans are stored in `website/docs/ai-development/ai-developer/plans/` with subfolders for `backlog/`, `active/`, and `completed/`.
 
 See [docs/ai-developer/](../ai-developer/) for the full setup.
 

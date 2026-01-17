@@ -12,7 +12,7 @@ How to structure plans for AI-assisted development.
 ## Folder Structure
 
 ```
-docs/ai-developer/plans/
+website/docs/ai-development/ai-developer/plans/
 ├── backlog/      # Approved plans waiting for implementation
 ├── active/       # Currently being worked on (max 1-2 at a time)
 └── completed/    # Done - kept for reference

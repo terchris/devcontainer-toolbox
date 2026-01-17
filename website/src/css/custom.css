@@ -29,9 +29,10 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
-/* Tool page package tables styling */
+/* Table styling */
 .markdown table {
   width: 100% !important;
+  min-width: 100%;
   max-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -39,7 +40,6 @@
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 1.5rem;
-  table-layout: fixed;
   display: table;
 }
 
@@ -53,14 +53,6 @@
   padding: 0.75rem 1rem;
   border: none;
   text-align: left;
-}
-
-.markdown table thead th:first-child {
-  width: 35%;
-}
-
-.markdown table thead th:last-child {
-  width: 65%;
 }
 
 .markdown table tbody tr {
