@@ -84,7 +84,7 @@ const config: Config = {
       textColor: '#fff',
       isCloseable: true,
     },
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/social-card.jpg',
     colorMode: {
       defaultMode: 'light',
       respectPrefersColorScheme: true,
