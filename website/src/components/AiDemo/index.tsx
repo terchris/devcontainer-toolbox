@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
 export default function AiDemo(): ReactNode {
@@ -12,7 +13,7 @@ export default function AiDemo(): ReactNode {
         </p>
         <div className={styles.gifContainer}>
           <img
-            src="/devcontainer-toolbox/img/ai-implement-plan-teaser.gif"
+            src={useBaseUrl('/img/ai-implement-plan-teaser.gif')}
             alt="AI implementing a plan"
             className={styles.demoGif}
           />
