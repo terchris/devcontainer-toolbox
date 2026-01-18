@@ -125,3 +125,32 @@
 .hidden {
   display: none;
 }
+
+/* Footer styling - ensure readable text on dark background */
+.footer--dark {
+  --ifm-footer-background-color: #1e3a5f;
+}
+
+.footer--dark .footer__title {
+  color: #ffffff;
+}
+
+.footer--dark .footer__link-item {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.footer--dark .footer__link-item:hover {
+  color: #ffffff;
+}
+
+.footer--dark .footer__copyright {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer--dark .footer__copyright a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.footer--dark .footer__copyright a:hover {
+  color: #ffffff;
+}

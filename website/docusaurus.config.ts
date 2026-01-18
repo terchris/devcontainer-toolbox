@@ -128,6 +128,10 @@ const config: Config = {
               label: 'Available Tools',
               to: '/docs/tools',
             },
+            {
+              label: 'About',
+              to: '/docs/about',
+            },
           ],
         },
         {
@@ -144,6 +148,19 @@ const config: Config = {
           ],
         },
         {
+          title: 'SovereignSky',
+          items: [
+            {
+              label: 'SovereignSky Initiative',
+              href: 'https://sovereignsky.no',
+            },
+            {
+              label: 'helpers.no',
+              href: 'https://helpers.no',
+            },
+          ],
+        },
+        {
           title: 'More',
           items: [
             {
@@ -153,7 +170,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} DevContainer Toolbox. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} DevContainer Toolbox. Part of the <a href="https://sovereignsky.no" target="_blank" rel="noopener noreferrer">SovereignSky</a> initiative.`,
     },
     prism: {
       theme: prismThemes.github,
