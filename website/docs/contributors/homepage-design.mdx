@@ -1,0 +1,230 @@
+---
+title: Homepage Design
+sidebar_position: 9
+---
+
+import FloatingCubes from '@site/src/components/FloatingCubes';
+
+# Homepage Design
+
+The homepage features animated 3D floating cubes displaying tool logos, inspired by the social card design.
+
+---
+
+## Floating Cubes Component
+
+The hero section displays spinning isometric cubes with tool logos on each face.
+
+### Live Demo
+
+<div style={{background: 'linear-gradient(135deg, #1e3a5f 0%, #0d1f33 100%)', padding: '2rem', borderRadius: '8px', marginBottom: '2rem'}}>
+  <FloatingCubes />
+</div>
+
+### Features
+
+- **Isometric 3D cubes** with semi-transparent green glass effect
+- **5 logos per cube** (top, front, back, left, right faces)
+- **Continuous spinning** animation with staggered delays
+- **Floating animation** for organic movement
+- **Responsive design** - adapts cube sizes for mobile
+- **Auto-generated** from available tool logos
+
+---
+
+## Generating Cube Configuration
+
+The cube configuration is **auto-generated** from the tool logos in `website/static/img/tools/`.
+
+### Using dev-cubes
+
+Run the generator after adding or modifying tool logos:
+
+```bash
+# Generate cube configuration
+dev-cubes
+
+# With verbose output (shows all logo details)
+dev-cubes --verbose
+```
+
+This command:
+1. Scans `static/img/tools/` for logo files
+2. Validates each image (size, dimensions)
+3. Reads `tools.json` for display names
+4. Generates `src/components/FloatingCubes/cubeConfig.ts`
+
+### Logo Validation
+
+The generator validates each logo:
+
+| Format | Max File Size | Dimensions |
+|--------|--------------|------------|
+| WebP | 50KB | 64px - 512px |
+| SVG | 100KB | min 64px |
+
+Invalid logos are excluded and reported. Non-square images generate a warning but are still included.
+
+### npm Script
+
+You can also run it via npm:
+
+```bash
+cd website
+npm run generate:cubes
+```
+
+---
+
+## Cube Configuration Structure
+
+Each cube displays 5 logos (one per visible face):
+
+```typescript
+type CubeConfig = {
+  logos: {
+    top: string;     // Logo filename for top face
+    front: string;   // Logo filename for front face
+    back: string;    // Logo filename for back face
+    left: string;    // Logo filename for left face
+    right: string;   // Logo filename for right face
+  };
+  names: {
+    top: string;     // Display name (for alt text)
+    front: string;
+    back: string;
+    left: string;
+    right: string;
+  };
+  size: 'small' | 'medium' | 'large';
+  position: { x: number; y: number };  // Percentage position
+  delay: number;  // Animation delay in seconds
+};
+```
+
+### Default Layout
+
+The generator creates 6-8 cubes (depending on available logos) with predefined positions:
+
+| Cube | Size | Position | Delay |
+|------|------|----------|-------|
+| 1 | large | 10%, 25% | 0s |
+| 2 | medium | 55%, 8% | 0.5s |
+| 3 | large | 35%, 45% | 1s |
+| 4 | medium | 5%, 60% | 1.5s |
+| 5 | small | 75%, 25% | 2s |
+| 6 | medium | 65%, 55% | 2.5s |
+
+---
+
+## Hero Section Layout
+
+The homepage hero uses a split layout:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  [Floating Cubes]              DevContainer Toolbox             │
+│  [with tool logos]                                              │
+│  [Python, Go, TS,              One command.                     │
+│   Azure, K8s, etc.]            Full dev environment.            │
+│                                Any project.                     │
+│                                                                 │
+│                                [Get Started] [View on GitHub]   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+On mobile (< 996px), the layout stacks vertically with cubes above text.
+
+---
+
+## Component Files
+
+| File | Description |
+|------|-------------|
+| `src/components/FloatingCubes/index.tsx` | React component |
+| `src/components/FloatingCubes/styles.module.css` | CSS animations and 3D transforms |
+| `src/components/FloatingCubes/cubeConfig.ts` | Auto-generated cube configuration |
+| `scripts/generate-cube-config.js` | Generator script |
+
+---
+
+## Customizing Cubes
+
+### Manual Override
+
+Import the component with custom configuration:
+
+```tsx
+import FloatingCubes from '@site/src/components/FloatingCubes';
+import {CubeConfig} from '@site/src/components/FloatingCubes/cubeConfig';
+
+const customCubes: CubeConfig[] = [
+  {
+    logos: {
+      top: 'dev-python-logo.webp',
+      front: 'dev-golang-logo.webp',
+      back: 'dev-typescript-logo.webp',
+      left: 'dev-rust-logo.webp',
+      right: 'dev-java-logo.webp',
+    },
+    names: {
+      top: 'Python',
+      front: 'Go',
+      back: 'TypeScript',
+      left: 'Rust',
+      right: 'Java',
+    },
+    size: 'large',
+    position: { x: 50, y: 50 },
+    delay: 0,
+  },
+];
+
+<FloatingCubes cubes={customCubes} />
+```
+
+---
+
+## Design Specifications
+
+### Colors (from brand guidelines)
+
+| Element | Color | Hex |
+|---------|-------|-----|
+| Hero background | Navy Blue gradient | `#1e3a5f` → `#0d1f33` |
+| Cube faces | Green glass | `rgba(50, 205, 120, 0.85)` |
+| Cube borders | Green | `rgba(58, 200, 120, 0.6)` |
+
+### Animation Timing
+
+| Animation | Duration | Easing |
+|-----------|----------|--------|
+| Spin | 15s | linear (continuous) |
+| Float | 6s | ease-in-out |
+| Float distance | 12px | vertical |
+
+### Responsive Breakpoints
+
+| Breakpoint | Scene Height | Cube Sizes |
+|------------|--------------|------------|
+| Desktop | 400px | 70/95/120px |
+| Tablet (< 768px) | 350px | 55/75/95px |
+| Mobile (< 480px) | 300px | 45/60/75px |
+
+---
+
+## CI/CD Integration
+
+The cube configuration is regenerated during deployment:
+
+```yaml
+# .github/workflows/deploy-docs.yml
+- name: Generate FloatingCubes configuration
+  run: bash .devcontainer/manage/dev-cubes.sh
+```
+
+Build order:
+1. `dev-logos.sh` - Generate WebP from SVG sources
+2. `dev-docs.sh` - Generate tools.json
+3. `dev-cubes.sh` - Generate cubeConfig.ts
+4. `npm run build` - Build website

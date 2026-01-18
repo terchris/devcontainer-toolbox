@@ -155,6 +155,18 @@ DevContainer Toolbox is part of the [SovereignSky](https://sovereignsky.no) init
 
 ---
 
+## Homepage Hero
+
+The homepage features animated 3D floating cubes that showcase tool logos using the brand colors:
+
+- **Background**: Navy Blue gradient (`#1e3a5f` → `#0d1f33`)
+- **Cube faces**: Semi-transparent green glass effect
+- **Content**: Tool logos from `website/static/img/tools/`
+
+See [Homepage Design](./homepage-design.mdx) for component details and configuration.
+
+---
+
 ## Attribution
 
 Icon assets derived from [Ionicons](https://ionic.io/ionicons) (MIT License).

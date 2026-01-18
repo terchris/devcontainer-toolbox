@@ -9,6 +9,84 @@ The devcontainer includes ImageMagick and rsvg-convert for image manipulation ta
 
 ---
 
+## Tool Logos
+
+Each tool can have a logo displayed in the UI and on the homepage floating cubes.
+
+### Directory Structure
+
+```
+website/static/img/tools/
+├── src/                    # Source SVG files (committed to git)
+│   ├── dev-python-logo.svg
+│   ├── dev-golang-logo.svg
+│   └── ...
+├── dev-python-logo.webp    # Generated WebP (gitignored)
+├── dev-golang-logo.webp
+└── ...
+```
+
+### Adding a New Tool Logo
+
+1. **Create SVG** in `website/static/img/tools/src/`:
+   - Filename: `{script-id}-logo.svg` (e.g., `dev-python-logo.svg`)
+   - Recommended size: 512x512px viewBox
+   - Keep it simple - works at small sizes
+
+2. **Generate WebP** with dev-logos:
+   ```bash
+   dev-logos
+   ```
+
+3. **Update install script** with logo reference:
+   ```bash
+   SCRIPT_LOGO="dev-python-logo.webp"
+   ```
+
+4. **Regenerate data files**:
+   ```bash
+   dev-docs
+   dev-cubes
+   ```
+
+### Logo Requirements
+
+| Property | Requirement |
+|----------|-------------|
+| Format | SVG (source), WebP (generated) |
+| Size | 512x512px recommended |
+| Aspect | Square (1:1) |
+| Background | Transparent |
+| Max file size | SVG: 100KB, WebP: 50KB |
+
+### Using dev-logos
+
+Process all logo source files to production WebP:
+
+```bash
+# Generate all logos
+dev-logos
+
+# Check if logos need processing
+dev-logos --check
+```
+
+This command:
+1. Scans `static/img/tools/src/` for SVG/PNG/JPG files
+2. Converts each to 512x512 WebP
+3. Outputs to `static/img/tools/`
+
+### Naming Convention
+
+| Script Type | Logo Filename |
+|-------------|---------------|
+| `install-dev-*` | `dev-*-logo.webp` |
+| `install-tool-*` | `tool-*-logo.webp` |
+| `install-srv-*` | `srv-*-logo.webp` |
+| `config-*` | `config-*-logo.webp` |
+
+---
+
 ## Brand Scripts
 
 The `website/static/img/brand/` folder contains scripts to generate and publish brand assets. All scripts must be run inside the devcontainer.

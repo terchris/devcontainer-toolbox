@@ -84,6 +84,19 @@ What it does:
 4. Packages into `dev_containers.zip`
 5. Creates GitHub release tagged "latest"
 
+### 3. Deploy Documentation (`.github/workflows/deploy-docs.yml`)
+
+**Triggers:** Push to main that touches `website/`, `.devcontainer/additions/`, or manage scripts
+
+What it does:
+1. Installs image processing tools (ImageMagick, rsvg-convert, webp)
+2. Runs `dev-logos` - converts SVG logos to WebP
+3. Runs `dev-docs` - generates tools.json from install scripts
+4. Runs `dev-cubes` - generates FloatingCubes configuration
+5. Builds and deploys Docusaurus site to GitHub Pages
+
+See [Homepage Design](./homepage-design.mdx) for details on the FloatingCubes component.
+
 ---
 
 ## Version Numbering
