@@ -6,7 +6,7 @@
 
 ## Status: Active
 
-**Goal**: Launch DevContainer Toolbox at dev.sovereignsky.no with original branding, aligned with SovereignSky's digital sovereignty mission, and a blog for content.
+**Goal**: Launch DevContainer Toolbox (DCT) at dct.sovereignsky.no with original branding, aligned with SovereignSky's digital sovereignty mission, and a blog for content.
 
 **Last Updated**: 2026-01-17
 
@@ -16,9 +16,9 @@
 
 ## Overview
 
-DevContainer Toolbox will be hosted at **dev.sovereignsky.no** as part of the SovereignSky initiative for Norwegian digital sovereignty. The site needs:
+DevContainer Toolbox will be hosted at **dct.sovereignsky.no** as part of the SovereignSky initiative for Norwegian digital sovereignty. The site needs:
 
-1. **Custom domain** - dev.sovereignsky.no
+1. **Custom domain** - dct.sovereignsky.no
 2. **Original branding** - logo, colors, social card (not copying SovereignSky, which has no branding yet)
 3. **Mission alignment** - messaging that connects to sovereignty themes
 4. **Blog** - for tutorials, announcements, and sovereignty topics
@@ -37,14 +37,14 @@ DevContainer Toolbox will be hosted at **dev.sovereignsky.no** as part of the So
 
 ### Tasks
 
-- [ ] 1.1 Create `website/static/CNAME` file with `dev.sovereignsky.no`
+- [ ] 1.1 Create `website/static/CNAME` file with `dct.sovereignsky.no`
 - [ ] 1.2 Update `website/docusaurus.config.ts`:
-  - Set `url: 'https://dev.sovereignsky.no'`
+  - Set `url: 'https://dct.sovereignsky.no'`
   - Set `baseUrl: '/'`
 - [ ] 1.3 Update GitHub repository settings (manual step - document for user):
-  - Settings → Pages → Custom domain: `dev.sovereignsky.no`
+  - Settings → Pages → Custom domain: `dct.sovereignsky.no`
 - [ ] 1.4 Document DNS setup for user:
-  - CNAME record: `dev.sovereignsky.no` → `<github-username>.github.io`
+  - CNAME record: `dct.sovereignsky.no` → `<github-username>.github.io`
 - [ ] 1.5 Update `README.md` with new domain
 - [ ] 1.6 Test locally that build works with new config
 
@@ -57,7 +57,7 @@ User confirms:
 
 ---
 
-## Phase 2: Branding — IN PROGRESS
+## Phase 2: Branding — ✅ DONE
 
 ### Image Creation Workflow
 
@@ -71,21 +71,35 @@ Using Gemini (gemini.google.com/app) for AI-generated images:
 
 ### Tasks
 
-- [ ] 2.1 Create logo for DevContainer Toolbox:
+- [x] 2.1 Create logo for DevContainer Toolbox:
   - Should convey: development tools, containers, independence/sovereignty
   - Simple, works at small sizes (favicon)
-  - Use Gemini to generate options
-- [ ] 2.2 Save logo as `website/static/img/logo.svg` (convert if needed)
-- [ ] 2.3 Create favicon from logo
-- [ ] 2.4 Define color scheme in `website/src/css/custom.css`:
-  - Primary color (buttons, links, highlights)
-  - Consider: blues (trust, reliability), greens (independence, growth)
-  - Must work in both light and dark mode
-- [ ] 2.5 Create social card image `website/static/img/social-card.png`:
-  - 1200x630px for optimal social sharing
-  - Include: logo, tagline, sovereignty message
-  - Use Gemini to generate
-- [ ] 2.6 Update `docusaurus.config.ts` with logo and social card paths
+  - Used Gemini to generate reference (gemini-logo.png)
+  - Created logo.svg based on reference (needs human refinement)
+- [x] 2.2 Save logo as `website/static/img/logo.svg` (convert if needed)
+  - Created SVG with shield, cube, and code brackets
+  - **TODO**: Human designer to refine logo.svg to match gemini-logo.png
+- [x] 2.3 Create favicon from logo
+  - Generated multi-size favicon.ico from logo.svg using ImageMagick
+- [x] 2.7 Create branding documentation page
+  - Added `website/docs/contributors/branding.md` with:
+    - Logo files and usage guidelines
+    - Commands to generate assets from SVG
+    - Color palette documentation
+    - Reference goal (gemini-logo.png) vs current (logo.svg)
+- [x] 2.4 Define color scheme in `website/src/css/custom.css`:
+  - Primary: Green #3a8f5e (from logo cube) for light mode
+  - Primary: Bright green #25c2a0 for dark mode (better readability)
+  - Secondary: Navy blue #1e3a5f (from logo shield)
+  - Added documentation comments referencing branding page
+- [x] 2.5 Create social card image `website/static/img/social-card.png`:
+  - Generated 1424x752px image using Gemini (Option 3: Abstract geometric)
+  - Navy blue background with green isometric cubes
+  - "DevContainer Toolbox" title and tagline
+  - Dev tool icons (gears, code brackets, terminal)
+- [x] 2.6 Update `docusaurus.config.ts` with logo and social card paths
+  - Logo path updated to logo.svg ✓
+  - Social card updated to social-card.png ✓
 
 ### Validation
 
@@ -170,7 +184,7 @@ User confirms:
   - Footer links work
 - [ ] 5.2 Check responsive design (mobile)
 - [ ] 5.3 Verify social card preview (use social card validator tools)
-- [ ] 5.4 Update SovereignSky projects page to link to dev.sovereignsky.no (coordinate with sovereignsky repo)
+- [ ] 5.4 Update SovereignSky projects page to link to dct.sovereignsky.no (coordinate with sovereignsky repo)
 - [ ] 5.5 Commit all changes
 - [ ] 5.6 Push and create PR
 
@@ -185,7 +199,7 @@ User confirms:
 
 ## Acceptance Criteria
 
-- [ ] Site builds and deploys to dev.sovereignsky.no
+- [ ] Site builds and deploys to dct.sovereignsky.no
 - [ ] Custom logo and branding applied
 - [ ] About page explains sovereignty mission
 - [ ] Blog is functional with first post

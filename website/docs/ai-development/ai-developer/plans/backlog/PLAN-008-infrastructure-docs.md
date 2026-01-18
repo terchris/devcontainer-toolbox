@@ -24,7 +24,7 @@ The [urbalurba-infrastructure](https://github.com/terchris/urbalurba-infrastruct
 ### Website Structure After Implementation
 
 ```
-DevContainer Toolbox (dev.sovereignsky.no)
+DevContainer Toolbox (dct.sovereignsky.no)
 ├── /docs/tools/          → Development tools (current)
 ├── /docs/templates/      → Project templates (PLAN-007)
 └── /docs/infrastructure/ → Infrastructure packages (this plan)
