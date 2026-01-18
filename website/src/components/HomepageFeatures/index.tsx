@@ -1,12 +1,13 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  image: string;
   description: ReactNode;
   link: string;
 };
@@ -14,7 +15,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Works Everywhere',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    image: '/img/works-everywhere.png',
     description: (
       <>
         Same environment on Windows, Mac, and Linux. No more "works on my machine" problems.
@@ -24,7 +25,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: '20+ Tools Ready',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    image: '/img/tools-ready.png',
     description: (
       <>
         Python, Go, TypeScript, Azure, Kubernetes, AI tools and more. Install with one click via the interactive menu.
@@ -34,7 +35,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'AI-Ready Development',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    image: '/img/ai-ready.png',
     description: (
       <>
         Safely run AI coding assistants inside the container. They can only access your project, not your whole machine.
@@ -44,12 +45,13 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, Svg, description, link}: FeatureItem) {
+function Feature({title, image, description, link}: FeatureItem) {
+  const imgUrl = useBaseUrl(image);
   return (
     <div className={clsx('col col--4')}>
       <Link to={link} className={styles.featureLink}>
         <div className="text--center">
-          <Svg className={styles.featureSvg} role="img" />
+          <img src={imgUrl} alt={title} className={styles.featureImg} />
         </div>
         <div className="text--center padding-horiz--md">
           <Heading as="h3">{title}</Heading>

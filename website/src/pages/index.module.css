@@ -1,19 +1,198 @@
 /**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
+ * Homepage styles with split hero layout
  */
 
+/* Hero Section - Navy blue background */
+.heroSection {
+  background: linear-gradient(135deg, #1e3a5f 0%, #0d1f33 100%);
+  padding: 2rem 0;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+}
+
+/* Hero Container - Split layout */
+.heroContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+  gap: 2rem;
+}
+
+/* Left side - Cubes */
+.heroLeft {
+  flex: 1;
+  min-width: 0;
+  max-width: 600px;
+}
+
+/* Right side - Text */
+.heroRight {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  padding-right: 2rem;
+}
+
+/* Hero Logo */
+.heroLogo {
+  display: block;
+  width: 120px;
+  height: auto;
+  margin: 0 auto 1.5rem auto;
+}
+
+/* Title */
+.heroTitle {
+  color: #3a8f5e;
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+/* Tagline */
+.heroTagline {
+  color: #ffffff;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+}
+
+/* Buttons container */
+.heroButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Primary button */
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  background: #3a8f5e;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 2px solid #3a8f5e;
+}
+
+.primaryButton:hover {
+  background: #2d7049;
+  border-color: #2d7049;
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+/* Secondary button */
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+/* Responsive - Tablet */
+@media screen and (max-width: 996px) {
+  .heroContainer {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .heroLeft {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .heroRight {
+    max-width: 100%;
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .heroLogo {
+    width: 100px;
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .heroTagline {
+    font-size: 1.25rem;
+  }
+
+  .heroButtons {
+    justify-content: center;
+  }
+}
+
+/* Responsive - Mobile */
+@media screen and (max-width: 576px) {
+  .heroSection {
+    padding: 1.5rem 0;
+    min-height: auto;
+  }
+
+  .heroContainer {
+    padding: 0 1rem;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .heroTagline {
+    font-size: 1.1rem;
+  }
+
+  .heroButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Legacy styles - keep for compatibility */
 .heroBanner {
   padding: 4rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
 }
 
 .buttons {

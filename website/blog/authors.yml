@@ -1,0 +1,11 @@
+terchris:
+  name: Terje Christensen
+  title: Creator of DevContainer Toolbox
+  url: https://github.com/terchris
+  image_url: https://github.com/terchris.png
+
+dct-team:
+  name: DCT Team
+  title: DevContainer Toolbox Contributors
+  url: https://github.com/terchris/devcontainer-toolbox
+  image_url: https://github.com/terchris.png

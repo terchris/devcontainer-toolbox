@@ -1,0 +1,194 @@
+/* Scene container */
+.scene {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  perspective: 1200px;
+  overflow: hidden;
+}
+
+/* Individual cube wrapper - handles positioning and float */
+.cubeWrapper {
+  position: absolute;
+  transform-style: preserve-3d;
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Size variants */
+.cubeSmall {
+  --cube-size: 70px;
+  --logo-size: 35px;
+}
+
+.cubeMedium {
+  --cube-size: 95px;
+  --logo-size: 45px;
+}
+
+.cubeLarge {
+  --cube-size: 120px;
+  --logo-size: 55px;
+}
+
+/* The cube container - continuous spin */
+.cube {
+  position: relative;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  transform-style: preserve-3d;
+  animation: spin 15s linear infinite;
+  will-change: transform;
+}
+
+/* Cube faces - shared styles */
+.face {
+  position: absolute;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  /* Bright green glass effect */
+  border: 2px solid rgba(58, 200, 120, 0.6);
+  backface-visibility: visible;
+}
+
+/* Top face - brightest */
+.faceTop {
+  background: linear-gradient(
+    135deg,
+    rgba(50, 205, 120, 0.85) 0%,
+    rgba(40, 180, 100, 0.75) 50%,
+    rgba(58, 200, 110, 0.8) 100%
+  );
+  transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+  box-shadow:
+    inset 0 0 30px rgba(255, 255, 255, 0.3),
+    inset 0 0 60px rgba(100, 255, 150, 0.2);
+}
+
+/* Front face */
+.faceFront {
+  background: linear-gradient(
+    180deg,
+    rgba(50, 190, 110, 0.8) 0%,
+    rgba(40, 160, 90, 0.85) 100%
+  );
+  transform: translateZ(calc(var(--cube-size) / 2));
+  box-shadow:
+    inset 0 0 25px rgba(255, 255, 255, 0.2),
+    inset 0 0 50px rgba(90, 230, 140, 0.15);
+}
+
+/* Back face */
+.faceBack {
+  background: linear-gradient(
+    180deg,
+    rgba(45, 170, 95, 0.8) 0%,
+    rgba(35, 140, 80, 0.85) 100%
+  );
+  transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+  box-shadow:
+    inset 0 0 25px rgba(255, 255, 255, 0.15),
+    inset 0 0 40px rgba(80, 220, 130, 0.15);
+}
+
+/* Left face - slightly darker for depth */
+.faceLeft {
+  background: linear-gradient(
+    180deg,
+    rgba(45, 170, 95, 0.8) 0%,
+    rgba(35, 140, 80, 0.85) 100%
+  );
+  transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+  box-shadow:
+    inset 0 0 25px rgba(255, 255, 255, 0.15),
+    inset 0 0 40px rgba(80, 220, 130, 0.15);
+}
+
+/* Right face */
+.faceRight {
+  background: linear-gradient(
+    180deg,
+    rgba(50, 190, 110, 0.8) 0%,
+    rgba(40, 160, 90, 0.85) 100%
+  );
+  transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+  box-shadow:
+    inset 0 0 25px rgba(255, 255, 255, 0.2),
+    inset 0 0 50px rgba(90, 230, 140, 0.15);
+}
+
+/* Logo on each face */
+.faceLogo {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  opacity: 0.95;
+}
+
+/* Floating animation - gentle vertical movement */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* Continuous spin animation */
+@keyframes spin {
+  0% {
+    transform: rotateX(-20deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(-20deg) rotateY(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scene {
+    height: 350px;
+  }
+
+  .cubeSmall {
+    --cube-size: 55px;
+    --logo-size: 28px;
+  }
+
+  .cubeMedium {
+    --cube-size: 75px;
+    --logo-size: 38px;
+  }
+
+  .cubeLarge {
+    --cube-size: 95px;
+    --logo-size: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scene {
+    height: 300px;
+  }
+
+  .cubeSmall {
+    --cube-size: 45px;
+    --logo-size: 22px;
+  }
+
+  .cubeMedium {
+    --cube-size: 60px;
+    --logo-size: 30px;
+  }
+
+  .cubeLarge {
+    --cube-size: 75px;
+    --logo-size: 38px;
+  }
+}

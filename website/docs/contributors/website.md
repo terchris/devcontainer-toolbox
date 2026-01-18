@@ -137,7 +137,7 @@ The site deploys automatically via GitHub Actions when changes to `website/` are
 
 **Workflow:** `.github/workflows/deploy-docs.yml`
 
-**URL:** https://terchris.github.io/devcontainer-toolbox/
+**URL:** https://dct.sovereignsky.no/
 
 To manually trigger a deploy:
 1. Go to Actions → "Deploy Documentation"

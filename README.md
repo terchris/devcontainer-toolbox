@@ -4,9 +4,9 @@
 
 Stop wasting time setting up development environments. DevContainer Toolbox gives you a complete, consistent setup that works on Windows, Mac, and Linux.
 
-[![View Documentation](website/static/img/docs-homepage.jpg)](https://terchris.github.io/devcontainer-toolbox/)
+[![View Documentation](website/static/img/dct-homepage.jpg)](https://dct.sovereignsky.no/)
 
-📚 **[View Full Documentation](https://terchris.github.io/devcontainer-toolbox/)** | [Getting Started](https://terchris.github.io/devcontainer-toolbox/docs/getting-started) | [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools)
+📚 **[View Full Documentation](https://dct.sovereignsky.no/)** | [Getting Started](https://dct.sovereignsky.no/docs/getting-started) | [Available Tools](https://dct.sovereignsky.no/docs/tools)
 
 ---
 
@@ -45,7 +45,7 @@ Done! Run `dev-setup` to install tools.
 
 <!-- TOOLS_END -->
 
-See [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools) for details and installation guides.
+See [Available Tools](https://dct.sovereignsky.no/docs/tools) for details and installation guides.
 
 ---
 
@@ -55,7 +55,7 @@ DevContainer Toolbox is built for AI coding assistants. The isolated container k
 
 ![AI implementing a feature](website/static/img/ai-implement-plan-teaser.gif)
 
-This 30-second clip shows an AI adding a new development tool. [Learn how it works](https://terchris.github.io/devcontainer-toolbox/docs/ai-docs/developing-using-ai).
+This 30-second clip shows an AI adding a new development tool. [Learn how it works](https://dct.sovereignsky.no/docs/ai-docs/developing-using-ai).
 
 ---
 
@@ -65,18 +65,18 @@ This 30-second clip shows an AI adding a new development tool. [Learn how it wor
 - **VS Code** with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 - **Windows users** - Install WSL first: `wsl --install` (run as Administrator, then restart)
 
-New to containers? See [What Are DevContainers?](https://terchris.github.io/devcontainer-toolbox/docs/what-are-devcontainers)
+New to containers? See [What Are DevContainers?](https://dct.sovereignsky.no/docs/what-are-devcontainers)
 
 ---
 
 ## Documentation
 
-- [Getting Started](https://terchris.github.io/devcontainer-toolbox/docs/getting-started) - Installation and first steps
-- [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools) - All installable tools
-- [Commands Reference](https://terchris.github.io/devcontainer-toolbox/docs/commands) - All `dev-*` commands
-- [AI Development](https://terchris.github.io/devcontainer-toolbox/docs/ai-docs/developing-using-ai) - Working with AI coding assistants
-- [Troubleshooting](https://terchris.github.io/devcontainer-toolbox/docs/troubleshooting) - Common issues and solutions
-- [Contributing](https://terchris.github.io/devcontainer-toolbox/docs/contributors) - How to contribute
+- [Getting Started](https://dct.sovereignsky.no/docs/getting-started) - Installation and first steps
+- [Available Tools](https://dct.sovereignsky.no/docs/tools) - All installable tools
+- [Commands Reference](https://dct.sovereignsky.no/docs/commands) - All `dev-*` commands
+- [AI Development](https://dct.sovereignsky.no/docs/ai-docs/developing-using-ai) - Working with AI coding assistants
+- [Troubleshooting](https://dct.sovereignsky.no/docs/troubleshooting) - Common issues and solutions
+- [Contributing](https://dct.sovereignsky.no/docs/contributors) - How to contribute
 
 ## License
 

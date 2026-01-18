@@ -995,7 +995,7 @@ Each plan delivers a **launchable increment** - the site remains functional afte
 ### PLAN-009: Domain, Mission Alignment & Blog
 **Priority:** Next (domain setup + content strategy)
 **Depends on:** PLAN-004 (completed)
-**Launchable after:** Yes - live at dev.sovereignsky.no with blog
+**Launchable after:** Yes - live at dct.sovereignsky.no with blog
 
 **Context: SovereignSky**
 [sovereignsky.no](http://sovereignsky.no) is a digital sovereignty resource hub for Norway, addressing the critical gap where Norwegian digital infrastructure depends on foreign powers (US cloud services, CLOUD Act). Created by [helpers.no](https://helpers.no), it connects to Totalforsvarsåret 2026 (Total Defense Year).
@@ -1009,7 +1009,7 @@ Each plan delivers a **launchable increment** - the site remains functional afte
 **Scope:**
 
 **1. Custom Domain Setup:**
-- Configure custom domain: `dev.sovereignsky.no`
+- Configure custom domain: `dct.sovereignsky.no`
 - Update `docusaurus.config.ts` with new URL
 - Set up DNS (CNAME to GitHub Pages)
 - Configure HTTPS (automatic with GitHub Pages)
@@ -1062,7 +1062,7 @@ blog: {
 **5. Navigation & Links:**
 - Add Blog to navbar
 - Footer: SovereignSky, helpers.no, GitHub
-- Cross-link: SovereignSky projects page → dev.sovereignsky.no
+- Cross-link: SovereignSky projects page → dct.sovereignsky.no
 
 **Files to modify/create:**
 - `website/docusaurus.config.ts` - Domain, blog config, navbar, footer
@@ -1120,7 +1120,7 @@ PLAN-006 (Analytics) 🔜  ── Can be done anytime (independent)
 | 8 | PLAN-007 | 📝 Draft - Templates integration (definition incomplete) |
 | 9 | PLAN-008 | 📝 Draft - Infrastructure docs (definition incomplete) |
 
-**Next up:** PLAN-009 (Domain, Mission & Blog) - dev.sovereignsky.no, sovereignty messaging, blog for tutorials & announcements
+**Next up:** PLAN-009 (Domain, Mission & Blog) - dct.sovereignsky.no, sovereignty messaging, blog for tutorials & announcements
 
 ---
 
@@ -1150,7 +1150,7 @@ PLAN-006 (Analytics) 🔜  ── Can be done anytime (independent)
 - ❌ `PLAN-005` - Interactive Homepage (scope delivered by PLAN-004)
 
 **Next plan** (in `backlog/`, ready for implementation):
-- 🔲 `PLAN-009-domain-mission-blog.md` - Custom domain (dev.sovereignsky.no), branding, blog setup
+- 🔲 `PLAN-009-domain-mission-blog.md` - Custom domain (dct.sovereignsky.no), branding, blog setup
 
 **Future plans** (in `backlog/`, definition incomplete):
 - 📝 `PLAN-006-analytics-setup.md` - Umami analytics (Status: Draft)

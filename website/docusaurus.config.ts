@@ -22,9 +22,9 @@ const config: Config = {
     v4: true,
   },
 
-  // GitHub Pages URL (configured via env vars for fork compatibility)
-  url: `https://${GITHUB_ORG}.github.io`,
-  baseUrl: `/${GITHUB_REPO}/`,
+  // Custom domain
+  url: 'https://dct.sovereignsky.no',
+  baseUrl: '/',
 
   // GitHub pages deployment config
   organizationName: GITHUB_ORG,
@@ -50,7 +50,15 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           editUrl: `https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/tree/main/website/`,
         },
-        blog: false, // Disable blog for now
+        blog: {
+          showReadingTime: true,
+          blogTitle: 'DevContainer Toolbox Blog',
+          blogDescription: 'Sovereign development tools for Norwegian digital resilience',
+          postsPerPage: 10,
+          blogSidebarTitle: 'Recent posts',
+          blogSidebarCount: 5,
+          editUrl: `https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/tree/main/website/`,
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -84,7 +92,7 @@ const config: Config = {
       textColor: '#fff',
       isCloseable: true,
     },
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/social-card.jpg',
     colorMode: {
       defaultMode: 'light',
       respectPrefersColorScheme: true,
@@ -101,6 +109,11 @@ const config: Config = {
           sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
+        },
+        {
+          to: '/blog',
+          label: 'Blog',
+          position: 'left',
         },
         {
           type: 'html',
@@ -128,6 +141,10 @@ const config: Config = {
               label: 'Available Tools',
               to: '/docs/tools',
             },
+            {
+              label: 'About',
+              to: '/docs/about',
+            },
           ],
         },
         {
@@ -144,6 +161,19 @@ const config: Config = {
           ],
         },
         {
+          title: 'SovereignSky',
+          items: [
+            {
+              label: 'SovereignSky Initiative',
+              href: 'https://sovereignsky.no',
+            },
+            {
+              label: 'helpers.no',
+              href: 'https://helpers.no',
+            },
+          ],
+        },
+        {
           title: 'More',
           items: [
             {
@@ -153,7 +183,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} DevContainer Toolbox. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} DevContainer Toolbox. Part of the <a href="https://sovereignsky.no" target="_blank" rel="noopener noreferrer">SovereignSky</a> initiative.`,
     },
     prism: {
       theme: prismThemes.github,

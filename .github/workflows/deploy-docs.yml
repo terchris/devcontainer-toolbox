@@ -9,6 +9,7 @@ on:
       - '.devcontainer/additions/**'
       - '.devcontainer/manage/dev-logos.sh'
       - '.devcontainer/manage/dev-docs.sh'
+      - '.devcontainer/manage/dev-cubes.sh'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch: # Allow manual trigger
 
@@ -53,6 +54,9 @@ jobs:
 
       - name: Generate documentation data
         run: bash .devcontainer/manage/dev-docs.sh
+
+      - name: Generate FloatingCubes configuration
+        run: bash .devcontainer/manage/dev-cubes.sh
 
       - name: Build website
         working-directory: website
