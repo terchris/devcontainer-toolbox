@@ -2,7 +2,7 @@
 # file: .devcontainer/manage/dev-docs.sh
 #
 # Generates comprehensive documentation by running all install scripts with --help
-# Output: website/docs/tools/index.md (overview), website/docs/tools-details.md (detailed), README.md (updated)
+# Output: website/docs/tools/index.mdx (overview), website/docs/commands.md (commands), README.md (updated)
 #
 # Usage:
 #   dev-docs                          # Generate full manual
@@ -75,7 +75,7 @@ Usage:
   dev-docs --verbose                # Show detailed progress
 
 Output:
-  website/docs/tools/index.md      - Overview table with links to tool pages
+  website/docs/tools/index.mdx     - Overview table with links to tool pages
   website/docs/tools/<category>/   - Category folders with individual tool pages
   website/docs/commands.md         - Command reference (dev-* commands)
   website/src/data/tools.json      - Tool metadata for React components

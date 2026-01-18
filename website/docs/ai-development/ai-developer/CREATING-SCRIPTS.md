@@ -259,4 +259,4 @@ Regenerate documentation (run inside the devcontainer):
 dev-docs
 ```
 
-This updates `website/docs/tools/index.md` so users can see the new tool. CI will fail if this is not done.
+This updates `website/docs/tools/index.mdx` so users can see the new tool. CI will fail if this is not done.
