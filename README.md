@@ -4,7 +4,7 @@
 
 Stop wasting time setting up development environments. DevContainer Toolbox gives you a complete, consistent setup that works on Windows, Mac, and Linux.
 
-[![View Documentation](website/static/img/docs-homepage.jpg)](https://terchris.github.io/devcontainer-toolbox/)
+[![View Documentation](website/static/img/dct-homepage.jpg)](https://terchris.github.io/devcontainer-toolbox/)
 
 📚 **[View Full Documentation](https://terchris.github.io/devcontainer-toolbox/)** | [Getting Started](https://terchris.github.io/devcontainer-toolbox/docs/getting-started) | [Available Tools](https://terchris.github.io/devcontainer-toolbox/docs/tools)
 

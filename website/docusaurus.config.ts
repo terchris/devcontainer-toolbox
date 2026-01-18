@@ -50,7 +50,15 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           editUrl: `https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/tree/main/website/`,
         },
-        blog: false, // Disable blog for now
+        blog: {
+          showReadingTime: true,
+          blogTitle: 'DevContainer Toolbox Blog',
+          blogDescription: 'Sovereign development tools for Norwegian digital resilience',
+          postsPerPage: 10,
+          blogSidebarTitle: 'Recent posts',
+          blogSidebarCount: 5,
+          editUrl: `https://github.com/${GITHUB_ORG}/${GITHUB_REPO}/tree/main/website/`,
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -101,6 +109,11 @@ const config: Config = {
           sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Docs',
+        },
+        {
+          to: '/blog',
+          label: 'Blog',
+          position: 'left',
         },
         {
           type: 'html',

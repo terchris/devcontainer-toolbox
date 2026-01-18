@@ -137,28 +137,18 @@ User confirms:
 
 ---
 
-## Phase 4: Blog Setup
+## Phase 4: Blog Setup — ✅ DONE
 
 ### Tasks
 
-- [ ] 4.1 Enable blog in `docusaurus.config.ts`:
-  ```js
-  blog: {
-    showReadingTime: true,
-    blogTitle: 'DevContainer Toolbox Blog',
-    blogDescription: 'Sovereign development tools for Norwegian digital resilience',
-    postsPerPage: 10,
-    blogSidebarTitle: 'Recent posts',
-    blogSidebarCount: 5,
-  },
-  ```
-- [ ] 4.2 Create `website/blog/` folder
-- [ ] 4.3 Create `website/blog/authors.yml` with author info
-- [ ] 4.4 Write first blog post: "Why DevContainer Toolbox Exists"
+- [x] 4.1 Enable blog in `docusaurus.config.ts`
+- [x] 4.2 Create `website/blog/` folder
+- [x] 4.3 Create `website/blog/authors.yml` with author info
+- [x] 4.4 Write first blog post: "Why DevContainer Toolbox Exists"
   - The sovereignty angle
   - Dev tools that work offline, locally, independently
   - Connection to Totalforsvarsaret 2026
-- [ ] 4.5 Add Blog to navbar in `docusaurus.config.ts`
+- [x] 4.5 Add Blog to navbar in `docusaurus.config.ts`
 - [ ] 4.6 Test blog functionality locally
 
 ### Validation

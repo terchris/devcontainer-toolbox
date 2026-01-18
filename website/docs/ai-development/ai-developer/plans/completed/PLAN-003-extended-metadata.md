@@ -10,7 +10,7 @@
 
 **Last Updated:** 2026-01-16
 
-**Source:** [INVESTIGATE-docusaurus-enhancements.md](../backlog/INVESTIGATE-docusaurus-enhancements.md)
+**Source:** [INVESTIGATE-docusaurus-enhancements.md](./INVESTIGATE-docusaurus-enhancements.md)
 
 ---
 

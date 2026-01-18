@@ -154,3 +154,16 @@
 .footer--dark .footer__copyright a:hover {
   color: #ffffff;
 }
+
+/* Version badge in navbar */
+.navbar .badge--secondary {
+  background-color: #1e3a5f;
+  color: #ffffff;
+  border: none;
+}
+
+[data-theme='dark'] .navbar .badge--secondary {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
