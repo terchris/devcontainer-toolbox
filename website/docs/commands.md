@@ -27,6 +27,7 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | [`dev-template`](#dev-template) | Create project files from templates |
 | [`dev-update`](#dev-update) | Update devcontainer-toolbox to latest version |
 | [`dev-setup`](#dev-setup) | Interactive menu for installing tools and managing services |
+| [`dev-cubes`](#dev-cubes) | Generate homepage floating cubes configuration |
 | [`dev-docs`](#dev-docs) | Generate documentation (tools.md, commands.md) |
 | [`dev-test`](#dev-test) | Run static, unit, and install tests |
 
@@ -107,6 +108,14 @@ dev-setup
 ---
 
 ## Contributor Tools
+
+### dev-cubes
+
+Generate homepage floating cubes configuration
+
+```bash
+dev-cubes
+```
 
 ### dev-docs
 
