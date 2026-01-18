@@ -65,11 +65,14 @@ jobs:
 
       - name: Commit documentation updates
         run: |
-          if [ -n "$(git status --porcelain website/docs/tools/index.md website/docs/tools-details.md website/docs/commands.md README.md)" ]; then
+          # Check for changes in auto-generated files
+          # Note: index.mdx (not .md), and tools-details.md was removed
+          DOCS_FILES="website/docs/tools/index.mdx website/docs/commands.md README.md website/src/data/tools.json website/src/data/categories.json"
+          if [ -n "$(git status --porcelain $DOCS_FILES)" ]; then
             echo "Documentation needs updating..."
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add website/docs/tools/index.md website/docs/tools-details.md website/docs/commands.md README.md
+            git add $DOCS_FILES
             git commit -m "docs: auto-update generated documentation [skip ci]"
             git push
             echo "Documentation updated and committed."

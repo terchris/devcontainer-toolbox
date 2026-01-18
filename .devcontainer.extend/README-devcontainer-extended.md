@@ -48,6 +48,6 @@ pip install -r requirements.txt
 
 ## More Information
 
-- **Available tools:** See [website/docs/tools](../website/docs/tools/index.md)
+- **Available tools:** See [website/docs/tools](../website/docs/tools/index.mdx)
 - **Adding new tools:** See [docs/contributors/adding-tools.md](../docs/contributors/adding-tools.md)
 - **System architecture:** See [docs/contributors/architecture.md](../docs/contributors/architecture.md)
