@@ -33,27 +33,38 @@ DevContainer Toolbox will be hosted at **dct.sovereignsky.no** as part of the So
 
 ---
 
-## Phase 1: Custom Domain Setup
+## Phase 1: Custom Domain Setup — ✅ DONE
 
 ### Tasks
 
-- [ ] 1.1 Create `website/static/CNAME` file with `dct.sovereignsky.no`
-- [ ] 1.2 Update `website/docusaurus.config.ts`:
+- [x] 1.1 Create `website/static/CNAME` file with `dct.sovereignsky.no`
+- [x] 1.2 Update `website/docusaurus.config.ts`:
   - Set `url: 'https://dct.sovereignsky.no'`
   - Set `baseUrl: '/'`
-- [ ] 1.3 Update GitHub repository settings (manual step - document for user):
-  - Settings → Pages → Custom domain: `dct.sovereignsky.no`
-- [ ] 1.4 Document DNS setup for user:
-  - CNAME record: `dct.sovereignsky.no` → `<github-username>.github.io`
-- [ ] 1.5 Update `README.md` with new domain
-- [ ] 1.6 Test locally that build works with new config
+- [x] 1.3 Update all hardcoded URLs (17 occurrences in README files and docs)
+- [ ] 1.4 **MANUAL:** Configure DNS (see below)
+- [ ] 1.5 **MANUAL:** Configure GitHub Pages (see below)
+
+### Manual Steps Required
+
+**DNS Configuration (at your DNS provider for sovereignsky.no):**
+```
+Type: CNAME
+Name: dct
+Value: terchris.github.io
+```
+
+**GitHub Repository Settings:**
+1. Go to repository Settings → Pages
+2. Under "Custom domain", enter: `dct.sovereignsky.no`
+3. Check "Enforce HTTPS" (after DNS propagates)
 
 ### Validation
 
 User confirms:
 - Build succeeds locally
-- DNS instructions are clear
-- Ready to configure DNS when going live
+- DNS configured
+- Site accessible at https://dct.sovereignsky.no
 
 ---
 

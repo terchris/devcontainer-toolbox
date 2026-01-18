@@ -22,9 +22,9 @@ const config: Config = {
     v4: true,
   },
 
-  // GitHub Pages URL (configured via env vars for fork compatibility)
-  url: `https://${GITHUB_ORG}.github.io`,
-  baseUrl: `/${GITHUB_REPO}/`,
+  // Custom domain
+  url: 'https://dct.sovereignsky.no',
+  baseUrl: '/',
 
   // GitHub pages deployment config
   organizationName: GITHUB_ORG,

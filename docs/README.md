@@ -4,7 +4,7 @@ All documentation for devcontainer-toolbox is built with **Docusaurus** and loca
 
 ## Documentation Website
 
-**Live site:** https://terchris.github.io/devcontainer-toolbox/
+**Live site:** https://dct.sovereignsky.no/
 
 **Source:** `website/docs/`
 
@@ -30,7 +30,7 @@ npm run build
 2. Add frontmatter with `title` and `sidebar_position`
 3. Restart dev server if adding new folders
 
-See [Contributing → Documentation Website](https://terchris.github.io/devcontainer-toolbox/docs/contributors/website) for the full guide.
+See [Contributing → Documentation Website](https://dct.sovereignsky.no/docs/contributors/website) for the full guide.
 
 ## Folder Structure
 

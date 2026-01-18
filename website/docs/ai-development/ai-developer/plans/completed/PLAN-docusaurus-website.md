@@ -230,7 +230,7 @@ npm run serve    # Serve production build locally
 **Validation:**
 - [x] Workflow file created
 - [ ] Push to main triggers build (requires merge to test)
-- [ ] Site live at https://terchris.github.io/devcontainer-toolbox/
+- [ ] Site live at https://dct.sovereignsky.no/
 
 ---
 
