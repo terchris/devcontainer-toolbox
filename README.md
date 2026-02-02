@@ -19,6 +19,9 @@ Stop wasting time setting up development environments. DevContainer Toolbox give
 ```bash
 # Mac/Linux
 curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+
+# Windows PowerShell (TODO: update for image mode)
+irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
 This creates a single `devcontainer.json` and pulls the pre-built container image.
