@@ -79,7 +79,9 @@ fi
 
 echo ""
 echo "Pulling image: $IMAGE"
-docker pull "$IMAGE"
+# Use sudo because the Docker socket GID from the host may not match
+# the container's docker group GID
+sudo docker pull "$IMAGE"
 
 echo ""
 echo "✅ Image updated!"
