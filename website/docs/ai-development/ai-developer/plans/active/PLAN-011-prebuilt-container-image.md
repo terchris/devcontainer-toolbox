@@ -62,23 +62,24 @@ Build the image definition and startup script. Test locally with `docker build` 
 
 ---
 
-## Phase 2: GitHub Actions CI
+## Phase 2: GitHub Actions CI — IN PROGRESS
 
 Automate multi-arch image builds and publish to ghcr.io on every release.
 
 ### Tasks
 
-- [ ] 2.1 Create GitHub Actions workflow `.github/workflows/build-image.yml`:
-  - Trigger: on push to `main` when `version.txt` changes (same trigger as current release)
-  - Use `docker/setup-buildx-action` for multi-arch support
-  - Use `docker/setup-qemu-action` for arm64 emulation
+- [x] 2.1 Create GitHub Actions workflow `.github/workflows/build-image.yml`:
+  - Trigger: on push to `main` when `version.txt`, `image/`, or `.devcontainer/` changes
+  - Uses `docker/setup-qemu-action` for arm64 emulation
+  - Uses `docker/setup-buildx-action` for multi-arch support
   - Login to ghcr.io with `docker/login-action` using `GITHUB_TOKEN`
   - Build and push with `docker/build-push-action`:
     - Platforms: `linux/amd64,linux/arm64`
-    - Tags: `ghcr.io/${GITHUB_ORG}/${GITHUB_REPO}:<version>` and `latest`
+    - Tags: `ghcr.io/<repo>:<version>` and `ghcr.io/<repo>:latest`
     - Cache: `type=gha` (GitHub Actions cache)
-  - All org/repo references use `${{ github.repository_owner }}` and `${{ github.event.repository.name }}`
-- [ ] 2.2 Ensure the published image is public (ghcr.io package visibility)
+  - Repository name lowercased for ghcr.io compatibility
+  - Manual trigger via `workflow_dispatch`
+- [ ] 2.2 Ensure the published image is public (ghcr.io package visibility — manual step after first push)
 - [ ] 2.3 Test: push a version bump, verify image appears on ghcr.io with correct tags and both architectures
 
 ### Validation
@@ -88,9 +89,9 @@ Automate multi-arch image builds and publish to ghcr.io on every release.
 - Both amd64 and arm64 manifests are present (`docker manifest inspect`)
 - User confirms phase is complete
 
-### Files to create
+### Files created
 
-- `.github/workflows/build-image.yml` (new)
+- `.github/workflows/build-image.yml`
 
 ---
 
