@@ -12,19 +12,23 @@ Stop wasting time setting up development environments. DevContainer Toolbox give
 
 ## Quick Start
 
+**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop) (or [Rancher Desktop](https://rancherdesktop.io/)) must be installed and running.
+
 **1. Install** (in your project folder):
 
 ```bash
 # Mac/Linux
 curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
 
-# Windows PowerShell
+# Windows PowerShell (TODO: update for image mode)
 irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
+This creates a single `devcontainer.json` and pulls the pre-built container image.
+
 **2. Open in VS Code** and click **"Reopen in Container"** when prompted.
 
-Done! Run `dev-setup` to install tools.
+Done! The container starts in seconds. Run `dev-setup` to install tools.
 
 ![dev-setup menu](website/static/img/dev-setup.png)
 
@@ -61,7 +65,7 @@ This 30-second clip shows an AI adding a new development tool. [Learn how it wor
 
 ## Prerequisites
 
-- **Docker** - Install [Rancher Desktop](https://rancherdesktop.io/) (free, no license required)
+- **Docker** - Install [Docker Desktop](https://www.docker.com/products/docker-desktop) or [Rancher Desktop](https://rancherdesktop.io/) (free, no license required)
 - **VS Code** with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 - **Windows users** - Install WSL first: `wsl --install` (run as Administrator, then restart)
 
