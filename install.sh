@@ -41,7 +41,6 @@ cat > .devcontainer/devcontainer.json << 'DEVCONTAINER_EOF'
     //
     // overrideCommand: false is REQUIRED so VS Code doesn't bypass the ENTRYPOINT.
     // The entrypoint handles all startup — no lifecycle hooks needed.
-    "name": "DevContainer Toolbox",
     "image": "ghcr.io/terchris/devcontainer-toolbox:latest",
     "overrideCommand": false,
 
