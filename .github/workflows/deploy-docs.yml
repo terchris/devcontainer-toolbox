@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'website/**'
+      - 'version.txt'
       - '.devcontainer/additions/**'
       - '.devcontainer/manage/dev-logos.sh'
       - '.devcontainer/manage/dev-docs.sh'
