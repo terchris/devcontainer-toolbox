@@ -14,7 +14,7 @@ SCRIPT_CHECK_COMMAND="true"
 
 #------------------------------------------------------------------------------
 
-STARTUP_LOG="/tmp/.dct-startup.log"
+STARTUP_LOG="/tmp/.dct-startup.log.saved"
 
 case "${1:-}" in
     --help|-h)
@@ -30,6 +30,5 @@ if [ -f "$STARTUP_LOG" ]; then
     cat "$STARTUP_LOG"
 else
     echo "No startup log found."
-    echo "The log is created when the container starts and is stored at:"
-    echo "  $STARTUP_LOG"
+    echo "The log is created when the container starts."
 fi

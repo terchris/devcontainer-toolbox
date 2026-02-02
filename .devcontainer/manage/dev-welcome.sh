@@ -35,20 +35,18 @@ else
 fi
 
 # Show startup log on the first terminal after container start.
-# The entrypoint writes all output to /tmp/.dct-startup.log. We stream it
-# here so the user sees setup progress (like postCreateCommand used to).
-# The log file is kept permanently so 'dev-log' can replay it anytime.
+# The entrypoint writes output to /tmp/.dct-startup.log. A permanent copy
+# is saved at .log.saved for dev-log. We display it here on first terminal.
 #
-# VS Code spawns an internal (invisible) shell before the user's terminal.
-# Both source this script, so we allow display for the first 2 shells:
-# shell 1 (internal, invisible) + shell 2 (user's terminal).
-# For non-VS-Code environments, the user just gets it on their first terminal.
+# VS Code spawns several internal (invisible) interactive shells before
+# the user's terminal. Each increments a counter. We allow up to 5 displays
+# so the user's terminal (typically 3rd-5th shell) still shows the log.
 _dct_startup_log="/tmp/.dct-startup.log"
 _dct_welcome_counter="/tmp/.dct-startup-welcome-count"
 if [ -f "$_dct_startup_log" ]; then
     _dct_count=0
     [ -f "$_dct_welcome_counter" ] && _dct_count=$(cat "$_dct_welcome_counter" 2>/dev/null || echo 0)
-    if [ "$_dct_count" -lt 2 ]; then
+    if [ "$_dct_count" -lt 5 ]; then
         echo ""
         if grep -q 'Startup complete' "$_dct_startup_log" 2>/dev/null; then
             # Entrypoint already finished — just display the log

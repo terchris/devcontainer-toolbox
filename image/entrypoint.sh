@@ -240,6 +240,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # HAND OFF — execute whatever was passed as CMD (e.g., "sleep infinity")
 # =============================================================================
 
+# Save a permanent copy for dev-log (before we close the file)
+cp "$STARTUP_LOG" "${STARTUP_LOG}.saved" 2>/dev/null || true
+
 # Restore stdout/stderr for the CMD process
 exec 1>/dev/null 2>/dev/null
 exec "$@"
