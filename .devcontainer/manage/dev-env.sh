@@ -28,12 +28,34 @@ SCRIPT_VER="0.0.1"
 # Configuration
 #------------------------------------------------------------------------------
 
-SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-ADDITIONS_DIR="$SCRIPT_DIR"
+# Resolve symlinks to get actual script location (handles /usr/local/bin/ symlinks)
+SCRIPT_SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SCRIPT_SOURCE" ]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+    SCRIPT_SOURCE="$(readlink "$SCRIPT_SOURCE")"
+    [[ $SCRIPT_SOURCE != /* ]] && SCRIPT_SOURCE="$SCRIPT_DIR/$SCRIPT_SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+
+# Handle both cases:
+# 1. Running from .devcontainer/manage/ or /opt/devcontainer-toolbox/manage/ (symlink resolved)
+# 2. Running from .devcontainer/ root (copy mode)
+if [[ "$(basename "$SCRIPT_DIR")" == "manage" ]]; then
+    DEVCONTAINER_DIR="$(dirname "$SCRIPT_DIR")"
+else
+    DEVCONTAINER_DIR="$SCRIPT_DIR"
+fi
+ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
+LIB_DIR="$ADDITIONS_DIR/lib"
 
 # Source component scanner library
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/component-scanner.sh"
+if [[ -f "$LIB_DIR/component-scanner.sh" ]]; then
+    source "$LIB_DIR/component-scanner.sh"
+else
+    echo "Error: component-scanner.sh not found at $LIB_DIR" >&2
+    exit 1
+fi
 
 #------------------------------------------------------------------------------
 # Category definitions - Load from categories.sh
@@ -41,15 +63,15 @@ source "$SCRIPT_DIR/lib/component-scanner.sh"
 
 # Source categories library to get all category definitions
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/categories.sh"
+source "$LIB_DIR/categories.sh"
 
 # Source display utilities library for box drawing and formatting
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/display-utils.sh"
+source "$LIB_DIR/display-utils.sh"
 
 # Source environment utilities library for container/host info
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/environment-utils.sh"
+source "$LIB_DIR/environment-utils.sh"
 
 # Global arrays for tools
 declare -a AVAILABLE_TOOLS=()

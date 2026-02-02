@@ -26,9 +26,25 @@ log_success() { echo -e "${GREEN}✅ $1${NC}"; }
 log_warn() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 log_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
 
+# Resolve script location (handles /usr/local/bin/ symlinks)
+SCRIPT_SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SCRIPT_SOURCE" ]; do
+    _dir="$(cd -P "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+    SCRIPT_SOURCE="$(readlink "$SCRIPT_SOURCE")"
+    [[ $SCRIPT_SOURCE != /* ]] && SCRIPT_SOURCE="$_dir/$SCRIPT_SOURCE"
+done
+_SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+
+if [[ "$(basename "$_SCRIPT_DIR")" == "manage" ]]; then
+    _DEVCONTAINER_DIR="$(dirname "$_SCRIPT_DIR")"
+else
+    _DEVCONTAINER_DIR="$_SCRIPT_DIR"
+fi
+
 # Configuration
-ENABLED_SERVICES_CONF="/workspace/.devcontainer.extend/enabled-services.conf"
-CONFIG_SUPERVISOR_SCRIPT="/workspace/.devcontainer/additions/config-supervisor.sh"
+DCT_WORKSPACE="${DCT_WORKSPACE:-/workspace}"
+ENABLED_SERVICES_CONF="$DCT_WORKSPACE/.devcontainer.extend/enabled-services.conf"
+CONFIG_SUPERVISOR_SCRIPT="$_DEVCONTAINER_DIR/additions/config-supervisor.sh"
 
 # Check if supervisord is running
 check_supervisord() {

@@ -7,6 +7,9 @@
 # environments (VS 2026, Docker CLI, Podman, JetBrains). For VS Code and
 # Codespaces, the devcontainer lifecycle hooks still run on top of this.
 #
+# All output is captured to /tmp/.dct-startup.log so the welcome message
+# can stream it to the user when they open the first terminal.
+#
 # All operations MUST be idempotent — safe to run multiple times.
 
 set -e
@@ -17,26 +20,26 @@ ADDITIONS_DIR="$DCT_HOME/additions"
 INIT_MARKER="/tmp/.dct-initialized"
 STARTUP_LOG="/tmp/.dct-startup.log"
 
-# Logging helper — writes to both stdout (Docker logs) and the startup log file
-: > "$STARTUP_LOG"  # truncate log file
-log() { echo "$@" | tee -a "$STARTUP_LOG"; }
+# Redirect ALL output (stdout + stderr) to the log file.
+# The entrypoint runs as PID 1 before any IDE connects, so stdout is
+# invisible anyway. The welcome script streams this file to the user.
+: > "$STARTUP_LOG"
+exec >> "$STARTUP_LOG" 2>&1
 
 # =============================================================================
 # EVERY START — runs on every container start
 # =============================================================================
 
-log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-log "DevContainer Toolbox — Starting up"
-log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 DevContainer Toolbox — Starting up"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Mark workspace git folder as safe (depends on mount path)
 git config --global --add safe.directory "$DCT_WORKSPACE" 2>/dev/null || true
 git config --global core.fileMode false 2>/dev/null || true
 git config --global core.hideDotFiles false 2>/dev/null || true
 
-# Apply host-captured git identity (written by initializeCommand on the host).
-# These files contain the developer's real name/email from the host machine.
-# Setting git config here ensures config-git.sh --verify finds correct values.
+# Apply host-captured git identity if available (from initializeCommand).
 HOST_GIT_NAME_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-name"
 HOST_GIT_EMAIL_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-email"
 
@@ -54,9 +57,10 @@ if [ -f "$HOST_GIT_EMAIL_FILE" ]; then
 fi
 
 # Refresh git identity (non-interactive)
-log "  Configuring git identity..."
+echo ""
+echo "🔐 Configuring git identity..."
 if [ -f "$ADDITIONS_DIR/config-git.sh" ]; then
-    bash "$ADDITIONS_DIR/config-git.sh" --verify 2>/dev/null || true
+    bash "$ADDITIONS_DIR/config-git.sh" --verify || true
 fi
 
 # Refresh host info
@@ -65,11 +69,10 @@ if [ -f "$ADDITIONS_DIR/config-host-info.sh" ]; then
 fi
 
 # Start supervisord services (checks PID file, won't start twice)
-log "  Starting services..."
+echo ""
+echo "🔧 Starting services..."
 if [ -f /etc/supervisor/supervisord.conf ]; then
-    # Source tool-installation.sh if available (has start_supervisor_services)
     if [ -f "$ADDITIONS_DIR/lib/tool-installation.sh" ]; then
-        # Source required dependencies
         source "$ADDITIONS_DIR/lib/install-common.sh" 2>/dev/null || true
         source "$ADDITIONS_DIR/lib/component-scanner.sh" 2>/dev/null || true
         source "$ADDITIONS_DIR/lib/prerequisite-check.sh" 2>/dev/null || true
@@ -112,12 +115,12 @@ fi
 
 if [ ! -f "$INIT_MARKER" ]; then
 
-    log ""
-    log "  First start — setting up container..."
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📦 First start — setting up container..."
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
     # Create .devcontainer.extend/ with template files if it doesn't exist.
-    # In copy mode this directory is part of the toolbox files.
-    # In image mode we create it so dev-setup and tool auto-install work.
     EXTEND_DIR="$DCT_WORKSPACE/.devcontainer.extend"
     if [ ! -d "$EXTEND_DIR" ]; then
         mkdir -p "$EXTEND_DIR"
@@ -171,47 +174,72 @@ PROJECT_EOF
     fi
 
     # Restore configurations from .devcontainer.secrets (non-interactive)
-    log "  Restoring saved configurations..."
+    echo ""
+    echo "🔐 Restoring saved configurations..."
     if [ -f "$ADDITIONS_DIR/lib/component-scanner.sh" ]; then
         source "$ADDITIONS_DIR/lib/component-scanner.sh" 2>/dev/null || true
 
         while IFS=$'\t' read -r script_basename config_name config_desc config_cat check_cmd; do
             local_config_path="$ADDITIONS_DIR/$script_basename"
             if [ -f "$local_config_path" ] && grep -q '= "--verify"' "$local_config_path" 2>/dev/null; then
-                bash "$local_config_path" --verify 2>/dev/null || true
+                if bash "$local_config_path" --verify 2>/dev/null; then
+                    echo "   ✅ $config_name restored"
+                fi
             fi
         done < <(scan_config_scripts "$ADDITIONS_DIR" 2>/dev/null) || true
     fi
 
     # Install non-default tools from enabled-tools.conf
-    # Default tools are baked into the image. Any extra tools the developer
-    # added via dev-setup are listed in enabled-tools.conf and must be
-    # re-installed when a new container is created (e.g., after dev-update).
-    log "  Installing tools from enabled-tools.conf..."
+    echo ""
+    echo "📦 Installing tools from enabled-tools.conf..."
     if [ -f "$ADDITIONS_DIR/lib/tool-installation.sh" ]; then
         source "$ADDITIONS_DIR/lib/install-common.sh" 2>/dev/null || true
         source "$ADDITIONS_DIR/lib/component-scanner.sh" 2>/dev/null || true
         source "$ADDITIONS_DIR/lib/prerequisite-check.sh" 2>/dev/null || true
         source "$ADDITIONS_DIR/lib/tool-installation.sh" 2>/dev/null || true
         install_enabled_tools "$ADDITIONS_DIR" \
-            "$DCT_WORKSPACE/.devcontainer.extend/enabled-tools.conf" 2>/dev/null || true
+            "$DCT_WORKSPACE/.devcontainer.extend/enabled-tools.conf" || true
     fi
 
     # Run project-specific installations
     if [ -f "$DCT_WORKSPACE/.devcontainer.extend/project-installs.sh" ]; then
-        log "  Running project-installs.sh..."
-        bash "$DCT_WORKSPACE/.devcontainer.extend/project-installs.sh" 2>/dev/null || true
+        echo ""
+        echo "🔧 Running project-installs.sh..."
+        bash "$DCT_WORKSPACE/.devcontainer.extend/project-installs.sh" || true
     fi
 
     touch "$INIT_MARKER"
-    log "  First-start setup complete."
 fi
 
-log ""
-log "  Startup complete. Type 'dev-help' for available commands."
-log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# =============================================================================
+# COMPLETION
+# =============================================================================
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🎉 Startup complete!"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "📋 Quick Start:"
+echo "   dev-setup       Main menu - install tools, manage services"
+echo "   dev-help        Show all available commands"
+echo "   dev-check       Configure required settings (Git identity, etc.)"
+echo ""
+
+# Check if Git identity is configured
+_git_name=$(git config --global user.name 2>/dev/null || echo "")
+_git_email=$(git config --global user.email 2>/dev/null || echo "")
+if [ -z "$_git_name" ] || [ -z "$_git_email" ] || [[ "$_git_email" == *@localhost ]]; then
+    echo "⚠️  Git identity not configured - run 'dev-setup' to set your name and email"
+    echo ""
+fi
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # =============================================================================
 # HAND OFF — execute whatever was passed as CMD (e.g., "sleep infinity")
 # =============================================================================
+
+# Restore stdout/stderr for the CMD process
+exec 1>/dev/null 2>/dev/null
 exec "$@"

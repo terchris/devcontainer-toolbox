@@ -121,19 +121,29 @@ RUN sudo rm -f /etc/apt/sources.list.d/yarn.list && \
 # Copy toolbox code into the image at /opt/devcontainer-toolbox/
 # Dev commands are made available via symlinks in /usr/local/bin/
 
-COPY .devcontainer/manage/ /opt/devcontainer-toolbox/manage/
-COPY .devcontainer/additions/ /opt/devcontainer-toolbox/additions/
-COPY version.txt /opt/devcontainer-toolbox/version.txt
+COPY --chown=vscode:vscode .devcontainer/manage/ /opt/devcontainer-toolbox/manage/
+COPY --chown=vscode:vscode .devcontainer/additions/ /opt/devcontainer-toolbox/additions/
+COPY --chown=vscode:vscode version.txt /opt/devcontainer-toolbox/version.txt
 
 # Create dev command symlinks in /usr/local/bin/ (already on PATH)
+# Every dev-*.sh in manage/ gets a symlink so dev-help listings all work
 RUN sudo ln -sf /opt/devcontainer-toolbox/manage/dev-setup.sh /usr/local/bin/dev-setup && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-help.sh /usr/local/bin/dev-help && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-check.sh /usr/local/bin/dev-check && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-docs.sh /usr/local/bin/dev-docs && \
-    # Make all scripts executable
-    sudo chmod +x /opt/devcontainer-toolbox/manage/*.sh && \
-    sudo chmod +x /opt/devcontainer-toolbox/additions/*.sh 2>/dev/null || true && \
-    sudo chmod +x /opt/devcontainer-toolbox/additions/lib/*.sh 2>/dev/null || true
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-env.sh /usr/local/bin/dev-env && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-services.sh /usr/local/bin/dev-services && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-test.sh /usr/local/bin/dev-test && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-template.sh /usr/local/bin/dev-template && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-update.sh /usr/local/bin/dev-update && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-clean.sh /usr/local/bin/dev-clean && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-logos.sh /usr/local/bin/dev-logos && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-cubes.sh /usr/local/bin/dev-cubes && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-log.sh /usr/local/bin/dev-log && \
+    # Make all scripts executable (files owned by vscode via --chown)
+    chmod +x /opt/devcontainer-toolbox/manage/*.sh && \
+    chmod +x /opt/devcontainer-toolbox/additions/*.sh 2>/dev/null || true && \
+    chmod +x /opt/devcontainer-toolbox/additions/lib/*.sh 2>/dev/null || true
 
 # Install welcome message for new terminals
 # Three locations needed for different shell startup paths:
@@ -158,8 +168,8 @@ RUN if [ -f /opt/devcontainer-toolbox/manage/dev-welcome.sh ]; then \
 # =============================================================================
 # ENTRYPOINT — startup script that runs regardless of IDE
 # =============================================================================
-COPY image/entrypoint.sh /opt/devcontainer-toolbox/entrypoint.sh
-RUN sudo chmod +x /opt/devcontainer-toolbox/entrypoint.sh
+COPY --chown=vscode:vscode image/entrypoint.sh /opt/devcontainer-toolbox/entrypoint.sh
+RUN chmod +x /opt/devcontainer-toolbox/entrypoint.sh
 
 ENTRYPOINT ["/opt/devcontainer-toolbox/entrypoint.sh"]
 CMD ["sleep", "infinity"]
