@@ -150,17 +150,35 @@ verify_git_identity() {
     # Setup persistent storage directory
     setup_persistent_storage
 
-    # First, restore basic git config if saved (name/email for commits)
+    # First, restore basic git config if saved (name/email for commits).
+    # Skip if the saved values are defaults — let detection find real values.
     if load_from_persistent_storage; then
-        git config --global user.name "${GIT_USER_NAME}" 2>/dev/null || true
-        git config --global user.email "${GIT_USER_EMAIL}" 2>/dev/null || true
+        if [[ "${GIT_USER_EMAIL:-}" != *@localhost ]] && [ "${GIT_USER_NAME:-}" != "Developer" ]; then
+            git config --global user.name "${GIT_USER_NAME}" 2>/dev/null || true
+            git config --global user.email "${GIT_USER_EMAIL}" 2>/dev/null || true
+        else
+            unset GIT_USER_EMAIL GIT_USER_NAME 2>/dev/null || true
+        fi
     fi
 
     # Now detect full identity including repo info
     detect_git_identity "/workspace"
 
-    # Save complete identity to file (this is the main identity file now)
-    save_git_identity_to_file
+    # Update git config with detected values (so git commits use correct identity)
+    if [[ "${GIT_USER_EMAIL:-}" != *@localhost ]]; then
+        git config --global user.email "${GIT_USER_EMAIL}" 2>/dev/null || true
+    fi
+    if [ -n "${GIT_USER_NAME:-}" ] && [ "${GIT_USER_NAME:-}" != "Developer" ]; then
+        git config --global user.name "${GIT_USER_NAME}" 2>/dev/null || true
+    fi
+
+    # Save complete identity to file, but only if we have real values.
+    # When no identity is configured (email falls back to @localhost),
+    # skip saving to avoid persisting defaults that block later detection
+    # (e.g., VS Code copies host .gitconfig after entrypoint runs).
+    if [[ "${GIT_USER_EMAIL:-}" != *@localhost ]]; then
+        save_git_identity_to_file
+    fi
 
     # Display what was detected
     echo "✅ Git identity detected:"

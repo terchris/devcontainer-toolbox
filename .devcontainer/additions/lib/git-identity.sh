@@ -108,9 +108,10 @@ parse_git_remote_url() {
 #
 detect_git_user_email() {
     local identity_file="/workspace/.devcontainer.secrets/env-vars/.git-identity"
+    local host_email_file="/workspace/.devcontainer.secrets/env-vars/.git-host-email"
 
-    # Priority 1: Already set in environment
-    if [ -n "${GIT_USER_EMAIL:-}" ]; then
+    # Priority 1: Already set in environment (skip fallback defaults)
+    if [ -n "${GIT_USER_EMAIL:-}" ] && [[ "${GIT_USER_EMAIL:-}" != *@localhost ]]; then
         return 0
     fi
 
@@ -123,7 +124,17 @@ detect_git_user_email() {
         fi
     fi
 
-    # Priority 3: Git config
+    # Priority 3: Host-captured email (from initializeCommand)
+    if [ -f "$host_email_file" ]; then
+        local host_email
+        host_email=$(cat "$host_email_file" 2>/dev/null | tr -d '[:space:]')
+        if [ -n "$host_email" ]; then
+            export GIT_USER_EMAIL="$host_email"
+            return 0
+        fi
+    fi
+
+    # Priority 4: Git config
     local git_email
     git_email=$(git config --global user.email 2>/dev/null || echo "")
     if [ -n "$git_email" ]; then
@@ -131,7 +142,7 @@ detect_git_user_email() {
         return 0
     fi
 
-    # Priority 4: Fallback to HOST_USER@localhost
+    # Priority 5: Fallback to HOST_USER@localhost
     local host_user="${HOST_USER:-$(whoami)}"
     export GIT_USER_EMAIL="${host_user}@localhost"
     return 0
@@ -208,9 +219,14 @@ detect_git_identity() {
     # Detect email
     detect_git_user_email
 
-    # Detect name from git config
+    # Detect name: git config → host-captured file → fallback
+    local host_name_file="/workspace/.devcontainer.secrets/env-vars/.git-host-name"
     export GIT_USER_NAME
-    GIT_USER_NAME=$(git config --global user.name 2>/dev/null || echo "Developer")
+    GIT_USER_NAME=$(git config --global user.name 2>/dev/null || echo "")
+    if [ -z "$GIT_USER_NAME" ] && [ -f "$host_name_file" ]; then
+        GIT_USER_NAME=$(cat "$host_name_file" 2>/dev/null | tr -d '\n\r')
+    fi
+    GIT_USER_NAME="${GIT_USER_NAME:-Developer}"
 
     # Detect remote URL and parse it
     local remote_url

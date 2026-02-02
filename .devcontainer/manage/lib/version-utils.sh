@@ -29,10 +29,12 @@ _load_version_info() {
     if [ -f "$version_file" ]; then
         TOOLBOX_VERSION=$(grep "^VERSION=" "$version_file" 2>/dev/null | cut -d= -f2)
         TOOLBOX_REPO=$(grep "^REPO=" "$version_file" 2>/dev/null | cut -d= -f2)
-    # Fall back to version.txt in workspace root (for development/fresh clones)
+    # Image mode: version.txt is inside $DCT_HOME (not in parent dir)
+    elif [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/version.txt" ]; then
+        TOOLBOX_VERSION=$(cat "$DCT_HOME/version.txt" 2>/dev/null | tr -d '[:space:]')
+    # Copy mode: version.txt in workspace root (parent of .devcontainer/)
     elif [ -f "$version_txt" ]; then
         TOOLBOX_VERSION=$(cat "$version_txt" 2>/dev/null | tr -d '[:space:]')
-        TOOLBOX_REPO="terchris/devcontainer-toolbox"
     fi
 }
 
