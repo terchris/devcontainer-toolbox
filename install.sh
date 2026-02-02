@@ -1,66 +1,118 @@
 #!/bin/bash
-# install.sh - First-time install of devcontainer-toolbox
-# Run with: curl -fsSL https://raw.githubusercontent.com/REPO/main/install.sh | bash
+# install.sh - First-time install of devcontainer-toolbox (image mode)
+# Run with: curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
 set -e
 
 REPO="terchris/devcontainer-toolbox"
-URL="https://github.com/$REPO/releases/download/latest/dev_containers.zip"
-TEMP_DIR=$(mktemp -d)
+IMAGE="ghcr.io/$REPO:latest"
 
 echo "Installing devcontainer-toolbox from $REPO..."
+echo ""
 
-# Download
-curl -fsSL "$URL" -o "$TEMP_DIR/dev_containers.zip"
+# ─── 1. Check Docker is available ────────────────────────────────────────────
 
-# Extract
-unzip -q "$TEMP_DIR/dev_containers.zip" -d "$TEMP_DIR/extract"
+if ! command -v docker &> /dev/null; then
+    echo "Error: Docker is not installed or not in PATH."
+    echo ""
+    echo "Install Docker Desktop from: https://www.docker.com/products/docker-desktop"
+    echo "Then run this script again."
+    exit 1
+fi
 
-# Check for existing .devcontainer
+# ─── 2. Backup existing .devcontainer/ ───────────────────────────────────────
+
 if [ -d ".devcontainer" ]; then
-    if [ -f ".devcontainer/.version" ]; then
-        echo "Found existing devcontainer-toolbox installation."
-        echo "Use 'dev-update' inside the container to update instead."
-        rm -rf "$TEMP_DIR"
-        exit 1
-    else
-        echo "Found existing .devcontainer without version info."
-        echo "This may be from an older installation or a different setup."
-        echo "Creating backup at .devcontainer.backup..."
-        rm -rf .devcontainer.backup
-        mv .devcontainer .devcontainer.backup
-        echo "Backup created."
-    fi
-fi
-
-# Copy .devcontainer
-cp -r "$TEMP_DIR/extract/.devcontainer" .
-
-# Handle .devcontainer.extend
-if [ -d ".devcontainer.extend" ]; then
-    echo "Found existing .devcontainer.extend."
-    echo "Creating backup at .devcontainer.extend.backup..."
-    rm -rf .devcontainer.extend.backup
-    mv .devcontainer.extend .devcontainer.extend.backup
+    echo "Found existing .devcontainer/ directory."
+    echo "Creating backup at .devcontainer.backup/..."
+    rm -rf .devcontainer.backup
+    mv .devcontainer .devcontainer.backup
     echo "Backup created."
+    echo ""
 fi
 
-# Copy fresh .devcontainer.extend
-cp -r "$TEMP_DIR/extract/.devcontainer.extend" .
+# ─── 3. Create .devcontainer/devcontainer.json ───────────────────────────────
 
-# Cleanup
-rm -rf "$TEMP_DIR"
+mkdir -p .devcontainer
+
+cat > .devcontainer/devcontainer.json << 'DEVCONTAINER_EOF'
+{
+    // DevContainer Toolbox — pre-built image mode
+    // Docs: https://github.com/terchris/devcontainer-toolbox
+    //
+    // overrideCommand: false is REQUIRED so VS Code doesn't bypass the ENTRYPOINT.
+    // The entrypoint handles all startup — no lifecycle hooks needed.
+    "name": "DevContainer Toolbox",
+    "image": "ghcr.io/terchris/devcontainer-toolbox:latest",
+    "overrideCommand": false,
+
+    // VPN capabilities
+    "runArgs": [
+        "--cap-add=NET_ADMIN",
+        "--cap-add=NET_RAW",
+        "--cap-add=SYS_ADMIN",
+        "--cap-add=AUDIT_WRITE",
+        "--device=/dev/net/tun:/dev/net/tun",
+        "--privileged"
+    ],
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "yzhang.markdown-all-in-one",
+                "MermaidChart.vscode-mermaid-chart",
+                "redhat.vscode-yaml",
+                "mhutchie.git-graph",
+                "timonwong.shellcheck"
+            ]
+        }
+    },
+
+    "remoteEnv": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock",
+        "DCT_HOME": "/opt/devcontainer-toolbox",
+        "DCT_WORKSPACE": "/workspace"
+    },
+
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached"
+    ],
+
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+    // Capture host git identity before container starts
+    "initializeCommand": "mkdir -p .devcontainer.secrets/env-vars && (git config --global user.name > .devcontainer.secrets/env-vars/.git-host-name 2>/dev/null || true) && (git config --global user.email > .devcontainer.secrets/env-vars/.git-host-email 2>/dev/null || true)",
+
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+    "shutdownAction": "stopContainer",
+    "updateRemoteUserUID": true,
+    "init": true
+}
+DEVCONTAINER_EOF
+
+echo "Created .devcontainer/devcontainer.json"
+
+# ─── 4. Pull the Docker image ────────────────────────────────────────────────
 
 echo ""
-echo "Installed devcontainer-toolbox!"
+echo "Pulling container image: $IMAGE"
+echo "(This may take a few minutes on first install...)"
+docker pull "$IMAGE"
+
+# ─── 5. Print next steps ─────────────────────────────────────────────────────
+
+echo ""
+echo "✅ devcontainer-toolbox installed!"
 echo ""
 echo "Next steps:"
 echo "  1. Open this folder in VS Code"
 echo "  2. When prompted, click 'Reopen in Container'"
-echo "  3. Inside the container, run: dev-help (to see available commands)"
-echo "  4. Run: dev-update (to check for updates)"
+echo "     (or run: Cmd/Ctrl+Shift+P > 'Dev Containers: Reopen in Container')"
+echo "  3. Inside the container, run: dev-help"
+echo ""
 
-if [ -d ".devcontainer.extend.backup" ]; then
+if [ -d ".devcontainer.backup" ]; then
+    echo "Note: Your previous .devcontainer/ was backed up to .devcontainer.backup/"
     echo ""
-    echo "Note: Your previous .devcontainer.extend was backed up."
-    echo "Review .devcontainer.extend.backup and reconfigure as needed."
 fi
