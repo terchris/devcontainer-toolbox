@@ -23,6 +23,7 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | [`dev-clean`](#dev-clean) | Clean up devcontainer resources |
 | [`dev-env`](#dev-env) | Show installed tools and environment info |
 | [`dev-help`](#dev-help) | Show available commands and version info |
+| [`dev-log`](#dev-log) | Display the container startup log |
 | [`dev-services`](#dev-services) | Manage background services (start, stop, status, logs) |
 | [`dev-template`](#dev-template) | Create project files from templates |
 | [`dev-update`](#dev-update) | Update devcontainer-toolbox to latest version |
@@ -66,6 +67,14 @@ Show available commands and version info
 
 ```bash
 dev-help
+```
+
+### dev-log
+
+Display the container startup log
+
+```bash
+dev-log
 ```
 
 ### dev-services
