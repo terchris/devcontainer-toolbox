@@ -83,9 +83,9 @@ $devcontainerJson = @'
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
 
     // Capture host git identity before container starts.
-    // Uses "bash -c" so it works on both bash (macOS/Linux) and PowerShell (Windows).
-    // On Windows, bash is available via Git for Windows or WSL.
-    "initializeCommand": "bash -c 'mkdir -p .devcontainer.secrets/env-vars && (git config --global user.name > .devcontainer.secrets/env-vars/.git-host-name 2>/dev/null || true) && (git config --global user.email > .devcontainer.secrets/env-vars/.git-host-email 2>/dev/null || true)'",
+    // Uses cmd.exe syntax since VS Code on Windows runs initializeCommand via cmd.exe.
+    // If git is not installed, the commands silently fail — entrypoint has fallbacks.
+    "initializeCommand": "mkdir .devcontainer.secrets\\env-vars 2>nul & git config --global user.name > .devcontainer.secrets\\env-vars\\.git-host-name 2>nul & git config --global user.email > .devcontainer.secrets\\env-vars\\.git-host-email 2>nul",
 
     "remoteUser": "vscode",
     "containerUser": "vscode",
