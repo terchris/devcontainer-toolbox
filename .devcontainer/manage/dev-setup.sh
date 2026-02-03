@@ -1201,11 +1201,15 @@ manage_autostart_services() {
 }
 
 # Manage auto-install tools (similar to auto-start services)
+# After updating enabled-tools.conf, installs newly enabled tools immediately.
+# Uses the same install pattern as execute_tool_installation() but batched.
 manage_autoinstall_tools() {
     while true; do
-        # Build checklist with all tools
+        # Build checklist with all tools and record current enabled state
         local checklist_options=()
         local option_num=1
+        local -a tool_ids=()
+        local -a previously_enabled=()
 
         for i in "${!AVAILABLE_TOOLS[@]}"; do
             local tool_name="${AVAILABLE_TOOLS[$i]}"
@@ -1215,14 +1219,17 @@ manage_autoinstall_tools() {
 
             # Extract tool ID
             local tool_id=$(extract_script_metadata "$script_path" "SCRIPT_ID")
+            tool_ids[$i]="$tool_id"
 
             # Build display name
             local display_name="$tool_name"
 
-            # Check if tool is auto-enabled
+            # Check if tool is auto-enabled and snapshot the state
             local status="off"
+            previously_enabled[$i]="off"
             if is_tool_auto_enabled "$tool_id"; then
                 status="on"
+                previously_enabled[$i]="on"
             fi
 
             checklist_options+=("$option_num" "$display_name" "$status")
@@ -1233,7 +1240,7 @@ manage_autoinstall_tools() {
         local selected
         selected=$(dialog --clear \
             --title "Manage Auto-Install Tools" \
-            --checklist "Select tools to auto-install on container build:\n\nSPACE=toggle  ENTER=save  ESC=cancel" \
+            --checklist "Checked tools will be installed now and on every rebuild.\nUnchecked tools are removed from auto-install.\n\nSPACE=toggle  ENTER=save  ESC=cancel" \
             $DIALOG_HEIGHT $DIALOG_WIDTH $MENU_HEIGHT \
             "${checklist_options[@]}" \
             2>&1 >/dev/tty)
@@ -1245,12 +1252,31 @@ manage_autoinstall_tools() {
 
         log_user_choice "Manage Auto-Install Tools" "Updated selections: $selected"
 
-        # Process selections
-        # First, disable all tools
+        # Build set of new selections for comparison
+        local -a new_enabled=()
         for i in "${!AVAILABLE_TOOLS[@]}"; do
-            local script_name="${TOOL_SCRIPTS[$i]}"
-            local script_path="$ADDITIONS_DIR/$script_name"
-            local tool_id=$(extract_script_metadata "$script_path" "SCRIPT_ID")
+            new_enabled[$i]="off"
+        done
+        for selection in $selected; do
+            selection=$(echo "$selection" | tr -d '"')
+            local idx=$((selection - 1))
+            new_enabled[$idx]="on"
+        done
+
+        # Determine what changed
+        local -a to_install=()
+        local -a to_disable=()
+        for i in "${!AVAILABLE_TOOLS[@]}"; do
+            if [[ "${previously_enabled[$i]}" == "off" && "${new_enabled[$i]}" == "on" ]]; then
+                to_install+=("$i")
+            elif [[ "${previously_enabled[$i]}" == "on" && "${new_enabled[$i]}" == "off" ]]; then
+                to_disable+=("$i")
+            fi
+        done
+
+        # Update enabled-tools.conf: disable all then enable selected
+        for i in "${!AVAILABLE_TOOLS[@]}"; do
+            local tool_id="${tool_ids[$i]}"
             local tool_name="${AVAILABLE_TOOLS[$i]}"
 
             if is_tool_auto_enabled "$tool_id"; then
@@ -1259,25 +1285,107 @@ manage_autoinstall_tools() {
             fi
         done
 
-        # Then, enable selected tools
         for selection in $selected; do
-            # Remove quotes from selection
             selection=$(echo "$selection" | tr -d '"')
-            # Map selection back to actual tool index
             local tool_index=$((selection - 1))
-            local script_name="${TOOL_SCRIPTS[$tool_index]}"
-            local script_path="$ADDITIONS_DIR/$script_name"
-            local tool_id=$(extract_script_metadata "$script_path" "SCRIPT_ID")
+            local tool_id="${tool_ids[$tool_index]}"
             local tool_name="${AVAILABLE_TOOLS[$tool_index]}"
 
             enable_tool_autoinstall "$tool_id" "$tool_name" >/dev/null 2>&1
             log_info_msg "Enabled auto-install for: $tool_name ($tool_id)"
         done
 
-        # Show success message
-        dialog --title "Success" --msgbox "Auto-install tools updated successfully!" 8 50
-        clear
         log_action "Auto-install tools configuration updated"
+
+        # Install newly enabled tools immediately
+        if [[ ${#to_install[@]} -gt 0 ]]; then
+            clear
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Installing ${#to_install[@]} newly enabled tool(s)..."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+
+            local install_ok=0
+            local install_skip=0
+            local install_fail=0
+
+            for idx in "${to_install[@]}"; do
+                local tool_name="${AVAILABLE_TOOLS[$idx]}"
+                local script_name="${TOOL_SCRIPTS[$idx]}"
+                local script_path="$ADDITIONS_DIR/$script_name"
+                local check_command=$(extract_script_metadata "$script_path" "SCRIPT_CHECK_COMMAND")
+
+                # Skip if already installed
+                if [[ -n "$check_command" ]] && eval "$check_command" 2>/dev/null; then
+                    echo "✅ $tool_name — already installed"
+                    ((install_skip++)) || true
+                    continue
+                fi
+
+                # Check prerequisites
+                local prerequisite_configs=$(extract_script_metadata "$script_path" "SCRIPT_PREREQUISITES")
+                if [[ -n "$prerequisite_configs" ]]; then
+                    if ! check_prerequisite_configs "$prerequisite_configs" "$ADDITIONS_DIR"; then
+                        local missing_msg=$(show_missing_prerequisites "$prerequisite_configs" "$ADDITIONS_DIR")
+                        echo "⚠️  $tool_name — skipped (prerequisites not met)"
+                        echo "   $missing_msg"
+                        ((install_fail++)) || true
+                        continue
+                    fi
+                fi
+
+                echo "📦 Installing: $tool_name"
+                log_installation "$script_name" "STARTING"
+                chmod +x "$script_path"
+
+                set +e
+                bash "$script_path"
+                local exit_code=$?
+                set -e
+
+                if [[ $exit_code -eq 0 ]]; then
+                    log_installation "$script_name" "SUCCESS"
+                    echo "✅ $tool_name — installed"
+                    ((install_ok++)) || true
+                else
+                    log_installation "$script_name" "FAILED"
+                    echo "❌ $tool_name — installation failed"
+                    ((install_fail++)) || true
+                fi
+                echo ""
+            done
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Installed: $install_ok  Skipped: $install_skip  Failed: $install_fail"
+
+            if [[ ${#to_disable[@]} -gt 0 ]]; then
+                echo ""
+                echo "Removed from auto-install:"
+                for idx in "${to_disable[@]}"; do
+                    echo "  - ${AVAILABLE_TOOLS[$idx]}"
+                done
+            fi
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            read -p "Press Enter to continue..." -r
+        else
+            # No new installs — show config update or no-change summary
+            clear
+            if [[ ${#to_disable[@]} -gt 0 ]]; then
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo "Removed from auto-install:"
+                for idx in "${to_disable[@]}"; do
+                    echo "  - ${AVAILABLE_TOOLS[$idx]}"
+                done
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo ""
+                read -p "Press Enter to continue..." -r
+            else
+                dialog --title "No Changes" --msgbox "Auto-install tools — no changes made." 8 50
+                clear
+            fi
+        fi
 
         return 0
     done
