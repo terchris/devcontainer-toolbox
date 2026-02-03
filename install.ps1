@@ -85,7 +85,7 @@ $devcontainerJson = @'
     // Capture host git identity before container starts.
     // Uses cmd.exe syntax since VS Code on Windows runs initializeCommand via cmd.exe.
     // If git is not installed, the commands silently fail — entrypoint has fallbacks.
-    "initializeCommand": "mkdir .devcontainer.secrets\\env-vars 2>nul & git config --global user.name > .devcontainer.secrets\\env-vars\\.git-host-name 2>nul & git config --global user.email > .devcontainer.secrets\\env-vars\\.git-host-email 2>nul",
+    "initializeCommand": "mkdir .devcontainer.secrets\\env-vars 2>nul & git config --global user.name > .devcontainer.secrets\\env-vars\\.git-host-name 2>nul & git config --global user.email > .devcontainer.secrets\\env-vars\\.git-host-email 2>nul & ver >nul",
 
     "remoteUser": "vscode",
     "containerUser": "vscode",
