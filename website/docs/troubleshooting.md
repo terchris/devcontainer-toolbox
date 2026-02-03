@@ -27,6 +27,17 @@ Extension ID: ms-vscode-remote.remote-containers
 
 **Solution:** Start Docker/Rancher Desktop and try again.
 
+### Windows: "A mount config is invalid"
+
+**Symptom:** Container fails to start with "A mount config is invalid. Make sure it has the right format and a secure folder that exists on the machine where Docker daemon is running."
+
+**Cause:** This happens when `devcontainer.json` includes a Docker socket mount (`/var/run/docker.sock`) that doesn't exist on the Windows host. On Windows, the Docker daemon runs inside WSL2.
+
+**Solution:** Re-run the Windows install command in your project folder to get an updated `devcontainer.json`:
+```powershell
+irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+```
+
 ---
 
 ## Git Issues
@@ -128,6 +139,16 @@ dev-services enable <service-name>
 ### dev-update permission denied
 
 **Solution:** Run with sudo if needed, or check file permissions.
+
+### Windows: dev-update says "Docker is not available"
+
+**This is expected on Windows.** The Docker socket isn't mounted inside the container on Windows. `dev-update` will show you the exact command to run in your host terminal:
+
+```powershell
+docker pull ghcr.io/terchris/devcontainer-toolbox:latest
+```
+
+Then rebuild the container: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
 
 ### Update not applying
 
