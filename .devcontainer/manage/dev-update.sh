@@ -77,15 +77,28 @@ fi
 
 # ─── Pull the latest image ───────────────────────────────────────────────────
 
-echo ""
-echo "Pulling image: $IMAGE"
-# Use sudo because the Docker socket GID from the host may not match
-# the container's docker group GID
-sudo docker pull "$IMAGE"
+# Check if Docker is available inside the container (requires socket mount)
+if sudo docker info &>/dev/null; then
+    echo ""
+    echo "Pulling image: $IMAGE"
+    sudo docker pull "$IMAGE"
 
-echo ""
-echo "✅ Image updated!"
-echo ""
-echo "🔄 Rebuild the container to apply the update:"
-echo "   VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
-echo ""
+    echo ""
+    echo "✅ Image updated!"
+    echo ""
+    echo "🔄 Rebuild the container to apply the update:"
+    echo "   VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
+    echo ""
+else
+    # Docker socket not mounted (typical on Windows where /var/run/docker.sock
+    # doesn't exist on the host). Give the user a command to run on the host.
+    echo ""
+    echo "Docker is not available inside this container."
+    echo "To update, run this in your host terminal (PowerShell or CMD):"
+    echo ""
+    echo "  docker pull $IMAGE"
+    echo ""
+    echo "Then rebuild the container:"
+    echo "  VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
+    echo ""
+fi
