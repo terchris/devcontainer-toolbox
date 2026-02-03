@@ -1357,34 +1357,61 @@ manage_autoinstall_tools() {
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "Installed: $install_ok  Skipped: $install_skip  Failed: $install_fail"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        fi
 
-            if [[ ${#to_disable[@]} -gt 0 ]]; then
-                echo ""
-                echo "Removed from auto-install:"
-                for idx in "${to_disable[@]}"; do
-                    echo "  - ${AVAILABLE_TOOLS[$idx]}"
-                done
+        # Uninstall newly disabled tools
+        if [[ ${#to_disable[@]} -gt 0 ]]; then
+            if [[ ${#to_install[@]} -eq 0 ]]; then
+                clear
             fi
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Uninstalling ${#to_disable[@]} disabled tool(s)..."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+
+            local uninstall_ok=0
+            local uninstall_fail=0
+
+            for idx in "${to_disable[@]}"; do
+                local tool_name="${AVAILABLE_TOOLS[$idx]}"
+                local script_name="${TOOL_SCRIPTS[$idx]}"
+                local script_path="$ADDITIONS_DIR/$script_name"
+
+                echo "🗑️  Uninstalling: $tool_name"
+                log_installation "$script_name" "UNINSTALL_STARTING"
+                chmod +x "$script_path"
+
+                set +e
+                bash "$script_path" --uninstall
+                local exit_code=$?
+                set -e
+
+                if [[ $exit_code -eq 0 ]]; then
+                    log_installation "$script_name" "UNINSTALL_SUCCESS"
+                    echo "✅ $tool_name — uninstalled"
+                    ((uninstall_ok++)) || true
+                else
+                    log_installation "$script_name" "UNINSTALL_FAILED"
+                    echo "❌ $tool_name — uninstall failed"
+                    ((uninstall_fail++)) || true
+                fi
+                echo ""
+            done
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Uninstalled: $uninstall_ok  Failed: $uninstall_fail"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        fi
+
+        # Show prompt or no-change message
+        if [[ ${#to_install[@]} -gt 0 || ${#to_disable[@]} -gt 0 ]]; then
             echo ""
             read -p "Press Enter to continue..." -r
         else
-            # No new installs — show config update or no-change summary
+            dialog --title "No Changes" --msgbox "Auto-install tools — no changes made." 8 50
             clear
-            if [[ ${#to_disable[@]} -gt 0 ]]; then
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo "Removed from auto-install:"
-                for idx in "${to_disable[@]}"; do
-                    echo "  - ${AVAILABLE_TOOLS[$idx]}"
-                done
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo ""
-                read -p "Press Enter to continue..." -r
-            else
-                dialog --title "No Changes" --msgbox "Auto-install tools — no changes made." 8 50
-                clear
-            fi
         fi
 
         return 0

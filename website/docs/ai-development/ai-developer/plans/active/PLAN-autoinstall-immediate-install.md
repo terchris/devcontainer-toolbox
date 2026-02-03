@@ -30,15 +30,15 @@ Users expect that enabling a tool in the checklist installs it right away.
 
 1–4 same as above, then:
 5. Newly enabled tools are **installed immediately** (same as "Browse & Install")
-6. Newly disabled tools are removed from `enabled-tools.conf` (no automatic uninstall — not all scripts support it)
-7. User sees a summary of what was installed/skipped/failed
+6. Newly disabled tools are **uninstalled immediately** via `--uninstall` flag (all install scripts support it via the common framework)
+7. User sees a summary of what was installed/uninstalled/skipped/failed
 
 ### How the dialog works
 
 The checklist is a standard `dialog --checklist` widget. An `[*]` next to a tool means it is currently listed in `enabled-tools.conf`. The user interaction is:
 
 1. **SPACE** — toggles a single item on/off. This only changes the visual state in the dialog; nothing is saved or installed yet.
-2. **ENTER (OK)** — confirms all selections. The code compares the previous state against the new state, updates `enabled-tools.conf`, and installs any newly checked tools.
+2. **ENTER (OK)** — confirms all selections. The code compares the previous state against the new state, updates `enabled-tools.conf`, installs newly checked tools, and uninstalls newly unchecked tools.
 3. **ESC / Cancel** — discards all changes. Nothing is saved or installed.
 
 All install/uninstall actions happen **after the user presses OK**, not on individual toggles. This lets the user review the full set of changes before committing.
@@ -62,13 +62,17 @@ All install/uninstall actions happen **after the user presses OK**, not on indiv
   - Log success/failure
 - [x] 1.5 Show summary: installed count, skipped count, failed count, disabled tools list
 - [x] 1.6 Update the checklist dialog description to say "Checked tools will be installed now and on every rebuild"
+- [x] 1.7 For each newly disabled tool:
+  - Run `bash "$script_path" --uninstall` (all scripts support this via the common install framework)
+  - Log success/failure
+- [x] 1.8 Update summary to include uninstall counts
 
 ### Validation
 
 - User opens `dev-setup` → option 7
 - Enables a tool that isn't installed → tool installs immediately
 - Enables a tool that is already installed → shows "already installed", skips
-- Disables a tool → removed from `enabled-tools.conf`, no uninstall attempted
+- Disables a tool → uninstalled immediately and removed from `enabled-tools.conf`
 - No changes → shows "no changes" message
 - User confirms phase is complete
 
@@ -83,7 +87,7 @@ All install/uninstall actions happen **after the user presses OK**, not on indiv
 - [ ] Enabling a tool in the checklist installs it immediately
 - [ ] Already-installed tools are skipped (not re-installed)
 - [ ] Prerequisites are checked before installing
-- [ ] Disabling a tool updates config only (no uninstall)
+- [ ] Disabling a tool uninstalls it immediately via `--uninstall`
 - [ ] Summary is shown after save
 - [ ] Existing "Browse & Install" flow is unchanged
 - [ ] Entrypoint startup still reads `enabled-tools.conf` normally
@@ -94,4 +98,4 @@ All install/uninstall actions happen **after the user presses OK**, not on indiv
 
 - The install logic should match what `execute_tool_installation()` does (lines 2264-2330 in dev-setup.sh), but without the interactive dialog wrapper — just direct console output since we may be installing multiple tools in sequence.
 - `install_single_tool()` from `tool-installation.sh` could also be used, but it requires sourcing multiple libraries that may not be loaded in the dev-setup context. Simpler to inline the check-and-run pattern.
-- No uninstall is attempted because not all install scripts support `--uninstall`. Users who want to reclaim space can rebuild the container.
+- All 24 install scripts support `--uninstall` via the common install framework (`lib/install-common.sh`). Uninstall is run for all newly disabled tools.
