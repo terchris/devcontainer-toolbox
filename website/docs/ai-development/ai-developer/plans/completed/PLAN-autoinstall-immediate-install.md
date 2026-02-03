@@ -4,7 +4,9 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Completed
+
+**Completed**: 2026-02-03
 
 **Goal**: When users toggle tools on/off in the "Manage Auto-Install Tools" checklist, install newly enabled tools immediately instead of waiting for container rebuild.
 
@@ -45,7 +47,7 @@ All install/uninstall actions happen **after the user presses OK**, not on indiv
 
 ---
 
-## Phase 1: Modify `manage_autoinstall_tools()` — IN PROGRESS
+## Phase 1: Modify `manage_autoinstall_tools()` — ✅ DONE
 
 ### Tasks
 
@@ -84,13 +86,13 @@ All install/uninstall actions happen **after the user presses OK**, not on indiv
 
 ## Acceptance Criteria
 
-- [ ] Enabling a tool in the checklist installs it immediately
-- [ ] Already-installed tools are skipped (not re-installed)
-- [ ] Prerequisites are checked before installing
-- [ ] Disabling a tool uninstalls it immediately via `--uninstall`
-- [ ] Summary is shown after save
-- [ ] Existing "Browse & Install" flow is unchanged
-- [ ] Entrypoint startup still reads `enabled-tools.conf` normally
+- [x] Enabling a tool in the checklist installs it immediately
+- [x] Already-installed tools are skipped (not re-installed)
+- [x] Prerequisites are checked before installing
+- [x] Disabling a tool uninstalls it immediately via `--uninstall`
+- [x] Summary is shown after save
+- [x] Existing "Browse & Install" flow is unchanged
+- [x] Entrypoint startup still reads `enabled-tools.conf` normally
 
 ---
 
