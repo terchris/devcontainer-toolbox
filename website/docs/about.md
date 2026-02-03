@@ -69,7 +69,11 @@ Every developer on your team gets the exact same environment. No more "works on 
 DevContainer Toolbox works with VS Code and GitHub Codespaces. Add it to any project:
 
 ```bash
+# Mac/Linux
 curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+
+# Windows PowerShell
+irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
 Then open in VS Code and click "Reopen in Container."

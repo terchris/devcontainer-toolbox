@@ -12,7 +12,7 @@ Stop wasting time setting up development environments. DevContainer Toolbox give
 
 ## Quick Start
 
-**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop) (or [Rancher Desktop](https://rancherdesktop.io/)) must be installed and running.
+**Prerequisites:** [Rancher Desktop](https://rancherdesktop.io/) (or [Docker Desktop](https://www.docker.com/products/docker-desktop)) must be installed and running.
 
 **1. Install** (in your project folder):
 
@@ -20,7 +20,7 @@ Stop wasting time setting up development environments. DevContainer Toolbox give
 # Mac/Linux
 curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
 
-# Windows PowerShell (TODO: update for image mode)
+# Windows PowerShell
 irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
