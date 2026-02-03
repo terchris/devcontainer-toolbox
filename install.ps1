@@ -1,73 +1,124 @@
-# install.ps1 - First-time install of devcontainer-toolbox
-# Run with: irm https://raw.githubusercontent.com/REPO/main/install.ps1 | iex
-# If blocked: powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/REPO/main/install.ps1 | iex"
+# install.ps1 - First-time install of devcontainer-toolbox (image mode)
+# Run with: irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+# If blocked: powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex"
 
 $ErrorActionPreference = "Stop"
 
 $repo = "terchris/devcontainer-toolbox"
-$url = "https://github.com/$repo/releases/download/latest/dev_containers.zip"
-$tempZip = Join-Path $env:TEMP "dev_containers.zip"
-$tempExtract = Join-Path $env:TEMP "dev_containers_extract"
+$image = "ghcr.io/${repo}:latest"
 
 Write-Host "Installing devcontainer-toolbox from $repo..."
+Write-Host ""
 
-# Download
-Invoke-WebRequest -Uri $url -OutFile $tempZip
+# --- 1. Check Docker is available ------------------------------------------------
 
-# Extract
-if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force }
-Expand-Archive -Path $tempZip -DestinationPath $tempExtract
+if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+    Write-Host "Error: Docker is not installed or not in PATH." -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Install Rancher Desktop from: https://rancherdesktop.io/"
+    Write-Host "Then run this script again."
+    exit 1
+}
 
-# Check for existing .devcontainer
+# --- 2. Backup existing .devcontainer/ -------------------------------------------
+
 if (Test-Path ".devcontainer") {
-    if (Test-Path ".devcontainer\.version") {
-        Write-Host "Found existing devcontainer-toolbox installation."
-        Write-Host "Use 'dev-update' inside the container to update instead."
-        Remove-Item $tempZip -Force
-        Remove-Item $tempExtract -Recurse -Force
-        exit 1
-    } else {
-        Write-Host "Found existing .devcontainer without version info."
-        Write-Host "This may be from an older installation or a different setup."
-        Write-Host "Creating backup at .devcontainer.backup..."
-        if (Test-Path ".devcontainer.backup") { Remove-Item ".devcontainer.backup" -Recurse -Force }
-        Move-Item ".devcontainer" ".devcontainer.backup"
-        Write-Host "Backup created."
+    Write-Host "Found existing .devcontainer/ directory."
+    Write-Host "Creating backup at .devcontainer.backup/..."
+    if (Test-Path ".devcontainer.backup") {
+        Remove-Item ".devcontainer.backup" -Recurse -Force
     }
-}
-
-# Copy .devcontainer
-Copy-Item -Path "$tempExtract\.devcontainer" -Destination "." -Recurse -Force
-
-# Handle .devcontainer.extend
-$extendBackedUp = $false
-if (Test-Path ".devcontainer.extend") {
-    Write-Host "Found existing .devcontainer.extend."
-    Write-Host "Creating backup at .devcontainer.extend.backup..."
-    if (Test-Path ".devcontainer.extend.backup") { Remove-Item ".devcontainer.extend.backup" -Recurse -Force }
-    Move-Item ".devcontainer.extend" ".devcontainer.extend.backup"
+    Rename-Item ".devcontainer" ".devcontainer.backup"
     Write-Host "Backup created."
-    $extendBackedUp = $true
+    Write-Host ""
 }
 
-# Copy fresh .devcontainer.extend
-Copy-Item -Path "$tempExtract\.devcontainer.extend" -Destination "." -Recurse
+# --- 3. Create .devcontainer/devcontainer.json ------------------------------------
 
-# Cleanup
-Remove-Item $tempZip -Force
-Remove-Item $tempExtract -Recurse -Force
+New-Item -ItemType Directory -Path ".devcontainer" -Force | Out-Null
+
+$devcontainerJson = @'
+{
+    // DevContainer Toolbox — pre-built image mode
+    // Docs: https://github.com/terchris/devcontainer-toolbox
+    //
+    // overrideCommand: false is REQUIRED so VS Code doesn't bypass the ENTRYPOINT.
+    // The entrypoint handles all startup — no lifecycle hooks needed.
+    "image": "ghcr.io/terchris/devcontainer-toolbox:latest",
+    "overrideCommand": false,
+
+    // VPN capabilities
+    "runArgs": [
+        "--cap-add=NET_ADMIN",
+        "--cap-add=NET_RAW",
+        "--cap-add=SYS_ADMIN",
+        "--cap-add=AUDIT_WRITE",
+        "--device=/dev/net/tun:/dev/net/tun",
+        "--privileged"
+    ],
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "yzhang.markdown-all-in-one",
+                "MermaidChart.vscode-mermaid-chart",
+                "redhat.vscode-yaml",
+                "mhutchie.git-graph",
+                "timonwong.shellcheck"
+            ]
+        }
+    },
+
+    "remoteEnv": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock",
+        "DCT_HOME": "/opt/devcontainer-toolbox",
+        "DCT_WORKSPACE": "/workspace"
+    },
+
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached"
+    ],
+
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+    // Capture host git identity before container starts.
+    // Uses "bash -c" so it works on both bash (macOS/Linux) and PowerShell (Windows).
+    // On Windows, bash is available via Git for Windows or WSL.
+    "initializeCommand": "bash -c 'mkdir -p .devcontainer.secrets/env-vars && (git config --global user.name > .devcontainer.secrets/env-vars/.git-host-name 2>/dev/null || true) && (git config --global user.email > .devcontainer.secrets/env-vars/.git-host-email 2>/dev/null || true)'",
+
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+    "shutdownAction": "stopContainer",
+    "updateRemoteUserUID": true,
+    "init": true
+}
+'@
+
+$devcontainerJson | Out-File -FilePath ".devcontainer/devcontainer.json" -Encoding utf8
+
+Write-Host "Created .devcontainer/devcontainer.json"
+
+# --- 4. Pull the Docker image -----------------------------------------------------
 
 Write-Host ""
-Write-Host "Installed devcontainer-toolbox!"
+Write-Host "Pulling container image: $image"
+Write-Host "(This may take a few minutes on first install...)"
+docker pull $image
+
+# --- 5. Print next steps ----------------------------------------------------------
+
+Write-Host ""
+Write-Host "devcontainer-toolbox installed!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:"
 Write-Host "  1. Open this folder in VS Code"
 Write-Host "  2. When prompted, click 'Reopen in Container'"
-Write-Host "  3. Inside the container, run: dev-help (to see available commands)"
-Write-Host "  4. Run: dev-update (to check for updates)"
+Write-Host "     (or run: Cmd/Ctrl+Shift+P > 'Dev Containers: Reopen in Container')"
+Write-Host "  3. Inside the container, run: dev-help"
+Write-Host ""
 
-if ($extendBackedUp) {
+if (Test-Path ".devcontainer.backup") {
+    Write-Host "Note: Your previous .devcontainer/ was backed up to .devcontainer.backup/"
     Write-Host ""
-    Write-Host "Note: Your previous .devcontainer.extend was backed up."
-    Write-Host "Review .devcontainer.extend.backup and reconfigure as needed."
 }

@@ -21,14 +21,11 @@ curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/
 irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
-**2. Open in VS Code:**
-```bash
-code .
-```
+This creates a `.devcontainer/devcontainer.json` and pulls the pre-built image.
 
-**3. Click "Reopen in Container"** when prompted.
+**2. Open in VS Code** and click **"Reopen in Container"** when prompted.
 
-Done! Start coding.
+Done! The container starts in seconds. Run `dev-setup` to install tools.
 
 ## What's Next?
 

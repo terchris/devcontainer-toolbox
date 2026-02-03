@@ -53,15 +53,13 @@ If you see "running scripts is disabled on this system":
 powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex"
 ```
 
-### Step 2: Open in VS Code
+This creates a `.devcontainer/devcontainer.json` in your project and pulls the pre-built container image.
 
-```bash
-code .
-```
+### Step 2: Open in VS Code and Reopen in Container
 
-### Step 3: Reopen in Container
+Open the project in VS Code. When prompted "Reopen in Container", click it.
 
-When VS Code prompts "Reopen in Container", click it. First time takes a few minutes.
+The container starts in seconds since the image was already pulled during install. Run `dev-setup` inside the container to install development tools.
 
 That's it! You're ready to start developing.
 
