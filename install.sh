@@ -67,14 +67,9 @@ cat > .devcontainer/devcontainer.json << 'DEVCONTAINER_EOF'
     },
 
     "remoteEnv": {
-        "DOCKER_HOST": "unix:///var/run/docker.sock",
         "DCT_HOME": "/opt/devcontainer-toolbox",
         "DCT_WORKSPACE": "/workspace"
     },
-
-    "mounts": [
-        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached"
-    ],
 
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",

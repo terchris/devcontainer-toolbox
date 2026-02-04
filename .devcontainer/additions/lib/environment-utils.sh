@@ -89,7 +89,6 @@ setup_devcontainer_path() {
 #   - dev-template      -> manage/dev-template.sh
 #   - dev-update        -> manage/dev-update.sh
 #   - dev-check         -> manage/dev-check.sh
-#   - dev-clean         -> manage/dev-clean.sh
 #   - dev-env           -> manage/dev-env.sh
 #   - dev-help          -> manage/dev-help.sh
 #
@@ -109,7 +108,6 @@ setup_command_symlinks() {
         "dev-template"
         "dev-update"
         "dev-check"
-        "dev-clean"
         "dev-env"
         "dev-help"
         "dev-docs"

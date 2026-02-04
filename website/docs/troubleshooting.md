@@ -21,22 +21,10 @@ Extension ID: ms-vscode-remote.remote-containers
 **Solution:** Try rebuilding from scratch:
 
 1. In VS Code: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
-2. Or run: `dev-clean` and reopen
 
 ### Docker not running
 
 **Solution:** Start Docker/Rancher Desktop and try again.
-
-### Windows: "A mount config is invalid"
-
-**Symptom:** Container fails to start with "A mount config is invalid. Make sure it has the right format and a secure folder that exists on the machine where Docker daemon is running."
-
-**Cause:** This happens when `devcontainer.json` includes a Docker socket mount (`/var/run/docker.sock`) that doesn't exist on the Windows host. On Windows, the Docker daemon runs inside WSL2.
-
-**Solution:** Re-run the Windows install command in your project folder to get an updated `devcontainer.json`:
-```powershell
-irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
-```
 
 ---
 
@@ -136,20 +124,6 @@ dev-services enable <service-name>
 
 ## Update Issues
 
-### dev-update permission denied
-
-**Solution:** Run with sudo if needed, or check file permissions.
-
-### Windows: dev-update says "Docker is not available"
-
-**This is expected on Windows.** The Docker socket isn't mounted inside the container on Windows. `dev-update` will show you the exact command to run in your host terminal:
-
-```powershell
-docker pull ghcr.io/terchris/devcontainer-toolbox:latest
-```
-
-Then rebuild the container: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"
-
 ### Update not applying
 
 **Solution:** After `dev-update`, VS Code should prompt to rebuild. If not:
@@ -160,18 +134,12 @@ Then rebuild the container: `Ctrl+Shift+P` → "Dev Containers: Rebuild Containe
 
 ## Reset Everything
 
-If nothing else works, start fresh:
+If nothing else works, rebuild from scratch:
 
-```bash
-dev-clean
-```
+1. In VS Code: `Ctrl+Shift+P` → "Dev Containers: Rebuild Container Without Cache"
+2. If that doesn't help, close VS Code, delete the container manually, and reopen
 
-Then:
-1. Close VS Code
-2. Reopen the project
-3. Click "Reopen in Container"
-
-This rebuilds the container from scratch while preserving your:
+Your settings are preserved in:
 - `.devcontainer.extend/` settings
 - `.devcontainer.secrets/` credentials
 
