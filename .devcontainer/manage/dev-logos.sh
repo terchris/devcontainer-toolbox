@@ -18,6 +18,15 @@
 # Install prerequisites with: bash .devcontainer/additions/install-dev-imagetools.sh
 #
 
+#------------------------------------------------------------------------------
+# Script Metadata (for component scanner)
+#------------------------------------------------------------------------------
+SCRIPT_ID="dev-logos"
+SCRIPT_NAME="Logos"
+SCRIPT_DESCRIPTION="Process logo images to production-ready WebP format"
+SCRIPT_CATEGORY="CONTRIBUTOR_TOOLS"
+SCRIPT_CHECK_COMMAND="command -v convert"
+
 set -e
 
 # Determine workspace root
