@@ -29,6 +29,7 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | [`dev-setup`](#dev-setup) | Interactive menu for installing tools and managing services |
 | [`dev-cubes`](#dev-cubes) | Generate homepage floating cubes configuration |
 | [`dev-docs`](#dev-docs) | Generate documentation (tools.md, commands.md) |
+| [`dev-logos`](#dev-logos) | Process logo images to production-ready WebP format |
 | [`dev-test`](#dev-test) | Run static, unit, and install tests |
 
 ---
@@ -123,6 +124,14 @@ Generate documentation (tools.md, commands.md)
 
 ```bash
 dev-docs
+```
+
+### dev-logos
+
+Process logo images to production-ready WebP format
+
+```bash
+dev-logos
 ```
 
 ### dev-test
