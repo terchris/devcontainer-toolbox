@@ -26,7 +26,7 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "Usage: dev-update [OPTIONS]"
     echo ""
     echo "Update devcontainer-toolbox to the latest version."
-    echo "Pulls the latest container image and instructs you to rebuild."
+    echo "Checks for updates and shows the command to pull the latest image."
     echo ""
     echo "Options:"
     echo "  -f, --force    Force pull even if already on latest version"
@@ -75,30 +75,12 @@ else
     echo "Update available: $CURRENT_VERSION → $REMOTE_VERSION"
 fi
 
-# ─── Pull the latest image ───────────────────────────────────────────────────
+# ─── Show update instructions ────────────────────────────────────────────────
 
-# Check if Docker is available inside the container (requires socket mount)
-if sudo docker info &>/dev/null; then
-    echo ""
-    echo "Pulling image: $IMAGE"
-    sudo docker pull "$IMAGE"
-
-    echo ""
-    echo "✅ Image updated!"
-    echo ""
-    echo "🔄 Rebuild the container to apply the update:"
-    echo "   VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
-    echo ""
-else
-    # Docker socket not mounted (typical on Windows where /var/run/docker.sock
-    # doesn't exist on the host). Give the user a command to run on the host.
-    echo ""
-    echo "Docker is not available inside this container."
-    echo "To update, run this in your host terminal (PowerShell or CMD):"
-    echo ""
-    echo "  docker pull $IMAGE"
-    echo ""
-    echo "Then rebuild the container:"
-    echo "  VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
-    echo ""
-fi
+echo "To update, run this in your terminal:"
+echo ""
+echo "  docker pull $IMAGE"
+echo ""
+echo "Then rebuild the container:"
+echo "  VS Code: Cmd/Ctrl+Shift+P > 'Dev Containers: Rebuild Container'"
+echo ""

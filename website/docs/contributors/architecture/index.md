@@ -179,7 +179,6 @@ SCRIPT_COMMANDS=(
 │   ├── dev-template.sh               # Project template system
 │   ├── postCreateCommand.sh          # Container startup script
 │   ├── dev-check.sh                  # Config validation
-│   ├── dev-clean.sh                  # Container cleanup
 │   ├── dev-env.sh                    # Environment info
 │   ├── dev-help.sh                   # Help command
 │   ├── dev-update.sh                 # Update toolbox

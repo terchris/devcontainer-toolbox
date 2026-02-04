@@ -20,7 +20,6 @@ USER vscode
 
 # Set versions (update these as needed)
 ARG NODE_VERSION=22.12.0
-ARG DOCKER_VERSION=27.5.1
 
 # Environment — no host-specific build args (those move to remoteEnv)
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -64,18 +63,6 @@ RUN sudo rm -f /etc/apt/sources.list.d/yarn.list && \
     sudo tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
     rm /tmp/node.tar.xz && \
     node --version && npm --version && \
-    # --- Docker CLI (static binary, ~25MB) ---
-    case "$ARCH" in \
-        amd64) DOCKER_ARCH="x86_64" ;; \
-        arm64) DOCKER_ARCH="aarch64" ;; \
-        *) echo "Unsupported architecture for Docker: $ARCH" && exit 1 ;; \
-    esac && \
-    curl -fsSL "https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/docker-${DOCKER_VERSION}.tgz" | \
-        sudo tar xzv --strip-components=1 -C /usr/local/bin docker/docker && \
-    docker --version && \
-    # --- Docker group (create if not exists, add vscode user) ---
-    (getent group docker > /dev/null 2>&1 || sudo groupadd docker) && \
-    sudo usermod -aG docker vscode && \
     # --- GitHub CLI ---
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
     sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
@@ -136,7 +123,6 @@ RUN sudo ln -sf /opt/devcontainer-toolbox/manage/dev-setup.sh /usr/local/bin/dev
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-test.sh /usr/local/bin/dev-test && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-template.sh /usr/local/bin/dev-template && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-update.sh /usr/local/bin/dev-update && \
-    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-clean.sh /usr/local/bin/dev-clean && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-logos.sh /usr/local/bin/dev-logos && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-cubes.sh /usr/local/bin/dev-cubes && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-log.sh /usr/local/bin/dev-log && \

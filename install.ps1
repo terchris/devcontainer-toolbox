@@ -74,9 +74,7 @@ $devcontainerJson = @'
         "DCT_WORKSPACE": "/workspace"
     },
 
-    // Docker socket mount is not included on Windows because /var/run/docker.sock
-    // does not exist on the Windows host (Docker runs inside WSL2).
-    // dev-update will instruct you to run 'docker pull' from your host terminal instead.
+    // No Docker socket mount — dev-update instructs you to pull from your host terminal.
 
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",

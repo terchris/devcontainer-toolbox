@@ -20,7 +20,6 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | Command | Description |
 |---------|-------------|
 | [`dev-check`](#dev-check) | Configure and validate Git identity and credentials |
-| [`dev-clean`](#dev-clean) | Clean up devcontainer resources |
 | [`dev-env`](#dev-env) | Show installed tools and environment info |
 | [`dev-help`](#dev-help) | Show available commands and version info |
 | [`dev-log`](#dev-log) | Display the container startup log |
@@ -43,14 +42,6 @@ Configure and validate Git identity and credentials
 ```bash
 dev-check
 dev-check --show    # Show current configuration
-```
-
-### dev-clean
-
-Clean up devcontainer resources
-
-```bash
-dev-clean
 ```
 
 ### dev-env
