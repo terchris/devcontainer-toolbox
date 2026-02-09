@@ -79,7 +79,8 @@ ENV DEV_MAC_LOGNAME=$DEV_MAC_LOGNAME \
 # - GitHub CLI (gh): Enhanced Git/GitHub workflow
 # - Supervisord: Multi-process manager for devcontainer services
 
-RUN sudo apt-get update && \
+RUN sudo rm -f /etc/apt/sources.list.d/yarn.list && \
+    sudo apt-get update && \
     # Install base system packages including supervisor
     sudo apt-get install -y --no-install-recommends \
         libcap2-bin \
