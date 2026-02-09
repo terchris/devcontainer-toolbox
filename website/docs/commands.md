@@ -25,6 +25,7 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | [`dev-log`](#dev-log) | Display the container startup log |
 | [`dev-services`](#dev-services) | Manage background services (start, stop, status, logs) |
 | [`dev-template`](#dev-template) | Create project files from templates |
+| [`dev-tools`](#dev-tools) | Output machine-readable tool inventory as JSON |
 | [`dev-update`](#dev-update) | Update devcontainer-toolbox to latest version |
 | [`dev-setup`](#dev-setup) | Interactive menu for installing tools and managing services |
 | [`dev-cubes`](#dev-cubes) | Generate homepage floating cubes configuration |
@@ -87,6 +88,14 @@ Create project files from templates
 
 ```bash
 dev-template
+```
+
+### dev-tools
+
+Output machine-readable tool inventory as JSON
+
+```bash
+dev-tools
 ```
 
 ### dev-update

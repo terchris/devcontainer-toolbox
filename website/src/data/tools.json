@@ -170,6 +170,19 @@
       "related": ["tool-azure-ops","tool-kubernetes","tool-iac"]
     },
     {
+      "id": "tool-azure-devops",
+      "type": "install",
+      "name": "Azure DevOps CLI",
+      "description": "Installs Azure CLI with azure-devops extension for git PR, merge, and repo management",
+      "category": "CLOUD_TOOLS",
+      "tags": ["azure","devops","git","pr","merge","repos","cli","pipelines"],
+      "abstract": "Lightweight Azure DevOps CLI for pull requests, merges, and repository management.",
+      "logo": "tool-azure-devops-logo.webp",
+      "website": "https://learn.microsoft.com/en-us/azure/devops/cli/",
+      "summary": "Minimal Azure CLI installation with the azure-devops extension. Enables az repos pr create/list/show/update commands for working with Azure DevOps repositories without the heavy extras from tool-azure-dev or tool-azure-ops.",
+      "related": ["tool-azure-dev","tool-azure-ops","config-azure-devops"]
+    },
+    {
       "id": "tool-azure-ops",
       "type": "install",
       "name": "Azure Operations & Infrastructure Management",
