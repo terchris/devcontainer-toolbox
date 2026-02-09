@@ -126,10 +126,13 @@ RUN sudo ln -sf /opt/devcontainer-toolbox/manage/dev-setup.sh /usr/local/bin/dev
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-logos.sh /usr/local/bin/dev-logos && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-cubes.sh /usr/local/bin/dev-cubes && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-log.sh /usr/local/bin/dev-log && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-tools.sh /usr/local/bin/dev-tools && \
     # Make all scripts executable (files owned by vscode via --chown)
     chmod +x /opt/devcontainer-toolbox/manage/*.sh && \
     chmod +x /opt/devcontainer-toolbox/additions/*.sh 2>/dev/null || true && \
-    chmod +x /opt/devcontainer-toolbox/additions/lib/*.sh 2>/dev/null || true
+    chmod +x /opt/devcontainer-toolbox/additions/lib/*.sh 2>/dev/null || true && \
+    # Generate tools.json inventory at build time
+    bash /opt/devcontainer-toolbox/manage/generate-tools-json.sh
 
 # Install welcome message for new terminals
 # Three locations needed for different shell startup paths:

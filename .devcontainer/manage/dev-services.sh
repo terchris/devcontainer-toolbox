@@ -46,6 +46,11 @@ DCT_WORKSPACE="${DCT_WORKSPACE:-/workspace}"
 ENABLED_SERVICES_CONF="$DCT_WORKSPACE/.devcontainer.extend/enabled-services.conf"
 CONFIG_SUPERVISOR_SCRIPT="$_DEVCONTAINER_DIR/additions/config-supervisor.sh"
 
+# Ensure .devcontainer.secrets is in .gitignore (issue #40)
+if [[ -f "$_DEVCONTAINER_DIR/additions/lib/ensure-gitignore.sh" ]]; then
+    source "$_DEVCONTAINER_DIR/additions/lib/ensure-gitignore.sh"
+fi
+
 # Check if supervisord is running
 check_supervisord() {
     if ! pgrep supervisord > /dev/null; then

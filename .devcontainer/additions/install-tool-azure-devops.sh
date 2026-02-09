@@ -1,59 +1,47 @@
 #!/bin/bash
-# file: .devcontainer/additions/install-tool-azure-dev.sh
+# file: .devcontainer/additions/install-tool-azure-devops.sh
 #
-# Installs Azure development tools including Azure CLI, Functions Core Tools, Azurite,
-# and VS Code extensions for building Azure applications, APIs, and data solutions.
-# For usage information, run: ./install-tool-azure-dev.sh --help
+# Installs Azure CLI with the azure-devops extension for working with Azure DevOps
+# repositories, pull requests, and pipelines from the command line.
+# For usage information, run: ./install-tool-azure-devops.sh --help
 #
 #------------------------------------------------------------------------------
 # CONFIGURATION - Modify this section for each new script
 #------------------------------------------------------------------------------
 
 # --- Script Metadata ---
-SCRIPT_ID="tool-azure-dev"
+SCRIPT_ID="tool-azure-devops"
 SCRIPT_VER="0.0.1"
-SCRIPT_NAME="Azure Application Development"
-SCRIPT_DESCRIPTION="Installs Azure CLI, Functions Core Tools, Azurite, and VS Code extensions for building Azure applications, APIs, Service Bus, and Cosmos DB solutions"
+SCRIPT_NAME="Azure DevOps CLI"
+SCRIPT_DESCRIPTION="Installs Azure CLI with azure-devops extension for git PR, merge, and repo management"
 SCRIPT_CATEGORY="CLOUD_TOOLS"
-SCRIPT_CHECK_COMMAND="command -v func >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="az extension show --name azure-devops >/dev/null 2>&1"
 
 # --- Extended Metadata (for website documentation) ---
-SCRIPT_TAGS="azure microsoft cloud functions azurite cosmosdb servicebus bicep"
-SCRIPT_ABSTRACT="Azure application development with CLI, Functions, Azurite emulator, and VS Code extensions."
-SCRIPT_LOGO="tool-azure-dev-logo.webp"
-SCRIPT_WEBSITE="https://azure.microsoft.com"
-SCRIPT_SUMMARY="Complete Azure development toolkit including Azure CLI, Functions Core Tools v4, Azurite storage emulator, and VS Code extensions for App Service, Functions, Storage, Service Bus, Cosmos DB, and Bicep infrastructure as code."
-SCRIPT_RELATED="tool-azure-ops tool-kubernetes tool-iac"
+SCRIPT_TAGS="azure devops git pr merge repos cli pipelines"
+SCRIPT_ABSTRACT="Lightweight Azure DevOps CLI for pull requests, merges, and repository management."
+SCRIPT_LOGO="tool-azure-devops-logo.webp"
+SCRIPT_WEBSITE="https://learn.microsoft.com/en-us/azure/devops/cli/"
+SCRIPT_SUMMARY="Minimal Azure CLI installation with the azure-devops extension. Enables az repos pr create/list/show/update commands for working with Azure DevOps repositories without the heavy extras from tool-azure-dev or tool-azure-ops."
+SCRIPT_RELATED="tool-azure-dev tool-azure-ops config-azure-devops"
 
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
-    "Action||Install Azure development tools||false|"
-    "Action|--uninstall|Uninstall Azure development tools||false|"
+    "Action||Install Azure DevOps CLI||false|"
+    "Action|--uninstall|Uninstall Azure DevOps CLI||false|"
     "Info|--help|Show help and usage information||false|"
 )
 
-# System packages
+# System packages - only Azure CLI
 PACKAGES_SYSTEM=(
     "azure-cli"  # Installed from Microsoft APT repository
 )
 
-# Node.js packages (cross-platform: works on x86_64 and ARM64)
-PACKAGES_NODE=(
-    "azure-functions-core-tools@4"  # Azure Functions runtime v4 (latest)
-    "azurite"  # Azure Storage emulator for local development
-)
+# No Node.js packages needed
+PACKAGES_NODE=()
 
-# VS Code extensions
-EXTENSIONS=(
-    "Azure Account (ms-vscode.azure-account) - Azure account management"
-    "Azure Resources (ms-azuretools.vscode-azureresourcegroups) - View and manage Azure resources"
-    "Azure App Service (ms-azuretools.vscode-azureappservice) - Deploy to Azure App Service"
-    "Azure Functions (ms-azuretools.vscode-azurefunctions) - Create and deploy Azure Functions"
-    "Azure Storage (ms-azuretools.vscode-azurestorage) - Manage Azure Storage accounts"
-    "Service Bus Explorer (digital-molecules.service-bus-explorer) - Browse queues, topics, and messages"
-    "Azure Cosmos DB (ms-azuretools.vscode-cosmosdb) - Cosmos DB and database support"
-    "Bicep (ms-azuretools.vscode-bicep) - Bicep language support for IaC"
-)
+# No VS Code extensions - this is CLI-only
+EXTENSIONS=()
 
 #------------------------------------------------------------------------------
 
@@ -112,52 +100,45 @@ add_azure_cli_repository() {
     echo "✅ Azure CLI repository added successfully"
 }
 
+# --- Post-installation Setup ---
+post_installation_setup() {
+    if [ "${UNINSTALL_MODE}" -eq 1 ]; then
+        # Remove the azure-devops extension on uninstall
+        echo "🔧 Removing azure-devops extension..."
+        az extension remove --name azure-devops 2>/dev/null || true
+    else
+        # Install the azure-devops extension
+        echo "🔧 Installing azure-devops extension..."
+        az extension add --name azure-devops --yes 2>/dev/null || \
+            az extension add --name azure-devops 2>/dev/null || true
+        echo "✅ azure-devops extension installed"
+    fi
+}
+
 # --- Post-installation/Uninstallation Messages ---
 post_installation_message() {
     echo
     echo "🎉 Installation complete!"
     echo
-    echo "Installed VS Code extensions:"
-    echo "  • Azure Account, Resources, App Service, Functions, Storage"
-    echo "  • Service Bus Explorer - Browse queues, topics, and messages"
-    echo "  • Azure Cosmos DB - Database management and queries"
-    echo "  • Bicep - Infrastructure as Code authoring"
+    echo "Quick start - Azure DevOps CLI:"
+    echo "  - Configure defaults:    az devops configure --defaults organization=https://dev.azure.com/MyOrg project=MyProject"
+    echo "  - Login with PAT:        export AZURE_DEVOPS_EXT_PAT=<your-pat>"
+    echo "  - Or use dev-setup:      dev-setup → Manage Configurations → Azure DevOps Identity"
     echo
-    echo "Quick start - Azure CLI:"
-    echo "  - Login to Azure:        az login"
-    echo "  - List subscriptions:    az account list --output table"
-    echo "  - Check version:         az version"
+    echo "Pull Request commands:"
+    echo "  - Create PR:             az repos pr create --title \"My PR\" --source-branch feature/x"
+    echo "  - List PRs:              az repos pr list"
+    echo "  - Show PR:               az repos pr show --id 123"
+    echo "  - Set auto-complete:     az repos pr update --id 123 --auto-complete true"
+    echo "  - Approve PR:            az repos pr set-vote --id 123 --vote approve"
     echo
-    echo "Quick start - Azure Functions:"
-    echo "  - Create Function:       func new"
-    echo "  - Init project (C#):     func init --worker-runtime dotnet"
-    echo "  - Init project (Python): func init --worker-runtime python"
-    echo "  - Init project (Node):   func init --worker-runtime node"
-    echo "  - Start locally:         func start"
-    echo
-    echo "Quick start - Azurite (local storage emulator):"
-    echo "  - Start emulator:        azurite"
-    echo "  - Connect string:        DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;..."
-    echo
-    echo "Service Bus development:"
-    echo "  - Use Service Bus Explorer extension in VS Code to browse queues/topics"
-    echo "  - Connection string:     From Azure Portal → Service Bus → Shared access policies"
-    echo
-    echo "Cosmos DB development:"
-    echo "  - Use Azure Cosmos DB extension to browse and query databases"
-    echo "  - Local emulator:        https://learn.microsoft.com/azure/cosmos-db/local-emulator"
-    echo
-    echo "Infrastructure as Code - Bicep:"
-    echo "  - Create main.bicep file and use VS Code extension for authoring"
-    echo "  - Deploy:                az deployment group create --resource-group <rg> --template-file main.bicep"
-    echo "  - Build to ARM:          az bicep build --file main.bicep"
+    echo "Repository commands:"
+    echo "  - List repos:            az repos list"
+    echo "  - Show repo:             az repos show --repository myrepo"
     echo
     echo "Docs:"
-    echo "  - Azure CLI:             https://docs.microsoft.com/cli/azure/"
-    echo "  - Azure Functions:       https://learn.microsoft.com/azure/azure-functions/"
-    echo "  - Service Bus:           https://learn.microsoft.com/azure/service-bus-messaging/"
-    echo "  - Cosmos DB:             https://learn.microsoft.com/azure/cosmos-db/"
-    echo "  - Bicep:                 https://learn.microsoft.com/azure/azure-resource-manager/bicep/"
+    echo "  - Azure DevOps CLI:      https://learn.microsoft.com/en-us/azure/devops/cli/"
+    echo "  - PAT tokens:            https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate"
     echo
 }
 
@@ -229,6 +210,9 @@ source "${SCRIPT_DIR}/lib/core-install-extensions.sh"
 process_installations() {
     # Use standard processing from lib/install-common.sh
     process_standard_installations
+
+    # After standard installations, handle the azure-devops extension
+    post_installation_setup
 }
 
 #------------------------------------------------------------------------------

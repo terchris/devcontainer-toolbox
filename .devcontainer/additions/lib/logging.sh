@@ -4,6 +4,16 @@
 # Usage: source "${SCRIPT_DIR}/lib/logging.sh"
 
 #------------------------------------------------------------------------------
+# ENSURE .gitignore PROTECTS SECRETS (issue #40)
+#------------------------------------------------------------------------------
+
+# Source the gitignore check - runs automatically when sourced
+_LOGGING_LIB_DIR="$(dirname "${BASH_SOURCE[0]}")"
+if [ -f "$_LOGGING_LIB_DIR/ensure-gitignore.sh" ]; then
+    source "$_LOGGING_LIB_DIR/ensure-gitignore.sh"
+fi
+
+#------------------------------------------------------------------------------
 # LOGGING SETUP
 #------------------------------------------------------------------------------
 

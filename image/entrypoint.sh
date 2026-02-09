@@ -39,6 +39,11 @@ git config --global --add safe.directory "$DCT_WORKSPACE" 2>/dev/null || true
 git config --global core.fileMode false 2>/dev/null || true
 git config --global core.hideDotFiles false 2>/dev/null || true
 
+# Ensure .devcontainer.secrets is in .gitignore (issue #40)
+if [ -f "$ADDITIONS_DIR/lib/ensure-gitignore.sh" ]; then
+    source "$ADDITIONS_DIR/lib/ensure-gitignore.sh"
+fi
+
 # Apply host-captured git identity if available (from initializeCommand).
 HOST_GIT_NAME_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-name"
 HOST_GIT_EMAIL_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-email"
@@ -232,6 +237,46 @@ _git_email=$(git config --global user.email 2>/dev/null || echo "")
 if [ -z "$_git_name" ] || [ -z "$_git_email" ] || [[ "$_git_email" == *@localhost ]]; then
     echo "⚠️  Git identity not configured - run 'dev-setup' to set your name and email"
     echo ""
+fi
+
+# Check git provider authentication
+_git_remote=$(git -C "$DCT_WORKSPACE" config --get remote.origin.url 2>/dev/null || echo "")
+
+if [ -z "$_git_remote" ]; then
+    # No repo or no remote - show how to get started
+    echo "💡 No code repository found in this folder."
+    echo ""
+    echo "   To work with GitHub repositories:"
+    echo "   1. Run: gh auth login"
+    echo "   2. Run: gh repo clone <owner>/<repo-name>"
+    echo "      Example: gh repo clone microsoft/vscode"
+    echo ""
+    echo "   To work with Azure DevOps repositories:"
+    echo "   1. Run: dev-setup → Cloud Tools → Azure DevOps CLI"
+    echo "   2. Run: dev-setup → Setup & Configuration → Azure DevOps Identity"
+    echo "      (This will configure your PAT and offer to clone your repo)"
+    echo ""
+elif [[ "$_git_remote" == *"github.com"* ]]; then
+    # GitHub repo - check if authenticated
+    if ! gh auth status &>/dev/null 2>&1; then
+        echo "💡 GitHub repository detected but not authenticated."
+        echo "   To create pull requests and manage issues, run:"
+        echo "   gh auth login"
+        echo ""
+    fi
+elif [[ "$_git_remote" == *"dev.azure.com"* ]] || [[ "$_git_remote" == *"visualstudio.com"* ]]; then
+    # Azure DevOps repo - check if CLI installed and PAT configured
+    if ! command -v az &>/dev/null; then
+        echo "💡 Azure DevOps repository detected but CLI not installed."
+        echo "   To create pull requests, run:"
+        echo "   dev-setup → Cloud Tools → Azure DevOps CLI"
+        echo ""
+    elif [ ! -f "$DCT_WORKSPACE/.devcontainer.secrets/env-vars/azure-devops-pat" ]; then
+        echo "💡 Azure DevOps repository detected but not authenticated."
+        echo "   To create pull requests, run:"
+        echo "   dev-setup → Manage Configurations → Azure DevOps Identity"
+        echo ""
+    fi
 fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

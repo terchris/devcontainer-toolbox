@@ -43,6 +43,11 @@ else
 fi
 ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
 
+# Ensure .devcontainer.secrets is in .gitignore (issue #40)
+if [[ -f "$ADDITIONS_DIR/lib/ensure-gitignore.sh" ]]; then
+    source "$ADDITIONS_DIR/lib/ensure-gitignore.sh"
+fi
+
 # Source version-utils from manage/lib
 if [ -f "$MANAGE_DIR/lib/version-utils.sh" ]; then
     source "$MANAGE_DIR/lib/version-utils.sh"

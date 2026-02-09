@@ -323,3 +323,13 @@ Verify the image works with all supported tools and environments.
 - **Existing release workflow**: The zip-based release (`deploy-docs.yml`, `version.txt`) continues for copy-mode users during transition. Image builds are additive, not replacing.
 - **`enabled-tools.conf` format**: The ENTRYPOINT reads script names line-by-line from this file. Blank lines and `#` comments are skipped.
 - **VS Code ENTRYPOINT override**: VS Code hardcodes `--entrypoint /bin/sh` for all containers. Setting `"overrideCommand": false` in `devcontainer.json` makes VS Code pass the original ENTRYPOINT+CMD as arguments to `/bin/sh`, so `entrypoint.sh` still runs. This is a known limitation ([devcontainers/cli#816](https://github.com/devcontainers/cli/issues/816)). For Docker CLI and Podman, the ENTRYPOINT works natively.
+
+---
+
+## Issues Found During Testing
+
+Issues discovered during testing that need to be fixed before release:
+
+1. **"Developer Identity" name is confusing** — ✅ Fixed: Renamed to "Telemetry Identity" in `config-devcontainer-identity.sh`.
+
+2. **Azure Application Development shows installed when only Azure DevOps CLI is installed** — Both scripts check for `az` CLI. Fixed: Changed `install-tool-azure-dev.sh` SCRIPT_CHECK_COMMAND to check for `func` (Azure Functions Core Tools) instead of `az`.

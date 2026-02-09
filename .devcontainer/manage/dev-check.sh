@@ -53,6 +53,11 @@ else
 fi
 ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
 
+# Ensure .devcontainer.secrets is in .gitignore (issue #40)
+if [[ -f "$ADDITIONS_DIR/lib/ensure-gitignore.sh" ]]; then
+    source "$ADDITIONS_DIR/lib/ensure-gitignore.sh"
+fi
+
 # Source component scanner library
 # shellcheck source=/dev/null
 source "${ADDITIONS_DIR}/lib/component-scanner.sh"

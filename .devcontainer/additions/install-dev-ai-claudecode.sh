@@ -11,10 +11,10 @@
 # Script metadata - must be at the very top of the configuration section
 SCRIPT_NAME="Claude Code"
 SCRIPT_ID="dev-ai-claudecode"
-SCRIPT_VER="0.0.1"
+SCRIPT_VER="0.0.2"
 SCRIPT_DESCRIPTION="Installs Claude Code, Anthropic's terminal-based AI coding assistant with agentic capabilities and LSP integration"
 SCRIPT_CATEGORY="AI_TOOLS"
-SCRIPT_CHECK_COMMAND="[ -f /home/vscode/.local/bin/claude ] || [ -f /usr/local/bin/claude ] || command -v claude >/dev/null 2>&1"
+SCRIPT_CHECK_COMMAND="[ -f /home/vscode/.local/bin/claude ] || command -v claude >/dev/null 2>&1"
 
 # --- Extended Metadata (for website documentation) ---
 SCRIPT_TAGS="claude anthropic ai coding assistant agentic terminal"
@@ -48,9 +48,40 @@ source "${SCRIPT_DIR}/lib/logging.sh"
 pre_installation_setup() {
     if [ "${UNINSTALL_MODE}" -eq 1 ]; then
         echo "🔧 Preparing for uninstallation..."
+        # Remove native installation
+        if [ -f "$HOME/.local/bin/claude" ]; then
+            echo "Removing Claude Code native installation..."
+            rm -f "$HOME/.local/bin/claude"
+        fi
+        # Remove npm global installation if exists
+        if command -v npm &>/dev/null && npm list -g @anthropic-ai/claude-code &>/dev/null 2>&1; then
+            echo "Removing Claude Code npm installation..."
+            npm uninstall -g @anthropic-ai/claude-code 2>/dev/null || true
+        fi
     else
-        echo "🔧 Performing pre-installation setup..."
-        echo "✅ Pre-installation setup complete"
+        echo "🔧 Installing Claude Code using native method (enables auto-updates)..."
+
+        # Ensure ~/.local/bin exists and is in PATH
+        mkdir -p "$HOME/.local/bin"
+        if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc" 2>/dev/null; then
+            echo '' >> "$HOME/.bashrc"
+            echo '# Claude Code native installation' >> "$HOME/.bashrc"
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+        fi
+        export PATH="$HOME/.local/bin:$PATH"
+
+        # Remove any existing npm global installation (causes conflicts)
+        if command -v npm &>/dev/null && npm list -g @anthropic-ai/claude-code &>/dev/null 2>&1; then
+            echo "Removing existing npm global installation..."
+            npm uninstall -g @anthropic-ai/claude-code 2>/dev/null || true
+        fi
+
+        # Install using native method (to ~/.local/bin/claude)
+        # This allows auto-updates without sudo
+        echo "Downloading and installing Claude Code..."
+        curl -fsSL https://claude.ai/install.sh | bash
+
+        echo "✅ Claude Code installed to ~/.local/bin/claude (auto-updates enabled)"
     fi
 }
 
@@ -59,9 +90,9 @@ PACKAGES_SYSTEM=(
     "curl"
 )
 
-PACKAGES_NODE=(
-    "@anthropic-ai/claude-code"
-)
+# Note: We use native installation instead of npm to enable auto-updates
+# See: https://github.com/terchris/devcontainer-toolbox/issues/41
+PACKAGES_NODE=()
 
 PACKAGES_PYTHON=()
 
@@ -70,13 +101,9 @@ EXTENSIONS=()
 
 # Define verification commands
 VERIFY_COMMANDS=(
-    "command -v claude >/dev/null && echo '✅ Claude Code binary is available' || echo '❌ Claude Code binary not found'"
-    "test -L /home/vscode/.claude-code-env && echo '✅ Environment config symlink exists' || echo '⚠️  Environment config symlink not found'"
-    "test -d /workspace/.devcontainer.secrets/env-vars && echo '✅ Environment directory exists in .devcontainer.secrets/' || echo '❌ Environment directory not found'"
-    "test -d /workspace/.claude/skills && echo '✅ Skills directory exists' || echo '⚠️  Skills directory not found'"
-    "grep -q '.devcontainer.secrets/' /workspace/.gitignore && echo '✅ .devcontainer.secrets/ is gitignored' || echo '❌ .devcontainer.secrets/ NOT gitignored (SECURITY RISK!)'"
-    "grep -q 'Claude Code environment' /home/vscode/.bashrc && echo '✅ Environment loading added to bashrc' || echo '⚠️  bashrc not configured'"
-    "claude --version >/dev/null 2>&1 && echo '✅ Claude Code is functional' || echo '⚠️  Claude Code installed'"
+    "test -f /home/vscode/.local/bin/claude && echo '✅ Claude Code installed at ~/.local/bin/claude (native)' || echo '❌ Claude Code native installation not found'"
+    "command -v claude >/dev/null && echo '✅ Claude Code binary is in PATH' || echo '❌ Claude Code binary not in PATH'"
+    "claude --version 2>/dev/null && echo '✅ Claude Code is functional' || echo '⚠️  Claude Code version check failed'"
 )
 
 # Post-installation notes
@@ -87,16 +114,17 @@ post_installation_message() {
     echo "Purpose: $SCRIPT_DESCRIPTION"
     echo
     echo "Important Notes:"
-    echo "1. Claude Code has been installed"
-    echo "2. Environment configuration should be set up in .devcontainer.secrets/"
-    echo "3. Skills directory is available at /workspace/.claude/skills"
+    echo "1. Claude Code installed to ~/.local/bin/claude (native installation)"
+    echo "2. Auto-updates are enabled (no sudo required)"
+    echo "3. Run 'claude doctor' to verify auto-update capability"
     echo
     echo "Quick Start:"
     echo "- Check installation: claude --version"
-    echo "- Configure environment variables in .devcontainer.secrets/env-vars/"
+    echo "- Verify auto-updates: claude doctor"
+    echo "- Start coding: claude"
     echo
     echo "Documentation Links:"
-    echo "- Claude Code: https://claude.com/claude-code"
+    echo "- Claude Code: https://claude.ai/code"
 }
 
 # Post-uninstallation notes
@@ -108,9 +136,8 @@ post_uninstallation_message() {
     echo "🏁 Uninstallation process complete for: $SCRIPT_NAME!"
     echo
     echo "Additional Notes:"
-    echo "1. Claude Code has been removed"
-    echo "2. Environment configuration in .devcontainer.secrets/ remains"
-    echo "3. Skills directory remains at /workspace/.claude/skills"
+    echo "1. Claude Code has been removed from ~/.local/bin/"
+    echo "2. Configuration in ~/.claude/ remains (delete manually if needed)"
 }
 
 #------------------------------------------------------------------------------

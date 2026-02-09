@@ -49,6 +49,12 @@ DEV_TEMPLATE_SCRIPT="$MANAGE_DIR/dev-template.sh"
 
 # Source component scanner library
 LIB_DIR="$ADDITIONS_DIR/lib"
+
+# Ensure .devcontainer.secrets is in .gitignore (issue #40)
+if [[ -f "$LIB_DIR/ensure-gitignore.sh" ]]; then
+    source "$LIB_DIR/ensure-gitignore.sh"
+fi
+
 if [[ -f "$LIB_DIR/component-scanner.sh" ]]; then
     source "$LIB_DIR/component-scanner.sh"
 else

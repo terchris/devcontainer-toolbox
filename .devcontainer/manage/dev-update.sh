@@ -13,6 +13,11 @@ SCRIPT_CHECK_COMMAND="true"
 
 set -e
 
+# Ensure .devcontainer.secrets is in .gitignore (issue #40)
+if [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/additions/lib/ensure-gitignore.sh" ]; then
+    source "$DCT_HOME/additions/lib/ensure-gitignore.sh"
+fi
+
 REPO="terchris/devcontainer-toolbox"
 IMAGE="ghcr.io/$REPO:latest"
 

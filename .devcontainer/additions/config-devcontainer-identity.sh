@@ -15,7 +15,7 @@
 #------------------------------------------------------------------------------
 
 SCRIPT_ID="config-devcontainer-identity"
-SCRIPT_NAME="Developer Identity"
+SCRIPT_NAME="Telemetry Identity"
 SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="Configure your identity for devcontainer monitoring (required for tracking your activity in Grafana dashboards)"
 SCRIPT_CATEGORY="INFRA_CONFIG"
