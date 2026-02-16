@@ -24,6 +24,7 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | [`dev-help`](#dev-help) | Show available commands and version info |
 | [`dev-log`](#dev-log) | Display the container startup log |
 | [`dev-services`](#dev-services) | Manage background services (start, stop, status, logs) |
+| [`dev-sync`](#dev-sync) | Update toolbox scripts without rebuilding the container |
 | [`dev-template`](#dev-template) | Create project files from templates |
 | [`dev-tools`](#dev-tools) | Output machine-readable tool inventory as JSON |
 | [`dev-update`](#dev-update) | Update devcontainer-toolbox to latest version |
@@ -80,6 +81,14 @@ dev-services status          # Show status of all services
 dev-services start <name>    # Start a service
 dev-services stop <name>     # Stop a service
 dev-services logs <name>     # View service logs
+```
+
+### dev-sync
+
+Update toolbox scripts without rebuilding the container
+
+```bash
+dev-sync
 ```
 
 ### dev-template
