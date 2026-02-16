@@ -131,6 +131,17 @@
       "related": ["dev-python","dev-golang","dev-rust"]
     },
     {
+      "id": "tool-powershell",
+      "type": "install",
+      "name": "PowerShell",
+      "description": "Installs PowerShell 7 with PSScriptAnalyzer for script development and linting",
+      "category": "LANGUAGE_DEV",
+      "tags": ["powershell","pwsh","intune","linting","scripting"],
+      "abstract": "PowerShell 7 with PSScriptAnalyzer for script development and linting.",
+      "website": "https://learn.microsoft.com/en-us/powershell/",
+      "related": ["tool-azure-ops"]
+    },
+    {
       "id": "dev-ai-claudecode",
       "type": "install",
       "name": "Claude Code",
