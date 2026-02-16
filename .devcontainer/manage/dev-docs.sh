@@ -828,6 +828,7 @@ generate_tool_mdx() {
 
     # Extract metadata
     local script_id=$(extract_script_field "$script_path" "SCRIPT_ID")
+    local script_ver=$(extract_script_field "$script_path" "SCRIPT_VER")
     local script_name=$(extract_script_field "$script_path" "SCRIPT_NAME")
     local script_desc=$(extract_script_field "$script_path" "SCRIPT_DESCRIPTION")
     local script_basename=$(basename "$script_path")
@@ -941,7 +942,7 @@ EOF
     # Quick info section
     echo "<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>"
     echo "  <div>"
-    echo "    <strong>Script ID:</strong> <code>$script_id</code>"
+    echo "    <strong>Script ID:</strong> <code>$script_id</code> &nbsp; <strong>Version:</strong> <code>$script_ver</code>"
     echo "  </div>"
     echo "  <div>"
     echo "    <strong>Script:</strong> <code>$script_basename</code>"
