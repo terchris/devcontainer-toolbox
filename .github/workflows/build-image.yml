@@ -33,6 +33,16 @@ jobs:
         id: version
         run: echo "VERSION=$(cat version.txt | tr -d '[:space:]')" >> $GITHUB_OUTPUT
 
+      - name: Generate scripts-version.txt for image
+        run: |
+          SHORT_HASH=$(git rev-parse --short HEAD)
+          DATE_STR=$(date +%Y-%m-%d)
+          SCRIPTS_VER="${DATE_STR}-${SHORT_HASH}"
+          echo "SCRIPTS_VERSION=$SCRIPTS_VER" > scripts-version.txt
+          echo "SCRIPTS_DATE=$DATE_STR" >> scripts-version.txt
+          echo "SCRIPTS_HASH=$SHORT_HASH" >> scripts-version.txt
+          echo "Scripts version for image: $SCRIPTS_VER"
+
       - name: Repository name to lowercase
         id: repo
         run: echo "name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT

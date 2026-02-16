@@ -111,6 +111,7 @@ RUN sudo rm -f /etc/apt/sources.list.d/yarn.list && \
 COPY --chown=vscode:vscode .devcontainer/manage/ /opt/devcontainer-toolbox/manage/
 COPY --chown=vscode:vscode .devcontainer/additions/ /opt/devcontainer-toolbox/additions/
 COPY --chown=vscode:vscode version.txt /opt/devcontainer-toolbox/version.txt
+COPY --chown=vscode:vscode scripts-version.txt /opt/devcontainer-toolbox/scripts-version.txt
 
 # Create dev command symlinks in /usr/local/bin/ (already on PATH)
 # Every dev-*.sh in manage/ gets a symlink so dev-help listings all work
@@ -127,6 +128,7 @@ RUN sudo ln -sf /opt/devcontainer-toolbox/manage/dev-setup.sh /usr/local/bin/dev
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-cubes.sh /usr/local/bin/dev-cubes && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-log.sh /usr/local/bin/dev-log && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-tools.sh /usr/local/bin/dev-tools && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/dev-sync.sh /usr/local/bin/dev-sync && \
     # Make all scripts executable (files owned by vscode via --chown)
     chmod +x /opt/devcontainer-toolbox/manage/*.sh && \
     chmod +x /opt/devcontainer-toolbox/additions/*.sh 2>/dev/null || true && \

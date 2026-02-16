@@ -49,16 +49,28 @@ jobs:
           # Update version in devcontainer.json (triggers VS Code rebuild prompt on update)
           sed -i "s|TOOLBOX_VERSION_PLACEHOLDER|$VERSION|g" .devcontainer/devcontainer.json
 
+      - name: 📝 Generate scripts-version.txt
+        run: |
+          SHORT_HASH=$(git rev-parse --short HEAD)
+          DATE_STR=$(date +%Y-%m-%d)
+          SCRIPTS_VER="${DATE_STR}-${SHORT_HASH}"
+
+          echo "SCRIPTS_VERSION=$SCRIPTS_VER" > scripts-version.txt
+          echo "SCRIPTS_DATE=$DATE_STR" >> scripts-version.txt
+          echo "SCRIPTS_HASH=$SHORT_HASH" >> scripts-version.txt
+
+          echo "Scripts version: $SCRIPTS_VER"
+
       - name: 📦 Archive dev_containers folders
         run: |
-          zip -r dev_containers.zip .devcontainer .devcontainer.extend
+          zip -r dev_containers.zip .devcontainer .devcontainer.extend scripts-version.txt
 
-      - name: 💾 Commit updated install scripts
+      - name: 💾 Commit updated files
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add install.sh install.ps1
-          git diff --staged --quiet || git commit -m "Update install scripts with repo URL [skip ci]"
+          git add install.sh install.ps1 scripts-version.txt
+          git diff --staged --quiet || git commit -m "Update install scripts and scripts-version.txt [skip ci]"
           git push || echo "Nothing to push or push failed"
 
       - name: 🗑️ Delete existing release
