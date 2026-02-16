@@ -70,7 +70,9 @@ SCRIPTS_LANGUAGE_DEV=""
 SCRIPTS_AI_TOOLS=""
 SCRIPTS_CLOUD_TOOLS=""
 SCRIPTS_DATA_ANALYTICS=""
+SCRIPTS_BACKGROUND_SERVICES=""
 SCRIPTS_INFRA_CONFIG=""
+SCRIPTS_CONTRIBUTOR_TOOLS=""
 
 #------------------------------------------------------------------------------
 # Helper Functions
@@ -96,11 +98,13 @@ Output:
   README.md                        - Tools summary (between markers)
 
 Categories:
-  LANGUAGE_DEV    - $(get_category_short_description "LANGUAGE_DEV")
-  AI_TOOLS        - $(get_category_short_description "AI_TOOLS")
-  CLOUD_TOOLS     - $(get_category_short_description "CLOUD_TOOLS")
-  DATA_ANALYTICS  - $(get_category_short_description "DATA_ANALYTICS")
-  INFRA_CONFIG    - $(get_category_short_description "INFRA_CONFIG")
+  LANGUAGE_DEV        - $(get_category_short_description "LANGUAGE_DEV")
+  AI_TOOLS            - $(get_category_short_description "AI_TOOLS")
+  CLOUD_TOOLS         - $(get_category_short_description "CLOUD_TOOLS")
+  DATA_ANALYTICS      - $(get_category_short_description "DATA_ANALYTICS")
+  BACKGROUND_SERVICES - $(get_category_short_description "BACKGROUND_SERVICES")
+  INFRA_CONFIG        - $(get_category_short_description "INFRA_CONFIG")
+  CONTRIBUTOR_TOOLS   - $(get_category_short_description "CONTRIBUTOR_TOOLS")
 
 Examples:
   # Generate full documentation
@@ -377,8 +381,14 @@ add_to_category() {
         DATA_ANALYTICS)
             SCRIPTS_DATA_ANALYTICS="${SCRIPTS_DATA_ANALYTICS}${script_path} "
             ;;
+        BACKGROUND_SERVICES)
+            SCRIPTS_BACKGROUND_SERVICES="${SCRIPTS_BACKGROUND_SERVICES}${script_path} "
+            ;;
         INFRA_CONFIG)
             SCRIPTS_INFRA_CONFIG="${SCRIPTS_INFRA_CONFIG}${script_path} "
+            ;;
+        CONTRIBUTOR_TOOLS)
+            SCRIPTS_CONTRIBUTOR_TOOLS="${SCRIPTS_CONTRIBUTOR_TOOLS}${script_path} "
             ;;
     esac
 }
@@ -392,7 +402,9 @@ get_category_scripts() {
         AI_TOOLS) echo "$SCRIPTS_AI_TOOLS" ;;
         CLOUD_TOOLS) echo "$SCRIPTS_CLOUD_TOOLS" ;;
         DATA_ANALYTICS) echo "$SCRIPTS_DATA_ANALYTICS" ;;
+        BACKGROUND_SERVICES) echo "$SCRIPTS_BACKGROUND_SERVICES" ;;
         INFRA_CONFIG) echo "$SCRIPTS_INFRA_CONFIG" ;;
+        CONTRIBUTOR_TOOLS) echo "$SCRIPTS_CONTRIBUTOR_TOOLS" ;;
         *) echo "" ;;
     esac
 }
@@ -405,7 +417,9 @@ get_category_folder() {
         AI_TOOLS) echo "ai-machine-learning" ;;
         CLOUD_TOOLS) echo "cloud-infrastructure" ;;
         DATA_ANALYTICS) echo "data-analytics" ;;
+        BACKGROUND_SERVICES) echo "background-services" ;;
         INFRA_CONFIG) echo "infrastructure-configuration" ;;
+        CONTRIBUTOR_TOOLS) echo "contributor-tools" ;;
         *) echo "" ;;
     esac
 }

@@ -23,7 +23,9 @@ export function getCategoryFolder(category: string): string {
     AI_TOOLS: 'ai-machine-learning',
     CLOUD_TOOLS: 'cloud-infrastructure',
     DATA_ANALYTICS: 'data-analytics',
+    BACKGROUND_SERVICES: 'background-services',
     INFRA_CONFIG: 'infrastructure-configuration',
+    CONTRIBUTOR_TOOLS: 'contributor-tools',
   };
   return mapping[category] || category.toLowerCase();
 }
