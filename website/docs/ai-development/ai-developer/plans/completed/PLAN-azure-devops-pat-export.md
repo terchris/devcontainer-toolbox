@@ -4,13 +4,15 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Completed
 
 **Goal**: Ensure `AZURE_DEVOPS_EXT_PAT` is automatically exported on container start so `az devops` commands work without manual setup.
 
 **GitHub Issue**: #48
 
 **Last Updated**: 2026-02-16
+
+**Completed**: 2026-02-16
 
 ---
 
@@ -28,7 +30,7 @@ Add a call to `config-azure-devops.sh --verify` in the entrypoint, following the
 
 ---
 
-## Phase 1: Add Azure DevOps restore to entrypoint — IN PROGRESS
+## Phase 1: Add Azure DevOps restore to entrypoint — ✅ DONE
 
 ### Tasks
 
@@ -49,11 +51,11 @@ User confirms phase is complete.
 
 ## Acceptance Criteria
 
-- [ ] `config-azure-devops.sh --verify` is called from `entrypoint.sh` on container start
-- [ ] The call is guarded (script existence check + `|| true`)
-- [ ] When `.devcontainer.secrets/env-vars/azure-devops-pat` exists, `AZURE_DEVOPS_EXT_PAT` is available in shell sessions after container start
-- [ ] When no PAT file exists, startup proceeds without errors
-- [ ] Pattern is consistent with existing `config-git.sh --verify` call
+- [x] `config-azure-devops.sh --verify` is called from `entrypoint.sh` on container start
+- [x] The call is guarded (script existence check + `|| true`)
+- [x] When `.devcontainer.secrets/env-vars/azure-devops-pat` exists, `AZURE_DEVOPS_EXT_PAT` is available in shell sessions after container start
+- [x] When no PAT file exists, startup proceeds without errors
+- [x] Pattern is consistent with existing `config-git.sh --verify` call
 
 ---
 
