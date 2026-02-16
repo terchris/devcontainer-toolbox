@@ -121,7 +121,7 @@ Every discoverable script must define these fields near the top:
 #------------------------------------------------------------------------------
 
 SCRIPT_ID="dev-golang"                    # Unique identifier
-SCRIPT_VER="0.0.1"                        # Script version
+SCRIPT_VER="0.0.1"                        # Script version (auto-bumped by pre-commit hook)
 SCRIPT_NAME="Go Runtime & Development"    # Display name (2-4 words)
 SCRIPT_DESCRIPTION="Install Go runtime"   # One-line description
 SCRIPT_CATEGORY="LANGUAGE_DEV"            # Category for grouping
@@ -172,6 +172,9 @@ SCRIPT_COMMANDS=(
 ## Directory Structure
 
 ```
+.githooks/
+└── pre-commit                        # Auto-bumps SCRIPT_VER on commit
+
 .devcontainer/
 ├── manage/                           # Management scripts
 │   ├── dev-setup.sh                  # Main menu entry point
@@ -183,7 +186,10 @@ SCRIPT_COMMANDS=(
 │   ├── dev-help.sh                   # Help command
 │   ├── dev-update.sh                 # Update toolbox
 │   ├── dev-docs.sh                   # Documentation generator
-│   └── dev-test.sh                   # Test runner
+│   ├── dev-test.sh                   # Test runner
+│   ├── generate-tools-json.sh        # Tool/category JSON generator (single source of truth)
+│   ├── tools.json                    # Generated tool inventory
+│   └── categories.json               # Generated category metadata
 │
 ├── additions/                        # Additions system
 │   ├── lib/                          # Shared libraries
@@ -376,6 +382,51 @@ service_start() {
     # Code after exec NEVER runs
 }
 ```
+
+---
+
+## Version Tracking
+
+### Pre-commit Hook
+
+The pre-commit hook at `.githooks/pre-commit` runs automatically on every commit. It performs two jobs in order:
+
+**Setup:** `git config core.hooksPath .githooks`
+
+#### Job 1: Script Validation
+
+Validates all staged addition scripts (`install-*.sh`, `config-*.sh`, `service-*.sh` in `.devcontainer/additions/`). If any check fails, the commit is blocked.
+
+| Check | What it does |
+|-------|-------------|
+| Syntax | `bash -n` — catches syntax errors |
+| Metadata | Verifies 8 required fields are present (see below) |
+| Shellcheck | `shellcheck --severity=error` — catches real bugs (skips style warnings) |
+
+**Required metadata fields:**
+
+`SCRIPT_ID`, `SCRIPT_VER`, `SCRIPT_NAME`, `SCRIPT_DESCRIPTION`, `SCRIPT_CATEGORY`, `SCRIPT_CHECK_COMMAND`, `SCRIPT_TAGS`, `SCRIPT_ABSTRACT`
+
+Templates and files outside `additions/` are skipped.
+
+#### Job 2: SCRIPT_VER Auto-Bumping
+
+Automatically bumps the patch version when you commit changes to a script. Contributors don't need to update `SCRIPT_VER` manually.
+
+The hook only bumps when:
+- The file is a `.sh` or `.ps1` script with a `SCRIPT_VER` field
+- The file already exists in the repo (new files are skipped)
+- There are real content changes (not just a version line change)
+
+Minor and major version bumps are done manually with the `set-version-*.sh` tools.
+
+### Tool JSON Generator
+
+`generate-tools-json.sh` is the **single source of truth** for tool and category JSON data. It produces:
+- `.devcontainer/manage/tools.json` — complete tool inventory with versions, packages, extensions
+- `.devcontainer/manage/categories.json` — category metadata
+
+Both the runtime (`dev-tools`) and the website (`dev-docs`) use this generator. The `dev-docs` command runs the generator and copies its output to `website/src/data/` for the React components.
 
 ---
 

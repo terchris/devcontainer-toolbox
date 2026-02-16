@@ -1,10 +1,14 @@
 #!/bin/bash
 # File: .devcontainer/manage/generate-tools-json.sh
-# Purpose: Generate tools.json with complete tool inventory
-# Usage: Called at container build time or manually via: generate-tools-json.sh
+# Purpose: Generate tools.json and categories.json — single source of truth for tool metadata
+# Usage: Called at container build time, by dev-docs, or manually via: generate-tools-json.sh
 #
-# Outputs tools.json to /opt/devcontainer-toolbox/manage/tools.json (image mode)
-# or .devcontainer/manage/tools.json (copy mode)
+# Outputs:
+#   tools.json      - Complete tool inventory with versions, packages, extensions
+#   categories.json - Category metadata for website and runtime
+#
+# Output location: /opt/devcontainer-toolbox/manage/ (image mode)
+#                  or .devcontainer/manage/ (copy mode)
 
 set -e
 
@@ -31,8 +35,13 @@ else
 fi
 ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
 
-# Output location
+# Output locations
 OUTPUT_FILE="$MANAGE_DIR/tools.json"
+CATEGORIES_FILE="$MANAGE_DIR/categories.json"
+
+# Source categories library for categories.json generation
+# shellcheck source=/dev/null
+source "$ADDITIONS_DIR/lib/categories.sh"
 
 #------------------------------------------------------------------------------
 # Helper Functions
@@ -132,8 +141,13 @@ json_escape() {
 
 echo "Generating tools.json..."
 
+# Top-level version for the tools inventory
+# This will be auto-bumped by CI/CD when any tool version changes (future Phase 2)
+TOOLS_VERSION="1.0.0"
+
 # Start JSON
 echo "{" > "$OUTPUT_FILE"
+echo "  \"version\": \"$TOOLS_VERSION\"," >> "$OUTPUT_FILE"
 echo '  "generated": "'$(date -Iseconds)'",' >> "$OUTPUT_FILE"
 echo '  "tools": [' >> "$OUTPUT_FILE"
 
@@ -147,11 +161,13 @@ for script_path in "$ADDITIONS_DIR"/install-*.sh; do
 
     # Extract metadata
     id=$(extract_var "$script_path" "SCRIPT_ID")
+    version=$(extract_var "$script_path" "SCRIPT_VER")
     name=$(extract_var "$script_path" "SCRIPT_NAME")
     description=$(extract_var "$script_path" "SCRIPT_DESCRIPTION")
     category=$(extract_var "$script_path" "SCRIPT_CATEGORY")
     tags=$(extract_var "$script_path" "SCRIPT_TAGS")
     abstract=$(extract_var "$script_path" "SCRIPT_ABSTRACT")
+    logo=$(extract_var "$script_path" "SCRIPT_LOGO")
     website=$(extract_var "$script_path" "SCRIPT_WEBSITE")
     summary=$(extract_var "$script_path" "SCRIPT_SUMMARY")
     related=$(extract_var "$script_path" "SCRIPT_RELATED")
@@ -178,17 +194,25 @@ for script_path in "$ADDITIONS_DIR"/install-*.sh; do
         echo "," >> "$OUTPUT_FILE"
     fi
 
+    # Build optional fields
+    local_optional=""
+    if [ -n "$logo" ]; then
+        local_optional="$local_optional
+      \"logo\": \"$(json_escape "$logo")\","
+    fi
+
     # Write JSON entry
     cat >> "$OUTPUT_FILE" << EOF
     {
       "id": "$(json_escape "$id")",
+      "version": "$(json_escape "$version")",
       "type": "install",
       "file": "$script_basename",
       "name": "$(json_escape "$name")",
       "description": "$(json_escape "$description")",
       "category": "$(json_escape "$category")",
       "tags": $(to_json_array "$tags"),
-      "abstract": "$(json_escape "$abstract")",
+      "abstract": "$(json_escape "$abstract")",${local_optional}
       "website": "$(json_escape "$website")",
       "summary": "$(json_escape "$summary")",
       "related": $(to_json_array "$related"),
@@ -215,6 +239,7 @@ for script_path in "$ADDITIONS_DIR"/config-*.sh; do
 
     # Extract metadata
     id=$(extract_var "$script_path" "SCRIPT_ID")
+    version=$(extract_var "$script_path" "SCRIPT_VER")
     name=$(extract_var "$script_path" "SCRIPT_NAME")
     description=$(extract_var "$script_path" "SCRIPT_DESCRIPTION")
     category=$(extract_var "$script_path" "SCRIPT_CATEGORY")
@@ -233,6 +258,7 @@ for script_path in "$ADDITIONS_DIR"/config-*.sh; do
     cat >> "$OUTPUT_FILE" << EOF
     {
       "id": "$(json_escape "$id")",
+      "version": "$(json_escape "$version")",
       "type": "config",
       "file": "$script_basename",
       "name": "$(json_escape "$name")",
@@ -255,6 +281,7 @@ for script_path in "$ADDITIONS_DIR"/service-*.sh; do
 
     # Extract metadata
     id=$(extract_var "$script_path" "SCRIPT_ID")
+    version=$(extract_var "$script_path" "SCRIPT_VER")
     name=$(extract_var "$script_path" "SCRIPT_NAME")
     description=$(extract_var "$script_path" "SCRIPT_DESCRIPTION")
     category=$(extract_var "$script_path" "SCRIPT_CATEGORY")
@@ -272,6 +299,7 @@ for script_path in "$ADDITIONS_DIR"/service-*.sh; do
     cat >> "$OUTPUT_FILE" << EOF
     {
       "id": "$(json_escape "$id")",
+      "version": "$(json_escape "$version")",
       "type": "service",
       "file": "$script_basename",
       "name": "$(json_escape "$name")",
@@ -285,9 +313,53 @@ for script_path in "$ADDITIONS_DIR"/service-*.sh; do
 EOF
 done
 
-# Close JSON
+# Close tools JSON
 echo "" >> "$OUTPUT_FILE"
 echo "  ]" >> "$OUTPUT_FILE"
 echo "}" >> "$OUTPUT_FILE"
 
 echo "Generated: $OUTPUT_FILE"
+
+#------------------------------------------------------------------------------
+# Generate categories.json
+#------------------------------------------------------------------------------
+
+echo "Generating categories.json..."
+
+echo "{" > "$CATEGORIES_FILE"
+echo '  "categories": [' >> "$CATEGORIES_FILE"
+
+first_cat=true
+for category_id in "${CATEGORY_ORDER[@]}"; do
+    cat_name=$(get_category_name "$category_id" || true)
+    cat_order=$(get_category_order "$category_id" || true)
+    cat_abstract=$(get_category_abstract "$category_id" || true)
+    cat_summary=$(get_category_summary "$category_id" || true)
+    cat_tags=$(get_category_tags "$category_id" || true)
+    cat_logo=$(get_category_logo "$category_id" || true)
+
+    # Add comma before all but first
+    if [ "$first_cat" = true ]; then
+        first_cat=false
+    else
+        echo "," >> "$CATEGORIES_FILE"
+    fi
+
+    # Write JSON entry
+    cat >> "$CATEGORIES_FILE" << EOF
+    {
+      "id": "$category_id",
+      "name": "$(json_escape "$cat_name")",
+      "order": $cat_order,
+      "tags": $(to_json_array "$cat_tags"),
+      "abstract": "$(json_escape "$cat_abstract")",
+      "summary": "$(json_escape "$cat_summary")",
+      "logo": "$(json_escape "$cat_logo")"
+    }
+EOF
+done
+
+echo "  ]" >> "$CATEGORIES_FILE"
+echo "}" >> "$CATEGORIES_FILE"
+
+echo "Generated: $CATEGORIES_FILE"
