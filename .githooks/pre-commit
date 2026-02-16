@@ -27,9 +27,12 @@ REQUIRED_FIELDS_INSTALL=(
     SCRIPT_CHECK_COMMAND
     SCRIPT_TAGS
     SCRIPT_ABSTRACT
+    SCRIPT_SUMMARY
+    SCRIPT_LOGO
+    SCRIPT_WEBSITE
 )
 
-# Config and service scripts need the same core fields
+# Config and service scripts need the same fields
 REQUIRED_FIELDS_OTHER=(
     SCRIPT_ID
     SCRIPT_VER
@@ -39,6 +42,8 @@ REQUIRED_FIELDS_OTHER=(
     SCRIPT_CHECK_COMMAND
     SCRIPT_TAGS
     SCRIPT_ABSTRACT
+    SCRIPT_SUMMARY
+    SCRIPT_LOGO
 )
 
 validation_failed=0

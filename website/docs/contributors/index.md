@@ -49,7 +49,7 @@ The pre-commit hook does two things automatically when you commit:
 
 If validation fails, the commit is blocked with a clear error message showing what needs to be fixed.
 
-**Required metadata fields** (must be present in every addition script):
+**Required metadata fields for install scripts** (all fields below must be present):
 
 | Field | Purpose |
 |-------|---------|
@@ -61,6 +61,11 @@ If validation fails, the commit is blocked with a clear error message showing wh
 | `SCRIPT_CHECK_COMMAND` | How to verify installation |
 | `SCRIPT_TAGS` | Search keywords |
 | `SCRIPT_ABSTRACT` | Brief description for tool cards |
+| `SCRIPT_SUMMARY` | Detailed overview for tool detail page |
+| `SCRIPT_LOGO` | Logo filename (e.g., `tool-name-logo.webp`) |
+| `SCRIPT_WEBSITE` | Official website URL |
+
+Config and service scripts require the same fields except `SCRIPT_WEBSITE`. Install scripts additionally require `SCRIPT_WEBSITE`.
 
 ### 4. Create a Branch
 

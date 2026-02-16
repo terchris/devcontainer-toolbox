@@ -22,6 +22,9 @@ SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="pgrep -x nginx >/dev/null 2>&1"
 SCRIPT_TAGS="nginx reverse proxy web server http"
 SCRIPT_ABSTRACT="Nginx reverse proxy service for routing HTTP traffic to backend services."
+SCRIPT_SUMMARY="Nginx configured as a reverse proxy to route HTTP requests between services in the devcontainer. Manages start, stop, restart, status, logs, validate, and reload operations via supervisord."
+SCRIPT_LOGO="config-nginx-logo.webp"
+SCRIPT_WEBSITE="https://nginx.org/"
 SCRIPT_PREREQUISITES=""  # Optional: "config-nginx.sh" if required
 SCRIPT_PREREQUISITE_TOOLS="install-srv-nginx.sh"  # Must be installed first
 

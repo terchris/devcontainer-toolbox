@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-16T17:17:47+00:00",
+  "generated": "2026-02-16T18:29:03+01:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -689,7 +689,7 @@
       "abstract": "PowerShell 7 with PSScriptAnalyzer for script development and linting.",
       "logo": "tool-powershell-logo.webp",
       "website": "https://learn.microsoft.com/en-us/powershell/",
-      "summary": "",
+      "summary": "Lightweight PowerShell 7 installation with PSScriptAnalyzer for script analysis and linting. Includes the VS Code PowerShell extension for IntelliSense, debugging, and integrated terminal support. For Azure automation and Intune management, see the Azure Operations tool which builds on this.",
       "related": ["tool-azure-ops"],
       "checkCommand": "command -v pwsh >/dev/null 2>&1 || [ -f /usr/bin/pwsh ]",
       "packages": {
@@ -819,7 +819,7 @@
       "category": "INFRA_CONFIG",
       "tags": ["nginx reverse proxy web server http"],
       "abstract": "Nginx reverse proxy service for routing HTTP traffic to backend services.",
-      "summary": "",
+      "summary": "Nginx configured as a reverse proxy to route HTTP requests between services in the devcontainer. Manages start, stop, restart, status, logs, validate, and reload operations via supervisord.",
       "related": []
     }
 ,
@@ -833,7 +833,7 @@
       "category": "INFRA_CONFIG",
       "tags": ["opentelemetry otel monitoring metrics observability"],
       "abstract": "OpenTelemetry monitoring stack with lifecycle events, metrics, and script exporter.",
-      "summary": "",
+      "summary": "Manages three OpenTelemetry processes: Lifecycle Collector (port 4318) for devcontainer events, Metrics Collector for system and container metrics, and Script Exporter (port 9469) for custom shell script metrics. Controlled via supervisord.",
       "related": []
     }
 
