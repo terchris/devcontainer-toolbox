@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-16T15:49:21+00:00",
+  "generated": "2026-02-16T16:12:31+00:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -675,6 +675,32 @@
         "dotnet": ["Microsoft.PowerApps.CLI.Tool"]
       },
       "extensions": ["microsoft-IsvExpTools.powerplatform-vscode"]
+    }
+,
+    {
+      "id": "tool-powershell",
+      "version": "1.0.0",
+      "type": "install",
+      "file": "install-tool-powershell.sh",
+      "name": "PowerShell",
+      "description": "Installs PowerShell 7 with PSScriptAnalyzer for script development and linting",
+      "category": "LANGUAGE_DEV",
+      "tags": ["powershell pwsh intune linting scripting"],
+      "abstract": "PowerShell 7 with PSScriptAnalyzer for script development and linting.",
+      "website": "https://learn.microsoft.com/en-us/powershell/",
+      "summary": "",
+      "related": ["tool-azure-ops"],
+      "checkCommand": "command -v pwsh >/dev/null 2>&1 || [ -f /usr/bin/pwsh ]",
+      "packages": {
+        "system": [],
+        "node": [],
+        "python": [],
+        "cargo": [],
+        "go": [],
+        "powershell": ["PSScriptAnalyzer"],
+        "dotnet": []
+      },
+      "extensions": ["ms-vscode.powershell"]
     }
 ,
     {
