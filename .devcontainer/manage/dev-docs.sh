@@ -942,7 +942,10 @@ EOF
     # Quick info section
     echo "<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>"
     echo "  <div>"
-    echo "    <strong>Script ID:</strong> <code>$script_id</code> &nbsp; <strong>Version:</strong> <code>$script_ver</code>"
+    echo "    <strong>Script ID:</strong> <code>$script_id</code>"
+    echo "  </div>"
+    echo "  <div>"
+    echo "    <strong>Version:</strong> <code>$script_ver</code>"
     echo "  </div>"
     echo "  <div>"
     echo "    <strong>Script:</strong> <code>$script_basename</code>"
