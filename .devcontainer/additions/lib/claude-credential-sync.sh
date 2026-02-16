@@ -59,7 +59,5 @@ ensure_claude_credentials() {
     fi
 }
 
-# If script is run directly (not sourced), execute the function
-if [ "${BASH_SOURCE[0]}" -ef "$0" ]; then
-    ensure_claude_credentials
-fi
+# Run the check when sourced (matches ensure-gitignore.sh pattern)
+ensure_claude_credentials
