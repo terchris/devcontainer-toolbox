@@ -115,24 +115,6 @@ Examples:
 EOF
 }
 
-# Detect script type from filename prefix
-# Args: $1=script_path
-# Returns: install, config, service, or unknown
-detect_script_type() {
-    local script_path=$1
-    local basename=$(basename "$script_path")
-
-    if [[ "$basename" == install-* ]]; then
-        echo "install"
-    elif [[ "$basename" == config-* ]]; then
-        echo "config"
-    elif [[ "$basename" == service-* ]] || [[ "$basename" == install-srv-* ]]; then
-        echo "service"
-    else
-        echo "unknown"
-    fi
-}
-
 # Extract a metadata field from a script file
 # Args: $1=script_path, $2=field_name
 # Returns: field value or empty string
@@ -375,42 +357,6 @@ format_extensions_table() {
         fi
     done
     echo ""
-}
-
-# Escape string for JSON output
-json_escape() {
-    local str=$1
-    # Escape backslashes, double quotes, and control characters
-    str="${str//\\/\\\\}"
-    str="${str//\"/\\\"}"
-    str="${str//$'\n'/\\n}"
-    str="${str//$'\r'/\\r}"
-    str="${str//$'\t'/\\t}"
-    echo "$str"
-}
-
-# Convert space-separated string to JSON array
-# Args: $1=space-separated string
-# Returns: JSON array string like ["item1","item2"]
-to_json_array() {
-    local input=$1
-    if [[ -z "$input" ]]; then
-        echo "[]"
-        return
-    fi
-
-    local result="["
-    local first=1
-    for item in $input; do
-        if [[ $first -eq 1 ]]; then
-            first=0
-        else
-            result+=","
-        fi
-        result+="\"$(json_escape "$item")\""
-    done
-    result+="]"
-    echo "$result"
 }
 
 # Add script to appropriate category variable
@@ -690,121 +636,6 @@ update_readme() {
     rm -f "$content_file"
 
     log_info "Updated: $README_FILE"
-}
-
-#------------------------------------------------------------------------------
-# JSON Generation Functions
-#------------------------------------------------------------------------------
-
-# Generate tools.json with all tool metadata
-generate_tools_json() {
-    log_info "Generating tools.json..."
-
-    local json="{\n  \"tools\": ["
-    local first_tool=1
-
-    for category in "${CATEGORY_ORDER[@]}"; do
-        local scripts=$(get_category_scripts "$category")
-        if [[ -z "$scripts" ]]; then
-            continue
-        fi
-
-        for script_path in $scripts; do
-            # Extract core metadata
-            local script_id=$(extract_script_field "$script_path" "SCRIPT_ID")
-            local script_name=$(extract_script_field "$script_path" "SCRIPT_NAME")
-            local script_desc=$(extract_script_field "$script_path" "SCRIPT_DESCRIPTION")
-            local script_category=$(extract_script_field "$script_path" "SCRIPT_CATEGORY")
-
-            # Extract extended metadata
-            extract_extended_metadata "$script_path"
-
-            # Detect script type
-            local script_type=$(detect_script_type "$script_path")
-
-            # Add comma before tool (except first)
-            if [[ $first_tool -eq 1 ]]; then
-                first_tool=0
-            else
-                json+=","
-            fi
-
-            # Build JSON object for this tool
-            json+="\n    {"
-            json+="\n      \"id\": \"$(json_escape "$script_id")\","
-            json+="\n      \"type\": \"$script_type\","
-            json+="\n      \"name\": \"$(json_escape "$script_name")\","
-            json+="\n      \"description\": \"$(json_escape "$script_desc")\","
-            json+="\n      \"category\": \"$script_category\","
-            json+="\n      \"tags\": $(to_json_array "$_SCRIPT_TAGS"),"
-            json+="\n      \"abstract\": \"$(json_escape "$_SCRIPT_ABSTRACT")\""
-
-            # Add optional fields only if they have values
-            if [[ -n "$_SCRIPT_LOGO" ]]; then
-                json+=",\n      \"logo\": \"$(json_escape "$_SCRIPT_LOGO")\""
-            fi
-            if [[ -n "$_SCRIPT_WEBSITE" ]]; then
-                json+=",\n      \"website\": \"$(json_escape "$_SCRIPT_WEBSITE")\""
-            fi
-            if [[ -n "$_SCRIPT_SUMMARY" ]]; then
-                json+=",\n      \"summary\": \"$(json_escape "$_SCRIPT_SUMMARY")\""
-            fi
-            if [[ -n "$_SCRIPT_RELATED" ]]; then
-                json+=",\n      \"related\": $(to_json_array "$_SCRIPT_RELATED")"
-            fi
-
-            json+="\n    }"
-        done
-    done
-
-    json+="\n  ]\n}"
-
-    echo -e "$json"
-}
-
-# Generate categories.json with all category metadata
-generate_categories_json() {
-    log_info "Generating categories.json..."
-
-    local json="{\n  \"categories\": ["
-    local first_cat=1
-
-    for category_id in "${CATEGORY_ORDER[@]}"; do
-        # Get category metadata using helper functions from categories.sh
-        local cat_name=$(get_category_name "$category_id")
-        local cat_order=$(get_category_order "$category_id")
-        local cat_abstract=$(get_category_abstract "$category_id")
-        local cat_summary=$(get_category_summary "$category_id")
-        local cat_tags=$(get_category_tags "$category_id")
-        local cat_logo=$(get_category_logo "$category_id")
-
-        # Add comma before category (except first)
-        if [[ $first_cat -eq 1 ]]; then
-            first_cat=0
-        else
-            json+=","
-        fi
-
-        # Build JSON object for this category
-        json+="\n    {"
-        json+="\n      \"id\": \"$category_id\","
-        json+="\n      \"name\": \"$(json_escape "$cat_name")\","
-        json+="\n      \"order\": $cat_order,"
-        json+="\n      \"tags\": $(to_json_array "$cat_tags"),"
-        json+="\n      \"abstract\": \"$(json_escape "$cat_abstract")\","
-        json+="\n      \"summary\": \"$(json_escape "$cat_summary")\""
-
-        # Add optional logo field only if it has a value
-        if [[ -n "$cat_logo" ]]; then
-            json+=",\n      \"logo\": \"$(json_escape "$cat_logo")\""
-        fi
-
-        json+="\n    }"
-    done
-
-    json+="\n  ]\n}"
-
-    echo -e "$json"
 }
 
 # Format help output from a script
@@ -1417,11 +1248,9 @@ generate_manual() {
     commands=$(generate_commands_md)
 
     # ===== Generate JSON files for React components =====
-    local tools_json
-    tools_json=$(generate_tools_json)
-
-    local categories_json
-    categories_json=$(generate_categories_json)
+    # Use the shared generator (single source of truth for tool/category JSON)
+    log_info "Running shared JSON generator..."
+    bash "$MANAGE_DIR/generate-tools-json.sh"
 
     # Output result
     if [[ $DRY_RUN -eq 1 ]]; then
@@ -1431,11 +1260,11 @@ generate_manual() {
         log_info "DRY RUN - commands.md preview:"
         echo -e "$commands" | head -50
         echo "..."
-        log_info "DRY RUN - tools.json preview:"
-        echo -e "$tools_json" | head -30
+        log_info "DRY RUN - tools.json preview (from shared generator):"
+        head -30 "$MANAGE_DIR/tools.json"
         echo "..."
-        log_info "DRY RUN - categories.json preview:"
-        echo -e "$categories_json" | head -30
+        log_info "DRY RUN - categories.json preview (from shared generator):"
+        head -30 "$MANAGE_DIR/categories.json"
         echo "..."
         log_info "Total length: tools/index.md=$(echo -e "$output" | wc -l) lines, commands.md=$(echo -e "$commands" | wc -l) lines"
     else
@@ -1453,13 +1282,12 @@ generate_manual() {
         echo -e "$commands" > "$OUTPUT_FILE_COMMANDS"
         log_info "Written: $OUTPUT_FILE_COMMANDS ($(wc -l < "$OUTPUT_FILE_COMMANDS") lines)"
 
-        # Write tools.json
-        echo -e "$tools_json" > "$TOOLS_JSON"
-        log_info "Written: $TOOLS_JSON"
+        # Copy JSON from shared generator to website data directory
+        cp "$MANAGE_DIR/tools.json" "$TOOLS_JSON"
+        log_info "Copied: $TOOLS_JSON (from shared generator)"
 
-        # Write categories.json
-        echo -e "$categories_json" > "$CATEGORIES_JSON"
-        log_info "Written: $CATEGORIES_JSON"
+        cp "$MANAGE_DIR/categories.json" "$CATEGORIES_JSON"
+        log_info "Copied: $CATEGORIES_JSON (from shared generator)"
 
         # Update README.md
         update_readme

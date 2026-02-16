@@ -1,0 +1,110 @@
+---
+title: Azure DevOps CLI
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-azure-devops-logo.webp')}
+    alt="Azure DevOps CLI"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Azure DevOps CLI</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Lightweight Azure DevOps CLI for pull requests, merges, and repository management.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>azure</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>devops</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>git</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pr</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>merge</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>repos</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>cli</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pipelines</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Minimal Azure CLI installation with the azure-devops extension. Enables az repos pr create/list/show/update commands for working with Azure DevOps repositories without the heavy extras from tool-azure-dev or tool-azure-ops.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-azure-devops</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-azure-devops.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://learn.microsoft.com/en-us/azure/devops/cli/" target="_blank">https://learn.microsoft.com/en-us/azure/devops/cli/</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [azure-cli](https://packages.debian.org/bookworm/azure-cli) | Installed from Microsoft APT repository |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-azure-devops.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Azure DevOps CLI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-azure-devops
+Name:         Azure DevOps CLI
+Script version: 0.0.1
+Category:     CLOUD_TOOLS, Cloud & Infrastructure Tools
+Description:  Installs Azure CLI with azure-devops extension for git PR, merge, and repo management
+
+Usage:
+
+  Action:
+      install-tool-azure-devops.sh      # Install Azure DevOps CLI
+      install-tool-azure-devops.sh --uninstall # Uninstall Azure DevOps CLI
+
+  Info:
+      install-tool-azure-devops.sh --help # Show help and usage information
+
+System Packages (APT):
+  - azure-cli
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-azure-dev', 'tool-azure-ops', 'config-azure-devops']} />

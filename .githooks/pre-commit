@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit
+#
+# Two jobs:
+#   1. Validate staged addition scripts (syntax, metadata, shellcheck)
+#   2. Auto-bump SCRIPT_VER patch version for changed scripts
+#
+# Only processes files that are staged for commit.
+# Uses GNU sed -i (runs inside devcontainer, Linux only).
+#
+# Setup: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+#------------------------------------------------------------------------------
+# Job 1: Validate staged addition scripts
+#------------------------------------------------------------------------------
+# Checks install-*.sh, config-*.sh, service-*.sh in .devcontainer/additions/
+# Skips templates and files outside additions/
+
+REQUIRED_FIELDS_INSTALL=(
+    SCRIPT_ID
+    SCRIPT_VER
+    SCRIPT_NAME
+    SCRIPT_DESCRIPTION
+    SCRIPT_CATEGORY
+    SCRIPT_CHECK_COMMAND
+    SCRIPT_TAGS
+    SCRIPT_ABSTRACT
+)
+
+# Config and service scripts need the same core fields
+REQUIRED_FIELDS_OTHER=(
+    SCRIPT_ID
+    SCRIPT_VER
+    SCRIPT_NAME
+    SCRIPT_DESCRIPTION
+    SCRIPT_CATEGORY
+    SCRIPT_CHECK_COMMAND
+    SCRIPT_TAGS
+    SCRIPT_ABSTRACT
+)
+
+validation_failed=0
+
+for file in $(git diff --cached --name-only); do
+    # Only check addition scripts (install-*, config-*, service-*)
+    case "$file" in
+        .devcontainer/additions/install-*.sh) script_type="install" ;;
+        .devcontainer/additions/config-*.sh)  script_type="config" ;;
+        .devcontainer/additions/service-*.sh) script_type="service" ;;
+        *) continue ;;
+    esac
+
+    # File must exist on disk (not a delete)
+    [ -f "$file" ] || continue
+
+    # Skip templates
+    case "$file" in
+        *template*) continue ;;
+    esac
+
+    basename=$(basename "$file")
+
+    # 1. Syntax check
+    if ! bash -n "$file" 2>/dev/null; then
+        echo "  FAIL  syntax   $basename"
+        validation_failed=1
+    fi
+
+    # 2. Required metadata fields
+    if [ "$script_type" = "install" ]; then
+        fields=("${REQUIRED_FIELDS_INSTALL[@]}")
+    else
+        fields=("${REQUIRED_FIELDS_OTHER[@]}")
+    fi
+
+    missing=()
+    for field in "${fields[@]}"; do
+        if ! grep -q "^${field}=" "$file"; then
+            missing+=("$field")
+        fi
+    done
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "  FAIL  meta     $basename  (missing: ${missing[*]})"
+        validation_failed=1
+    fi
+
+    # 3. Shellcheck (if available) — errors only, not warnings
+    if command -v shellcheck >/dev/null 2>&1; then
+        if ! shellcheck --severity=error "$file" >/dev/null 2>&1; then
+            echo "  FAIL  lint     $basename"
+            shellcheck --severity=error "$file" 2>&1 | head -20
+            validation_failed=1
+        fi
+    fi
+done
+
+if [ "$validation_failed" -ne 0 ]; then
+    echo ""
+    echo "  pre-commit: validation failed — fix errors above before committing"
+    exit 1
+fi
+
+#------------------------------------------------------------------------------
+# Job 2: Auto-bump SCRIPT_VER patch version
+#------------------------------------------------------------------------------
+# Bumps files that:
+#   - Are staged for commit (.sh or .ps1)
+#   - Contain a SCRIPT_VER field
+#   - Already exist in HEAD (new files are skipped)
+#   - Have real content changes (not just a SCRIPT_VER line change)
+#
+# Minor and major version bumps are done manually with set-version-*.sh tools.
+
+bumped=0
+
+for file in $(git diff --cached --name-only); do
+    # Only process .sh and .ps1 files
+    case "$file" in
+        *.sh|*.ps1) ;;
+        *) continue ;;
+    esac
+
+    # File must exist on disk (not a delete)
+    [ -f "$file" ] || continue
+
+    # File must contain SCRIPT_VER
+    grep -q 'SCRIPT_VER' "$file" || continue
+
+    # Skip new files (not in HEAD)
+    git show "HEAD:$file" > /dev/null 2>&1 || continue
+
+    # Compare content excluding SCRIPT_VER line -- skip if no real change
+    staged_content=$(git show ":$file" | grep -v 'SCRIPT_VER' || true)
+    head_content=$(git show "HEAD:$file" | grep -v 'SCRIPT_VER' || true)
+    [ "$staged_content" = "$head_content" ] && continue
+
+    # Extract current version (|| true to handle grep returning no match under pipefail)
+    if [[ "$file" == *.ps1 ]]; then
+        current=$(grep '^\$SCRIPT_VER' "$file" | head -1 | sed 's/.*= *"//' | sed 's/".*//') || true
+    else
+        current=$(grep '^SCRIPT_VER=' "$file" | head -1 | sed 's/^SCRIPT_VER="//' | sed 's/".*//') || true
+    fi
+    [ -z "$current" ] && continue
+
+    # Parse and bump patch
+    major=$(echo "$current" | cut -d. -f1)
+    minor=$(echo "$current" | cut -d. -f2)
+    patch=$(echo "$current" | cut -d. -f3)
+    new_ver="${major}.${minor}.$((patch + 1))"
+
+    # Update file on disk
+    if [[ "$file" == *.ps1 ]]; then
+        sed -i "s/^\(\\\$SCRIPT_VER *=  *\)\"[^\"]*\"/\1\"$new_ver\"/" "$file"
+    else
+        sed -i "s/SCRIPT_VER=\"[^\"]*\"/SCRIPT_VER=\"$new_ver\"/" "$file"
+    fi
+
+    # Re-stage the file with the version bump
+    git add "$file"
+    echo "  version-bump: $(basename "$file") $current -> $new_ver"
+    bumped=$((bumped + 1))
+done
+
+if [ "$bumped" -gt 0 ]; then
+    echo "  version-bump: $bumped file(s) bumped"
+fi
