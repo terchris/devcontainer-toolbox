@@ -42,6 +42,10 @@ source "${SCRIPT_DIR}/lib/tool-auto-enable.sh"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/logging.sh"
 
+# Set up Claude credentials symlink for persistence across rebuilds (issue #46)
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/lib/claude-credential-sync.sh"
+
 #------------------------------------------------------------------------------
 
 # Before running installation, we need to add any required repositories or setup
