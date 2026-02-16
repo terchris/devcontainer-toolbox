@@ -68,6 +68,13 @@ if [ -f "$ADDITIONS_DIR/config-git.sh" ]; then
     bash "$ADDITIONS_DIR/config-git.sh" --verify || true
 fi
 
+# Restore Azure DevOps configuration (non-interactive)
+if [ -f "$ADDITIONS_DIR/config-azure-devops.sh" ]; then
+    echo ""
+    echo "🔐 Restoring Azure DevOps configuration..."
+    bash "$ADDITIONS_DIR/config-azure-devops.sh" --verify || true
+fi
+
 # Refresh host info
 if [ -f "$ADDITIONS_DIR/config-host-info.sh" ]; then
     bash "$ADDITIONS_DIR/config-host-info.sh" --refresh 2>/dev/null || true
