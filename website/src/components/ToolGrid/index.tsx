@@ -23,9 +23,10 @@ export default function ToolGrid({
 }: ToolGridProps): ReactNode {
   const {tools} = toolsData as {tools: Tool[]};
 
+  // Only show install-type tools (config/service scripts don't have detail pages)
   let filteredTools = category
-    ? tools.filter((tool) => tool.category === category)
-    : tools;
+    ? tools.filter((tool) => tool.type === 'install' && tool.category === category)
+    : tools.filter((tool) => tool.type === 'install');
 
   const totalCount = filteredTools.length;
 

@@ -7,6 +7,7 @@ import styles from './styles.module.css';
 
 type Tool = {
   id: string;
+  type: string;
   name: string;
   category: string;
   abstract: string;
@@ -25,10 +26,10 @@ export default function RelatedTools({
   const {tools} = toolsData as {tools: Tool[]};
   const toolsImgBase = useBaseUrl('/img/tools/');
 
-  // Find tools by ID
+  // Find tools by ID (only install-type tools have detail pages)
   const relatedTools = relatedIds
     .map((id) => tools.find((tool) => tool.id === id))
-    .filter((tool): tool is Tool => tool !== undefined);
+    .filter((tool): tool is Tool => tool !== undefined && tool.type === 'install');
 
   if (relatedTools.length === 0) {
     return null;

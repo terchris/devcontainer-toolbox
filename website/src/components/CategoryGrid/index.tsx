@@ -14,12 +14,14 @@ export default function CategoryGrid({
   excludeEmpty = true,
 }: CategoryGridProps): ReactNode {
   const {categories} = categoriesData as {categories: Category[]};
-  const {tools} = toolsData as {tools: {category: string}[]};
+  const {tools} = toolsData as {tools: {category: string; type: string}[]};
 
-  // Count tools per category
+  // Count install-type tools per category (config/service scripts don't have detail pages)
   const toolCountByCategory: Record<string, number> = {};
   for (const tool of tools) {
-    toolCountByCategory[tool.category] = (toolCountByCategory[tool.category] || 0) + 1;
+    if (tool.type === 'install') {
+      toolCountByCategory[tool.category] = (toolCountByCategory[tool.category] || 0) + 1;
+    }
   }
 
   // Sort by order and optionally filter empty
