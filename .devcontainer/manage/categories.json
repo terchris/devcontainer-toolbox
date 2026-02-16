@@ -1,0 +1,83 @@
+{
+  "categories": [
+    {
+      "id": "SYSTEM_COMMANDS",
+      "name": "System Commands",
+      "order": 0,
+      "tags": ["system devcontainer setup management commands"],
+      "abstract": "DevContainer management commands for setup and maintenance.",
+      "summary": "DevContainer management commands (setup, update, services, help). Essential tools for managing your development environment.",
+      "logo": "system-commands-logo.webp"
+    }
+,
+    {
+      "id": "LANGUAGE_DEV",
+      "name": "Development Tools",
+      "order": 1,
+      "tags": ["programming languages code development ide python typescript go rust"],
+      "abstract": "Programming language development environments and tools.",
+      "summary": "Complete development setups for Python, TypeScript, Go, Rust, .NET, and Bash. Each includes language-specific tooling and VS Code extensions.",
+      "logo": "language-dev-logo.webp"
+    }
+,
+    {
+      "id": "AI_TOOLS",
+      "name": "AI & Machine Learning Tools",
+      "order": 2,
+      "tags": ["ai artificial intelligence machine learning ml claude code"],
+      "abstract": "AI and machine learning development tools.",
+      "summary": "AI and machine learning development tools including Claude Code for AI-assisted coding and other ML utilities.",
+      "logo": "ai-tools-logo.webp"
+    }
+,
+    {
+      "id": "CLOUD_TOOLS",
+      "name": "Cloud & Infrastructure Tools",
+      "order": 3,
+      "tags": ["cloud azure aws gcp infrastructure sdk cli"],
+      "abstract": "Cloud platform tools and SDKs.",
+      "summary": "Cloud platform CLIs and SDKs for Azure, AWS, and GCP. Manage cloud resources directly from your development environment.",
+      "logo": "cloud-tools-logo.webp"
+    }
+,
+    {
+      "id": "DATA_ANALYTICS",
+      "name": "Data & Analytics Tools",
+      "order": 4,
+      "tags": ["data analytics jupyter pandas visualization database"],
+      "abstract": "Data analysis, visualization, and engineering tools.",
+      "summary": "Data analysis, visualization, and data engineering tools including Jupyter, pandas, and database clients. Connect to data platforms.",
+      "logo": "data-analytics-logo.webp"
+    }
+,
+    {
+      "id": "BACKGROUND_SERVICES",
+      "name": "Background Services & Daemons",
+      "order": 5,
+      "tags": ["services daemon background nginx monitoring otel"],
+      "abstract": "Background services and daemons for development.",
+      "summary": "Background services and daemons including nginx reverse proxy, OTEL collector, and monitoring services. Run services locally.",
+      "logo": "background-services-logo.webp"
+    }
+,
+    {
+      "id": "INFRA_CONFIG",
+      "name": "Infrastructure & Configuration",
+      "order": 6,
+      "tags": ["infrastructure devops kubernetes terraform ansible configuration"],
+      "abstract": "Infrastructure as Code and configuration management.",
+      "summary": "Infrastructure as Code, configuration management, and DevOps tools including Kubernetes, Terraform, and Ansible.",
+      "logo": "infra-config-logo.webp"
+    }
+,
+    {
+      "id": "CONTRIBUTOR_TOOLS",
+      "name": "Contributor Tools",
+      "order": 7,
+      "tags": ["contributor maintainer development tools testing docs"],
+      "abstract": "Tools for contributors and maintainers.",
+      "summary": "Tools for contributors and maintainers including documentation generators, test runners, and development utilities.",
+      "logo": "contributor-tools-logo.webp"
+    }
+  ]
+}

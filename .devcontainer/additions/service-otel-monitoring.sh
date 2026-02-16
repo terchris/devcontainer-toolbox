@@ -24,6 +24,8 @@ SCRIPT_VER="0.0.1"
 SCRIPT_DESCRIPTION="OpenTelemetry monitoring stack (lifecycle, metrics, script exporter)"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 SCRIPT_CHECK_COMMAND="pgrep -f 'otelcol.*--config' >/dev/null 2>&1"
+SCRIPT_TAGS="opentelemetry otel monitoring metrics observability"
+SCRIPT_ABSTRACT="OpenTelemetry monitoring stack with lifecycle events, metrics, and script exporter."
 SCRIPT_PREREQUISITES="config-devcontainer-identity.sh"
 SCRIPT_PREREQUISITE_TOOLS="install-srv-otel-monitoring.sh"  # Must be installed first
 
