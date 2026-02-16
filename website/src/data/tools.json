@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-16T16:22:26+00:00",
+  "generated": "2026-02-16T16:37:24+00:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -816,8 +816,8 @@
       "name": "Nginx Reverse Proxy",
       "description": "Nginx reverse proxy for LiteLLM (adds Host header)",
       "category": "INFRA_CONFIG",
-      "tags": [],
-      "abstract": "",
+      "tags": ["nginx reverse proxy web server http"],
+      "abstract": "Nginx reverse proxy service for routing HTTP traffic to backend services.",
       "summary": "",
       "related": []
     }
@@ -830,8 +830,8 @@
       "name": "OTel Monitoring",
       "description": "OpenTelemetry monitoring stack (lifecycle, metrics, script exporter)",
       "category": "INFRA_CONFIG",
-      "tags": [],
-      "abstract": "",
+      "tags": ["opentelemetry otel monitoring metrics observability"],
+      "abstract": "OpenTelemetry monitoring stack with lifecycle events, metrics, and script exporter.",
       "summary": "",
       "related": []
     }
