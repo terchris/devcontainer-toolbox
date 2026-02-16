@@ -44,6 +44,11 @@ if [ -f "$ADDITIONS_DIR/lib/ensure-gitignore.sh" ]; then
     source "$ADDITIONS_DIR/lib/ensure-gitignore.sh"
 fi
 
+# Ensure .vscode/extensions.json recommends Dev Containers extension (issue #49)
+if [ -f "$ADDITIONS_DIR/lib/ensure-vscode-extensions.sh" ]; then
+    source "$ADDITIONS_DIR/lib/ensure-vscode-extensions.sh"
+fi
+
 # Apply host-captured git identity if available (from initializeCommand).
 HOST_GIT_NAME_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-name"
 HOST_GIT_EMAIL_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-email"
