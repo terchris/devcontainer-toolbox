@@ -131,6 +131,13 @@ if [ -f "$ADDITIONS_DIR/otel/scripts/send-tools-inventory.sh" ]; then
     fi
 fi
 
+# Auto-sync scripts (quiet, non-blocking, 10s timeout)
+if [ -f "$DCT_HOME/manage/dev-sync.sh" ]; then
+    echo ""
+    echo "🔄 Checking for script updates..."
+    timeout 10 bash "$DCT_HOME/manage/dev-sync.sh" --quiet 2>/dev/null || true
+fi
+
 # =============================================================================
 # FIRST START ONLY — runs once when container is first created
 # =============================================================================
