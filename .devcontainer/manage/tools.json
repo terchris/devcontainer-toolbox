@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-16T17:36:05+01:00",
+  "generated": "2026-02-16T18:14:44+01:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -687,6 +687,7 @@
       "category": "LANGUAGE_DEV",
       "tags": ["powershell pwsh intune linting scripting"],
       "abstract": "PowerShell 7 with PSScriptAnalyzer for script development and linting.",
+      "logo": "tool-powershell-logo.webp",
       "website": "https://learn.microsoft.com/en-us/powershell/",
       "summary": "",
       "related": ["tool-azure-ops"],

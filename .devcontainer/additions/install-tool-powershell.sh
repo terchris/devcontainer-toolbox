@@ -20,6 +20,7 @@ SCRIPT_CHECK_COMMAND="command -v pwsh >/dev/null 2>&1 || [ -f /usr/bin/pwsh ]"
 # --- Extended Metadata (for website documentation) ---
 SCRIPT_TAGS="powershell pwsh intune linting scripting"
 SCRIPT_ABSTRACT="PowerShell 7 with PSScriptAnalyzer for script development and linting."
+SCRIPT_LOGO="tool-powershell-logo.webp"
 SCRIPT_WEBSITE="https://learn.microsoft.com/en-us/powershell/"
 SCRIPT_RELATED="tool-azure-ops"
 
