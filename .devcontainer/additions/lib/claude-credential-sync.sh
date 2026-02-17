@@ -7,10 +7,19 @@
 ensure_claude_credentials() {
     local target_dir="/workspace/.devcontainer.secrets/.claude-credentials"
     local link_path="/home/vscode/.claude"
+    local legacy_file="/workspace/.devcontainer.secrets/claude-credentials.json"
+    local target_creds="$target_dir/.credentials.json"
 
     # Ensure target directory exists
     if [ ! -d "$target_dir" ]; then
         mkdir -p "$target_dir"
+    fi
+
+    # Migrate legacy credentials if new location is empty (issue #58)
+    if [ ! -f "$target_creds" ] && [ -f "$legacy_file" ]; then
+        cp "$legacy_file" "$target_creds"
+        chmod 600 "$target_creds"
+        echo "   ✅ Migrated legacy credentials from claude-credentials.json"
     fi
 
     # Check current state of .claude
@@ -59,5 +68,29 @@ ensure_claude_credentials() {
     fi
 }
 
-# Run the check when sourced (matches ensure-gitignore.sh pattern)
+restore_anthropic_api_key() {
+    local apikey_file="/workspace/.devcontainer.secrets/env-vars/anthropic-api-key"
+    local bashrc="/home/vscode/.bashrc"
+    local marker="# ANTHROPIC_API_KEY persistence (issue #58)"
+
+    # Nothing to restore if the key file doesn't exist
+    [ -f "$apikey_file" ] || return 0
+
+    # Already wired into .bashrc?
+    if grep -qF "$marker" "$bashrc" 2>/dev/null; then
+        return 0
+    fi
+
+    # Append export to .bashrc
+    cat >> "$bashrc" <<EOF
+
+$marker
+[ -f "$apikey_file" ] && export ANTHROPIC_API_KEY="\$(cat "$apikey_file" 2>/dev/null)"
+EOF
+
+    echo "   ✅ ANTHROPIC_API_KEY will be loaded from $apikey_file"
+}
+
+# Run checks when sourced (matches ensure-gitignore.sh pattern)
 ensure_claude_credentials
+restore_anthropic_api_key

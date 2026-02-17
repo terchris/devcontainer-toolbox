@@ -54,6 +54,11 @@ if [ -f "$ADDITIONS_DIR/lib/claude-credential-sync.sh" ]; then
     source "$ADDITIONS_DIR/lib/claude-credential-sync.sh"
 fi
 
+# Ensure GitHub CLI credentials symlink for persistence across rebuilds (issue #59)
+if [ -f "$ADDITIONS_DIR/lib/gh-credential-sync.sh" ]; then
+    source "$ADDITIONS_DIR/lib/gh-credential-sync.sh"
+fi
+
 # Apply host-captured git identity if available (from initializeCommand).
 HOST_GIT_NAME_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-name"
 HOST_GIT_EMAIL_FILE="$DCT_WORKSPACE/.devcontainer.secrets/env-vars/.git-host-email"

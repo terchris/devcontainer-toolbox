@@ -142,11 +142,14 @@ Or install directly:
 
 ### 2. Configure API Key
 
-Create the environment file:
+Save your API key (persists across container rebuilds):
 ```bash
 mkdir -p .devcontainer.secrets/env-vars
-echo "ANTHROPIC_API_KEY=your-api-key" > .devcontainer.secrets/env-vars/anthropic.env
+echo "your-api-key" > .devcontainer.secrets/env-vars/anthropic-api-key
+chmod 600 .devcontainer.secrets/env-vars/anthropic-api-key
 ```
+
+The key is automatically exported as `ANTHROPIC_API_KEY` on every container start.
 
 ### 3. Start Using It
 
