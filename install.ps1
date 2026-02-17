@@ -3,9 +3,11 @@
 # If blocked: powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex"
 
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 $repo = "terchris/devcontainer-toolbox"
 $image = "ghcr.io/${repo}:latest"
+$templateUrl = "https://raw.githubusercontent.com/$repo/main/devcontainer-user-template.json"
 
 Write-Host "Installing devcontainer-toolbox from $repo..."
 Write-Host ""
@@ -33,77 +35,68 @@ if (Test-Path ".devcontainer") {
     Write-Host ""
 }
 
-# --- 3. Create .devcontainer/devcontainer.json ------------------------------------
+# --- 3. Download devcontainer-user-template.json ----------------------------------
 
 New-Item -ItemType Directory -Path ".devcontainer" -Force | Out-Null
 
-$devcontainerJson = @'
-{
-    // DevContainer Toolbox — pre-built image mode
-    // Docs: https://github.com/terchris/devcontainer-toolbox
-    //
-    // overrideCommand: false is REQUIRED so VS Code doesn't bypass the ENTRYPOINT.
-    // The entrypoint handles all startup — no lifecycle hooks needed.
-    "image": "ghcr.io/terchris/devcontainer-toolbox:latest",
-    "overrideCommand": false,
+Write-Host "Downloading devcontainer.json from $templateUrl..."
 
-    // VPN capabilities
-    "runArgs": [
-        "--cap-add=NET_ADMIN",
-        "--cap-add=NET_RAW",
-        "--cap-add=SYS_ADMIN",
-        "--cap-add=AUDIT_WRITE",
-        "--device=/dev/net/tun:/dev/net/tun",
-        "--privileged"
-    ],
+# PowerShell 5.1 may default to TLS 1.0 which GitHub rejects
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "yzhang.markdown-all-in-one",
-                "MermaidChart.vscode-mermaid-chart",
-                "redhat.vscode-yaml",
-                "mhutchie.git-graph",
-                "timonwong.shellcheck"
-            ]
-        }
-    },
-
-    "remoteEnv": {
-        "DCT_HOME": "/opt/devcontainer-toolbox",
-        "DCT_WORKSPACE": "/workspace"
-    },
-
-    // No Docker socket mount — dev-update instructs you to pull from your host terminal.
-
-    "workspaceFolder": "/workspace",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-
-    // Capture host git identity before container starts.
-    // Uses cmd.exe syntax since VS Code on Windows runs initializeCommand via cmd.exe.
-    // If git is not installed, the commands silently fail — entrypoint has fallbacks.
-    "initializeCommand": "mkdir .devcontainer.secrets\\env-vars 2>nul & git config --global user.name > .devcontainer.secrets\\env-vars\\.git-host-name 2>nul & git config --global user.email > .devcontainer.secrets\\env-vars\\.git-host-email 2>nul & ver >nul",
-
-    "remoteUser": "vscode",
-    "containerUser": "vscode",
-    "shutdownAction": "stopContainer",
-    "updateRemoteUserUID": true,
-    "init": true
+try {
+    Invoke-WebRequest -Uri $templateUrl -OutFile ".devcontainer/devcontainer.json" -UseBasicParsing -TimeoutSec 30
 }
-'@
+catch {
+    Write-Host "Error: Failed to download devcontainer-user-template.json" -ForegroundColor Red
+    Write-Host "URL: $templateUrl"
+    Write-Host "$_"
+    exit 1
+}
 
-$devcontainerJson | Out-File -FilePath ".devcontainer/devcontainer.json" -Encoding utf8
+$fileSize = (Get-Item ".devcontainer/devcontainer.json").Length
+if ($fileSize -eq 0) {
+    Write-Host "Error: Downloaded file is empty" -ForegroundColor Red
+    Remove-Item ".devcontainer/devcontainer.json" -Force -ErrorAction SilentlyContinue
+    exit 1
+}
 
-Write-Host "Created .devcontainer/devcontainer.json"
+Write-Host "Created .devcontainer/devcontainer.json ($fileSize bytes)"
 
-# --- 4. Pull the Docker image -----------------------------------------------------
+# --- 4. Ensure .vscode/extensions.json recommends Dev Containers ------------------
+
+$extId = "ms-vscode-remote.remote-containers"
+$extFile = ".vscode\extensions.json"
+
+New-Item -ItemType Directory -Path ".vscode" -Force | Out-Null
+
+if (Test-Path $extFile) {
+    $json = Get-Content $extFile -Raw | ConvertFrom-Json
+    if (-not $json.recommendations) {
+        $json | Add-Member -NotePropertyName recommendations -NotePropertyValue @($extId)
+    } elseif ($json.recommendations -notcontains $extId) {
+        $json.recommendations += $extId
+    } else {
+        Write-Host "Dev Containers extension already in $extFile"
+        $json = $null
+    }
+    if ($json) {
+        $json | ConvertTo-Json -Depth 10 | Set-Content $extFile -Encoding UTF8
+        Write-Host "Added Dev Containers extension to $extFile"
+    }
+} else {
+    @{ recommendations = @($extId) } | ConvertTo-Json -Depth 10 | Set-Content $extFile -Encoding UTF8
+    Write-Host "Created $extFile with Dev Containers extension recommendation"
+}
+
+# --- 5. Pull the Docker image -----------------------------------------------------
 
 Write-Host ""
 Write-Host "Pulling container image: $image"
 Write-Host "(This may take a few minutes on first install...)"
 docker pull $image
 
-# --- 5. Print next steps ----------------------------------------------------------
+# --- 6. Print next steps ----------------------------------------------------------
 
 Write-Host ""
 Write-Host "devcontainer-toolbox installed!" -ForegroundColor Green

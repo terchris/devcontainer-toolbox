@@ -1,9 +1,11 @@
 {
-    // we are using devcontainers read about it: https://code.visualstudio.com/docs/devcontainers/containers
-    // or watch this video intro: https://www.youtube.com/watch?v=b1RavPr_878&t=38s
-    // NEWER edit this file. It is the same for all projects. Extend in the .devcontainer.extend folder
+    // FOR TOOLBOX DEVELOPMENT ONLY — Do NOT use this in user projects.
+    // User projects use the image-mode template: devcontainer-user-template.json
+    //
+    // Read about devcontainers: https://code.visualstudio.com/docs/devcontainers/containers
+    // Video intro: https://www.youtube.com/watch?v=b1RavPr_878&t=38s
+    // Extend in the .devcontainer.extend folder
     "name": "DevContainer Toolbox",
-    "_toolboxVersion": "TOOLBOX_VERSION_PLACEHOLDER",
     "build": {
         "dockerfile": "Dockerfile.base",
         "args": {

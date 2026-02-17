@@ -5,6 +5,7 @@ set -e
 
 REPO="terchris/devcontainer-toolbox"
 IMAGE="ghcr.io/$REPO:latest"
+TEMPLATE_URL="https://raw.githubusercontent.com/$REPO/main/devcontainer-user-template.json"
 
 echo "Installing devcontainer-toolbox from $REPO..."
 echo ""
@@ -30,71 +31,80 @@ if [ -d ".devcontainer" ]; then
     echo ""
 fi
 
-# ─── 3. Create .devcontainer/devcontainer.json ───────────────────────────────
+# ─── 3. Download devcontainer-user-template.json ─────────────────────────────
 
 mkdir -p .devcontainer
 
-cat > .devcontainer/devcontainer.json << 'DEVCONTAINER_EOF'
-{
-    // DevContainer Toolbox — pre-built image mode
-    // Docs: https://github.com/terchris/devcontainer-toolbox
-    //
-    // overrideCommand: false is REQUIRED so VS Code doesn't bypass the ENTRYPOINT.
-    // The entrypoint handles all startup — no lifecycle hooks needed.
-    "image": "ghcr.io/terchris/devcontainer-toolbox:latest",
-    "overrideCommand": false,
+echo "Downloading devcontainer.json from $TEMPLATE_URL..."
+if command -v curl >/dev/null 2>&1; then
+    if ! curl -fsSL "$TEMPLATE_URL" -o .devcontainer/devcontainer.json; then
+        echo "Error: Failed to download devcontainer-user-template.json"
+        exit 1
+    fi
+elif command -v wget >/dev/null 2>&1; then
+    if ! wget -qO .devcontainer/devcontainer.json "$TEMPLATE_URL"; then
+        echo "Error: Failed to download devcontainer-user-template.json"
+        exit 1
+    fi
+else
+    echo "Error: Neither 'curl' nor 'wget' is available"
+    exit 1
+fi
 
-    // VPN capabilities
-    "runArgs": [
-        "--cap-add=NET_ADMIN",
-        "--cap-add=NET_RAW",
-        "--cap-add=SYS_ADMIN",
-        "--cap-add=AUDIT_WRITE",
-        "--device=/dev/net/tun:/dev/net/tun",
-        "--privileged"
-    ],
-
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "yzhang.markdown-all-in-one",
-                "MermaidChart.vscode-mermaid-chart",
-                "redhat.vscode-yaml",
-                "mhutchie.git-graph",
-                "timonwong.shellcheck"
-            ]
-        }
-    },
-
-    "remoteEnv": {
-        "DCT_HOME": "/opt/devcontainer-toolbox",
-        "DCT_WORKSPACE": "/workspace"
-    },
-
-    "workspaceFolder": "/workspace",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-
-    // Capture host git identity before container starts
-    "initializeCommand": "mkdir -p .devcontainer.secrets/env-vars && (git config --global user.name > .devcontainer.secrets/env-vars/.git-host-name 2>/dev/null || true) && (git config --global user.email > .devcontainer.secrets/env-vars/.git-host-email 2>/dev/null || true)",
-
-    "remoteUser": "vscode",
-    "containerUser": "vscode",
-    "shutdownAction": "stopContainer",
-    "updateRemoteUserUID": true,
-    "init": true
-}
-DEVCONTAINER_EOF
+if [ ! -s .devcontainer/devcontainer.json ]; then
+    echo "Error: Downloaded file is empty"
+    exit 1
+fi
 
 echo "Created .devcontainer/devcontainer.json"
 
-# ─── 4. Pull the Docker image ────────────────────────────────────────────────
+# ─── 4. Ensure .vscode/extensions.json recommends Dev Containers ─────────────
+
+EXT_ID="ms-vscode-remote.remote-containers"
+EXT_FILE=".vscode/extensions.json"
+
+mkdir -p .vscode
+
+if [ -f "$EXT_FILE" ]; then
+    if grep -q "$EXT_ID" "$EXT_FILE" 2>/dev/null; then
+        echo "Dev Containers extension already in $EXT_FILE"
+    elif command -v python3 >/dev/null 2>&1; then
+        python3 -c "
+import json, sys
+path = '$EXT_FILE'
+ext_id = '$EXT_ID'
+with open(path) as f:
+    data = json.load(f)
+recs = data.setdefault('recommendations', [])
+if ext_id not in recs:
+    recs.append(ext_id)
+with open(path, 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+"
+        echo "Added Dev Containers extension to $EXT_FILE"
+    else
+        echo "Warning: Could not update existing $EXT_FILE (python3 not available)"
+    fi
+else
+    cat > "$EXT_FILE" << 'EXTENSIONS_EOF'
+{
+  "recommendations": [
+    "ms-vscode-remote.remote-containers"
+  ]
+}
+EXTENSIONS_EOF
+    echo "Created $EXT_FILE with Dev Containers extension recommendation"
+fi
+
+# ─── 5. Pull the Docker image ────────────────────────────────────────────────
 
 echo ""
 echo "Pulling container image: $IMAGE"
 echo "(This may take a few minutes on first install...)"
 docker pull "$IMAGE"
 
-# ─── 5. Print next steps ─────────────────────────────────────────────────────
+# ─── 6. Print next steps ─────────────────────────────────────────────────────
 
 echo ""
 echo "✅ devcontainer-toolbox installed!"
