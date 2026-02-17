@@ -28,6 +28,8 @@ cd devcontainer-toolbox
 
 ### 2. Open in Devcontainer
 
+> **Note:** Opening this repo in a devcontainer uses `.devcontainer/devcontainer.json` — the **build-mode** file that builds from `Dockerfile.base`. This is for toolbox development only. User projects use `devcontainer-user-template.json` (the image-mode template) via `install.sh`/`install.ps1`. See [Two Deployment Modes](architecture#two-deployment-modes) for details.
+
 ```bash
 code .
 # Click "Reopen in Container" when prompted

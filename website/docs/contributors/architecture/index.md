@@ -7,6 +7,47 @@ sidebar_position: 1
 
 This document describes the architecture and design patterns of the DevContainer Additions System - a metadata-driven, self-discovering script management system for devcontainer configuration.
 
+## Two Deployment Modes
+
+The toolbox has two distinct deployment modes with different `devcontainer.json` files. Mixing them up is a common source of errors.
+
+| | Build mode | Image mode |
+|---|---|---|
+| **Who** | Toolbox contributors | Everyone else (user projects) |
+| **File** | `.devcontainer/devcontainer.json` | `devcontainer-user-template.json` (repo root) |
+| **How it works** | Builds from `Dockerfile.base` | Pulls pre-built image from ghcr.io |
+| **Contains** | `"build": {"dockerfile": "Dockerfile.base"}` | `"image": "ghcr.io/terchris/devcontainer-toolbox:latest"` |
+| **Requires** | Full `.devcontainer/` directory (100+ files) | Just the one JSON file |
+
+### Single source of truth
+
+`devcontainer-user-template.json` at the repo root is the **single source of truth** for image-mode configuration. All install scripts and deployment tools download from:
+
+```
+https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/devcontainer-user-template.json
+```
+
+### Two installation paths
+
+```
+Organisation-managed machines (Jamf/Intune):
+  Jamf/Intune deploys devcontainer-init command
+  → user runs devcontainer-init per project
+
+Individual developers:
+  User runs curl|bash (install.sh) or irm|iex (install.ps1) per project
+  (downloads template + pulls image in one step)
+
+Both paths download from devcontainer-user-template.json
+```
+
+### What breaks if you mix them up
+
+- Downloading `.devcontainer/devcontainer.json` for a user project fails because `Dockerfile.base` does not exist in the user's project
+- The build-mode file also has toolbox-specific lifecycle hooks (`postCreateCommand`, `postStartCommand`) that only work inside the toolbox repo
+
+---
+
 ## Overview
 
 The Additions System provides:
