@@ -12,7 +12,7 @@
 
 **Last Updated**: 2026-02-16
 
-**Investigation**: [INVESTIGATE-dev-update-auto-pull.md](../backlog/INVESTIGATE-dev-update-auto-pull.md) — Phase 1 (foundation)
+**Investigation**: [INVESTIGATE-dev-update-auto-pull.md](INVESTIGATE-dev-update-auto-pull.md) — Phase 1 (foundation)
 
 ---
 

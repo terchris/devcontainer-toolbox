@@ -12,7 +12,7 @@
 
 **Last Updated**: 2026-02-16
 
-**Investigation**: [INVESTIGATE-lightweight-powershell.md](../backlog/INVESTIGATE-lightweight-powershell.md) — chose Option A (standalone script based on template)
+**Investigation**: [INVESTIGATE-lightweight-powershell.md](INVESTIGATE-lightweight-powershell.md) — chose Option A (standalone script based on template)
 
 ---
 
