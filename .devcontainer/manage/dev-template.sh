@@ -9,7 +9,7 @@
 #   ./dev-template.sh                      # Show menu
 #   ./dev-template.sh typescript-basic-webserver  # Direct selection
 #
-# Version: 1.3.0
+# Version: 1.4.0
 #------------------------------------------------------------------------------
 set -e
 
@@ -21,15 +21,20 @@ SCRIPT_NAME="Templates"
 SCRIPT_DESCRIPTION="Create project files from templates"
 SCRIPT_CATEGORY="SYSTEM_COMMANDS"
 SCRIPT_CHECK_COMMAND="true"
-SCRIPT_VERSION="1.3.0"
+SCRIPT_VERSION="1.4.0"
 
 #------------------------------------------------------------------------------
-# Check if dialog is available
+# Check prerequisites
 #------------------------------------------------------------------------------
-function check_dialog() {
+function check_prerequisites() {
   if ! command -v dialog >/dev/null 2>&1; then
     echo "❌ Error: dialog is not installed"
     echo "   sudo apt-get install dialog"
+    exit 2
+  fi
+  if ! command -v unzip >/dev/null 2>&1; then
+    echo "❌ Error: unzip is not installed"
+    echo "   sudo apt-get install unzip"
     exit 2
   fi
 }
@@ -49,52 +54,104 @@ function display_intro() {
 #------------------------------------------------------------------------------
 function detect_github_info() {
   echo "🔍 Detecting GitHub repository information..."
-  GITHUB_REMOTE=$(git remote get-url origin 2>/dev/null)
-  
-  if [[ -z "$GITHUB_REMOTE" ]]; then
-    echo "❌ Could not determine GitHub remote"
+
+  # Check we are inside a git repository
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "❌ Not inside a git repository"
+    echo "   Run this command from the root of your project repository."
     exit 1
   fi
-  
+
+  GITHUB_REMOTE=$(git remote get-url origin 2>/dev/null)
+
+  if [[ -z "$GITHUB_REMOTE" ]]; then
+    echo "❌ No 'origin' remote found"
+    echo "   This repository does not have a remote named 'origin'."
+    echo "   Add one with: git remote add origin https://github.com/<user>/<repo>.git"
+    exit 1
+  fi
+
+  echo "   Remote: $GITHUB_REMOTE"
+
   GITHUB_USERNAME=$(echo "$GITHUB_REMOTE" | sed -n 's/.*github.com[:/]\(.*\)\/.*/\1/p')
   REPO_NAME=$(basename -s .git "$GITHUB_REMOTE")
 
-  if [[ -z "$GITHUB_USERNAME" || -z "$REPO_NAME" ]]; then
-    echo "❌ Could not determine GitHub username or repo name"
+  if [[ -z "$GITHUB_USERNAME" ]]; then
+    echo "❌ Could not extract GitHub username from remote URL"
+    echo "   Remote URL: $GITHUB_REMOTE"
+    echo "   Expected format: https://github.com/<user>/<repo>.git"
     exit 1
   fi
 
-  echo "✅ GitHub user: $GITHUB_USERNAME"
-  echo "✅ Repository: $REPO_NAME"
+  if [[ -z "$REPO_NAME" ]]; then
+    echo "❌ Could not extract repository name from remote URL"
+    echo "   Remote URL: $GITHUB_REMOTE"
+    exit 1
+  fi
+
+  echo "   GitHub user: $GITHUB_USERNAME"
+  echo "   Repository: $REPO_NAME"
+  echo "✅ GitHub info detected"
   echo ""
 }
 
 #------------------------------------------------------------------------------
-# Clone templates repository
+# Download templates repository as zip
 #------------------------------------------------------------------------------
-function clone_template_repo() {
-  TEMPLATE_OWNER="terchris"
-  TEMPLATE_REPO_NAME="urbalurba-dev-templates"
-  TEMPLATE_REPO_URL="https://github.com/$TEMPLATE_OWNER/$TEMPLATE_REPO_NAME"
+function download_templates() {
+  local template_owner="terchris"
+  local template_repo="urbalurba-dev-templates"
+  local template_branch="main"
+  local zip_url="https://github.com/$template_owner/$template_repo/archive/refs/heads/$template_branch.zip"
 
   TEMP_DIR=$(mktemp -d)
+  local zip_file="$TEMP_DIR/templates.zip"
+
   echo "📥 Fetching latest templates from GitHub..."
-  echo "   📁 Download location: $TEMP_DIR"
+  echo "   Source: $zip_url"
   echo ""
+
+  local curl_error
+  if ! curl_error=$(curl -fsSL "$zip_url" -o "$zip_file" 2>&1); then
+    echo "❌ Failed to download templates"
+    echo ""
+    echo "   URL: $zip_url"
+    echo "   Error: $curl_error"
+    echo ""
+    echo "   Possible causes:"
+    echo "   - No internet connection"
+    echo "   - GitHub is unreachable (firewall, proxy, DNS)"
+    echo ""
+    echo "   To test, run:"
+    echo "   curl -fsSL -o /tmp/test.zip \"$zip_url\""
+    rm -rf "$TEMP_DIR"
+    exit 1
+  fi
+
+  if [ ! -s "$zip_file" ]; then
+    echo "❌ Downloaded file is empty"
+    rm -rf "$TEMP_DIR"
+    exit 1
+  fi
+
+  if ! unzip -q "$zip_file" -d "$TEMP_DIR/" 2>/dev/null; then
+    echo "❌ Failed to extract templates zip"
+    rm -rf "$TEMP_DIR"
+    exit 1
+  fi
+
+  # GitHub archive extracts to <repo>-<branch>/ directory
+  TEMPLATE_REPO_NAME="$template_repo-$template_branch"
+
   cd "$TEMP_DIR"
 
-  if ! git clone --quiet $TEMPLATE_REPO_URL 2>/dev/null; then
-    echo "❌ Failed to clone template repository"
+  if [ ! -d "$TEMPLATE_REPO_NAME/templates" ]; then
+    echo "❌ Templates directory not found in downloaded archive"
+    echo "   Expected: $TEMPLATE_REPO_NAME/templates/"
     rm -rf "$TEMP_DIR"
     exit 1
   fi
 
-  if [ ! -d "$TEMPLATE_REPO_NAME/templates" ]; then
-    echo "❌ Templates directory not found"
-    rm -rf "$TEMP_DIR"
-    exit 1
-  fi
-  
   echo "✅ Templates fetched successfully"
   echo ""
 }
@@ -489,8 +546,8 @@ function cleanup_and_complete() {
 # Get template name from command line (optional)
 TEMPLATE_NAME="${1:-}"
 
-# Check for dialog
-check_dialog
+# Check prerequisites
+check_prerequisites
 
 # Show intro
 clear
@@ -498,7 +555,7 @@ display_intro
 
 # Run the process
 detect_github_info
-clone_template_repo
+download_templates
 scan_templates
 select_template "$TEMPLATE_NAME"
 verify_template
