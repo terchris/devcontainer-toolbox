@@ -6,39 +6,74 @@
 
 ## Title
 
-Add CI/CD pipeline to validate templates and publish release zip
+Add CI/CD pipeline to validate templates, auto-replace placeholders, and publish release zip
 
 ## Body
 
 ### Problem
 
-The `dev-template` command in [devcontainer-toolbox](https://github.com/terchris/devcontainer-toolbox) currently uses `git clone` to fetch templates. This fails on freshly installed machines where git credential helpers block or prompt for auth (see [devcontainer-toolbox#63](https://github.com/terchris/devcontainer-toolbox/issues/63)).
+The `dev-template` command in [devcontainer-toolbox](https://github.com/terchris/devcontainer-toolbox) copies template files as-is — it does not replace `{{GITHUB_USERNAME}}` or `{{REPO_NAME}}` placeholders. These placeholders appear in Kubernetes manifests and GitHub workflow files across all templates.
 
-The fix is to switch to downloading a release zip (like devcontainer-toolbox's `dev-sync` command does), but this repo has no CI/CD pipeline and no releases.
+Previously `dev-template` required a git repo to detect GitHub info and replace these, but that broke on fresh machines. The new approach is: `dev-template` just copies files, and the templates' own CI/CD handles placeholder replacement on first push.
 
 ### Requested
 
-Create a GitHub Actions workflow that:
+Create GitHub Actions workflows that:
 
-1. **Validates templates on every push/PR:**
+1. **Auto-replace placeholders on first push (all templates):**
+   - On push to any branch, check if any files contain `{{GITHUB_USERNAME}}` or `{{REPO_NAME}}`
+   - If found, replace with `${{ github.repository_owner }}` and `${{ github.event.repository.name }}`
+   - Commit the changes back to the branch
+   - This runs once — after replacement, the placeholders are gone and the step becomes a no-op
+   - This should be a separate workflow file (e.g., `init-placeholders.yml`) included in every template
+
+2. **Validate templates on every push/PR (this repo only):**
    - Every directory in `templates/` has a `TEMPLATE_INFO` file
    - `TEMPLATE_INFO` contains required variables: `TEMPLATE_NAME`, `TEMPLATE_DESCRIPTION`, `TEMPLATE_CATEGORY`
    - Every template has `manifests/deployment.yaml` (required by `dev-template`)
    - No broken file references
-   - Optional: lint YAML files, check for placeholder variables
+   - Optional: lint YAML files
 
-2. **Publishes a release zip on merge to main:**
+3. **Publish a release zip on merge to main (this repo only):**
    - Create a zip containing the `templates/` directory (and `urbalurba-scripts/` if present)
    - Publish as a GitHub release asset (e.g., `templates.zip`)
-   - Use a fixed release tag (e.g., `latest`) so the download URL is stable, or use `templates-version.txt` for versioned releases
-   - The stable download URL should be: `https://github.com/terchris/urbalurba-dev-templates/releases/download/latest/templates.zip`
+   - Use a fixed release tag (e.g., `latest`) so the download URL is stable
+   - Stable download URL: `https://github.com/terchris/urbalurba-dev-templates/releases/download/latest/templates.zip`
 
 ### Why
 
-- `dev-template` will switch from `git clone` to `curl` + zip download (no git auth needed)
+- `dev-template` stays ultra simple — just download, browse, select, copy. No git requirement.
+- Placeholder replacement happens automatically when the user pushes their project to GitHub — zero manual steps
 - Template validation catches errors before they reach users
-- Follows the same pattern as devcontainer-toolbox's own release pipeline (`dev_containers.zip`)
-- Zip download is faster (no git history) and works in restrictive network environments
+- Follows the same pattern as devcontainer-toolbox's own release pipeline
+
+### Placeholder replacement example
+
+The `init-placeholders.yml` workflow included in each template:
+
+```yaml
+name: Initialize project
+on: push
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace template placeholders
+        run: |
+          # Check if any placeholders remain
+          if grep -rq '{{GITHUB_USERNAME}}\|{{REPO_NAME}}' . --include='*.yaml' --include='*.yml'; then
+            find . -type f \( -name '*.yaml' -o -name '*.yml' \) -exec sed -i \
+              -e 's|{{GITHUB_USERNAME}}|${{ github.repository_owner }}|g' \
+              -e 's|{{REPO_NAME}}|${{ github.event.repository.name }}|g' {} +
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: initialize project placeholders [skip ci]" || true
+            git push
+          fi
+```
 
 ### Reference
 
