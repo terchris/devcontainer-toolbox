@@ -77,7 +77,7 @@ cleanup_and_complete
 
 1. **Remove all git code from dev-template** — delete `detect_github_info()`, `replace_placeholders()`, and `process_essential_files()`. The script becomes: download → browse → select → copy.
 
-2. **Add placeholder replacement to the templates repo** — each template gets an `init-placeholders.yml` GitHub Actions workflow that auto-replaces `{{GITHUB_USERNAME}}`/`{{REPO_NAME}}` on first push. This is tracked in the draft issue: [ISSUE-urbalurba-dev-templates-cicd.md](ISSUE-urbalurba-dev-templates-cicd.md).
+2. **Add placeholder replacement to the templates repo** — each template gets an `init-placeholders.yml` GitHub Actions workflow that auto-replaces `{{GITHUB_USERNAME}}`/`{{REPO_NAME}}` on first push. This is tracked in the draft issue: [ISSUE-urbalurba-dev-templates-cicd.md](../backlog/ISSUE-urbalurba-dev-templates-cicd.md).
 
 ---
 
