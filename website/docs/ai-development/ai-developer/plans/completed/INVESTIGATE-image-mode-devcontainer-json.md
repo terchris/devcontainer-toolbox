@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Backlog
+## Status: Done
 
 **Goal**: Provide a single, downloadable, cross-platform `devcontainer.json` for image-mode users — separate from the build-mode file used for toolbox development.
 

@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Done
 
 **Goal**: Persist `gh` CLI credentials across devcontainer rebuilds by symlinking `~/.config/gh` to `.devcontainer.secrets/.gh-config/`.
 
