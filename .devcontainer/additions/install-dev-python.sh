@@ -10,18 +10,18 @@
 
 # --- Script Metadata ---
 SCRIPT_ID="dev-python"
-SCRIPT_VER="0.0.1"
+SCRIPT_VER="0.0.2"
 SCRIPT_NAME="Python Development Tools"
-SCRIPT_DESCRIPTION="Adds ipython, pytest-cov, and VS Code extensions for Python development"
+SCRIPT_DESCRIPTION="Adds ipython, pytest-cov, uv, and VS Code extensions for Python development"
 SCRIPT_CATEGORY="LANGUAGE_DEV"
 SCRIPT_CHECK_COMMAND="command -v ipython >/dev/null 2>&1"
 
 # --- Extended Metadata (for website documentation) ---
-SCRIPT_TAGS="python pip ipython pytest coverage development venv"
-SCRIPT_ABSTRACT="Python development environment with ipython, pytest-cov, and python-dotenv for enhanced coding and testing."
+SCRIPT_TAGS="python pip uv ipython pytest coverage development venv"
+SCRIPT_ABSTRACT="Python development environment with ipython, pytest-cov, uv, and python-dotenv for enhanced coding and testing."
 SCRIPT_LOGO="dev-python-logo.webp"
 SCRIPT_WEBSITE="https://python.org"
-SCRIPT_SUMMARY="Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, and python-dotenv for environment management. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking."
+SCRIPT_SUMMARY="Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, python-dotenv for environment management, and uv as an extremely fast Python package and project manager. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking."
 SCRIPT_RELATED="dev-typescript dev-golang dev-rust"
 
 # Commands for dev-setup.sh menu integration
@@ -36,6 +36,7 @@ PACKAGES_PYTHON=(
     "ipython"       # Enhanced interactive Python shell
     "pytest-cov"    # Code coverage for pytest
     "python-dotenv" # Environment variable management
+    "uv"            # Extremely fast Python package and project manager
 )
 
 # VS Code extensions
@@ -108,6 +109,7 @@ post_installation_message() {
     echo "   ipython: $ipython_version"
     echo "   pytest-cov: installed (for code coverage)"
     echo "   python-dotenv: installed (for .env files)"
+    echo "   uv: installed (extremely fast Python package and project manager)"
     echo
     echo "Quick start: ipython    # Enhanced Python shell"
     echo "             pytest --cov=. tests/  # Run tests with coverage"
