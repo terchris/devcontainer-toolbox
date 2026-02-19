@@ -6,11 +6,18 @@
 #   2. Auto-bump SCRIPT_VER patch version for changed scripts
 #
 # Only processes files that are staged for commit.
-# Uses GNU sed -i (runs inside devcontainer, Linux only).
+# Works on both Linux (GNU sed) and macOS (BSD sed).
 #
 # Setup: git config core.hooksPath .githooks
 
 set -euo pipefail
+
+# Portable in-place sed: BSD sed (macOS) requires -i '', GNU sed (Linux) does not
+if sed --version 2>/dev/null | grep -q 'GNU'; then
+    sed_inplace() { sed -i "$@"; }
+else
+    sed_inplace() { sed -i '' "$@"; }
+fi
 
 #------------------------------------------------------------------------------
 # Job 1: Validate staged addition scripts
@@ -157,9 +164,9 @@ for file in $(git diff --cached --name-only); do
 
     # Update file on disk
     if [[ "$file" == *.ps1 ]]; then
-        sed -i "s/^\(\\\$SCRIPT_VER *=  *\)\"[^\"]*\"/\1\"$new_ver\"/" "$file"
+        sed_inplace "s/^\(\\\$SCRIPT_VER *=  *\)\"[^\"]*\"/\1\"$new_ver\"/" "$file"
     else
-        sed -i "s/SCRIPT_VER=\"[^\"]*\"/SCRIPT_VER=\"$new_ver\"/" "$file"
+        sed_inplace "s/SCRIPT_VER=\"[^\"]*\"/SCRIPT_VER=\"$new_ver\"/" "$file"
     fi
 
     # Re-stage the file with the version bump
