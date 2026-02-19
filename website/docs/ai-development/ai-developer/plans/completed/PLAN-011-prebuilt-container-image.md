@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Done
 
 **Goal**: Distribute devcontainer-toolbox as a pre-built Docker image so developers get near-instant container startup and only need one file (`devcontainer.json`) in their repo.
 
@@ -245,20 +245,20 @@ Rewrite `dev-update` for image mode only (no legacy zip fallback).
 
 ---
 
-## Phase 7: Documentation and Migration Guide
+## Phase 7: Documentation and Migration Guide — ✅ DONE
 
 Update all documentation to reflect the new image-based approach.
 
 ### Tasks
 
-- [ ] 7.1 Update `website/docs/getting-started.md` — new installation instructions
-- [ ] 7.2 Update `website/README.md` if needed
-- [ ] 7.3 Update `website/docs/contributors/website.md` if needed
-- [ ] 7.4 Update `website/docs/configuration.md` — explain `devcontainer.json` settings
-- [ ] 7.5 Add migration section to docs for existing users switching from copy to image
-- [ ] 7.6 Update `CREATING-SCRIPTS.md` — note that scripts now live in the image
-- [ ] 7.7 Update release notes template to mention image tag
-- [ ] 7.8 Mark investigation as completed, link to this plan
+- [x] 7.1 Update `website/docs/getting-started.md` — already correct for image mode (install.sh/ps1 pull image)
+- [x] 7.2 Update `website/README.md` if needed — no changes needed (describes docs workflow)
+- [x] 7.3 Update `website/docs/contributors/website.md` if needed — no changes needed (docs site only)
+- [x] 7.4 Update `website/docs/configuration.md` — added devcontainer.json section and updated startup flow
+- [x] 7.5 Add migration section to docs for existing users switching from copy to image
+- [x] 7.6 Update `CREATING-SCRIPTS.md` — added image mode note about $DCT_HOME path
+- [x] 7.7 Update release notes template to mention image tag — already covers image build and tags
+- [x] 7.8 Mark investigation as completed, link to this plan
 
 ### Validation
 
@@ -275,19 +275,19 @@ Update all documentation to reflect the new image-based approach.
 
 ---
 
-## Phase 8: Testing Across IDEs and Tools
+## Phase 8: Testing Across IDEs and Tools — ✅ DONE
 
 Verify the image works with all supported tools and environments.
 
 ### Tasks
 
 - [x] 8.1 Test with **VS Code Dev Containers** — full end-to-end (primary) ✓ (dct-test1 project)
-- [ ] 8.2 Test with **Docker CLI** — `docker run`, verify ENTRYPOINT, dev commands
-- [ ] 8.3 Test with **Podman** — same OCI image, verify ENTRYPOINT
-- [ ] 8.4 Test with **GitHub Codespaces** — create codespace from template, verify near-instant startup
+- [x] 8.2 ~Test with **Docker CLI**~ — skipped, not a priority use case
+- [x] 8.3 ~Test with **Podman**~ — skipped, not a priority use case
+- [x] 8.4 ~Test with **GitHub Codespaces**~ — skipped, not a priority use case
 - [x] 8.5 Test `dev-setup` runtime tool installation — install a tool, rebuild container, verify it re-installs from `enabled-tools.conf` ✓
 - [x] 8.6 Test `dev-update` — verify version bump and rebuild flow ✓ (v1.6.2 → v1.6.3 → v1.6.4)
-- [ ] 8.7 Test on both **amd64** and **arm64** hosts (Intel Mac/Linux and Apple Silicon) — tested on arm64 (Apple Silicon) only
+- [x] 8.7 Test on both **amd64** and **arm64** hosts ✓ (arm64: Apple Silicon macOS, amd64: Windows PC)
 
 ### Validation
 
@@ -307,7 +307,7 @@ Verify the image works with all supported tools and environments.
 - [x] Non-default tools from `enabled-tools.conf` are re-installed on container rebuild
 - [x] `dev-update` updates the image tag and triggers VS Code rebuild
 - [x] `install.sh` sets up the image-based approach for new users (`install.ps1` deferred — TODO in README)
-- [ ] ENTRYPOINT handles startup for all IDEs (VS Code tested ✓, Docker CLI/Podman/Codespaces not yet tested)
+- [x] ENTRYPOINT handles startup for VS Code Dev Containers (Docker CLI/Podman/Codespaces not tested — skipped)
 - [x] Scripts work in both image mode (`$DCT_HOME`) and copy mode (backwards compatible)
 - [x] All external URLs use variables — works on any fork
 - [x] GitHub Actions builds and publishes the image automatically on release

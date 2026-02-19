@@ -63,6 +63,31 @@ The container starts in seconds since the image was already pulled during instal
 
 That's it! You're ready to start developing.
 
+## Migrating from an Older Version
+
+If your project has an older `.devcontainer/` folder with many files (Dockerfile, manage/, additions/), you can switch to the new image-based approach:
+
+1. Back up your current config:
+   ```bash
+   mv .devcontainer .devcontainer.old
+   ```
+
+2. Run the installer again from your project directory:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+   ```
+
+3. Your `.devcontainer.extend/` and `.devcontainer.secrets/` are preserved — all tool selections and credentials carry over.
+
+4. Delete the old backup when everything works:
+   ```bash
+   rm -rf .devcontainer.old
+   ```
+
+The new approach uses a pre-built image so your `.devcontainer/` folder contains only `devcontainer.json` instead of 100+ files.
+
+---
+
 ## What's Next?
 
 - **[Install Tools](commands)** - Add development tools (Python, TypeScript, Go, etc.)

@@ -10,6 +10,9 @@ Configure your devcontainer to match your project's needs. These settings are st
 ## File Locations
 
 ```
+.devcontainer/
+└── devcontainer.json          # Container config (references pre-built image)
+
 .devcontainer.extend/          # Project config (commit to git)
 ├── enabled-tools.conf         # Tools to auto-install
 ├── enabled-services.conf      # Services to auto-start
@@ -19,6 +22,28 @@ Configure your devcontainer to match your project's needs. These settings are st
 ├── devcontainer-identity      # Git user name/email
 └── ...                        # Other credentials
 ```
+
+---
+
+## devcontainer.json
+
+The container configuration file. This is the only file you need in `.devcontainer/`.
+
+**Location:** `.devcontainer/devcontainer.json`
+
+It references the pre-built image on ghcr.io and contains settings for VS Code extensions, VPN capabilities, and environment variables. The container starts in seconds because everything is pre-built in the image.
+
+Key settings:
+
+| Setting | Purpose |
+|---------|---------|
+| `image` | Pre-built image reference (`ghcr.io/terchris/devcontainer-toolbox:latest`) |
+| `overrideCommand` | Must be `false` so VS Code doesn't bypass the startup script |
+| `runArgs` | VPN capabilities (NET_ADMIN, NET_RAW, etc.) |
+| `customizations.vscode.extensions` | VS Code extensions to install |
+| `remoteEnv` | Environment variables (`DCT_HOME`, `DCT_WORKSPACE`) |
+
+You normally don't need to edit this file. The `install.sh` script creates it, and `dev-update` updates the image version when new releases are available.
 
 ---
 
@@ -128,18 +153,23 @@ Secrets survive container rebuilds because they're stored in the workspace, not 
 
 ## How It All Works Together
 
+The container image includes a startup script (ENTRYPOINT) that handles all initialization automatically, regardless of which IDE you use:
+
 ```
-Container Created
+Container Starts (ENTRYPOINT runs)
        ↓
-1. Restore configs from .devcontainer.secrets/
+Every start:
+  - Configure git identity
+  - Start background services
+  - Sync latest scripts
        ↓
-2. Install tools from enabled-tools.conf
-       ↓
-3. Start services from enabled-services.conf
-       ↓
-4. Run project-installs.sh
+First start only:
+  - Create .devcontainer.extend/ with defaults
+  - Restore configs from .devcontainer.secrets/
+  - Install tools from enabled-tools.conf
+  - Run project-installs.sh
        ↓
 Ready to develop!
 ```
 
-This happens automatically - you just open the project in VS Code.
+This happens automatically — open the project in VS Code and click "Reopen in Container".

@@ -191,6 +191,8 @@ All scripts go in: `.devcontainer/additions/`
 └── lib/              # Shared libraries (add new ones for reusable functionality)
 ```
 
+**Image mode:** At build time, the Docker image copies these scripts to `/opt/devcontainer-toolbox/additions/` (set as `$DCT_HOME/additions/`). When developing and testing locally in the repo, you work with the `.devcontainer/additions/` path as normal. The image build handles the copy.
+
 ---
 
 ## When to Create Library Functions
