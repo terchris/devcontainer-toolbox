@@ -9,7 +9,7 @@
 #   ./dev-template.sh                      # Show menu
 #   ./dev-template.sh typescript-basic-webserver  # Direct selection
 #
-# Version: 1.4.0
+# Version: 1.5.0
 #------------------------------------------------------------------------------
 set -e
 
@@ -21,7 +21,7 @@ SCRIPT_NAME="Templates"
 SCRIPT_DESCRIPTION="Create project files from templates"
 SCRIPT_CATEGORY="SYSTEM_COMMANDS"
 SCRIPT_CHECK_COMMAND="true"
-SCRIPT_VERSION="1.4.0"
+SCRIPT_VERSION="1.5.0"
 
 #------------------------------------------------------------------------------
 # Check prerequisites
@@ -46,52 +46,6 @@ function display_intro() {
   echo ""
   echo "🛠️  Urbalurba Developer Platform - Project Template Initializer"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-}
-
-#------------------------------------------------------------------------------
-# Detect GitHub repository info
-#------------------------------------------------------------------------------
-function detect_github_info() {
-  echo "🔍 Detecting GitHub repository information..."
-
-  # Check we are inside a git repository
-  if ! git rev-parse --git-dir >/dev/null 2>&1; then
-    echo "❌ Not inside a git repository"
-    echo "   Run this command from the root of your project repository."
-    exit 1
-  fi
-
-  GITHUB_REMOTE=$(git remote get-url origin 2>/dev/null)
-
-  if [[ -z "$GITHUB_REMOTE" ]]; then
-    echo "❌ No 'origin' remote found"
-    echo "   This repository does not have a remote named 'origin'."
-    echo "   Add one with: git remote add origin https://github.com/<user>/<repo>.git"
-    exit 1
-  fi
-
-  echo "   Remote: $GITHUB_REMOTE"
-
-  GITHUB_USERNAME=$(echo "$GITHUB_REMOTE" | sed -n 's/.*github.com[:/]\(.*\)\/.*/\1/p')
-  REPO_NAME=$(basename -s .git "$GITHUB_REMOTE")
-
-  if [[ -z "$GITHUB_USERNAME" ]]; then
-    echo "❌ Could not extract GitHub username from remote URL"
-    echo "   Remote URL: $GITHUB_REMOTE"
-    echo "   Expected format: https://github.com/<user>/<repo>.git"
-    exit 1
-  fi
-
-  if [[ -z "$REPO_NAME" ]]; then
-    echo "❌ Could not extract repository name from remote URL"
-    echo "   Remote URL: $GITHUB_REMOTE"
-    exit 1
-  fi
-
-  echo "   GitHub user: $GITHUB_USERNAME"
-  echo "   Repository: $REPO_NAME"
-  echo "✅ GitHub info detected"
   echo ""
 }
 
@@ -469,57 +423,6 @@ function merge_gitignore() {
 }
 
 #------------------------------------------------------------------------------
-# Replace template variables in file
-#------------------------------------------------------------------------------
-function replace_placeholders() {
-  local file=$1
-  local temp_file=$(mktemp)
-  
-  if [ -f "$file" ]; then
-    cat "$file" | \
-      sed -e "s|{{GITHUB_USERNAME}}|$GITHUB_USERNAME|g" \
-          -e "s|{{REPO_NAME}}|$REPO_NAME|g" > "$temp_file"
-    
-    if cat "$temp_file" > "$file"; then
-      echo "      ✅ $(basename "$file")"
-    else
-      echo "      ❌ $(basename "$file")"
-      return 1
-    fi
-    rm "$temp_file"
-  fi
-  
-  return 0
-}
-
-#------------------------------------------------------------------------------
-# Process template variables
-#------------------------------------------------------------------------------
-function process_essential_files() {
-  echo "⚙️  Processing template variables..."
-  
-  if [ -d "manifests" ]; then
-    echo "   📄 Updating manifest files:"
-    for manifest_file in manifests/*.yaml manifests/*.yml; do
-      if [ -f "$manifest_file" ]; then
-        replace_placeholders "$manifest_file"
-      fi
-    done
-  fi
-  
-  if [ -d ".github/workflows" ]; then
-    echo "   📄 Updating workflow files:"
-    for workflow_file in .github/workflows/*.yaml .github/workflows/*.yml; do
-      if [ -f "$workflow_file" ]; then
-        replace_placeholders "$workflow_file"
-      fi
-    done
-  fi
-  
-  echo ""
-}
-
-#------------------------------------------------------------------------------
 # Cleanup and show completion
 #------------------------------------------------------------------------------
 function cleanup_and_complete() {
@@ -554,7 +457,6 @@ clear
 display_intro
 
 # Run the process
-detect_github_info
 download_templates
 scan_templates
 select_template "$TEMPLATE_NAME"
@@ -565,8 +467,5 @@ merge_gitignore
 
 # Go back to original directory
 cd "$OLDPWD"
-
-# Process files
-process_essential_files
 
 cleanup_and_complete
