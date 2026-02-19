@@ -113,7 +113,40 @@ This gives a stable, validated download URL and a JSON file the toolbox website 
 
 A draft issue for the templates repo is at: `plans/backlog/ISSUE-urbalurba-dev-templates-cicd.md`
 
-### 5. Template Categories
+### 5. Prerequisite Checking (from real-world testing)
+
+**Problem discovered during testing:** The TypeScript template works on a fresh machine because the devcontainer base image includes TypeScript and Python. But the C# template fails because .NET is not installed. Users get no warning — they only discover the problem when following the README.
+
+**How it should work:**
+
+1. Each template declares prerequisites in TEMPLATE_INFO:
+   ```bash
+   TEMPLATE_PREREQUISITES="dev-csharp"           # C# template
+   TEMPLATE_PREREQUISITES="dev-typescript"        # TypeScript template
+   TEMPLATE_PREREQUISITES="dev-python"            # Python template
+   TEMPLATE_PREREQUISITES="dev-golang"            # Go template
+   TEMPLATE_PREREQUISITES="dev-typescript dev-python"  # Multiple prerequisites
+   ```
+
+2. After template selection, `dev-template` checks each prerequisite:
+   - Read the install script's `SCRIPT_CHECK_COMMAND` to test if the tool is installed
+   - Or check `.devcontainer.extend/enabled-tools.conf` to see if it's enabled
+
+3. If prerequisites are missing, prompt the user:
+   ```
+   ⚠️  This template requires tools that are not installed:
+      - .NET Development Tools (dev-csharp)
+
+   Install now? [Y/n]
+   ```
+
+4. If yes, either:
+   - Run the install script directly: `bash .devcontainer/additions/install-dev-csharp.sh`
+   - Or add to `enabled-tools.conf` and tell the user to rebuild the container
+
+**Connection to dev-setup:** The prerequisite tool IDs (e.g., `dev-csharp`) match the `SCRIPT_ID` in install scripts. The `component-scanner.sh` already knows how to find these scripts and their check commands.
+
+### 6. Template Categories
 
 Templates need their own category table (separate from toolbox categories):
 
@@ -154,5 +187,6 @@ Each plan depends on the previous. Plan 3 is optional and can wait.
 
 ## Next Steps
 
-- [ ] Do the zip download fix first (separate investigation)
-- [ ] Then create ordered plans for this upgrade when ready
+- [x] Do the zip download fix first (done — PR #64, PR #66)
+- [x] Post CI/CD issue to templates repo (done — urbalurba-dev-templates#6)
+- [ ] Create ordered plans for this upgrade when ready
