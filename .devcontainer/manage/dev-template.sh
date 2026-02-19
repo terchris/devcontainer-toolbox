@@ -148,24 +148,24 @@ function scan_templates() {
   TEMPLATE_DESCRIPTIONS=()
   TEMPLATE_CATEGORIES=()
   TEMPLATE_PURPOSES=()
-  
+
   # Group by category
   declare -g -A CATEGORY_WEB_SERVER
   declare -g -A CATEGORY_WEB_APP
   declare -g -A CATEGORY_OTHER
-  
+
   echo "📋 Scanning available templates..."
   for dir in "$TEMPLATE_REPO_NAME/templates"/*; do
     if [ -d "$dir" ]; then
       read_template_info "$dir"
-      
+
       local idx=${#TEMPLATE_DIRS[@]}
       TEMPLATE_DIRS+=("$(basename "$dir")")
       TEMPLATE_NAMES+=("$INFO_NAME")
       TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
       TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
       TEMPLATE_PURPOSES+=("$INFO_PURPOSE")
-      
+
       # Group by category for menu display
       case "$INFO_CATEGORY" in
         WEB_SERVER)
@@ -180,71 +180,70 @@ function scan_templates() {
       esac
     fi
   done
-  
+
   if [ ${#TEMPLATE_DIRS[@]} -eq 0 ]; then
     echo "❌ No templates found"
     rm -rf "$TEMP_DIR"
     exit 1
   fi
-  
+
   echo "✅ Found ${#TEMPLATE_DIRS[@]} template(s)"
   echo ""
+
+  # Build menu options and menu-to-index mapping here (not in subshell)
+  # This must be done in the main shell so MENU_TO_INDEX persists
+  MENU_OPTIONS=()
+  declare -g -A MENU_TO_INDEX
+  local option_num=1
+
+  if [ ${#CATEGORY_WEB_SERVER[@]} -gt 0 ]; then
+    for dir_name in $(printf '%s\n' "${!CATEGORY_WEB_SERVER[@]}" | sort); do
+      local idx=${CATEGORY_WEB_SERVER[$dir_name]}
+      MENU_OPTIONS+=("$option_num" "🌐 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
+      MENU_TO_INDEX[$option_num]=$idx
+      ((option_num++))
+    done
+  fi
+
+  if [ ${#CATEGORY_WEB_APP[@]} -gt 0 ]; then
+    for dir_name in $(printf '%s\n' "${!CATEGORY_WEB_APP[@]}" | sort); do
+      local idx=${CATEGORY_WEB_APP[$dir_name]}
+      MENU_OPTIONS+=("$option_num" "📱 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
+      MENU_TO_INDEX[$option_num]=$idx
+      ((option_num++))
+    done
+  fi
+
+  if [ ${#CATEGORY_OTHER[@]} -gt 0 ]; then
+    for dir_name in $(printf '%s\n' "${!CATEGORY_OTHER[@]}" | sort); do
+      local idx=${CATEGORY_OTHER[$dir_name]}
+      MENU_OPTIONS+=("$option_num" "📦 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
+      MENU_TO_INDEX[$option_num]=$idx
+      ((option_num++))
+    done
+  fi
 }
 
 #------------------------------------------------------------------------------
 # Show dialog menu grouped by category and get selection
 #------------------------------------------------------------------------------
 function show_template_menu() {
-  local menu_options=()
-  local option_num=1
-  declare -g -A MENU_TO_INDEX
-  
-  # Web Server templates
-  if [ ${#CATEGORY_WEB_SERVER[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_WEB_SERVER[@]}" | sort); do
-      local idx=${CATEGORY_WEB_SERVER[$dir_name]}
-      menu_options+=("$option_num" "🌐 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-  
-  # Web App templates
-  if [ ${#CATEGORY_WEB_APP[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_WEB_APP[@]}" | sort); do
-      local idx=${CATEGORY_WEB_APP[$dir_name]}
-      menu_options+=("$option_num" "📱 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-  
-  # Other templates
-  if [ ${#CATEGORY_OTHER[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_OTHER[@]}" | sort); do
-      local idx=${CATEGORY_OTHER[$dir_name]}
-      menu_options+=("$option_num" "📦 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-  
   local choice
   choice=$(dialog --clear \
     --item-help \
     --title "Project Templates" \
     --menu "Choose a template (ESC to cancel):\n\n🌐=Web Server  📱=Web App  📦=Other" \
     20 80 12 \
-    "${menu_options[@]}" \
+    "${MENU_OPTIONS[@]}" \
     2>&1 >/dev/tty)
-  
+
   if [[ $? -ne 0 ]]; then
     clear
     echo "ℹ️  Selection cancelled"
     rm -rf "$TEMP_DIR"
     exit 3
   fi
-  
+
   echo "$choice"
 }
 
