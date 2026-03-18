@@ -32,7 +32,7 @@ The repo lives under `terchris/devcontainer-toolbox` but needs to be under the `
 
 ---
 
-## Phase 1: Create branch and fix references — IN PROGRESS
+## Phase 1: Create branch and fix references — ✅ DONE
 
 ### Tasks
 
@@ -57,7 +57,7 @@ The repo lives under `terchris/devcontainer-toolbox` but needs to be under the `
   - Kept completed plans as-is (historical)
   - Kept `authors: [terchris]` in blog posts (person name)
 - [x] 1.5 Update `.gitignore` (`terchris/` → `personal/`)
-- [ ] 1.6 Commit all changes to branch (do NOT merge)
+- [x] 1.6 Commit all changes to branch (do NOT merge)
 
 ### Validation
 
