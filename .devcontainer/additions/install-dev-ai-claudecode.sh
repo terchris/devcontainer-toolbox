@@ -11,7 +11,7 @@
 # Script metadata - must be at the very top of the configuration section
 SCRIPT_NAME="Claude Code"
 SCRIPT_ID="dev-ai-claudecode"
-SCRIPT_VER="0.0.2"
+SCRIPT_VER="0.0.3"
 SCRIPT_DESCRIPTION="Installs Claude Code, Anthropic's terminal-based AI coding assistant with agentic capabilities and LSP integration"
 SCRIPT_CATEGORY="AI_TOOLS"
 SCRIPT_CHECK_COMMAND="[ -f /home/vscode/.local/bin/claude ] || command -v claude >/dev/null 2>&1"
@@ -95,7 +95,7 @@ PACKAGES_SYSTEM=(
 )
 
 # Note: We use native installation instead of npm to enable auto-updates
-# See: https://github.com/terchris/devcontainer-toolbox/issues/41
+# See: https://github.com/helpers-no/devcontainer-toolbox/issues/41
 PACKAGES_NODE=()
 
 PACKAGES_PYTHON=()

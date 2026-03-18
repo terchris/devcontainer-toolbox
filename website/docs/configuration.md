@@ -37,7 +37,7 @@ Key settings:
 
 | Setting | Purpose |
 |---------|---------|
-| `image` | Pre-built image reference (`ghcr.io/terchris/devcontainer-toolbox:latest`) |
+| `image` | Pre-built image reference (`ghcr.io/helpers-no/devcontainer-toolbox:latest`) |
 | `overrideCommand` | Must be `false` so VS Code doesn't bypass the startup script |
 | `runArgs` | VPN capabilities (NET_ADMIN, NET_RAW, etc.) |
 | `customizations.vscode.extensions` | VS Code extensions to install |

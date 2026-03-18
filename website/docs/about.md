@@ -70,10 +70,10 @@ DevContainer Toolbox works with VS Code and GitHub Codespaces. Add it to any pro
 
 ```bash
 # Mac/Linux
-curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
 
 # Windows PowerShell
-irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
 Then open in VS Code and click "Reopen in Container."
@@ -84,6 +84,6 @@ Then open in VS Code and click "Reopen in Container."
 
 ## Connect With Us
 
-- **GitHub**: [devcontainer-toolbox](https://github.com/terchris/devcontainer-toolbox)
+- **GitHub**: [devcontainer-toolbox](https://github.com/helpers-no/devcontainer-toolbox)
 - **SovereignSky**: [sovereignsky.no](https://sovereignsky.no)
 - **helpers.no**: [helpers.no](https://helpers.no)

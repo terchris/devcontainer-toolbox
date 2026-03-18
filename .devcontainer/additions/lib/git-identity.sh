@@ -20,8 +20,8 @@
 #                   git@ssh.dev.azure.com:v3/org/project/repo
 #   - Generic: Falls back to extracting last path component
 #
-# Usage: parse_git_remote_url "https://github.com/terchris/devcontainer-toolbox.git"
-# After: GIT_PROVIDER="github", GIT_ORG="terchris", GIT_REPO="devcontainer-toolbox"
+# Usage: parse_git_remote_url "https://github.com/helpers-no/devcontainer-toolbox.git"
+# After: GIT_PROVIDER="github", GIT_ORG="helpers-no", GIT_REPO="devcontainer-toolbox"
 #
 parse_git_remote_url() {
     local url="$1"

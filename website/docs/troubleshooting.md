@@ -152,4 +152,4 @@ dev-help              # Show all commands
 dev-setup             # Interactive menu
 ```
 
-Still stuck? Check the [GitHub issues](https://github.com/terchris/devcontainer-toolbox/issues).
+Still stuck? Check the [GitHub issues](https://github.com/helpers-no/devcontainer-toolbox/issues).

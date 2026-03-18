@@ -47,7 +47,7 @@ The site uses environment variables for GitHub URLs, so it works on any fork wit
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `GITHUB_ORG` | `terchris` | GitHub organization/username |
+| `GITHUB_ORG` | `helpers-no` | GitHub organization/username |
 | `GITHUB_REPO` | `devcontainer-toolbox` | Repository name |
 
 **How it works:**

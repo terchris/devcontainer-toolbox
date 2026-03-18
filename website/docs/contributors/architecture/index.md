@@ -16,7 +16,7 @@ The toolbox has two distinct deployment modes with different `devcontainer.json`
 | **Who** | Toolbox contributors | Everyone else (user projects) |
 | **File** | `.devcontainer/devcontainer.json` | `devcontainer-user-template.json` (repo root) |
 | **How it works** | Builds from `Dockerfile.base` | Pulls pre-built image from ghcr.io |
-| **Contains** | `"build": {"dockerfile": "Dockerfile.base"}` | `"image": "ghcr.io/terchris/devcontainer-toolbox:latest"` |
+| **Contains** | `"build": {"dockerfile": "Dockerfile.base"}` | `"image": "ghcr.io/helpers-no/devcontainer-toolbox:latest"` |
 | **Requires** | Full `.devcontainer/` directory (100+ files) | Just the one JSON file |
 
 ### Single source of truth
@@ -24,7 +24,7 @@ The toolbox has two distinct deployment modes with different `devcontainer.json`
 `devcontainer-user-template.json` at the repo root is the **single source of truth** for image-mode configuration. All install scripts and deployment tools download from:
 
 ```
-https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/devcontainer-user-template.json
+https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/devcontainer-user-template.json
 ```
 
 ### Two installation paths

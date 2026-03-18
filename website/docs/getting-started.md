@@ -40,17 +40,17 @@ Open a terminal in your project directory and run:
 
 **Mac/Linux:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 ```powershell
-irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
 If you see "running scripts is disabled on this system":
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex"
 ```
 
 This creates a `.devcontainer/devcontainer.json` in your project and pulls the pre-built container image.
@@ -74,7 +74,7 @@ If your project has an older `.devcontainer/` folder with many files (Dockerfile
 
 2. Run the installer again from your project directory:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+   curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
    ```
 
 3. Your `.devcontainer.extend/` and `.devcontainer.secrets/` are preserved — all tool selections and credentials carry over.

@@ -169,4 +169,4 @@ Add a `CLAUDE.md` that tells the AI:
 
 - [AI Developer Docs](../ai-developer/) - Planning templates and workflow
 - [Testing Guide](../../contributors/testing) - How to run and create tests
-- [CLAUDE.md](https://github.com/terchris/devcontainer-toolbox/blob/main/CLAUDE.md) - Project-specific AI configuration (in repo root)
+- [CLAUDE.md](https://github.com/helpers-no/devcontainer-toolbox/blob/main/CLAUDE.md) - Project-specific AI configuration (in repo root)

@@ -15,7 +15,7 @@ set -e
 
 DCT_HOME="${DCT_HOME:-/opt/devcontainer-toolbox}"
 MANAGE_DIR="$DCT_HOME/manage"
-REPO="terchris/devcontainer-toolbox"
+REPO="helpers-no/devcontainer-toolbox"
 BACKUP_DIR="$DCT_HOME/.backup"
 
 # Source version-utils for centralized version checking

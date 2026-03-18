@@ -158,8 +158,8 @@ chore: bump version to 1.2.0
 
 ## Getting Help
 
-- **Questions?** Open a [GitHub Discussion](https://github.com/terchris/devcontainer-toolbox/discussions)
-- **Found a bug?** Open an [Issue](https://github.com/terchris/devcontainer-toolbox/issues)
+- **Questions?** Open a [GitHub Discussion](https://github.com/helpers-no/devcontainer-toolbox/discussions)
+- **Found a bug?** Open an [Issue](https://github.com/helpers-no/devcontainer-toolbox/issues)
 - **Want to chat?** Comment on an existing issue or discussion
 
 ---

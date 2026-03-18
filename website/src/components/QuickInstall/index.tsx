@@ -14,13 +14,13 @@ export default function QuickInstall(): ReactNode {
           <div className={styles.codeBlock}>
             <p><strong>Mac/Linux</strong></p>
             <CodeBlock language="bash">
-              curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+              curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
             </CodeBlock>
           </div>
           <div className={styles.codeBlock}>
             <p><strong>Windows PowerShell</strong></p>
             <CodeBlock language="powershell">
-              irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+              irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex
             </CodeBlock>
           </div>
         </div>

@@ -1,11 +1,11 @@
 # install.ps1 - First-time install of devcontainer-toolbox (image mode)
-# Run with: irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
-# If blocked: powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex"
+# Run with: irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex
+# If blocked: powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex"
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$repo = "terchris/devcontainer-toolbox"
+$repo = "helpers-no/devcontainer-toolbox"
 $image = "ghcr.io/${repo}:latest"
 $templateUrl = "https://raw.githubusercontent.com/$repo/main/devcontainer-user-template.json"
 

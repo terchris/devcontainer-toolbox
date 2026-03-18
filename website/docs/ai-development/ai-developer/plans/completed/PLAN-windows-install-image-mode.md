@@ -10,7 +10,7 @@
 
 **Last Updated**: 2026-02-03
 
-**Related**: [PLAN-011-prebuilt-container-image.md](../active/PLAN-011-prebuilt-container-image.md) (Phase 5 completed `install.sh`; this plan covers the Windows equivalent)
+**Related**: [PLAN-011-prebuilt-container-image.md](../completed/PLAN-011-prebuilt-container-image.md) (Phase 5 completed `install.sh`; this plan covers the Windows equivalent)
 
 ---
 
