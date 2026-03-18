@@ -6,7 +6,7 @@
 
 ## Status: Draft (Definition Incomplete)
 
-**Goal**: Merge project templates from urbalurba-dev-templates into DevContainer Toolbox, allowing users to start projects with pre-configured templates.
+**Goal**: Merge project templates from dev-templates into DevContainer Toolbox, allowing users to start projects with pre-configured templates.
 
 **Last Updated**: 2026-01-17
 
@@ -20,7 +20,7 @@
 
 ## Overview
 
-Currently, `dev-template.sh` downloads templates from [urbalurba-dev-templates](https://github.com/terchris/urbalurba-dev-templates). This plan merges templates into devcontainer-toolbox so the website covers both **Tools** AND **Templates/Starters**.
+Currently, `dev-template.sh` downloads templates from [dev-templates](https://github.com/helpers-no/dev-templates). This plan merges templates into devcontainer-toolbox so the website covers both **Tools** AND **Templates/Starters**.
 
 ### Website Structure After Implementation
 
@@ -41,7 +41,7 @@ DevContainer Toolbox
 
 ## Definition Tasks (To Complete Before Implementation)
 
-- [ ] Review urbalurba-dev-templates repo structure
+- [ ] Review dev-templates repo structure
 - [ ] Decide on template metadata format (TEMPLATE_* fields)
 - [ ] Decide where templates live in the repo (`templates/` folder?)
 - [ ] Decide how `dev-template.sh` will work after merge
@@ -95,7 +95,7 @@ TEMPLATE_DEMO="https://demo.example.com"  # Live demo URL (optional)
 ## Proposed Phases (Draft)
 
 ### Phase 1: Planning & Design
-- Review urbalurba-dev-templates
+- Review dev-templates
 - Finalize metadata format
 - Design website integration
 
@@ -155,5 +155,5 @@ TEMPLATE_DEMO="https://demo.example.com"  # Live demo URL (optional)
 
 ## Reference
 
-- [urbalurba-dev-templates](https://github.com/terchris/urbalurba-dev-templates)
+- [dev-templates](https://github.com/helpers-no/dev-templates)
 - INVESTIGATE-docusaurus-enhancements.md - "Future Scope: Templates Integration" section

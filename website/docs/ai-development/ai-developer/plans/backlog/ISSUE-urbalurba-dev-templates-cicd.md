@@ -1,4 +1,4 @@
-# GitHub Issue for terchris/urbalurba-dev-templates
+# GitHub Issue for helpers-no/dev-templates
 
 **Ready to post after confirmation.**
 
@@ -38,7 +38,7 @@ Create GitHub Actions workflows that:
    - Create a zip containing the `templates/` directory (and `urbalurba-scripts/` if present)
    - Publish as a GitHub release asset (e.g., `templates.zip`)
    - Use a fixed release tag (e.g., `latest`) so the download URL is stable
-   - Stable download URL: `https://github.com/terchris/urbalurba-dev-templates/releases/download/latest/templates.zip`
+   - Stable download URL: `https://github.com/helpers-no/dev-templates/releases/download/latest/templates.zip`
 
 ### Why
 
