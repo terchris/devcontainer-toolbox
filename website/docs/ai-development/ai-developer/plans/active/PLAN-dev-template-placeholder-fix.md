@@ -12,7 +12,7 @@
 
 **Last Updated**: 2026-03-04
 
-**Investigation**: [INVESTIGATE-dev-template-placeholder-substitution.md](INVESTIGATE-dev-template-placeholder-substitution.md)
+**Investigation**: [INVESTIGATE-dev-template-placeholder-substitution.md](../completed/INVESTIGATE-dev-template-placeholder-substitution.md)
 
 ---
 

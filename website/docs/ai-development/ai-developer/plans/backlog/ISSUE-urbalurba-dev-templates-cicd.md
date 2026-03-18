@@ -12,7 +12,7 @@ Add CI/CD pipeline to validate templates, auto-replace placeholders, and publish
 
 ### Problem
 
-The `dev-template` command in [devcontainer-toolbox](https://github.com/terchris/devcontainer-toolbox) copies template files as-is — it does not replace `{{GITHUB_USERNAME}}` or `{{REPO_NAME}}` placeholders. These placeholders appear in Kubernetes manifests and GitHub workflow files across all templates.
+The `dev-template` command in [devcontainer-toolbox](https://github.com/helpers-no/devcontainer-toolbox) copies template files as-is — it does not replace `{{GITHUB_USERNAME}}` or `{{REPO_NAME}}` placeholders. These placeholders appear in Kubernetes manifests and GitHub workflow files across all templates.
 
 Previously `dev-template` required a git repo to detect GitHub info and replace these, but that broke on fresh machines. The new approach is: `dev-template` just copies files, and the templates' own CI/CD handles placeholder replacement on first push.
 
@@ -78,5 +78,5 @@ jobs:
 ### Reference
 
 The devcontainer-toolbox CI/CD pipeline that creates a similar zip:
-- Workflow: [zip_dev_setup.yml](https://github.com/terchris/devcontainer-toolbox/blob/main/.github/workflows/zip_dev_setup.yml)
-- Consumer: [dev-sync.sh](https://github.com/terchris/devcontainer-toolbox/blob/main/.devcontainer/manage/dev-sync.sh) downloads the zip with `curl -fsSL`
+- Workflow: [zip_dev_setup.yml](https://github.com/helpers-no/devcontainer-toolbox/blob/main/.github/workflows/zip_dev_setup.yml)
+- Consumer: [dev-sync.sh](https://github.com/helpers-no/devcontainer-toolbox/blob/main/.devcontainer/manage/dev-sync.sh) downloads the zip with `curl -fsSL`

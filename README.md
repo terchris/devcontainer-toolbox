@@ -18,10 +18,10 @@ Stop wasting time setting up development environments. DevContainer Toolbox give
 
 ```bash
 # Mac/Linux
-curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
 
 # Windows PowerShell
-irm https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.ps1 | iex
 ```
 
 This creates a single `devcontainer.json` and pulls the pre-built container image.

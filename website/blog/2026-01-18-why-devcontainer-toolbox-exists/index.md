@@ -70,7 +70,7 @@ DevContainer Toolbox contributes to this goal by providing development tools tha
 Adding DevContainer Toolbox to your project takes one command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
 ```
 
 Then open your project in VS Code and click "Reopen in Container."
@@ -79,4 +79,4 @@ Your development environment is now local, reproducible, and sovereign.
 
 ---
 
-*DevContainer Toolbox is open source and welcomes contributions. Visit our [GitHub repository](https://github.com/terchris/devcontainer-toolbox) to get involved.*
+*DevContainer Toolbox is open source and welcomes contributions. Visit our [GitHub repository](https://github.com/helpers-no/devcontainer-toolbox) to get involved.*

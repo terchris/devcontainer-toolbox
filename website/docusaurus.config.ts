@@ -8,9 +8,9 @@ const version = fs.readFileSync('../version.txt', 'utf8').trim();
 
 // Environment variables for configurable repository URLs
 // - In GitHub Actions: automatically set from repository context
-// - In local dev: uses defaults (terchris/devcontainer-toolbox)
+// - In local dev: uses defaults (helpers-no/devcontainer-toolbox)
 // - For forks: set GITHUB_ORG and GITHUB_REPO env vars or let CI auto-detect
-const GITHUB_ORG = process.env.GITHUB_ORG || 'terchris';
+const GITHUB_ORG = process.env.GITHUB_ORG || 'helpers-no';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'devcontainer-toolbox';
 
 const config: Config = {

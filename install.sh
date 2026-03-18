@@ -1,9 +1,9 @@
 #!/bin/bash
 # install.sh - First-time install of devcontainer-toolbox (image mode)
-# Run with: curl -fsSL https://raw.githubusercontent.com/terchris/devcontainer-toolbox/main/install.sh | bash
+# Run with: curl -fsSL https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/install.sh | bash
 set -e
 
-REPO="terchris/devcontainer-toolbox"
+REPO="helpers-no/devcontainer-toolbox"
 IMAGE="ghcr.io/$REPO:latest"
 TEMPLATE_URL="https://raw.githubusercontent.com/$REPO/main/devcontainer-user-template.json"
 

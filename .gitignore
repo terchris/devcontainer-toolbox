@@ -79,7 +79,8 @@ Cargo.lock
 composer.phar
 vendor/
 
-# Terchris personal working directory (never commit)
+# Personal working directories (never commit)
+personal/
 terchris/
 
 # Devcontainer secrets folder - contains credentials (NEVER commit)

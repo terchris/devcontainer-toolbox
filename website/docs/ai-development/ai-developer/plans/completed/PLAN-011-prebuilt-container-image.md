@@ -10,7 +10,7 @@
 
 **Last Updated**: 2026-02-03
 
-**Investigation**: [INVESTIGATE-prebuilt-container-image.md](../backlog/INVESTIGATE-prebuilt-container-image.md)
+**Investigation**: [INVESTIGATE-prebuilt-container-image.md](../completed/INVESTIGATE-prebuilt-container-image.md)
 
 ---
 

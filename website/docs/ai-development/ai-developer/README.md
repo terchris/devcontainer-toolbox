@@ -73,4 +73,4 @@ plans/
 ## Related Documentation
 
 - [Contributor docs](../../contributors/) - Technical documentation for human developers
-- [CLAUDE.md](https://github.com/terchris/devcontainer-toolbox/blob/main/CLAUDE.md) - Project-specific Claude Code instructions (in repo root)
+- [CLAUDE.md](https://github.com/helpers-no/devcontainer-toolbox/blob/main/CLAUDE.md) - Project-specific Claude Code instructions (in repo root)

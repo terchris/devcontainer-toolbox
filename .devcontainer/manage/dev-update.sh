@@ -18,7 +18,7 @@ if [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/additions/lib/ensure-gitignore.sh" ]; t
     source "$DCT_HOME/additions/lib/ensure-gitignore.sh"
 fi
 
-REPO="terchris/devcontainer-toolbox"
+REPO="helpers-no/devcontainer-toolbox"
 IMAGE="ghcr.io/$REPO:latest"
 
 # Parse arguments
