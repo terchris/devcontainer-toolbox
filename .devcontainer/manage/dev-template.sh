@@ -108,7 +108,7 @@ function display_intro() {
 #------------------------------------------------------------------------------
 function download_templates() {
   local template_owner="helpers-no"
-  local template_repo="urbalurba-dev-templates"
+  local template_repo="dev-templates"
   local template_branch="main"
   local zip_url="https://github.com/$template_owner/$template_repo/archive/refs/heads/$template_branch.zip"
 
