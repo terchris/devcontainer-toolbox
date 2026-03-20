@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-16T18:29:03+01:00",
+  "generated": "2026-03-20T17:55:40+01:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "type": "install",
       "file": "install-dev-ai-claudecode.sh",
       "name": "Claude Code",
@@ -247,23 +247,23 @@
 ,
     {
       "id": "dev-python",
-      "version": "0.0.1",
+      "version": "0.0.2",
       "type": "install",
       "file": "install-dev-python.sh",
       "name": "Python Development Tools",
-      "description": "Adds ipython, pytest-cov, and VS Code extensions for Python development",
+      "description": "Adds ipython, pytest-cov, uv, and VS Code extensions for Python development",
       "category": "LANGUAGE_DEV",
-      "tags": ["python pip ipython pytest coverage development venv"],
-      "abstract": "Python development environment with ipython, pytest-cov, and python-dotenv for enhanced coding and testing.",
+      "tags": ["python pip uv ipython pytest coverage development venv"],
+      "abstract": "Python development environment with ipython, pytest-cov, uv, and python-dotenv for enhanced coding and testing.",
       "logo": "dev-python-logo.webp",
       "website": "https://python.org",
-      "summary": "Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, and python-dotenv for environment management. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking.",
+      "summary": "Complete Python development setup including ipython for interactive development, pytest-cov for test coverage, python-dotenv for environment management, and uv as an extremely fast Python package and project manager. Includes VS Code extensions for Python, Pylance, Black formatter, Flake8, and Mypy type checking.",
       "related": ["dev-typescript dev-golang dev-rust"],
       "checkCommand": "command -v ipython >/dev/null 2>&1",
       "packages": {
         "system": [],
         "node": [],
-        "python": ["ipython", "pytest-cov", "python-dotenv"],
+        "python": ["ipython", "pytest-cov", "python-dotenv", "uv"],
         "cargo": [],
         "go": [],
         "powershell": [],
@@ -324,6 +324,33 @@
         "dotnet": []
       },
       "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+    }
+,
+    {
+      "id": "fwk-hugo",
+      "version": "0.0.1",
+      "type": "install",
+      "file": "install-fwk-hugo.sh",
+      "name": "Hugo Extended",
+      "description": "Installs Hugo Extended static site generator with SCSS/SASS support.",
+      "category": "FRAMEWORKS",
+      "tags": ["hugo static-site-generator ssg framework web"],
+      "abstract": "Hugo Extended static site generator with SCSS/SASS support.",
+      "logo": "fwk-hugo-logo.webp",
+      "website": "https://gohugo.io",
+      "summary": "Hugo Extended static site generator — the worlds fastest framework for building websites. Includes SCSS/SASS compilation, image processing, and VS Code language support. Supports version pinning for theme compatibility.",
+      "related": [],
+      "checkCommand": "[ -f /usr/local/bin/hugo ] || command -v hugo >/dev/null 2>&1",
+      "packages": {
+        "system": [],
+        "node": [],
+        "python": [],
+        "cargo": [],
+        "go": [],
+        "powershell": [],
+        "dotnet": []
+      },
+      "extensions": ["budparr.language-hugo-vscode"]
     }
 ,
     {

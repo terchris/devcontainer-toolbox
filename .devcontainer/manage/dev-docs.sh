@@ -73,6 +73,7 @@ SCRIPTS_DATA_ANALYTICS=""
 SCRIPTS_BACKGROUND_SERVICES=""
 SCRIPTS_INFRA_CONFIG=""
 SCRIPTS_CONTRIBUTOR_TOOLS=""
+SCRIPTS_FRAMEWORKS=""
 
 #------------------------------------------------------------------------------
 # Helper Functions
@@ -390,6 +391,9 @@ add_to_category() {
         CONTRIBUTOR_TOOLS)
             SCRIPTS_CONTRIBUTOR_TOOLS="${SCRIPTS_CONTRIBUTOR_TOOLS}${script_path} "
             ;;
+        FRAMEWORKS)
+            SCRIPTS_FRAMEWORKS="${SCRIPTS_FRAMEWORKS}${script_path} "
+            ;;
     esac
 }
 
@@ -405,6 +409,7 @@ get_category_scripts() {
         BACKGROUND_SERVICES) echo "$SCRIPTS_BACKGROUND_SERVICES" ;;
         INFRA_CONFIG) echo "$SCRIPTS_INFRA_CONFIG" ;;
         CONTRIBUTOR_TOOLS) echo "$SCRIPTS_CONTRIBUTOR_TOOLS" ;;
+        FRAMEWORKS) echo "$SCRIPTS_FRAMEWORKS" ;;
         *) echo "" ;;
     esac
 }
@@ -420,6 +425,7 @@ get_category_folder() {
         BACKGROUND_SERVICES) echo "background-services" ;;
         INFRA_CONFIG) echo "infrastructure-configuration" ;;
         CONTRIBUTOR_TOOLS) echo "contributor-tools" ;;
+        FRAMEWORKS) echo "frameworks" ;;
         *) echo "" ;;
     esac
 }
@@ -427,10 +433,11 @@ get_category_folder() {
 # Map tool ID to filename (strip common prefixes, use kebab-case)
 get_tool_filename() {
     local tool_id=$1
-    # Remove common prefixes like dev-, tool-, install-
+    # Remove common prefixes like dev-, tool-, install-, fwk-
     local name="${tool_id#dev-}"
     name="${name#tool-}"
     name="${name#install-}"
+    name="${name#fwk-}"
     # Convert to lowercase (already should be)
     echo "$name"
 }

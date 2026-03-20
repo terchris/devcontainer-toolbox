@@ -1,0 +1,21 @@
+---
+title: Contributor Tools
+hide_title: true
+---
+
+import ToolGrid from '@site/src/components/ToolGrid';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{display: 'flex', alignItems: 'flex-start', gap: '1.5rem', marginBottom: '2rem'}}>
+  <img
+    src={useBaseUrl('/img/categories/contributor-tools-logo.webp')}
+    alt="Contributor Tools"
+    style={{width: '120px', height: '120px', objectFit: 'contain'}}
+  />
+  <div>
+    <h1 style={{marginTop: 0}}>Contributor Tools</h1>
+    <p style={{fontSize: '1.1rem', color: 'var(--ifm-color-emphasis-700)'}}>Tools for contributors and maintainers including documentation generators, test runners, and development utilities.</p>
+  </div>
+</div>
+
+<ToolGrid category="CONTRIBUTOR_TOOLS" columns={2} />

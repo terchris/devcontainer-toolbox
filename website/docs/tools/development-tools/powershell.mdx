@@ -1,0 +1,120 @@
+---
+title: PowerShell
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/tool-powershell-logo.webp')}
+    alt="PowerShell"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>PowerShell</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>PowerShell 7 with PSScriptAnalyzer for script development and linting.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>powershell</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>pwsh</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>intune</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>linting</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>scripting</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Lightweight PowerShell 7 installation with PSScriptAnalyzer for script analysis and linting. Includes the VS Code PowerShell extension for IntelliSense, debugging, and integrated terminal support. For Azure automation and Intune management, see the Azure Operations tool which builds on this.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>tool-powershell</code>
+  </div>
+  <div>
+    <strong>Version:</strong> <code>1.0.0</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-tool-powershell.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://learn.microsoft.com/en-us/powershell/" target="_blank">https://learn.microsoft.com/en-us/powershell/</a>
+  </div>
+</div>
+
+## PowerShell Modules
+
+| Package | Description |
+|---------|-------------|
+| [PSScriptAnalyzer](https://www.powershellgallery.com/packages/PSScriptAnalyzer) | PowerShell script analysis and linting |
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.powershell) | PowerShell language support and debugging |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-tool-powershell.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 PowerShell
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           tool-powershell
+Name:         PowerShell
+Script version: 1.0.0
+Category:     LANGUAGE_DEV, Development Tools
+Description:  Installs PowerShell 7 with PSScriptAnalyzer for script development and linting
+Default:      Version 7.5.4
+
+Usage:
+
+  Action:
+      install-tool-powershell.sh        # Install PowerShell
+      install-tool-powershell.sh --uninstall # Uninstall PowerShell
+
+  Info:
+      install-tool-powershell.sh --help # Show help and usage information
+
+PowerShell Modules:
+  - PSScriptAnalyzer
+
+VS Code Extensions:
+  - PowerShell (ms-vscode.powershell) - PowerShell language support and debugging
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['tool-azure-ops']} />

@@ -1,0 +1,104 @@
+---
+title: OpenTelemetry Monitoring
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/srv-otel-logo.webp')}
+    alt="OpenTelemetry Monitoring"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>OpenTelemetry Monitoring</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>OpenTelemetry Collector for devcontainer monitoring with metrics and log collection.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>opentelemetry</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>otel</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>monitoring</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>observability</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>metrics</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>prometheus</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+OpenTelemetry Collector Contrib with script_exporter for comprehensive devcontainer monitoring. Collects custom metrics via shell scripts, supports Prometheus/Loki/Tempo exporters, and provides resource processors for multi-tenant tagging.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>srv-otel</code>
+  </div>
+  <div>
+    <strong>Version:</strong> <code>0.0.1</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-srv-otel-monitoring.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://opentelemetry.io" target="_blank">https://opentelemetry.io</a>
+  </div>
+</div>
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-srv-otel-monitoring.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 OpenTelemetry Monitoring
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           srv-otel
+Name:         OpenTelemetry Monitoring
+Script version: 0.0.1
+Category:     BACKGROUND_SERVICES, Background Services & Daemons
+Description:  Install OpenTelemetry Collector for devcontainer monitoring when connected to our network
+
+Usage:
+
+  Action:
+      install-srv-otel-monitoring.sh    # Install OpenTelemetry Collector
+      install-srv-otel-monitoring.sh --uninstall # Uninstall OpenTelemetry Collector
+
+  Info:
+      install-srv-otel-monitoring.sh --help # Show help and usage information
+
+Packages: Custom installation (see script for details)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['srv-nginx']} />

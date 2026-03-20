@@ -1,0 +1,8 @@
+{
+  "label": "Background Services & Daemons",
+  "position": 5,
+  "link": {
+    "type": "doc",
+    "id": "tools/background-services/index"
+  }
+}
