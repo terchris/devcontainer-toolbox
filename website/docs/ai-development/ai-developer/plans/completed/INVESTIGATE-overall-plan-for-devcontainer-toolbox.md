@@ -31,7 +31,7 @@ The `.devcontainer` folder is a git submodule pointing to devcontainer-toolbox.
 git submodule add https://github.com/terchris/devcontainer-toolbox.git .devcontainer
 
 # Cloning a repo that uses it
-git clone --recurse-submodules <repo-url>
+git clone --recurse-submodules REPO_URL
 
 # Updating to latest
 cd .devcontainer && git pull origin main && cd ..

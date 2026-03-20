@@ -102,7 +102,7 @@ Website loads correctly at https://dct.sovereignsky.no/.
 ### Tasks
 
 - [x] 4.1 Updated local git remote: `git remote set-url origin https://github.com/helpers-no/devcontainer-toolbox.git`
-- [ ] 4.2 Notify users (<10) to update their remotes and rebuild devcontainers
+- [ ] 4.2 Notify users (fewer than 10) to update their remotes and rebuild devcontainers
 
 ### Validation
 
