@@ -1,0 +1,8 @@
+{
+  "label": "Frameworks & Standalone Binaries",
+  "position": 8,
+  "link": {
+    "type": "doc",
+    "id": "tools/frameworks/index"
+  }
+}

@@ -79,5 +79,15 @@
       "summary": "Tools for contributors and maintainers including documentation generators, test runners, and development utilities.",
       "logo": "contributor-tools-logo.webp"
     }
+,
+    {
+      "id": "FRAMEWORKS",
+      "name": "Frameworks & Standalone Binaries",
+      "order": 8,
+      "tags": ["framework binary standalone hugo helm static-site-generator ssg"],
+      "abstract": "Standalone binary frameworks and tools for web development and infrastructure.",
+      "summary": "Standalone binary frameworks distributed as single downloads — static site generators, package managers, and build tools. Each supports version pinning and clean uninstall.",
+      "logo": "frameworks-logo.webp"
+    }
   ]
 }

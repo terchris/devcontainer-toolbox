@@ -26,6 +26,7 @@ export function getCategoryFolder(category: string): string {
     BACKGROUND_SERVICES: 'background-services',
     INFRA_CONFIG: 'infrastructure-configuration',
     CONTRIBUTOR_TOOLS: 'contributor-tools',
+    FRAMEWORKS: 'frameworks',
   };
   return mapping[category] || category.toLowerCase();
 }
@@ -38,7 +39,8 @@ export function getToolFilename(toolId: string): string {
   return toolId
     .replace(/^dev-/, '')
     .replace(/^tool-/, '')
-    .replace(/^install-/, '');
+    .replace(/^install-/, '')
+    .replace(/^fwk-/, '');
 }
 
 /**

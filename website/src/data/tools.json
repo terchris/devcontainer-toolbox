@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-03-18T22:19:07+00:00",
+  "generated": "2026-03-20T17:55:40+01:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -324,6 +324,33 @@
         "dotnet": []
       },
       "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+    }
+,
+    {
+      "id": "fwk-hugo",
+      "version": "0.0.1",
+      "type": "install",
+      "file": "install-fwk-hugo.sh",
+      "name": "Hugo Extended",
+      "description": "Installs Hugo Extended static site generator with SCSS/SASS support.",
+      "category": "FRAMEWORKS",
+      "tags": ["hugo static-site-generator ssg framework web"],
+      "abstract": "Hugo Extended static site generator with SCSS/SASS support.",
+      "logo": "fwk-hugo-logo.webp",
+      "website": "https://gohugo.io",
+      "summary": "Hugo Extended static site generator — the worlds fastest framework for building websites. Includes SCSS/SASS compilation, image processing, and VS Code language support. Supports version pinning for theme compatibility.",
+      "related": [],
+      "checkCommand": "[ -f /usr/local/bin/hugo ] || command -v hugo >/dev/null 2>&1",
+      "packages": {
+        "system": [],
+        "node": [],
+        "python": [],
+        "cargo": [],
+        "go": [],
+        "powershell": [],
+        "dotnet": []
+      },
+      "extensions": ["budparr.language-hugo-vscode"]
     }
 ,
     {

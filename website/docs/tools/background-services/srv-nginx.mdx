@@ -1,0 +1,113 @@
+---
+title: Nginx Reverse Proxy
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/srv-nginx-logo.webp')}
+    alt="Nginx Reverse Proxy"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Nginx Reverse Proxy</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Nginx reverse proxy for routing requests between Claude Code and LiteLLM services.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>nginx</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>reverse</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>proxy</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>web</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>server</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>http</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>load</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>balancer</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Nginx configured as a reverse proxy to route requests between Claude Code and LiteLLM. Handles Host header injection for proper API routing in the devcontainer environment. Uses nginx-light for minimal footprint.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>srv-nginx</code>
+  </div>
+  <div>
+    <strong>Version:</strong> <code>0.0.1</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-srv-nginx.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://nginx.org" target="_blank">https://nginx.org</a>
+  </div>
+</div>
+
+## System Packages
+
+| Package | Description |
+|---------|-------------|
+| [nginx-light](https://packages.debian.org/bookworm/nginx-light) |  |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-srv-nginx.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Nginx Reverse Proxy
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           srv-nginx
+Name:         Nginx Reverse Proxy
+Script version: 0.0.1
+Category:     BACKGROUND_SERVICES, Background Services & Daemons
+Description:  Install nginx as reverse proxy for Claude Code ↔ LiteLLM with Host header injection
+
+Usage:
+
+  Action:
+      install-srv-nginx.sh              # Install nginx reverse proxy
+      install-srv-nginx.sh --uninstall  # Uninstall nginx
+
+  Info:
+      install-srv-nginx.sh --help       # Show help and usage information
+
+System Packages (APT):
+  - nginx-light
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['srv-otel', 'dev-ai-claudecode']} />

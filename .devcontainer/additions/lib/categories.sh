@@ -44,6 +44,7 @@ if [[ -z "${CATEGORY_TABLE+x}" ]]; then
 5|BACKGROUND_SERVICES|Background Services & Daemons|Background services and daemons for development.|Background services and daemons including nginx reverse proxy, OTEL collector, and monitoring services. Run services locally.|services daemon background nginx monitoring otel|background-services-logo.webp
 6|INFRA_CONFIG|Infrastructure & Configuration|Infrastructure as Code and configuration management.|Infrastructure as Code, configuration management, and DevOps tools including Kubernetes, Terraform, and Ansible.|infrastructure devops kubernetes terraform ansible configuration|infra-config-logo.webp
 7|CONTRIBUTOR_TOOLS|Contributor Tools|Tools for contributors and maintainers.|Tools for contributors and maintainers including documentation generators, test runners, and development utilities.|contributor maintainer development tools testing docs|contributor-tools-logo.webp
+8|FRAMEWORKS|Frameworks & Standalone Binaries|Standalone binary frameworks and tools for web development and infrastructure.|Standalone binary frameworks distributed as single downloads — static site generators, package managers, and build tools. Each supports version pinning and clean uninstall.|framework binary standalone hugo helm static-site-generator ssg|frameworks-logo.webp
 "
 fi
 
@@ -201,6 +202,7 @@ if [[ -z "${CATEGORY_LANGUAGE_DEV+x}" ]]; then
     readonly CATEGORY_BACKGROUND_SERVICES="BACKGROUND_SERVICES"
     readonly CATEGORY_INFRA_CONFIG="INFRA_CONFIG"
     readonly CATEGORY_CONTRIBUTOR_TOOLS="CONTRIBUTOR_TOOLS"
+    readonly CATEGORY_FRAMEWORKS="FRAMEWORKS"
 fi
 
 # Array of all category IDs in sort order (for iteration)
