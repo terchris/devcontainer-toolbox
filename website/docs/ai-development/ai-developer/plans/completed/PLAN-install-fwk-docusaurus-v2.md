@@ -4,7 +4,9 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Completed
+
+**Completed**: 2026-03-30
 
 **Goal**: Convert `cmd-fwk-docusaurus.sh` to `install-fwk-docusaurus.sh` and add GitHub Pages CI/CD workflow generation.
 
@@ -72,15 +74,15 @@ User confirms generated workflow looks correct.
 
 ---
 
-## Phase 3: Testing — IN PROGRESS
+## Phase 3: Testing — DONE
 
 ### Tasks
 
 - [x] 3.1 Verify `--help` flag works
 - [x] 3.2 Bash syntax check passes
-- [ ] 3.3 Test install inside devcontainer — verify all files created including workflow
-- [ ] 3.4 Test uninstall — verify all files removed
-- [ ] 3.5 Test idempotency — second install is a no-op
+- [x] 3.3 Test install inside devcontainer — site, workflow, extensions all created
+- [x] 3.4 Test uninstall — website/, workflow, extensions all removed
+- [x] 3.5 Test idempotency — pre_installation_setup exits if website/ exists
 
 ### Validation
 
@@ -90,17 +92,17 @@ User confirms tests pass.
 
 ## Acceptance Criteria
 
-- [ ] `install-fwk-docusaurus.sh` scaffolds a working Docusaurus site in `website/`
-- [ ] `.github/workflows/deploy-docs.yml` is generated and would deploy to GitHub Pages
-- [ ] `--uninstall` removes `website/` and the workflow file
-- [ ] `--help` flag works
-- [ ] Script is idempotent (safe to run twice)
-- [ ] VS Code extensions installed automatically via `EXTENSIONS` array
-- [ ] `auto_enable_tool` / `auto_disable_tool` work correctly
-- [ ] Shows in dev-setup under FRAMEWORKS category
-- [ ] `cmd-fwk-docusaurus.sh` is deleted
-- [ ] All core and extended metadata fields are set
-- [ ] No shellcheck warnings
+- [x] `install-fwk-docusaurus.sh` scaffolds a working Docusaurus site in `website/`
+- [x] `.github/workflows/deploy-docs.yml` is generated and would deploy to GitHub Pages
+- [x] `--uninstall` removes `website/` and the workflow file
+- [x] `--help` flag works
+- [x] Script is idempotent (safe to run twice)
+- [x] VS Code extensions installed automatically via `EXTENSIONS` array
+- [x] `auto_enable_tool` / `auto_disable_tool` work correctly
+- [x] Shows in dev-setup under FRAMEWORKS category
+- [x] `cmd-fwk-docusaurus.sh` is deleted
+- [x] All core and extended metadata fields are set
+- [ ] No shellcheck warnings (requires CI — passed static tests)
 
 ---
 
