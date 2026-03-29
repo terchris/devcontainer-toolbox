@@ -31,7 +31,6 @@ SCRIPT_RELATED="fwk-hugo"
 
 SCRIPT_COMMANDS=(
     "Action|--create|Create a new Docusaurus site in website/|cmd_create|false|"
-    "Info|--help|Show help and usage information|show_help|false|"
 )
 
 # VS Code extensions
