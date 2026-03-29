@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-03-29T21:54:57+00:00",
+  "generated": "2026-03-29T22:34:15+00:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -324,6 +324,33 @@
         "dotnet": []
       },
       "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+    }
+,
+    {
+      "id": "fwk-docusaurus",
+      "version": "0.1.0",
+      "type": "install",
+      "file": "install-fwk-docusaurus.sh",
+      "name": "Docusaurus",
+      "description": "Installs a Docusaurus documentation site with GitHub Pages deployment.",
+      "category": "FRAMEWORKS",
+      "tags": ["docusaurus static-site-generator ssg framework web documentation react"],
+      "abstract": "Docusaurus documentation site with TypeScript, Mermaid, local search, and GitHub Pages CI/CD.",
+      "logo": "fwk-docusaurus-logo.webp",
+      "website": "https://docusaurus.io",
+      "summary": "Installs a complete Docusaurus 3.x documentation site in website/ with TypeScript configuration, Mermaid diagram support, local search, image zoom, auto-generated sidebars, and a GitHub Actions workflow for deploying to GitHub Pages.",
+      "related": ["fwk-hugo"],
+      "checkCommand": "[ -d /workspace/website ]",
+      "packages": {
+        "system": [],
+        "node": [],
+        "python": [],
+        "cargo": [],
+        "go": [],
+        "powershell": [],
+        "dotnet": []
+      },
+      "extensions": ["unifiedjs.vscode-mdx", "eliostruyf.vscode-front-matter"]
     }
 ,
     {
