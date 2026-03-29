@@ -1,37 +1,39 @@
 #!/bin/bash
-# file: .devcontainer/additions/cmd-fwk-docusaurus.sh
+# file: .devcontainer/additions/install-fwk-docusaurus.sh
 #
-# Scaffolds a ready-to-go Docusaurus documentation site in website/.
-# For usage information, run: ./cmd-fwk-docusaurus.sh --help
+# Installs a complete Docusaurus documentation site in website/ with
+# GitHub Pages CI/CD deployment workflow.
+# For usage information, run: ./install-fwk-docusaurus.sh --help
 #
 #------------------------------------------------------------------------------
 # CONFIGURATION
 #------------------------------------------------------------------------------
 
 # --- Core Metadata (required for dev-setup.sh) ---
-SCRIPT_ID="cmd-fwk-docusaurus"
-SCRIPT_VER="0.0.1"
-SCRIPT_NAME="Docusaurus Scaffold"
-SCRIPT_DESCRIPTION="Scaffold a Docusaurus documentation site in website/"
+SCRIPT_ID="fwk-docusaurus"
+SCRIPT_VER="0.1.0"
+SCRIPT_NAME="Docusaurus"
+SCRIPT_DESCRIPTION="Installs a Docusaurus documentation site with GitHub Pages deployment."
 SCRIPT_CATEGORY="FRAMEWORKS"
-SCRIPT_CHECK_COMMAND="command -v npx >/dev/null 2>&1"
-SCRIPT_PREREQUISITES=""
+SCRIPT_CHECK_COMMAND="[ -d /workspace/website ]"
 
 # --- Extended Metadata (for website documentation) ---
 SCRIPT_TAGS="docusaurus static-site-generator ssg framework web documentation react"
-SCRIPT_ABSTRACT="Scaffold a ready-to-go Docusaurus documentation site with TypeScript, Mermaid, and local search."
-SCRIPT_LOGO="cmd-fwk-docusaurus-logo.webp"
+SCRIPT_ABSTRACT="Docusaurus documentation site with TypeScript, Mermaid, local search, and GitHub Pages CI/CD."
+SCRIPT_LOGO="fwk-docusaurus-logo.webp"
 SCRIPT_WEBSITE="https://docusaurus.io"
-SCRIPT_SUMMARY="Scaffolds a complete Docusaurus 3.x documentation site in website/ with TypeScript configuration, Mermaid diagram support, local search, image zoom, and auto-generated sidebars. Includes starter docs, blog, and homepage."
+SCRIPT_SUMMARY="Installs a complete Docusaurus 3.x documentation site in website/ with TypeScript configuration, Mermaid diagram support, local search, image zoom, auto-generated sidebars, and a GitHub Actions workflow for deploying to GitHub Pages."
 SCRIPT_RELATED="fwk-hugo"
 
-#------------------------------------------------------------------------------
-# SCRIPT_COMMANDS DEFINITIONS
-#------------------------------------------------------------------------------
-
+# Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
-    "Action|--create|Create a new Docusaurus site in website/|cmd_create|false|"
+    "Action||Install Docusaurus site and CI/CD workflow||false|"
+    "Action|--uninstall|Uninstall Docusaurus site and workflow||false|"
+    "Info|--help|Show help and usage information||false|"
 )
+
+# System packages (none needed — Node.js is pre-installed)
+PACKAGES_SYSTEM=()
 
 # VS Code extensions
 EXTENSIONS=(
@@ -41,19 +43,19 @@ EXTENSIONS=(
 
 #------------------------------------------------------------------------------
 
-set -euo pipefail
-
-# Source libraries
+# Source auto-enable library
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 # shellcheck source=/dev/null
-source "${SCRIPT_DIR}/lib/logging.sh"
-# shellcheck source=/dev/null
-source "${SCRIPT_DIR}/lib/core-install-extensions.sh"
-# shellcheck source=/dev/null
-source "${SCRIPT_DIR}/lib/display-utils.sh"
+source "${SCRIPT_DIR}/lib/tool-auto-enable.sh"
 
-# Target directory (always website/ in the repo root)
-WEBSITE_DIR="${WEBSITE_DIR:-/workspace/website}"
+# Source logging library
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/lib/logging.sh"
+
+# Target directories
+WEBSITE_DIR="/workspace/website"
+WORKFLOW_DIR="/workspace/.github/workflows"
+WORKFLOW_FILE="${WORKFLOW_DIR}/deploy-docs.yml"
 
 #------------------------------------------------------------------------------
 # Generated File Content
@@ -425,48 +427,233 @@ You can add more blog posts in the `blog/` directory.
 BLOG_EOF
 }
 
+generate_deploy_workflow() {
+    cat << 'WORKFLOW_EOF'
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install dependencies
+        working-directory: website
+        run: npm ci
+
+      - name: Build website
+        working-directory: website
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/build
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+WORKFLOW_EOF
+}
+
 #------------------------------------------------------------------------------
-# Command Functions
+# Pre-installation/Uninstallation Setup
 #------------------------------------------------------------------------------
 
-cmd_create() {
-    draw_heavy_line
-    echo "📦 Docusaurus Site Scaffold"
-    draw_heavy_line
-    echo ""
+pre_installation_setup() {
+    if [ "${UNINSTALL_MODE}" -eq 1 ]; then
+        echo "🔧 Preparing for Docusaurus uninstallation..."
+    else
+        echo "🔧 Performing pre-installation setup for Docusaurus..."
 
-    # Check Node.js is available
-    if ! command -v node >/dev/null 2>&1; then
-        log_error "Node.js is not installed. It is required for Docusaurus."
-        return 1
+        # Check Node.js is available
+        if ! command -v node >/dev/null 2>&1; then
+            log_error "Node.js is not installed. It is required for Docusaurus."
+            exit 1
+        fi
+
+        if ! command -v npm >/dev/null 2>&1; then
+            log_error "npm is not installed. It is required for Docusaurus."
+            exit 1
+        fi
+
+        # Check website/ doesn't already exist
+        if [ -d "$WEBSITE_DIR" ] && [ "${FORCE_MODE}" -eq 0 ]; then
+            log_info "Docusaurus site already exists at $WEBSITE_DIR"
+            log_info "Use --force to reinstall."
+            exit 0
+        fi
     fi
+}
 
-    if ! command -v npm >/dev/null 2>&1; then
-        log_error "npm is not installed. It is required for Docusaurus."
-        return 1
-    fi
+#------------------------------------------------------------------------------
+# Post-installation/Uninstallation Messages
+#------------------------------------------------------------------------------
 
-    # Check website/ doesn't already exist
+post_installation_message() {
+    echo
+    echo "🎉 Installation complete!"
+    echo
+    echo "Quick start:"
+    echo "  cd /workspace/website"
+    echo "  npm run start -- --host 0.0.0.0    # Start dev server"
+    echo "  npm run build                       # Build for production"
+    echo
+    echo "Edit your site:"
+    echo "  website/docusaurus.config.ts        # Site configuration"
+    echo "  website/docs/                       # Documentation pages"
+    echo "  website/blog/                       # Blog posts"
+    echo "  website/src/pages/index.tsx         # Homepage"
+    echo "  website/src/css/custom.css          # Custom styles"
+    echo
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "⚠️  REQUIRED: Enable GitHub Pages"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo
+    echo "  1. Go to your repo on GitHub"
+    echo "  2. Settings → Pages"
+    echo "  3. Source: select 'GitHub Actions'"
+    echo "  4. Push to main — the workflow will deploy automatically"
+    echo
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📌 OPTIONAL: Custom domain"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo
+    echo "  1. Create website/static/CNAME with your domain:"
+    echo "     echo 'docs.example.com' > website/static/CNAME"
+    echo
+    echo "  2. Update url in website/docusaurus.config.ts:"
+    echo "     url: 'https://docs.example.com',"
+    echo
+    echo "  3. Configure DNS — add a CNAME record:"
+    echo "     docs.example.com → <username>.github.io"
+    echo
+    echo "  4. In GitHub repo Settings → Pages → Custom domain:"
+    echo "     enter your domain and enable 'Enforce HTTPS'"
+    echo
+    echo "Docs: https://docusaurus.io/docs"
+    echo "GitHub Pages: https://docs.github.com/en/pages"
+    echo
+}
+
+post_uninstallation_message() {
+    echo
+    echo "🏁 Uninstallation complete!"
     if [ -d "$WEBSITE_DIR" ]; then
-        log_error "Directory already exists: $WEBSITE_DIR"
-        log_info "Remove it first if you want to start fresh."
-        return 1
+        echo "   ⚠️  website/ directory still exists"
+    else
+        echo "   ✅ website/ removed"
     fi
+    if [ -f "$WORKFLOW_FILE" ]; then
+        echo "   ⚠️  deploy-docs.yml still exists"
+    else
+        echo "   ✅ deploy-docs.yml removed"
+    fi
+    echo
+}
 
-    log_info "Creating Docusaurus site in $WEBSITE_DIR ..."
-    echo ""
+#------------------------------------------------------------------------------
+# ARGUMENT PARSING
+#------------------------------------------------------------------------------
 
+# Initialize mode flags
+DEBUG_MODE=0
+UNINSTALL_MODE=0
+FORCE_MODE=0
+
+# Source common installation patterns library (needed for --help)
+source "${SCRIPT_DIR}/lib/install-common.sh"
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help)
+            show_script_help
+            exit 0
+            ;;
+        --debug)
+            DEBUG_MODE=1
+            shift
+            ;;
+        --uninstall)
+            UNINSTALL_MODE=1
+            shift
+            ;;
+        --force)
+            FORCE_MODE=1
+            shift
+            ;;
+        *)
+            echo "ERROR: Unknown option: $1" >&2
+            echo "Usage: $0 [--help] [--debug] [--uninstall] [--force]" >&2
+            echo "Description: $SCRIPT_DESCRIPTION"
+            exit 1
+            ;;
+    esac
+done
+
+# Export mode flags
+export DEBUG_MODE
+export UNINSTALL_MODE
+export FORCE_MODE
+
+#------------------------------------------------------------------------------
+# SOURCE CORE SCRIPTS
+#------------------------------------------------------------------------------
+
+source "${SCRIPT_DIR}/lib/core-install-system.sh"
+source "${SCRIPT_DIR}/lib/core-install-extensions.sh"
+
+#------------------------------------------------------------------------------
+# HELPER FUNCTIONS
+#------------------------------------------------------------------------------
+
+install_docusaurus_site() {
     # Create directory structure
     log_info "Creating directory structure..."
     mkdir -p "$WEBSITE_DIR"/{docs,blog,src/css,src/pages,static/img}
 
-    # Generate files
+    # Generate config files
     log_info "Generating configuration files..."
     generate_package_json > "$WEBSITE_DIR/package.json"
     generate_docusaurus_config > "$WEBSITE_DIR/docusaurus.config.ts"
     generate_sidebars > "$WEBSITE_DIR/sidebars.ts"
     generate_tsconfig > "$WEBSITE_DIR/tsconfig.json"
 
+    # Generate starter content
     log_info "Generating starter content..."
     generate_custom_css > "$WEBSITE_DIR/src/css/custom.css"
     generate_index_page > "$WEBSITE_DIR/src/pages/index.tsx"
@@ -474,94 +661,83 @@ cmd_create() {
     generate_authors_yml > "$WEBSITE_DIR/blog/authors.yml"
     generate_first_blog_post > "$WEBSITE_DIR/blog/welcome.md"
 
+    # Generate CI/CD workflow
+    log_info "Generating GitHub Actions workflow..."
+    mkdir -p "$WORKFLOW_DIR"
+    generate_deploy_workflow > "$WORKFLOW_FILE"
+
     # Run npm install
     log_info "Running npm install (this may take a minute)..."
     echo ""
     if (cd "$WEBSITE_DIR" && npm install); then
         echo ""
         log_success "Docusaurus site created successfully!"
-
-        # Install VS Code extensions
-        log_info "Installing VS Code extensions..."
-        process_extensions "EXTENSIONS"
     else
         echo ""
-        log_error "npm install failed. The files have been created but dependencies are not installed."
+        log_error "npm install failed. Files created but dependencies not installed."
         log_info "Try running: cd $WEBSITE_DIR && npm install"
         return 1
     fi
+}
 
-    echo ""
-    draw_heavy_line
-    echo ""
-    echo "Quick start:"
-    echo "  cd $WEBSITE_DIR"
-    echo "  npm run start              # Start dev server"
-    echo "  npm run build              # Build for production"
-    echo ""
-    echo "Edit your site:"
-    echo "  docusaurus.config.ts       # Site configuration"
-    echo "  docs/                      # Documentation pages"
-    echo "  blog/                      # Blog posts"
-    echo "  src/pages/index.tsx        # Homepage"
-    echo "  src/css/custom.css         # Custom styles"
-    echo ""
-    echo "Docs: https://docusaurus.io/docs"
-    echo ""
-    draw_heavy_line
+uninstall_docusaurus_site() {
+    # Remove website directory
+    if [ -d "$WEBSITE_DIR" ]; then
+        log_info "Removing $WEBSITE_DIR ..."
+        rm -rf "$WEBSITE_DIR"
+        log_success "website/ removed"
+    else
+        log_info "No website/ directory found"
+    fi
+
+    # Remove workflow file
+    if [ -f "$WORKFLOW_FILE" ]; then
+        log_info "Removing $WORKFLOW_FILE ..."
+        rm -f "$WORKFLOW_FILE"
+        log_success "deploy-docs.yml removed"
+    else
+        log_info "No deploy-docs.yml found"
+    fi
+}
+
+# Function to process installations
+process_installations() {
+    if [ "${UNINSTALL_MODE}" -eq 1 ]; then
+        uninstall_docusaurus_site
+
+        # Uninstall extensions
+        if [ ${#EXTENSIONS[@]} -gt 0 ]; then
+            process_extensions "EXTENSIONS"
+        fi
+    else
+        install_docusaurus_site
+
+        # Install extensions
+        process_standard_installations
+    fi
 }
 
 #------------------------------------------------------------------------------
-# Help and Argument Parsing
+# MAIN EXECUTION
 #------------------------------------------------------------------------------
 
-show_help() {
-    # Source framework if not already loaded
-    if ! declare -f cmd_framework_generate_help >/dev/null 2>&1; then
-        # shellcheck source=/dev/null
-        source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    fi
+if [ "${UNINSTALL_MODE}" -eq 1 ]; then
+    show_install_header "uninstall"
+    pre_installation_setup
+    process_installations
+    post_uninstallation_message
 
-    cmd_framework_generate_help SCRIPT_COMMANDS "cmd-fwk-docusaurus.sh" "$SCRIPT_VER"
+    # Remove from auto-enable config
+    auto_disable_tool
+else
+    show_install_header
+    pre_installation_setup
+    process_installations
+    post_installation_message
 
-    echo ""
-    echo "VS Code Extensions (installed automatically):"
-    for ext in "${EXTENSIONS[@]}"; do
-        echo "  - $ext"
-    done
+    # Auto-enable for container rebuild
+    auto_enable_tool
+fi
 
-    echo ""
-    echo "Examples:"
-    echo "  cmd-fwk-docusaurus.sh --create    # Create Docusaurus site in website/"
-    echo ""
-}
-
-parse_args() {
-    # Source framework if not already loaded
-    if ! declare -f cmd_framework_parse_args >/dev/null 2>&1; then
-        # shellcheck source=/dev/null
-        source "${SCRIPT_DIR}/lib/cmd-framework.sh"
-    fi
-
-    cmd_framework_parse_args SCRIPT_COMMANDS "cmd-fwk-docusaurus.sh" "$@"
-}
-
-#------------------------------------------------------------------------------
-# Main
-#------------------------------------------------------------------------------
-
-main() {
-    if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
-        show_help
-        exit 0
-    fi
-
-    if [ $# -eq 0 ]; then
-        show_help
-        exit 0
-    fi
-
-    parse_args "$@"
-}
-
-main "$@"
+echo "✅ Script execution finished."
+exit 0
