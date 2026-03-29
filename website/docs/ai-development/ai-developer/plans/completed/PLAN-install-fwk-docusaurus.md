@@ -4,7 +4,9 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Completed
+
+**Completed**: 2026-03-29
 
 **Goal**: Add a cmd script that scaffolds a ready-to-go Docusaurus site in `website/`, matching the project's proven setup.
 
