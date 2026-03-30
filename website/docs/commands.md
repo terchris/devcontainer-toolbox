@@ -25,6 +25,7 @@ Run `dev-setup` to install development tools. The interactive menu lets you brow
 | [`dev-log`](#dev-log) | Display the container startup log |
 | [`dev-services`](#dev-services) | Manage background services (start, stop, status, logs) |
 | [`dev-sync`](#dev-sync) | Update toolbox scripts without rebuilding the container |
+| [`dev-template-ai`](#dev-template-ai) | Install AI workflow templates into your project |
 | [`dev-template`](#dev-template) | Create project files from templates |
 | [`dev-tools`](#dev-tools) | Output machine-readable tool inventory as JSON |
 | [`dev-update`](#dev-update) | Update devcontainer-toolbox to latest version |
@@ -89,6 +90,14 @@ Update toolbox scripts without rebuilding the container
 
 ```bash
 dev-sync
+```
+
+### dev-template-ai
+
+Install AI workflow templates into your project
+
+```bash
+dev-template-ai
 ```
 
 ### dev-template
