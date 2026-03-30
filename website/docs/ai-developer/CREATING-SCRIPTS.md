@@ -21,10 +21,10 @@ Read these before creating scripts:
 
 | Document | Content |
 |----------|---------|
-| [Creating Install Scripts](../../contributors/scripts/install-scripts) | Complete guide for install/config/cmd scripts |
-| [Services Overview](../../contributors/services) | Service scripts documentation |
-| [Libraries Reference](../../contributors/architecture/libraries) | Library functions reference |
-| [Categories Reference](../../contributors/architecture/categories) | Valid category values |
+| [Creating Install Scripts](../contributors/scripts/install-scripts) | Complete guide for install/config/cmd scripts |
+| [Services Overview](../contributors/services) | Service scripts documentation |
+| [Libraries Reference](../contributors/architecture/libraries) | Library functions reference |
+| [Categories Reference](../contributors/architecture/categories) | Valid category values |
 
 ---
 
@@ -202,7 +202,7 @@ If you find yourself writing the same code in multiple scripts, extract it to a 
 1. Create `lib/your-library.sh` with reusable functions
 2. Document functions with comments
 3. Source it in scripts: `source "$SCRIPT_DIR/lib/your-library.sh"`
-4. Update [libraries.md](../../contributors/architecture/libraries) with documentation
+4. Update [libraries.md](../contributors/architecture/libraries) with documentation
 
 See existing libraries in `.devcontainer/additions/lib/` for patterns.
 
@@ -248,8 +248,8 @@ If tests fail:
 - Unit test failures → Check `--help` and `--verify` implementations
 - Install test failures → Check install/uninstall logic
 
-See [testing.md](../../contributors/testing) for details on the test framework.
-See [CI-CD.md](../../contributors/ci-cd) for what CI checks.
+See [testing.md](../contributors/testing) for details on the test framework.
+See [CI-CD.md](../contributors/ci-cd) for what CI checks.
 
 ---
 

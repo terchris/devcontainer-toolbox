@@ -9,7 +9,7 @@ How plans become implemented features.
 
 **Related:**
 - [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
-- [CI-CD.md](../../contributors/ci-cd) - What to check before merging to main
+- [CI-CD.md](../contributors/ci-cd) - What to check before merging to main
 
 ---
 
@@ -173,7 +173,7 @@ Claude will:
 
 7. **Documentation**: CI auto-updates docs after merge - no manual step needed.
 
-See [CI-CD.md](../../contributors/ci-cd) for details on what happens after merge.
+See [CI-CD.md](../contributors/ci-cd) for details on what happens after merge.
 
 ---
 
@@ -190,7 +190,7 @@ See [CI-CD.md](../../contributors/ci-cd) for details on what happens after merge
 
 **Why this matters:** Users running `dev-update` will only see updates if the version number changes. Without a version bump, changes will never reach users.
 
-See [RELEASING.md](../../contributors/releasing) for full release process.
+See [RELEASING.md](../contributors/releasing) for full release process.
 
 ---
 
