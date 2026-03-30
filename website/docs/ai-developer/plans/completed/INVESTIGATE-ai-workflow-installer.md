@@ -1,6 +1,8 @@
 # Investigate: AI Workflow Installer Tool (`dev-template-ai.sh`)
 
-## Status: Backlog
+## Status: Completed
+
+**Completed**: 2026-03-30
 
 **Goal**: Create `dev-template-ai.sh` — a command that installs AI workflow templates into any project, following the same UX pattern as `dev-template.sh` for app templates.
 
