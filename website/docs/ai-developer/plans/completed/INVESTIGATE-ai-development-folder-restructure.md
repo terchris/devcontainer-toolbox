@@ -4,7 +4,9 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Backlog
+## Status: Completed
+
+**Completed**: 2026-03-30
 
 **Goal**: Determine how to restructure `website/docs/ai-development/` — move `ai-developer/` up to `website/docs/ai-developer/` and decide what to do with remaining files.
 
