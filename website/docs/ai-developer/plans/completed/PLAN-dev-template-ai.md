@@ -4,7 +4,9 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Completed
+
+**Completed**: 2026-03-30
 
 **Goal**: Create `dev-template-ai.sh` that installs AI workflow templates from `helpers-no/dev-templates` into any project, following the same UX as `dev-template.sh`.
 
@@ -225,19 +227,19 @@ Both scripts download only their needed folder, not the entire repo.
 
 ---
 
-## Phase 9: Testing
+## Phase 9: Testing — DONE
 
 ### Tasks
 
-- [ ] 9.1 Test `dev-template-ai.sh` in devcontainer with interactive dialog selection
-- [ ] 9.2 Test direct selection: `dev-template-ai.sh plan-based-workflow`
-- [ ] 9.3 Test CLAUDE.md conflict: run in project WITH existing CLAUDE.md — verify original preserved
-- [ ] 9.4 Test CLAUDE.md no-conflict: run in project WITHOUT CLAUDE.md — verify installed + CLAUDE-template.md removed
-- [ ] 9.5 Test safe re-run: run twice, verify plans/ not overwritten
-- [ ] 9.6 Test placeholder replacement: verify `{{REPO_NAME}}` replaced in all `.md` files
-- [ ] 9.7 Test `dev-template.sh` still works after refactor — install an app template end-to-end (regression test)
-- [ ] 9.8 Verify sparse-checkout works without git auth (public repo, no gh login)
-- [ ] 9.9 Verify `dev-help` shows the new command
+- [x] 9.1 Test `dev-template-ai.sh` in devcontainer with interactive dialog selection
+- [x] 9.2 Test direct selection: `dev-template-ai.sh plan-based-workflow`
+- [x] 9.3 Test CLAUDE.md conflict: run in project WITH existing CLAUDE.md — original preserved, CLAUDE-template.md kept
+- [x] 9.4 Test CLAUDE.md no-conflict: run in project WITHOUT CLAUDE.md — installed, CLAUDE-template.md removed
+- [x] 9.5 Test safe re-run: run twice, plans/ not overwritten, project-delete-test.md preserved
+- [x] 9.6 Test placeholder replacement: `{{REPO_NAME}}` replaced in all `.md` files
+- [x] 9.7 Test `dev-template.sh` regression — PHP template installed successfully end-to-end
+- [x] 9.8 Sparse-checkout works without git auth (public repo, no gh login)
+- [x] 9.9 Test invalid template name: `dev-template-ai wrong-template-name` — error handled correctly
 
 ### Validation
 
@@ -247,21 +249,21 @@ All tests pass. Both scripts work with sparse-checkout. No regression in dev-tem
 
 ## Acceptance Criteria
 
-- [ ] `dev-template-ai.sh` installs AI workflow template to `docs/ai-developer/`
-- [ ] Downloads only `ai-templates/` folder (not full repo) via git sparse-checkout
-- [ ] `dev-template.sh` downloads only `templates/` folder (not full repo)
-- [ ] Interactive dialog menu with category grouping
-- [ ] Direct selection via command-line argument
-- [ ] `{{REPO_NAME}}` replaced in all `.md` files
-- [ ] CLAUDE.md conflict handling works correctly
-- [ ] Safe re-runs: template docs overwritten, user plans preserved
-- [ ] `project-TEMPLATE.md` renamed to `project-{repo-name}.md`
-- [ ] Prerequisites checked (dialog, git — no longer requires unzip)
-- [ ] Cleanup removes temp directory
-- [ ] Script metadata present for component scanner
-- [ ] Works without git authentication (public repo)
-- [ ] `--help` flag works for both scripts (without requiring dialog or git remote)
-- [ ] No regression in `dev-template.sh` functionality
+- [x] `dev-template-ai.sh` installs AI workflow template to `docs/ai-developer/`
+- [x] Downloads only `ai-templates/` folder (not full repo) via git sparse-checkout
+- [x] `dev-template.sh` downloads only `templates/` folder (not full repo)
+- [x] Interactive dialog menu with category grouping
+- [x] Direct selection via command-line argument
+- [x] `{{REPO_NAME}}` replaced in all `.md` files
+- [x] CLAUDE.md conflict handling works correctly
+- [x] Safe re-runs: template docs overwritten, user plans preserved
+- [x] `project-TEMPLATE.md` renamed to `project-{repo-name}.md`
+- [x] Prerequisites checked (dialog, git — no longer requires unzip)
+- [x] Cleanup removes temp directory
+- [x] Script metadata present for component scanner
+- [x] Works without git authentication (public repo)
+- [x] `--help` flag works for both scripts (without requiring dialog or git remote)
+- [x] No regression in `dev-template.sh` functionality
 
 ---
 
