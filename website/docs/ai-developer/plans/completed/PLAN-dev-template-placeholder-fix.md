@@ -4,7 +4,9 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: Completed
+
+**Completed**: 2026-03-30
 
 **Goal**: Restore placeholder substitution in `dev-template.sh` so `{{REPO_NAME}}` and `{{GITHUB_USERNAME}}` are replaced in template files, and remove obsolete `urbalurba-scripts/` copy block.
 
@@ -30,14 +32,14 @@ Replace fragile `$OLDPWD` usage with explicit directory tracking.
 
 ### Tasks
 
-- [ ] 1.1 Add `CALLER_DIR="$PWD"` immediately after `set -e` (line 14)
-- [ ] 1.2 Add path resolution block after script metadata (after line 25):
+- [x] 1.1 Add `CALLER_DIR="$PWD"` immediately after `set -e` (line 14)
+- [x] 1.2 Add path resolution block after script metadata (after line 25):
   ```bash
   SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
   DEVCONTAINER_DIR="$(dirname "$SCRIPT_DIR")"
   ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
   ```
-- [ ] 1.3 Replace all `$OLDPWD` references with `$CALLER_DIR`:
+- [x] 1.3 Replace all `$OLDPWD` references with `$CALLER_DIR`:
   - Line 361: `cp -r "$TEMPLATE_PATH/"* "$OLDPWD/"`
   - Line 365: `mkdir -p "$OLDPWD/urbalurba-scripts"` (will be removed in Phase 4, but fix for now)
   - Line 366: `cp -r "$TEMPLATE_REPO_NAME/urbalurba-scripts/"* "$OLDPWD/urbalurba-scripts/"`
@@ -46,7 +48,7 @@ Replace fragile `$OLDPWD` usage with explicit directory tracking.
   - Line 381: `cp -r "$TEMPLATE_PATH/.github"/* "$OLDPWD/.github/"`
   - Line 394-417: All `$OLDPWD` in `merge_gitignore()`
   - Line 468: `cd "$OLDPWD"` → `cd "$CALLER_DIR"`
-- [ ] 1.4 Verify no other `$OLDPWD` references remain
+- [x] 1.4 Verify no other `$OLDPWD` references remain
 
 ### Validation
 
@@ -60,11 +62,11 @@ Source `git-identity.sh` and validate repo info before downloading anything.
 
 ### Tasks
 
-- [ ] 2.1 Add source statement after path resolution:
+- [x] 2.1 Add source statement after path resolution:
   ```bash
   source "$ADDITIONS_DIR/lib/git-identity.sh"
   ```
-- [ ] 2.2 Add `detect_and_validate_repo_info()` function:
+- [x] 2.2 Add `detect_and_validate_repo_info()` function:
   ```bash
   function detect_and_validate_repo_info() {
     echo "🔍 Detecting repository information..."
@@ -106,7 +108,7 @@ Source `git-identity.sh` and validate repo info before downloading anything.
     echo ""
   }
   ```
-- [ ] 2.3 Add `detect_and_validate_repo_info` call in main flow, after `check_prerequisites` and before `download_templates` (around line 459):
+- [x] 2.3 Add `detect_and_validate_repo_info` call in main flow, after `check_prerequisites` and before `download_templates` (around line 459):
   ```bash
   check_prerequisites
   clear
@@ -127,7 +129,7 @@ Restore `replace_placeholders()` and call it on manifests and workflows.
 
 ### Tasks
 
-- [ ] 3.1 Add `replace_placeholders()` function (before `cleanup_and_complete()`):
+- [x] 3.1 Add `replace_placeholders()` function (before `cleanup_and_complete()`):
   ```bash
   function replace_placeholders() {
     local file=$1
@@ -149,7 +151,7 @@ Restore `replace_placeholders()` and call it on manifests and workflows.
     fi
   }
   ```
-- [ ] 3.2 Add `process_template_files()` function:
+- [x] 3.2 Add `process_template_files()` function:
   ```bash
   function process_template_files() {
     echo "🔄 Replacing template placeholders..."
@@ -177,7 +179,7 @@ Restore `replace_placeholders()` and call it on manifests and workflows.
     echo ""
   }
   ```
-- [ ] 3.3 Add `process_template_files` call in main flow, after `merge_gitignore` and before `cd "$CALLER_DIR"`:
+- [x] 3.3 Add `process_template_files` call in main flow, after `merge_gitignore` and before `cd "$CALLER_DIR"`:
   ```bash
   merge_gitignore
   process_template_files    # ← NEW
@@ -195,7 +197,7 @@ User confirms: after running `dev-template.sh`, `manifests/deployment.yaml` cont
 
 ### Tasks
 
-- [ ] 4.1 Remove `urbalurba-scripts/` copy block from `copy_template_files()` (lines 363-369):
+- [x] 4.1 Remove `urbalurba-scripts/` copy block from `copy_template_files()` (lines 363-369):
   ```bash
   # DELETE THIS BLOCK:
   if [ -d "$TEMPLATE_REPO_NAME/urbalurba-scripts" ]; then
@@ -206,8 +208,8 @@ User confirms: after running `dev-template.sh`, `manifests/deployment.yaml` cont
     echo "   ✅ Added urbalurba-scripts"
   fi
   ```
-- [ ] 4.2 Bump `SCRIPT_VERSION` from `1.5.0` to `1.6.0` (lines 12 and 24)
-- [ ] 4.3 Verify the complete script flow works end-to-end
+- [x] 4.2 Bump `SCRIPT_VERSION` from `1.5.0` to `1.6.0` (lines 12 and 24)
+- [x] 4.3 Verify the complete script flow works end-to-end
 
 ### Validation
 
@@ -217,16 +219,16 @@ User confirms script version is 1.6.0 and no `urbalurba-scripts/` block remains.
 
 ## Acceptance Criteria
 
-- [ ] Script detects `GIT_ORG` and `GIT_REPO` from git remote before downloading templates
-- [ ] Script aborts with clear error if repo info is missing
-- [ ] Script warns (but continues) for non-GitHub providers
-- [ ] `{{REPO_NAME}}` replaced in `manifests/*.yaml` and `.github/workflows/*.yaml`
-- [ ] `{{GITHUB_USERNAME}}` replaced in `manifests/*.yaml` and `.github/workflows/*.yaml`
-- [ ] GitHub Actions `${{ }}` context variables are NOT affected by substitution
-- [ ] `urbalurba-scripts/` copy block removed
-- [ ] All `$OLDPWD` references replaced with `$CALLER_DIR`
-- [ ] Script version bumped to 1.6.0
-- [ ] No shellcheck warnings
+- [x] Script detects `GIT_ORG` and `GIT_REPO` from git remote before downloading templates
+- [x] Script aborts with clear error if repo info is missing
+- [x] Script warns (but continues) for non-GitHub providers
+- [x] `{{REPO_NAME}}` replaced in `manifests/*.yaml` and `.github/workflows/*.yaml`
+- [x] `{{GITHUB_USERNAME}}` replaced in `manifests/*.yaml` and `.github/workflows/*.yaml`
+- [x] GitHub Actions `${{ }}` context variables are NOT affected by substitution
+- [x] `urbalurba-scripts/` copy block removed
+- [x] All `$OLDPWD` references replaced with `$CALLER_DIR`
+- [x] Script version bumped to 1.6.0
+- [x] No shellcheck warnings
 
 ---
 
