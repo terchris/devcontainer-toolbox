@@ -270,7 +270,7 @@ Update all documentation to reflect the new image-based approach.
 
 - `website/docs/getting-started.md`
 - `website/docs/configuration.md`
-- `website/docs/ai-development/ai-developer/CREATING-SCRIPTS.md`
+- `website/docs/ai-developer/CREATING-SCRIPTS.md`
 - Other docs as identified during implementation
 
 ---

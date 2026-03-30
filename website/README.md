@@ -67,8 +67,7 @@ docs/
 ├── index.md              # Docs home
 ├── getting-started.md    # Installation guide
 ├── tools/                # Tool documentation (auto-generated)
-├── ai-development/       # AI development guides
-├── ai-developer/         # Internal AI workflow and plans
+├── ai-developer/         # AI development guides, workflow, and plans
 ├── contributors/         # Contributor guides
 └── ...
 ```

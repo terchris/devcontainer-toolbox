@@ -21,7 +21,7 @@ export default function AiDemo(): ReactNode {
         <div className="text--center" style={{marginTop: '1.5rem'}}>
           <Link
             className="button button--primary button--lg"
-            to="/docs/ai-development">
+            to="/docs/ai-developer">
             Learn More About AI Development
           </Link>
         </div>

@@ -1,16 +1,14 @@
 ---
-title: Developing Using AI
+title: Developing with AI
 sidebar_position: 1
 ---
 
-# Developing Using AI
+# Developing with AI
 
-Watch an AI implement a complete feature in 12 minutes:
+Watch an AI implement a complete feature:
 
-![AI implementing a development tool](/img/ai-implement-plan.gif)
-*Full implementation at 4x speed (~3 min). The user mostly just confirms each phase.*
-
-> **Side note:** We used an AI to figure out how to create this screen recording. See the [AI Developer section](../ai-developer/) for examples of AI research tasks.
+![AI implementing a development tool](/img/ai-implement-plan-teaser.gif)
+*30-second teaser at 4x speed. The user mostly just confirms each phase.*
 
 This is Claude Code adding Bash development tools to devcontainer-toolbox. The AI:
 - Created the install script
@@ -66,7 +64,7 @@ Without guidance, AI assistants:
 Instead of "implement feature X", say:
 
 ```
-we need to create a plan for creating a install-dev-bash.sh
+we need to create a plan for adding a new install script
 ```
 
 The AI reads your documentation and creates a structured plan:
@@ -81,17 +79,15 @@ Notice what happens:
 
 The plan is a markdown file. Edit it if something's wrong. Only after you approve does the AI start coding.
 
-**See the actual plan used in the demo:** The `PLAN-install-dev-bash.md` is in `website/docs/ai-development/ai-developer/plans/completed/`.
-
-More examples in the [AI Developer plans](../ai-developer/PLANS) section.
-
-### Why Plans Work
-
+:::tip Why Plans Work
 **They reduce hallucinations.** The AI follows your documented patterns instead of guessing.
 
 **They enable course correction.** When something goes wrong, point to the plan. There's a shared reference.
 
 **They create documentation.** Completed plans show what was implemented and why.
+:::
+
+Learn more: [Creating Plans](PLANS)
 
 ---
 
@@ -116,41 +112,6 @@ Tests turn the AI into a self-correcting system.
 
 ---
 
-## Setting Up Your Project
-
-### Planning Documentation
-
-Create docs that tell the AI how to make plans:
-
-| Document | Purpose |
-|----------|---------|
-| [PLANS.md](../ai-developer/PLANS.md) | Plan templates and structure |
-| [WORKFLOW.md](../ai-developer/WORKFLOW.md) | Implementation process |
-| [CREATING-SCRIPTS.md](../ai-developer/CREATING-SCRIPTS.md) | Code conventions |
-
-Plans are stored in `website/docs/ai-development/ai-developer/plans/` with subfolders for `backlog/`, `active/`, and `completed/`.
-
-See [docs/ai-developer/](../ai-developer/) for the full setup.
-
-### Tests
-
-Create tests the AI can run:
-
-```bash
-dev-test static    # Validate syntax and metadata
-dev-test unit      # Run safe execution tests
-dev-test lint      # Check code style
-```
-
-### AI Configuration
-
-Add a `CLAUDE.md` that tells the AI:
-- Where to find planning docs
-- What workflow to follow
-- What tests to run
-
----
-
 ## The Three Layers
 
 | Layer | What it does |
@@ -165,8 +126,43 @@ Add a `CLAUDE.md` that tells the AI:
 
 ---
 
-## Related
+## Getting Started
 
-- [AI Developer Docs](../ai-developer/) - Planning templates and workflow
-- [Testing Guide](../../contributors/testing) - How to run and create tests
-- [CLAUDE.md](https://github.com/helpers-no/devcontainer-toolbox/blob/main/CLAUDE.md) - Project-specific AI configuration (in repo root)
+### 1. Install Claude Code
+
+```bash
+dev-setup
+# Select "Claude Code" from AI & Machine Learning Tools
+```
+
+Or install directly:
+```bash
+.devcontainer/additions/install-dev-ai-claudecode.sh
+```
+
+### 2. Configure API Key
+
+Save your API key (persists across container rebuilds):
+```bash
+mkdir -p .devcontainer.secrets/env-vars
+echo "your-api-key" > .devcontainer.secrets/env-vars/anthropic-api-key
+chmod 600 .devcontainer.secrets/env-vars/anthropic-api-key
+```
+
+The key is automatically exported as `ANTHROPIC_API_KEY` on every container start.
+
+### 3. Start Using It
+
+```bash
+claude
+```
+
+Then tell it what you want to build. It will create a plan for your review.
+
+---
+
+## Next Steps
+
+- [Workflow](WORKFLOW) - The full flow from idea to implementation
+- [Creating Plans](PLANS) - Plan templates and best practices
+- [Claude Code Tool](../tools/ai-machine-learning/ai-claudecode) - Installation and configuration details

@@ -39,7 +39,7 @@ This is too heavy when only `pwsh` + linting is needed (e.g., for Intune script 
 | Install template | `addition-templates/_template-install-script.sh` | Template for new install scripts |
 | PowerShell core library | `lib/core-install-pwsh.sh` | Module install/uninstall/update functions |
 | Azure ops script | `install-tool-azure-ops.sh` | Full Azure + PowerShell stack |
-| CREATING-SCRIPTS.md | `website/docs/ai-development/ai-developer/CREATING-SCRIPTS.md` | Script conventions and metadata |
+| CREATING-SCRIPTS.md | `website/docs/ai-developer/CREATING-SCRIPTS.md` | Script conventions and metadata |
 
 ### How PowerShell is currently installed
 

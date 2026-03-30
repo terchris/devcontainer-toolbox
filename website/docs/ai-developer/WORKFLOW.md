@@ -1,15 +1,21 @@
 ---
-title: AI Development Workflow
+title: Workflow
 sidebar_position: 2
 ---
 
-# AI Development Workflow
+# Plan to Implementation Workflow
 
 How plans become implemented features.
+
+**Related:**
+- [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
+- [CI-CD.md](../../contributors/ci-cd) - What to check before merging to main
 
 ---
 
 ## The Flow
+
+**Note:** Claude always asks for confirmation before running git commands (add, commit, push, branch, merge).
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -38,10 +44,6 @@ How plans become implemented features.
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-:::note
-Claude always asks for confirmation before running git commands (add, commit, push, branch, merge).
-:::
-
 ---
 
 ## Step 1: Describe What You Want
@@ -66,12 +68,12 @@ Tell Claude what you want to do:
 
 Claude will:
 
-1. **Create plan file** in `website/docs/ai-development/ai-developer/plans/backlog/`:
+1. **Create plan file** in `website/docs/ai-developer/plans/backlog/`:
    - `PLAN-*.md` if the solution is clear
    - `INVESTIGATE-*.md` if research is needed first
 2. **Ask you to review** the plan
 
-See [Creating Plans](creating-plans) for plan structure and templates.
+See [PLANS.md](PLANS.md) for plan structure, templates, and what goes in each section.
 
 ---
 
@@ -98,17 +100,23 @@ When satisfied, tell Claude:
 
 Claude will:
 
-1. **Move plan to active/**
+1. **Move plan to active/**:
+   ```bash
+   mv website/docs/ai-developer/plans/backlog/PLAN-xyz.md website/docs/ai-developer/plans/active/
+   ```
 
 2. **Ask about feature branch** (recommended):
 
+   Claude will ask:
    > "Do you want to work on a feature branch? (recommended)
    >
    > This keeps your changes separate from the main code until you're ready.
    > When done, you'll create a Pull Request to merge your changes."
 
-   - **If yes:** Claude creates a branch like `feature/update-scripts`
-   - **If no:** Claude works directly on the current branch
+   **If yes:** Claude creates a branch like `feature/update-scripts`
+   **If no:** Claude works directly on the current branch
+
+   *See "What is a Feature Branch?" below if you're new to this.*
 
 3. **Work phase by phase**:
    - Complete tasks in order
@@ -156,6 +164,34 @@ Claude will:
    > - Ask someone to review it
    > - Merge it when ready"
 
+**Before merging the PR**, Claude will ask:
+
+6. **Check version bump**:
+   > "Should we bump the version before merging?
+   > - Current version: 1.0.3
+   > - If yes, what should the new version be?"
+
+7. **Documentation**: CI auto-updates docs after merge - no manual step needed.
+
+See [CI-CD.md](../../contributors/ci-cd) for details on what happens after merge.
+
+---
+
+## Version Management (MANDATORY)
+
+**CRITICAL:** Before pushing to GitHub or creating a PR, Claude MUST:
+
+1. **Ask the user:** "Should we bump the version for this change?"
+2. **If yes:** Update `version.txt` with the new version number
+3. **Version types:**
+   - PATCH (1.0.x → 1.0.y): Bug fixes, small improvements
+   - MINOR (1.x.0 → 1.y.0): New features, documentation improvements
+   - MAJOR (x.0.0 → y.0.0): Breaking changes
+
+**Why this matters:** Users running `dev-update` will only see updates if the version number changes. Without a version bump, changes will never reach users.
+
+See [RELEASING.md](../../contributors/releasing) for full release process.
+
 ---
 
 ## Quick Reference
@@ -179,7 +215,7 @@ Claude will:
 YOU: I want to add SCRIPT_VER to all install scripts
 
 CLAUDE: I'll create a plan for that.
-        Created website/docs/ai-development/ai-developer/plans/backlog/PLAN-script-version-variable.md
+        Created website/docs/ai-developer/plans/backlog/PLAN-script-version-variable.md
 
         Please review the plan and let me know if it looks good
         or needs changes.
@@ -258,9 +294,24 @@ main (the original)
 - **Reversible**: Easy to undo if something goes wrong
 - **Collaborative**: Multiple people can work on different features
 
+### Commands Claude Uses
+
+```bash
+# Create and switch to a new branch
+git checkout -b feature/my-feature
+
+# Push the branch to GitHub
+git push -u origin feature/my-feature
+
+# Create a Pull Request
+gh pr create --title "Add my feature" --body "Description..."
+```
+
+You don't need to memorize these - Claude handles it for you.
+
 ---
 
-## Working with GitHub Issues
+## Optional: Working with GitHub Issues
 
 If you're using GitHub issues to track work, tell Claude:
 
