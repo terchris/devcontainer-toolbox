@@ -113,6 +113,7 @@ function scan_templates() {
   TEMPLATE_DESCRIPTIONS=()
   TEMPLATE_CATEGORIES=()
   TEMPLATE_PURPOSES=()
+  TEMPLATE_TOOLS_LIST=()
 
   # Group by category
   declare -g -A CATEGORY_WEB_SERVER
@@ -130,6 +131,7 @@ function scan_templates() {
       TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
       TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
       TEMPLATE_PURPOSES+=("$INFO_PURPOSE")
+      TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
 
       # Group by category for menu display
       case "$INFO_CATEGORY" in
@@ -429,6 +431,9 @@ function show_help() {
   echo "  substitution. Temp files are cleaned up automatically."
   echo "  No git authentication required (public repo)."
   echo ""
+  echo "  If the template declares required tools (TEMPLATE_TOOLS),"
+  echo "  they are installed automatically in the devcontainer."
+  echo ""
   echo "Source: https://github.com/helpers-no/dev-templates/tree/main/templates"
   echo ""
 }
@@ -464,6 +469,7 @@ verify_template
 copy_template_files
 setup_github_workflows
 merge_gitignore
+install_template_tools "${TEMPLATE_TOOLS_LIST[$TEMPLATE_INDEX]:-}"
 process_template_files
 
 # Go back to original directory

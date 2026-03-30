@@ -14,6 +14,7 @@
 #   read_template_info            — read TEMPLATE_INFO from a template dir
 #   show_template_details_dialog  — show template details confirmation dialog
 #   replace_template_placeholder  — replace a placeholder in a single file
+#   install_template_tools        — install devcontainer tools declared in TEMPLATE_TOOLS
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ download_template_repo() {
 #   $1 — path to template directory containing TEMPLATE_INFO
 #
 # Sets globals:
-#   INFO_NAME, INFO_DESCRIPTION, INFO_CATEGORY, INFO_PURPOSE
+#   INFO_NAME, INFO_DESCRIPTION, INFO_CATEGORY, INFO_PURPOSE, INFO_TOOLS
 #------------------------------------------------------------------------------
 read_template_info() {
   local template_dir="$1"
@@ -104,10 +105,11 @@ read_template_info() {
   INFO_DESCRIPTION="No description"
   INFO_CATEGORY="UNCATEGORIZED"
   INFO_PURPOSE=""
+  INFO_TOOLS=""
 
   if [ -f "$info_file" ]; then
-    # Unset variables to avoid pollution
-    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_PURPOSE
+    # Unset variables to avoid pollution (prevents leaking between templates)
+    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_PURPOSE TEMPLATE_TOOLS
 
     source "$info_file"
 
@@ -115,9 +117,10 @@ read_template_info() {
     INFO_DESCRIPTION="${TEMPLATE_DESCRIPTION:-$INFO_DESCRIPTION}"
     INFO_CATEGORY="${TEMPLATE_CATEGORY:-$INFO_CATEGORY}"
     INFO_PURPOSE="${TEMPLATE_PURPOSE:-$INFO_PURPOSE}"
+    INFO_TOOLS="${TEMPLATE_TOOLS:-$INFO_TOOLS}"
 
     # Clean up after sourcing
-    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_PURPOSE
+    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_PURPOSE TEMPLATE_TOOLS
   fi
 }
 
@@ -129,7 +132,7 @@ read_template_info() {
 #
 # Requires globals:
 #   TEMPLATE_NAMES[], TEMPLATE_DESCRIPTIONS[], TEMPLATE_CATEGORIES[],
-#   TEMPLATE_PURPOSES[], TEMPLATE_DIRS[]
+#   TEMPLATE_PURPOSES[], TEMPLATE_DIRS[], TEMPLATE_TOOLS_LIST[] (optional)
 #
 # Returns: dialog exit code (0 = yes, 1 = no)
 #------------------------------------------------------------------------------
@@ -149,6 +152,11 @@ show_template_details_dialog() {
     details+="Purpose:\n$template_purpose\n\n"
   fi
 
+  local template_tools="${TEMPLATE_TOOLS_LIST[$idx]:-}"
+  if [ -n "$template_tools" ]; then
+    details+="Tools to install:\n$template_tools\n\n"
+  fi
+
   details+="Directory: ${TEMPLATE_DIRS[$idx]}"
 
   dialog --clear \
@@ -157,6 +165,57 @@ show_template_details_dialog() {
     20 80
 
   return $?
+}
+
+#------------------------------------------------------------------------------
+# Install devcontainer tools declared in TEMPLATE_TOOLS
+#
+# Arguments:
+#   $1 — space-separated SCRIPT_IDs (e.g., "dev-php-laravel dev-typescript")
+#
+# Requires globals:
+#   $ADDITIONS_DIR — path to .devcontainer/additions/ (set by calling script)
+#
+# Each tool ID maps to install-{ID}.sh in $ADDITIONS_DIR.
+# Failed installs are caught and reported — they don't abort the template install.
+#------------------------------------------------------------------------------
+install_template_tools() {
+  local tools="$1"
+
+  # No-op if empty
+  if [ -z "$tools" ]; then
+    return 0
+  fi
+
+  echo "🔧 Installing required development tools..."
+  echo ""
+
+  local installed=0
+  local failed=0
+  local skipped=0
+
+  for tool_id in $tools; do
+    local script="install-${tool_id}.sh"
+    local script_path="$ADDITIONS_DIR/$script"
+
+    if [ ! -f "$script_path" ]; then
+      echo "   ⚠️  Tool '$tool_id' not found ($script)"
+      ((skipped++))
+      continue
+    fi
+
+    echo "   📦 Installing $tool_id..."
+    if bash "$script_path"; then
+      ((installed++))
+    else
+      echo "   ⚠️  Failed to install $tool_id — you can install it later with dev-setup"
+      ((failed++))
+    fi
+    echo ""
+  done
+
+  echo "🔧 Tool installation summary: $installed installed, $failed failed, $skipped not found"
+  echo ""
 }
 
 #------------------------------------------------------------------------------
