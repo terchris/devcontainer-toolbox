@@ -389,7 +389,7 @@ Restructure the documentation sidebar for better organization.
   - troubleshooting.md → position 8
   - contributing.md → position 9
 - [x] 7.2 `docs/ai-development/` folder already existed with `_category_.json` (updated position 5)
-- [x] 7.3 Move `docs/ai-developer/` → `docs/ai-development/ai-developer/`
+- [x] 7.3 Move `docs/ai-developer/` → `docs/ai-developer/`
 - [x] 7.4 Move `docs/ai-docs/` → `docs/ai-development/ai-docs/`
 - [x] 7.5 Update `_category_.json` files for nested folders
 - [x] 7.6 Fix relative links in moved files (../contributors/ → ../../contributors/)

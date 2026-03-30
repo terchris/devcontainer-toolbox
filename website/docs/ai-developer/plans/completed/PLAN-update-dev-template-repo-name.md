@@ -66,6 +66,6 @@ The `dev-template.sh` script and several docs/plans reference the repo as `urbal
 - `.devcontainer/manage/dev-template.sh`
 
 **Docs (update for correctness):**
-- `website/docs/ai-development/ai-developer/plans/backlog/ISSUE-urbalurba-dev-templates-cicd.md`
-- `website/docs/ai-development/ai-developer/plans/backlog/PLAN-007-templates-integration.md`
+- `website/docs/ai-developer/plans/backlog/ISSUE-urbalurba-dev-templates-cicd.md`
+- `website/docs/ai-developer/plans/backlog/PLAN-007-templates-integration.md`
 - Completed plan/investigation files that reference the old name

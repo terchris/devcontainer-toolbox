@@ -44,7 +44,7 @@ website/
 │   ├── troubleshooting.md      # Troubleshooting guide
 │   ├── what-are-devcontainers.md  # DevContainers explainer
 │   ├── tools/                  # Tool documentation (auto-generated)
-│   ├── ai-development/         # AI development guides
+│   ├── ai-developer/            # AI development guides
 │   └── contributors/           # Contributor guides (you are here)
 ├── src/
 │   ├── components/             # React components (ToolCard, ToolGrid, etc.)

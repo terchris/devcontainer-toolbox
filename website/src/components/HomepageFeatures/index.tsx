@@ -41,7 +41,7 @@ const FeatureList: FeatureItem[] = [
         Safely run AI coding assistants inside the container. They can only access your project, not your whole machine.
       </>
     ),
-    link: '/docs/ai-development/',
+    link: '/docs/ai-developer/',
   },
 ];
 

@@ -1,8 +1,9 @@
 {
   "label": "AI Development",
   "position": 5,
+  "collapsed": true,
   "link": {
     "type": "doc",
-    "id": "ai-development/index"
+    "id": "ai-developer/README"
   }
 }
