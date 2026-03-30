@@ -168,13 +168,101 @@ The config script (`config-uis-postgresql.sh`) knows how to query UIS for Postgr
 
 ---
 
+## Immediate Problem: Templates Don't Install Required Tools
+
+Before tackling backend service dependencies, there's a simpler gap: **templates don't install the devcontainer tools they need**.
+
+### Example: PHP template
+
+The user runs `dev-template` and selects the PHP Basic Webserver template. Files are scaffolded, but PHP is not installed in the devcontainer. The user has to manually figure out they need to run `dev-setup`, find PHP, and install it.
+
+### What exists today
+
+- `TEMPLATE_INFO` describes the template (name, description, category, purpose) but has **no field for tool dependencies**
+- `enabled-tools.conf` in `.devcontainer.extend/` controls which tools auto-install on container rebuild
+- Install scripts have `SCRIPT_ID` (e.g., `dev-php-laravel`) that matches `enabled-tools.conf` entries
+- The `auto_enable_tool` function in install scripts adds the ID to `enabled-tools.conf`
+
+### Proposed solution: `TEMPLATE_TOOLS` field
+
+Add a new field to `TEMPLATE_INFO`:
+
+```bash
+TEMPLATE_NAME="PHP Basic Webserver"
+TEMPLATE_DESCRIPTION="PHP web server using built-in server"
+TEMPLATE_CATEGORY="WEB_SERVER"
+TEMPLATE_PURPOSE="Provides a minimal starting point..."
+TEMPLATE_TOOLS="dev-php-laravel"
+```
+
+Multiple tools:
+```bash
+TEMPLATE_TOOLS="dev-typescript dev-python"
+```
+
+### What the template installer should do
+
+1. Read `TEMPLATE_TOOLS` from `TEMPLATE_INFO`
+2. For each tool ID:
+   a. Add it to `.devcontainer.extend/enabled-tools.conf` (so it persists across rebuilds)
+   b. Run the install script: `bash .devcontainer/additions/install-{id-with-prefix}.sh`
+3. Show the user what was installed
+
+### Mapping SCRIPT_ID to install script filename
+
+`SCRIPT_ID` values like `dev-php-laravel` map to `install-dev-php-laravel.sh`. The pattern is:
+```
+install-{SCRIPT_ID}.sh
+```
+
+This mapping already exists in the component scanner and auto-enable system.
+
+### Impact on both template scripts
+
+Both `dev-template.sh` and `dev-template-ai.sh` would need this. It belongs in the shared library `template-common.sh`:
+
+```bash
+install_template_tools() {
+  local tools="$1"  # space-separated SCRIPT_IDs
+  for tool_id in $tools; do
+    local script="install-${tool_id}.sh"
+    local script_path="$ADDITIONS_DIR/$script"
+    if [ -f "$script_path" ]; then
+      echo "📦 Installing $tool_id..."
+      bash "$script_path"
+    else
+      echo "⚠️  Tool '$tool_id' not found: $script_path"
+    fi
+  done
+}
+```
+
+### This is independent of the backend services problem
+
+`TEMPLATE_TOOLS` handles devcontainer tools (PHP, Python, TypeScript, etc.). Backend services (PostgreSQL, Strapi) are a separate concern covered by the options above. Both can coexist:
+
+```bash
+TEMPLATE_TOOLS="dev-php-laravel"           # devcontainer tools
+TEMPLATE_SERVICES="postgresql"              # backend services (future)
+```
+
+---
+
 ## Questions to Answer
 
-1. Does UIS have (or plan to have) a way to query deployed service details? (`uis info`, API, config file?)
-2. Should database creation be part of the template installer or a separate step the user runs?
-3. Should we support non-UIS backends? (local Docker, cloud databases, etc.)
-4. Is Backstage on the roadmap? If so, should we design for Backstage scaffolder compatibility?
-5. What UIS services beyond PostgreSQL will templates need? (Redis, message queues, S3-compatible storage?)
+### Tool dependencies (ready to implement)
+
+1. Should `TEMPLATE_TOOLS` be added to `TEMPLATE_INFO` format? (proposed above)
+2. Should tools install automatically or ask the user first?
+3. What if a tool install fails — abort template install or continue with warning?
+
+### Backend service dependencies (future)
+
+4. Does UIS have (or plan to have) a way to query deployed service details? (`uis info`, API, config file?)
+5. Should database creation be part of the template installer or a separate step the user runs?
+6. Should we support non-UIS backends? (local Docker, cloud databases, etc.)
+7. Is Backstage on the roadmap? If so, should we design for Backstage scaffolder compatibility?
+8. What UIS services beyond PostgreSQL will templates need? (Redis, message queues, S3-compatible storage?)
 
 ---
 
@@ -188,6 +276,16 @@ The `.env.example` pattern should be the foundation regardless of which option w
 
 ## Next Steps
 
+### Immediate (TEMPLATE_TOOLS)
+
+- [ ] Add `TEMPLATE_TOOLS` field to TEMPLATE_INFO format spec (in dev-templates repo)
+- [ ] Add `install_template_tools()` to `template-common.sh`
+- [ ] Update `dev-template.sh` and `dev-template-ai.sh` to read and process `TEMPLATE_TOOLS`
+- [ ] Update PHP template TEMPLATE_INFO with `TEMPLATE_TOOLS="dev-php-laravel"`
+- [ ] Create PLAN for implementing TEMPLATE_TOOLS
+
+### Future (backend services)
+
 - [ ] Determine what UIS can provide for service discovery
-- [ ] Decide on approach (A, B, C, or D)
+- [ ] Decide on approach (A, B, C, or D) for backend services
 - [ ] Create PLAN for implementing the chosen approach

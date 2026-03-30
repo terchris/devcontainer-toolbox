@@ -82,6 +82,7 @@ function scan_templates() {
   TEMPLATE_DESCRIPTIONS=()
   TEMPLATE_CATEGORIES=()
   TEMPLATE_PURPOSES=()
+  TEMPLATE_TOOLS_LIST=()
 
   # Group by category — AI templates use WORKFLOW category
   declare -g -A CATEGORY_WORKFLOW
@@ -98,6 +99,7 @@ function scan_templates() {
       TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
       TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
       TEMPLATE_PURPOSES+=("$INFO_PURPOSE")
+      TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
 
       case "$INFO_CATEGORY" in
         WORKFLOW)
@@ -388,6 +390,9 @@ function show_help() {
   echo "  template is then copied into your project. Temp files are cleaned"
   echo "  up automatically. No git authentication required (public repo)."
   echo ""
+  echo "  If the template declares required tools (TEMPLATE_TOOLS),"
+  echo "  they are installed automatically in the devcontainer."
+  echo ""
   echo "Source: https://github.com/helpers-no/dev-templates/tree/main/ai-templates"
   echo ""
 }
@@ -430,6 +435,7 @@ fi
 
 handle_claude_md
 rename_project_template
+install_template_tools "${TEMPLATE_TOOLS_LIST[$TEMPLATE_INDEX]:-}"
 process_template_files
 cd "$CALLER_DIR"
 cleanup_and_complete
