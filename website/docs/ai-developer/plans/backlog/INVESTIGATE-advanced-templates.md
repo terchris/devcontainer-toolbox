@@ -250,11 +250,13 @@ TEMPLATE_SERVICES="postgresql"              # backend services (future)
 
 ## Questions to Answer
 
-### Tool dependencies (ready to implement)
+### Tool dependencies -- COMPLETED 2026-03-30
 
-1. Should `TEMPLATE_TOOLS` be added to `TEMPLATE_INFO` format? (proposed above)
-2. Should tools install automatically or ask the user first?
-3. What if a tool install fails — abort template install or continue with warning?
+1. ~~Should `TEMPLATE_TOOLS` be added to `TEMPLATE_INFO` format?~~ **Yes -- implemented.**
+2. ~~Should tools install automatically or ask the user first?~~ **Automatically, shown in dialog before confirmation.**
+3. ~~What if a tool install fails?~~ **Warn and continue, don't abort.**
+
+See `PLAN-template-tools-dct.md` (completed) and `PLAN-template-tools-dev-templates.md` (completed in helpers-no/dev-templates).
 
 ### Backend service dependencies (future)
 
@@ -276,13 +278,13 @@ The `.env.example` pattern should be the foundation regardless of which option w
 
 ## Next Steps
 
-### Immediate (TEMPLATE_TOOLS)
+### Immediate (TEMPLATE_TOOLS) -- COMPLETED 2026-03-30
 
-- [ ] Add `TEMPLATE_TOOLS` field to TEMPLATE_INFO format spec (in dev-templates repo)
-- [ ] Add `install_template_tools()` to `template-common.sh`
-- [ ] Update `dev-template.sh` and `dev-template-ai.sh` to read and process `TEMPLATE_TOOLS`
-- [ ] Update PHP template TEMPLATE_INFO with `TEMPLATE_TOOLS="dev-php-laravel"`
-- [ ] Create PLAN for implementing TEMPLATE_TOOLS
+- [x] Add `TEMPLATE_TOOLS` field to TEMPLATE_INFO format spec (in dev-templates repo)
+- [x] Add `install_template_tools()` to `template-common.sh`
+- [x] Update `dev-template.sh` and `dev-template-ai.sh` to read and process `TEMPLATE_TOOLS`
+- [x] Update all 7 app templates with `TEMPLATE_TOOLS` (in dev-templates repo)
+- [x] Create and complete PLAN for implementing TEMPLATE_TOOLS
 
 ### Future (backend services)
 

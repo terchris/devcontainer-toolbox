@@ -112,8 +112,9 @@ function scan_templates() {
   TEMPLATE_NAMES=()
   TEMPLATE_DESCRIPTIONS=()
   TEMPLATE_CATEGORIES=()
-  TEMPLATE_PURPOSES=()
+  TEMPLATE_ABSTRACTS=()
   TEMPLATE_TOOLS_LIST=()
+  TEMPLATE_README_LIST=()
 
   # Group by category
   declare -g -A CATEGORY_WEB_SERVER
@@ -130,8 +131,9 @@ function scan_templates() {
       TEMPLATE_NAMES+=("$INFO_NAME")
       TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
       TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
-      TEMPLATE_PURPOSES+=("$INFO_PURPOSE")
+      TEMPLATE_ABSTRACTS+=("$INFO_ABSTRACT")
       TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
+      TEMPLATE_README_LIST+=("$INFO_README")
 
       # Group by category for menu display
       case "$INFO_CATEGORY" in
@@ -226,17 +228,23 @@ function select_template() {
   
   if [ -n "$param_name" ]; then
     # Direct selection by directory name
-    TEMPLATE_NAME="$param_name"
-    
-    if [ ! -d "$TEMPLATE_REPO_DIR/templates/$TEMPLATE_NAME" ]; then
-      echo "❌ Template '$TEMPLATE_NAME' not found"
+    SELECTED_TEMPLATE="$param_name"
+
+    if [ ! -d "$TEMPLATE_REPO_DIR/templates/$SELECTED_TEMPLATE" ]; then
+      echo "❌ Template '$SELECTED_TEMPLATE' not found"
+      echo ""
+      echo "   Available templates:"
+      for i in "${!TEMPLATE_DIRS[@]}"; do
+        echo "   - ${TEMPLATE_DIRS[$i]}  (${TEMPLATE_NAMES[$i]})"
+      done
+      echo ""
       rm -rf "$TEMP_DIR"
       exit 2
     fi
-    
+
     # Find index for display
     for i in "${!TEMPLATE_DIRS[@]}"; do
-      if [ "${TEMPLATE_DIRS[$i]}" == "$TEMPLATE_NAME" ]; then
+      if [ "${TEMPLATE_DIRS[$i]}" == "$SELECTED_TEMPLATE" ]; then
         TEMPLATE_INDEX=$i
         break
       fi
@@ -247,28 +255,28 @@ function select_template() {
       local choice
       choice=$(show_template_menu)
       TEMPLATE_INDEX=${MENU_TO_INDEX[$choice]}
-      
+
       # Show details and get confirmation
       if show_template_details $TEMPLATE_INDEX; then
-        TEMPLATE_NAME="${TEMPLATE_DIRS[$TEMPLATE_INDEX]}"
+        SELECTED_TEMPLATE="${TEMPLATE_DIRS[$TEMPLATE_INDEX]}"
         break
       fi
       # If user said no, loop back to menu
     done
   fi
-  
+
   clear
   display_intro
   echo "✅ Selected: ${TEMPLATE_NAMES[$TEMPLATE_INDEX]}"
-  
-  if [ -n "${TEMPLATE_PURPOSES[$TEMPLATE_INDEX]}" ]; then
+
+  if [ -n "${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}" ]; then
     echo ""
     echo "📝 About this template:"
-    echo "   ${TEMPLATE_PURPOSES[$TEMPLATE_INDEX]}"
+    echo "   ${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}"
   fi
   echo ""
   
-  TEMPLATE_PATH="$TEMPLATE_REPO_DIR/templates/$TEMPLATE_NAME"
+  TEMPLATE_PATH="$TEMPLATE_REPO_DIR/templates/$SELECTED_TEMPLATE"
 }
 
 #------------------------------------------------------------------------------
@@ -326,7 +334,7 @@ function merge_gitignore() {
       TEMP_MERGED=$(mktemp)
       cat "$CALLER_DIR/.gitignore" > "$TEMP_MERGED"
       echo "" >> "$TEMP_MERGED"
-      echo "# Added from template $TEMPLATE_NAME" >> "$TEMP_MERGED"
+      echo "# Added from template $SELECTED_TEMPLATE" >> "$TEMP_MERGED"
       
       while IFS= read -r line; do
         if [[ -n "$line" && ! "$line" =~ ^[[:space:]]*# ]]; then
@@ -401,9 +409,27 @@ function cleanup_and_complete() {
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   echo ""
   echo "📝 Next steps:"
-  echo "   1. Review the files that were created"
-  echo "   2. Run any setup commands in the template's README"
-  echo "   3. Commit and push your project to GitHub"
+  echo ""
+
+  local step=1
+  local tools="${TEMPLATE_TOOLS_LIST[$TEMPLATE_INDEX]:-}"
+  local readme="${TEMPLATE_README_LIST[$TEMPLATE_INDEX]:-}"
+
+  if [ -n "$tools" ]; then
+    echo "   $step. Update your terminal (tools were installed):"
+    echo "      source ~/.bashrc"
+    echo ""
+    ((step++))
+  fi
+
+  if [ -n "$readme" ]; then
+    echo "   $step. Read the template instructions:"
+    echo "      cat $readme"
+    echo ""
+    ((step++))
+  fi
+
+  echo "   $step. Commit and push your project to GitHub"
   echo ""
 }
 
@@ -449,7 +475,7 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
 fi
 
 # Get template name from command line (optional)
-TEMPLATE_NAME="${1:-}"
+SELECTED_TEMPLATE_ARG="${1:-}"
 
 # Check prerequisites
 check_prerequisites
@@ -464,7 +490,7 @@ display_intro
 # Run the process
 download_templates
 scan_templates
-select_template "$TEMPLATE_NAME"
+select_template "$SELECTED_TEMPLATE_ARG"
 verify_template
 copy_template_files
 setup_github_workflows
