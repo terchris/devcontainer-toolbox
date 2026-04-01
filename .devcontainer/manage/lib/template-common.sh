@@ -94,7 +94,7 @@ download_template_repo() {
 #   $1 — path to template directory containing TEMPLATE_INFO
 #
 # Sets globals:
-#   INFO_NAME, INFO_DESCRIPTION, INFO_CATEGORY, INFO_PURPOSE, INFO_TOOLS
+#   INFO_NAME, INFO_DESCRIPTION, INFO_CATEGORY, INFO_ABSTRACT, INFO_TOOLS, INFO_README
 #------------------------------------------------------------------------------
 read_template_info() {
   local template_dir="$1"
@@ -104,23 +104,25 @@ read_template_info() {
   INFO_NAME=$(basename "$template_dir")
   INFO_DESCRIPTION="No description"
   INFO_CATEGORY="UNCATEGORIZED"
-  INFO_PURPOSE=""
+  INFO_ABSTRACT=""
   INFO_TOOLS=""
+  INFO_README=""
 
   if [ -f "$info_file" ]; then
     # Unset variables to avoid pollution (prevents leaking between templates)
-    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_PURPOSE TEMPLATE_TOOLS
+    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_ABSTRACT TEMPLATE_TOOLS TEMPLATE_README
 
     source "$info_file"
 
     INFO_NAME="${TEMPLATE_NAME:-$INFO_NAME}"
     INFO_DESCRIPTION="${TEMPLATE_DESCRIPTION:-$INFO_DESCRIPTION}"
     INFO_CATEGORY="${TEMPLATE_CATEGORY:-$INFO_CATEGORY}"
-    INFO_PURPOSE="${TEMPLATE_PURPOSE:-$INFO_PURPOSE}"
+    INFO_ABSTRACT="${TEMPLATE_ABSTRACT:-$INFO_ABSTRACT}"
     INFO_TOOLS="${TEMPLATE_TOOLS:-$INFO_TOOLS}"
+    INFO_README="${TEMPLATE_README:-$INFO_README}"
 
     # Clean up after sourcing
-    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_PURPOSE TEMPLATE_TOOLS
+    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_ABSTRACT TEMPLATE_TOOLS TEMPLATE_README
   fi
 }
 
@@ -132,7 +134,7 @@ read_template_info() {
 #
 # Requires globals:
 #   TEMPLATE_NAMES[], TEMPLATE_DESCRIPTIONS[], TEMPLATE_CATEGORIES[],
-#   TEMPLATE_PURPOSES[], TEMPLATE_DIRS[], TEMPLATE_TOOLS_LIST[] (optional)
+#   TEMPLATE_ABSTRACTS[], TEMPLATE_DIRS[], TEMPLATE_TOOLS_LIST[] (optional)
 #
 # Returns: dialog exit code (0 = yes, 1 = no)
 #------------------------------------------------------------------------------
@@ -141,15 +143,15 @@ show_template_details_dialog() {
   local template_name="${TEMPLATE_NAMES[$idx]}"
   local template_desc="${TEMPLATE_DESCRIPTIONS[$idx]}"
   local template_category="${TEMPLATE_CATEGORIES[$idx]}"
-  local template_purpose="${TEMPLATE_PURPOSES[$idx]}"
+  local template_abstract="${TEMPLATE_ABSTRACTS[$idx]:-}"
 
   local details=""
   details+="Name: $template_name\n\n"
   details+="Category: $template_category\n\n"
   details+="Description:\n$template_desc\n\n"
 
-  if [ -n "$template_purpose" ]; then
-    details+="Purpose:\n$template_purpose\n\n"
+  if [ -n "$template_abstract" ]; then
+    details+="About:\n$template_abstract\n\n"
   fi
 
   local template_tools="${TEMPLATE_TOOLS_LIST[$idx]:-}"
@@ -200,16 +202,16 @@ install_template_tools() {
 
     if [ ! -f "$script_path" ]; then
       echo "   ⚠️  Tool '$tool_id' not found ($script)"
-      ((skipped++))
+      skipped=$((skipped + 1))
       continue
     fi
 
     echo "   📦 Installing $tool_id..."
     if bash "$script_path"; then
-      ((installed++))
+      installed=$((installed + 1))
     else
       echo "   ⚠️  Failed to install $tool_id — you can install it later with dev-setup"
-      ((failed++))
+      failed=$((failed + 1))
     fi
     echo ""
   done

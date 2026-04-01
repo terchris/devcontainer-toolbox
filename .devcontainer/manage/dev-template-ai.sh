@@ -81,8 +81,9 @@ function scan_templates() {
   TEMPLATE_NAMES=()
   TEMPLATE_DESCRIPTIONS=()
   TEMPLATE_CATEGORIES=()
-  TEMPLATE_PURPOSES=()
+  TEMPLATE_ABSTRACTS=()
   TEMPLATE_TOOLS_LIST=()
+  TEMPLATE_README_LIST=()
 
   # Group by category — AI templates use WORKFLOW category
   declare -g -A CATEGORY_WORKFLOW
@@ -98,8 +99,9 @@ function scan_templates() {
       TEMPLATE_NAMES+=("$INFO_NAME")
       TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
       TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
-      TEMPLATE_PURPOSES+=("$INFO_PURPOSE")
+      TEMPLATE_ABSTRACTS+=("$INFO_ABSTRACT")
       TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
+      TEMPLATE_README_LIST+=("$INFO_README")
 
       case "$INFO_CATEGORY" in
         WORKFLOW)
@@ -179,6 +181,12 @@ function select_template() {
 
     if [ ! -d "$TEMPLATE_REPO_DIR/$TEMPLATES_SUBDIR/$SELECTED_TEMPLATE" ]; then
       echo "❌ AI template '$SELECTED_TEMPLATE' not found"
+      echo ""
+      echo "   Available templates:"
+      for i in "${!TEMPLATE_DIRS[@]}"; do
+        echo "   - ${TEMPLATE_DIRS[$i]}  (${TEMPLATE_NAMES[$i]})"
+      done
+      echo ""
       rm -rf "$TEMP_DIR"
       exit 2
     fi
@@ -206,10 +214,10 @@ function select_template() {
   display_intro
   echo "✅ Selected: ${TEMPLATE_NAMES[$TEMPLATE_INDEX]}"
 
-  if [ -n "${TEMPLATE_PURPOSES[$TEMPLATE_INDEX]}" ]; then
+  if [ -n "${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}" ]; then
     echo ""
     echo "📝 About this template:"
-    echo "   ${TEMPLATE_PURPOSES[$TEMPLATE_INDEX]}"
+    echo "   ${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}"
   fi
   echo ""
 
@@ -362,9 +370,31 @@ function cleanup_and_complete() {
   fi
   echo ""
   echo "📝 Next steps:"
-  echo "   1. Review docs/ai-developer/README.md for the complete guide"
-  echo "   2. Review CLAUDE.md and customize for your project"
-  echo "   3. Start your first task: tell your AI assistant what you want to build"
+  echo ""
+
+  local step=1
+  local tools="${TEMPLATE_TOOLS_LIST[$TEMPLATE_INDEX]:-}"
+  local readme="${TEMPLATE_README_LIST[$TEMPLATE_INDEX]:-}"
+
+  if [ -n "$tools" ]; then
+    echo "   $step. Update your terminal (tools were installed):"
+    echo "      source ~/.bashrc"
+    echo ""
+    ((step++))
+  fi
+
+  if [ -n "$readme" ]; then
+    echo "   $step. Read the template instructions:"
+    echo "      cat $readme"
+    echo ""
+    ((step++))
+  else
+    echo "   $step. Review docs/ai-developer/README.md for the complete guide"
+    echo ""
+    ((step++))
+  fi
+
+  echo "   $step. Start your first task: tell your AI assistant what you want to build"
   echo ""
 }
 
