@@ -12,7 +12,7 @@
 
 **Last Updated**: 2026-03-30
 
-**Investigation**: [INVESTIGATE-advanced-templates.md](INVESTIGATE-advanced-templates.md)
+**Investigation**: [INVESTIGATE-advanced-templates.md](../backlog/INVESTIGATE-advanced-templates.md)
 
 **Companion plan**: `PLAN-template-tools-dev-templates.md` in `helpers-no/dev-templates` -- adds `TEMPLATE_TOOLS` to each template's `TEMPLATE_INFO`. **Completed 2026-03-30** -- all 7 app templates now have `TEMPLATE_TOOLS` on `main`.
 
