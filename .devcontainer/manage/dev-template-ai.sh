@@ -2,7 +2,6 @@
 # File: .devcontainer/manage/dev-template-ai.sh
 # Description: AI workflow template installer. Downloads AI templates from
 #              helpers-no/dev-templates and installs them into a project.
-#              Follows the same UX pattern as dev-template.sh.
 #
 # Usage: ./dev-template-ai.sh [template-directory-name]
 #
@@ -10,7 +9,7 @@
 #   ./dev-template-ai.sh                         # Show menu
 #   ./dev-template-ai.sh plan-based-workflow      # Direct selection
 #
-# Version: 1.0.0
+# Version: 1.1.0
 #------------------------------------------------------------------------------
 set -e
 
@@ -34,9 +33,9 @@ SCRIPT_NAME="AI Templates"
 SCRIPT_DESCRIPTION="Install AI workflow templates into your project"
 SCRIPT_CATEGORY="SYSTEM_COMMANDS"
 SCRIPT_CHECK_COMMAND="true"
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.1.0"
 
-# Which subdirectory in dev-templates repo to scan
+# Templates subdirectory
 TEMPLATES_SUBDIR="ai-templates"
 
 #------------------------------------------------------------------------------
@@ -74,158 +73,7 @@ function display_intro() {
 }
 
 #------------------------------------------------------------------------------
-# Scan templates and build arrays
-#------------------------------------------------------------------------------
-function scan_templates() {
-  TEMPLATE_DIRS=()
-  TEMPLATE_NAMES=()
-  TEMPLATE_DESCRIPTIONS=()
-  TEMPLATE_CATEGORIES=()
-  TEMPLATE_ABSTRACTS=()
-  TEMPLATE_TOOLS_LIST=()
-  TEMPLATE_README_LIST=()
-
-  # Group by category — AI templates use WORKFLOW category
-  declare -g -A CATEGORY_WORKFLOW
-  declare -g -A CATEGORY_OTHER
-
-  echo "📋 Scanning available AI templates..."
-  for dir in "$TEMPLATE_REPO_DIR/$TEMPLATES_SUBDIR"/*; do
-    if [ -d "$dir" ]; then
-      read_template_info "$dir"
-
-      local idx=${#TEMPLATE_DIRS[@]}
-      TEMPLATE_DIRS+=("$(basename "$dir")")
-      TEMPLATE_NAMES+=("$INFO_NAME")
-      TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
-      TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
-      TEMPLATE_ABSTRACTS+=("$INFO_ABSTRACT")
-      TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
-      TEMPLATE_README_LIST+=("$INFO_README")
-
-      case "$INFO_CATEGORY" in
-        WORKFLOW)
-          CATEGORY_WORKFLOW["$(basename "$dir")"]=$idx
-          ;;
-        *)
-          CATEGORY_OTHER["$(basename "$dir")"]=$idx
-          ;;
-      esac
-    fi
-  done
-
-  if [ ${#TEMPLATE_DIRS[@]} -eq 0 ]; then
-    echo "❌ No AI templates found"
-    rm -rf "$TEMP_DIR"
-    exit 1
-  fi
-
-  echo "✅ Found ${#TEMPLATE_DIRS[@]} AI template(s)"
-  echo ""
-
-  # Build menu options
-  MENU_OPTIONS=()
-  declare -g -A MENU_TO_INDEX
-  local option_num=1
-
-  if [ ${#CATEGORY_WORKFLOW[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_WORKFLOW[@]}" | sort); do
-      local idx=${CATEGORY_WORKFLOW[$dir_name]}
-      MENU_OPTIONS+=("$option_num" "📋 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-
-  if [ ${#CATEGORY_OTHER[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_OTHER[@]}" | sort); do
-      local idx=${CATEGORY_OTHER[$dir_name]}
-      MENU_OPTIONS+=("$option_num" "📦 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-}
-
-#------------------------------------------------------------------------------
-# Show dialog menu and get selection
-#------------------------------------------------------------------------------
-function show_template_menu() {
-  local choice
-  choice=$(dialog --clear \
-    --item-help \
-    --title "AI Workflow Templates" \
-    --menu "Choose an AI template (ESC to cancel):\n\n📋=Workflow  📦=Other" \
-    20 80 12 \
-    "${MENU_OPTIONS[@]}" \
-    2>&1 >/dev/tty)
-
-  if [[ $? -ne 0 ]]; then
-    clear
-    echo "ℹ️  Selection cancelled"
-    rm -rf "$TEMP_DIR"
-    exit 3
-  fi
-
-  echo "$choice"
-}
-
-#------------------------------------------------------------------------------
-# Select template (interactive or from argument)
-#------------------------------------------------------------------------------
-function select_template() {
-  local param_name="$1"
-
-  if [ -n "$param_name" ]; then
-    SELECTED_TEMPLATE="$param_name"
-
-    if [ ! -d "$TEMPLATE_REPO_DIR/$TEMPLATES_SUBDIR/$SELECTED_TEMPLATE" ]; then
-      echo "❌ AI template '$SELECTED_TEMPLATE' not found"
-      echo ""
-      echo "   Available templates:"
-      for i in "${!TEMPLATE_DIRS[@]}"; do
-        echo "   - ${TEMPLATE_DIRS[$i]}  (${TEMPLATE_NAMES[$i]})"
-      done
-      echo ""
-      rm -rf "$TEMP_DIR"
-      exit 2
-    fi
-
-    for i in "${!TEMPLATE_DIRS[@]}"; do
-      if [ "${TEMPLATE_DIRS[$i]}" == "$SELECTED_TEMPLATE" ]; then
-        TEMPLATE_INDEX=$i
-        break
-      fi
-    done
-  else
-    while true; do
-      local choice
-      choice=$(show_template_menu)
-      TEMPLATE_INDEX=${MENU_TO_INDEX[$choice]}
-
-      if show_template_details_dialog $TEMPLATE_INDEX; then
-        SELECTED_TEMPLATE="${TEMPLATE_DIRS[$TEMPLATE_INDEX]}"
-        break
-      fi
-    done
-  fi
-
-  clear
-  display_intro
-  echo "✅ Selected: ${TEMPLATE_NAMES[$TEMPLATE_INDEX]}"
-
-  if [ -n "${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}" ]; then
-    echo ""
-    echo "📝 About this template:"
-    echo "   ${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}"
-  fi
-  echo ""
-
-  TEMPLATE_PATH="$TEMPLATE_REPO_DIR/$TEMPLATES_SUBDIR/$SELECTED_TEMPLATE"
-}
-
-#------------------------------------------------------------------------------
-# Verify template structure
+# Verify template structure (AI templates require template/ subdirectory)
 #------------------------------------------------------------------------------
 function verify_template() {
   echo "🔍 Verifying template structure..."
@@ -299,14 +147,12 @@ function handle_claude_md() {
   local template_ref="$CALLER_DIR/docs/ai-developer/CLAUDE-template.md"
 
   if $CLAUDE_EXISTED; then
-    # User had CLAUDE.md before — original was restored, keep template reference
     echo "⚠️  CLAUDE.md already exists in your project."
     echo "   A template CLAUDE.md has been placed at docs/ai-developer/CLAUDE-template.md"
     echo ""
     echo "   Ask your AI assistant: \"Merge CLAUDE-template.md into my CLAUDE.md\""
     echo ""
   else
-    # No pre-existing CLAUDE.md — template CLAUDE.md was installed, remove reference copy
     rm -f "$template_ref"
   fi
 }
@@ -380,18 +226,18 @@ function cleanup_and_complete() {
     echo "   $step. Update your terminal (tools were installed):"
     echo "      source ~/.bashrc"
     echo ""
-    ((step++))
+    step=$((step + 1))
   fi
 
   if [ -n "$readme" ]; then
     echo "   $step. Read the template instructions:"
     echo "      cat $readme"
     echo ""
-    ((step++))
+    step=$((step + 1))
   else
     echo "   $step. Review docs/ai-developer/README.md for the complete guide"
     echo ""
-    ((step++))
+    step=$((step + 1))
   fi
 
   echo "   $step. Start your first task: tell your AI assistant what you want to build"
@@ -431,22 +277,20 @@ function show_help() {
 # Main execution
 #------------------------------------------------------------------------------
 
-# Check for --help before anything else (no prerequisites needed)
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   show_help
   exit 0
 fi
 
-# Get template name from command line (optional)
-SELECTED_TEMPLATE="${1:-}"
+SELECTED_TEMPLATE_ARG="${1:-}"
 
 check_template_prerequisites
 detect_and_validate_repo_info
 clear
 display_intro
 download_template_repo "$TEMPLATES_SUBDIR"
-scan_templates
-select_template "$SELECTED_TEMPLATE"
+scan_templates "$TEMPLATES_SUBDIR"
+select_template "$SELECTED_TEMPLATE_ARG" "$TEMPLATES_SUBDIR" "AI Workflow Templates"
 verify_template
 
 # Save CLAUDE.md state before copy overwrites it

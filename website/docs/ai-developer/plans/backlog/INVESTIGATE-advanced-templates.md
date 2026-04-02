@@ -248,6 +248,101 @@ TEMPLATE_SERVICES="postgresql"              # backend services (future)
 
 ---
 
+## Documentation Templates
+
+Beyond app scaffolding and backend services, templates could also scaffold **project documentation**. This would work similarly to AI templates (`dev-template-ai`) but for documentation artifacts.
+
+### Examples of documentation templates
+
+- Architecture Decision Records (ADRs)
+- Runbooks / operational guides
+- API documentation scaffolds
+- Onboarding guides
+- Changelog / release notes templates
+- Contributing guides
+- Incident report templates
+
+### How this could work
+
+Documentation templates would follow the same pattern as AI templates:
+- Stored in a templates repository (or a `docs/` category within existing templates)
+- Have `TEMPLATE_INFO` metadata (name, description, category, abstract)
+- Scaffolded via a command (e.g., `dev-template-docs` or as a category within `dev-template`)
+- Could use variable substitution for project-specific values (project name, repo URL, team name)
+
+### Key questions
+
+- Should documentation templates live alongside app templates or in a separate collection?
+- Should there be a dedicated command (`dev-template-docs`) or a category within `dev-template`?
+- What variables/placeholders should documentation templates support?
+- Should documentation templates integrate with Docusaurus (the project's doc system) or be framework-agnostic?
+
+---
+
+## Infrastructure Templates
+
+Templates that scaffold **UIS infrastructure configurations** — helping users set up and manage services in their local Kubernetes cluster via UIS (https://uis.sovereignsky.no).
+
+### Examples of infrastructure templates
+
+- PostgreSQL database setup (deploy, create database, configure credentials)
+- Redis cache configuration
+- Message queue setup (RabbitMQ, NATS)
+- S3-compatible object storage (MinIO)
+- Reverse proxy / ingress configuration
+- Multi-service stack compositions (e.g., "web app backend" = PostgreSQL + Redis + S3)
+- Monitoring stack (Prometheus, Grafana)
+
+### How this could work
+
+Infrastructure templates would describe UIS deployments and resource creation:
+- Declare which UIS services to deploy (`uis deploy postgresql`, `uis deploy redis`, etc.)
+- Include post-deploy setup scripts (create databases, configure users, set up buckets)
+- Generate connection details as `.env` files or config files for app templates to consume
+- Could tie into the backend services work (Options A–D above) — infrastructure templates would be the "producer" side, app templates the "consumer" side
+
+### Key questions
+
+- Should infrastructure templates trigger `uis deploy` automatically or just generate instructions?
+- How do infrastructure templates compose with app templates? (e.g., user picks "Next.js + PostgreSQL" and both app + infra templates run)
+- Should infrastructure templates be idempotent (safe to re-run)?
+- How to handle teardown / cleanup of infrastructure resources?
+
+---
+
+## Coding Rules Templates
+
+Templates that scaffold **coding best practices and rules** — project-level configuration for linters, formatters, coding standards, and AI coding guidelines.
+
+### Examples of coding rules templates
+
+- ESLint / Prettier configurations for different project types
+- Python linting rules (ruff, pylint, mypy configurations)
+- Git hooks (pre-commit, commit-msg conventions)
+- Editor configurations (`.editorconfig`, VS Code settings)
+- AI coding rules (`CLAUDE.md`, `.cursorrules`, `.github/copilot-instructions.md`)
+- Language-specific best practices (TypeScript strict mode, Go lint rules)
+- Security rules (SAST tool configs, dependency scanning)
+- Code review checklists
+
+### How this could work
+
+Coding rules templates would drop configuration files into the project:
+- Stored as template sets (e.g., "TypeScript Strict" includes ESLint, Prettier, tsconfig, and editorconfig)
+- Have `TEMPLATE_INFO` metadata describing the coding standard
+- Could be layered — a base set of rules plus optional stricter additions
+- Should be composable — picking "Python" and "Security" rules shouldn't conflict
+- Could integrate with `dev-setup` to install required tooling (linters, formatters)
+
+### Key questions
+
+- Should coding rules templates merge with existing config files or replace them?
+- How to handle conflicts when multiple rule sets are applied?
+- Should there be opinionated defaults per language/framework, or always let the user choose?
+- How do coding rules templates interact with `TEMPLATE_TOOLS` (e.g., a linting rules template that requires `dev-eslint`)?
+
+---
+
 ## Questions to Answer
 
 ### Tool dependencies -- COMPLETED 2026-03-30
@@ -291,3 +386,21 @@ The `.env.example` pattern should be the foundation regardless of which option w
 - [ ] Determine what UIS can provide for service discovery
 - [ ] Decide on approach (A, B, C, or D) for backend services
 - [ ] Create PLAN for implementing the chosen approach
+
+### Future (documentation templates)
+
+- [ ] Investigate documentation templates — similar concept to AI templates but for project documentation (e.g., ADRs, runbooks, API docs, onboarding guides, changelogs)
+- [ ] Determine how documentation templates relate to and differ from AI templates
+- [ ] Decide if documentation templates should use the same infrastructure (TEMPLATE_INFO, template installer) or a separate system
+
+### Future (infrastructure templates)
+
+- [ ] Investigate infrastructure templates for UIS service setup (PostgreSQL, Redis, message queues, etc.)
+- [ ] Determine how infrastructure templates compose with app templates (producer/consumer relationship)
+- [ ] Decide on idempotency and teardown strategies
+
+### Future (coding rules templates)
+
+- [ ] Investigate coding rules templates for linters, formatters, AI rules, and best practices
+- [ ] Determine how rule sets compose and handle conflicts when layered
+- [ ] Decide on merge vs replace strategy for existing config files
