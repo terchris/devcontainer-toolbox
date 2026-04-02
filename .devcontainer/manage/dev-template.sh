@@ -1,7 +1,7 @@
 #!/bin/bash
 # File: .devcontainer/manage/dev-template.sh
-# Description: Template initializer for the Urbalurba Developer Platform with dialog menu.
-#              Reads TEMPLATE_INFO from each template for display names and descriptions.
+# Description: Template initializer for the Urbalurba Developer Platform.
+#              Downloads templates from helpers-no/dev-templates and installs them.
 #
 # Usage: ./dev-template.sh [template-directory-name]
 #
@@ -9,7 +9,7 @@
 #   ./dev-template.sh                      # Show menu
 #   ./dev-template.sh typescript-basic-webserver  # Direct selection
 #
-# Version: 1.6.0
+# Version: 1.7.0
 #------------------------------------------------------------------------------
 set -e
 
@@ -33,14 +33,10 @@ SCRIPT_NAME="Templates"
 SCRIPT_DESCRIPTION="Create project files from templates"
 SCRIPT_CATEGORY="SYSTEM_COMMANDS"
 SCRIPT_CHECK_COMMAND="true"
-SCRIPT_VERSION="1.6.0"
+SCRIPT_VERSION="1.7.0"
 
-#------------------------------------------------------------------------------
-# Check prerequisites (uses shared library)
-#------------------------------------------------------------------------------
-function check_prerequisites() {
-  check_template_prerequisites
-}
+# Templates subdirectory
+TEMPLATES_SUBDIR="templates"
 
 #------------------------------------------------------------------------------
 # Detect and validate repository information
@@ -96,191 +92,7 @@ function display_intro() {
 }
 
 #------------------------------------------------------------------------------
-# Download templates repository as zip
-#------------------------------------------------------------------------------
-function download_templates() {
-  download_template_repo "templates"
-}
-
-# read_template_info() — provided by lib/template-common.sh
-
-#------------------------------------------------------------------------------
-# Scan templates and build arrays
-#------------------------------------------------------------------------------
-function scan_templates() {
-  TEMPLATE_DIRS=()
-  TEMPLATE_NAMES=()
-  TEMPLATE_DESCRIPTIONS=()
-  TEMPLATE_CATEGORIES=()
-  TEMPLATE_ABSTRACTS=()
-  TEMPLATE_TOOLS_LIST=()
-  TEMPLATE_README_LIST=()
-
-  # Group by category
-  declare -g -A CATEGORY_WEB_SERVER
-  declare -g -A CATEGORY_WEB_APP
-  declare -g -A CATEGORY_OTHER
-
-  echo "📋 Scanning available templates..."
-  for dir in "$TEMPLATE_REPO_DIR/templates"/*; do
-    if [ -d "$dir" ]; then
-      read_template_info "$dir"
-
-      local idx=${#TEMPLATE_DIRS[@]}
-      TEMPLATE_DIRS+=("$(basename "$dir")")
-      TEMPLATE_NAMES+=("$INFO_NAME")
-      TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
-      TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
-      TEMPLATE_ABSTRACTS+=("$INFO_ABSTRACT")
-      TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
-      TEMPLATE_README_LIST+=("$INFO_README")
-
-      # Group by category for menu display
-      case "$INFO_CATEGORY" in
-        WEB_SERVER)
-          CATEGORY_WEB_SERVER["$(basename "$dir")"]=$idx
-          ;;
-        WEB_APP)
-          CATEGORY_WEB_APP["$(basename "$dir")"]=$idx
-          ;;
-        *)
-          CATEGORY_OTHER["$(basename "$dir")"]=$idx
-          ;;
-      esac
-    fi
-  done
-
-  if [ ${#TEMPLATE_DIRS[@]} -eq 0 ]; then
-    echo "❌ No templates found"
-    rm -rf "$TEMP_DIR"
-    exit 1
-  fi
-
-  echo "✅ Found ${#TEMPLATE_DIRS[@]} template(s)"
-  echo ""
-
-  # Build menu options and menu-to-index mapping here (not in subshell)
-  # This must be done in the main shell so MENU_TO_INDEX persists
-  MENU_OPTIONS=()
-  declare -g -A MENU_TO_INDEX
-  local option_num=1
-
-  if [ ${#CATEGORY_WEB_SERVER[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_WEB_SERVER[@]}" | sort); do
-      local idx=${CATEGORY_WEB_SERVER[$dir_name]}
-      MENU_OPTIONS+=("$option_num" "🌐 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-
-  if [ ${#CATEGORY_WEB_APP[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_WEB_APP[@]}" | sort); do
-      local idx=${CATEGORY_WEB_APP[$dir_name]}
-      MENU_OPTIONS+=("$option_num" "📱 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-
-  if [ ${#CATEGORY_OTHER[@]} -gt 0 ]; then
-    for dir_name in $(printf '%s\n' "${!CATEGORY_OTHER[@]}" | sort); do
-      local idx=${CATEGORY_OTHER[$dir_name]}
-      MENU_OPTIONS+=("$option_num" "📦 ${TEMPLATE_NAMES[$idx]}" "${TEMPLATE_DESCRIPTIONS[$idx]}")
-      MENU_TO_INDEX[$option_num]=$idx
-      ((option_num++))
-    done
-  fi
-}
-
-#------------------------------------------------------------------------------
-# Show dialog menu grouped by category and get selection
-#------------------------------------------------------------------------------
-function show_template_menu() {
-  local choice
-  choice=$(dialog --clear \
-    --item-help \
-    --title "Project Templates" \
-    --menu "Choose a template (ESC to cancel):\n\n🌐=Web Server  📱=Web App  📦=Other" \
-    20 80 12 \
-    "${MENU_OPTIONS[@]}" \
-    2>&1 >/dev/tty)
-
-  if [[ $? -ne 0 ]]; then
-    clear
-    echo "ℹ️  Selection cancelled"
-    rm -rf "$TEMP_DIR"
-    exit 3
-  fi
-
-  echo "$choice"
-}
-
-function show_template_details() {
-  show_template_details_dialog "$1"
-}
-
-#------------------------------------------------------------------------------
-# Select template (interactive or from argument)
-#------------------------------------------------------------------------------
-function select_template() {
-  local param_name="$1"
-  
-  if [ -n "$param_name" ]; then
-    # Direct selection by directory name
-    SELECTED_TEMPLATE="$param_name"
-
-    if [ ! -d "$TEMPLATE_REPO_DIR/templates/$SELECTED_TEMPLATE" ]; then
-      echo "❌ Template '$SELECTED_TEMPLATE' not found"
-      echo ""
-      echo "   Available templates:"
-      for i in "${!TEMPLATE_DIRS[@]}"; do
-        echo "   - ${TEMPLATE_DIRS[$i]}  (${TEMPLATE_NAMES[$i]})"
-      done
-      echo ""
-      rm -rf "$TEMP_DIR"
-      exit 2
-    fi
-
-    # Find index for display
-    for i in "${!TEMPLATE_DIRS[@]}"; do
-      if [ "${TEMPLATE_DIRS[$i]}" == "$SELECTED_TEMPLATE" ]; then
-        TEMPLATE_INDEX=$i
-        break
-      fi
-    done
-  else
-    # Interactive menu selection with confirmation
-    while true; do
-      local choice
-      choice=$(show_template_menu)
-      TEMPLATE_INDEX=${MENU_TO_INDEX[$choice]}
-
-      # Show details and get confirmation
-      if show_template_details $TEMPLATE_INDEX; then
-        SELECTED_TEMPLATE="${TEMPLATE_DIRS[$TEMPLATE_INDEX]}"
-        break
-      fi
-      # If user said no, loop back to menu
-    done
-  fi
-
-  clear
-  display_intro
-  echo "✅ Selected: ${TEMPLATE_NAMES[$TEMPLATE_INDEX]}"
-
-  if [ -n "${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}" ]; then
-    echo ""
-    echo "📝 About this template:"
-    echo "   ${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}"
-  fi
-  echo ""
-  
-  TEMPLATE_PATH="$TEMPLATE_REPO_DIR/templates/$SELECTED_TEMPLATE"
-}
-
-#------------------------------------------------------------------------------
-# Verify template structure
+# Verify template structure (project templates require manifests)
 #------------------------------------------------------------------------------
 function verify_template() {
   echo "🔍 Verifying template structure..."
@@ -329,13 +141,13 @@ function setup_github_workflows() {
 function merge_gitignore() {
   if [ -f "$TEMPLATE_PATH/.gitignore" ]; then
     echo "🔀 Merging .gitignore files..."
-    
+
     if [ -f "$CALLER_DIR/.gitignore" ]; then
       TEMP_MERGED=$(mktemp)
       cat "$CALLER_DIR/.gitignore" > "$TEMP_MERGED"
       echo "" >> "$TEMP_MERGED"
       echo "# Added from template $SELECTED_TEMPLATE" >> "$TEMP_MERGED"
-      
+
       while IFS= read -r line; do
         if [[ -n "$line" && ! "$line" =~ ^[[:space:]]*# ]]; then
           if ! grep -Fxq "$line" "$CALLER_DIR/.gitignore"; then
@@ -343,7 +155,7 @@ function merge_gitignore() {
           fi
         fi
       done < "$TEMPLATE_PATH/.gitignore"
-      
+
       if cat "$TEMP_MERGED" > "$CALLER_DIR/.gitignore"; then
         echo "   ✅ Merged .gitignore files"
         rm -f "$TEMP_MERGED"
@@ -360,34 +172,28 @@ function merge_gitignore() {
   fi
 }
 
+#------------------------------------------------------------------------------
+# Replace placeholders in template files
+#------------------------------------------------------------------------------
 function replace_placeholders() {
   replace_template_placeholder "$1" \
     "s|{{GITHUB_USERNAME}}|$GIT_ORG|g" \
     "s|{{REPO_NAME}}|$GIT_REPO|g"
 }
 
-#------------------------------------------------------------------------------
-# Process template files that need placeholder substitution
-#------------------------------------------------------------------------------
 function process_template_files() {
   echo "🔄 Replacing template placeholders..."
   echo "   Using: $GIT_ORG/$GIT_REPO"
 
-  # Process manifest files
   if [ -d "$CALLER_DIR/manifests" ]; then
     for file in "$CALLER_DIR"/manifests/*.yaml "$CALLER_DIR"/manifests/*.yml; do
-      if [ -f "$file" ]; then
-        replace_placeholders "$file"
-      fi
+      [ -f "$file" ] && replace_placeholders "$file"
     done
   fi
 
-  # Process GitHub workflow files
   if [ -d "$CALLER_DIR/.github/workflows" ]; then
     for file in "$CALLER_DIR"/.github/workflows/*.yaml "$CALLER_DIR"/.github/workflows/*.yml; do
-      if [ -f "$file" ]; then
-        replace_placeholders "$file"
-      fi
+      [ -f "$file" ] && replace_placeholders "$file"
     done
   fi
 
@@ -400,7 +206,6 @@ function process_template_files() {
 #------------------------------------------------------------------------------
 function cleanup_and_complete() {
   echo "🧹 Cleaning up..."
-  echo "   Removing: $TEMP_DIR"
   rm -rf "$TEMP_DIR"
 
   echo ""
@@ -419,14 +224,14 @@ function cleanup_and_complete() {
     echo "   $step. Update your terminal (tools were installed):"
     echo "      source ~/.bashrc"
     echo ""
-    ((step++))
+    step=$((step + 1))
   fi
 
   if [ -n "$readme" ]; then
     echo "   $step. Read the template instructions:"
     echo "      cat $readme"
     echo ""
-    ((step++))
+    step=$((step + 1))
   fi
 
   echo "   $step. Commit and push your project to GitHub"
@@ -468,37 +273,25 @@ function show_help() {
 # Main execution
 #------------------------------------------------------------------------------
 
-# Check for --help before anything else (no prerequisites needed)
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   show_help
   exit 0
 fi
 
-# Get template name from command line (optional)
 SELECTED_TEMPLATE_ARG="${1:-}"
 
-# Check prerequisites
-check_prerequisites
-
-# Detect and validate repo info before downloading anything
+check_template_prerequisites
 detect_and_validate_repo_info
-
-# Show intro
 clear
 display_intro
-
-# Run the process
-download_templates
-scan_templates
-select_template "$SELECTED_TEMPLATE_ARG"
+download_template_repo "$TEMPLATES_SUBDIR"
+scan_templates "$TEMPLATES_SUBDIR"
+select_template "$SELECTED_TEMPLATE_ARG" "$TEMPLATES_SUBDIR" "Project Templates"
 verify_template
 copy_template_files
 setup_github_workflows
 merge_gitignore
 install_template_tools "${TEMPLATE_TOOLS_LIST[$TEMPLATE_INDEX]:-}"
 process_template_files
-
-# Go back to original directory
 cd "$CALLER_DIR"
-
 cleanup_and_complete
