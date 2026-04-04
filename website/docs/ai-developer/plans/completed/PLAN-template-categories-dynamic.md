@@ -12,7 +12,7 @@
 
 **Last Updated**: 2026-04-01
 
-**Investigation**: [INVESTIGATE-template-categories-dynamic.md](../backlog/INVESTIGATE-template-categories-dynamic.md)
+**Investigation**: [INVESTIGATE-template-categories-dynamic.md](INVESTIGATE-template-categories-dynamic.md)
 
 ---
 
