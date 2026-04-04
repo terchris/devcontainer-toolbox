@@ -177,9 +177,37 @@ All tests pass. One command replaces two. No regression.
 
 ---
 
-## Files to Modify
+## Implementation Notes (issues encountered)
 
-- `.devcontainer/manage/lib/template-common.sh` -- registry parsing, install_type dispatch, handlers
-- `.devcontainer/manage/dev-template.sh` -- unified script
+### 1. Bash `read` collapses empty TSV fields
+
+`jq` `@tsv` output with empty fields (e.g., `tools` is `""`) produces consecutive tabs. Bash `IFS=$'\t' read` collapses these, causing all subsequent fields to shift left. The `folder` field got the `install_type` value, etc.
+
+**Fix:** Used a `jq` `nonempty` function to replace empty/null values with `"-"` sentinel, then replaced back to empty after reading.
+
+### 2. MDX breaks on curly braces in plan files
+
+Docusaurus treats `{{GITHUB_USERNAME}}` in markdown as a JSX expression and fails with `ReferenceError: GITHUB_USERNAME is not defined`.
+
+**Fix:** Escaped curly braces with HTML entities: `&#123;&#123;GITHUB_USERNAME&#125;&#125;`. This is a recurring issue — any plan file with template placeholder syntax needs escaping.
+
+### 3. Broken links when plans move from backlog/active to completed
+
+Relative links like `../backlog/INVESTIGATE-foo.md` break when both the plan and the investigation move to `completed/` (becomes a same-directory link). This happened twice during this project.
+
+**Fix:** Updated the link path after move. Future plans should use absolute paths or avoid cross-referencing files that may move.
+
+### 4. Registry primary URL not yet deployed
+
+The Docusaurus site URL (`tmp.sovereignsky.no/data/template-registry.json`) returned 404 because TMP's CI hadn't deployed yet. The GitHub raw fallback worked.
+
+**Fix:** The fallback mechanism worked as designed. Both URLs should be checked in order.
+
+---
+
+## Files Modified
+
+- `.devcontainer/manage/lib/template-common.sh` -- complete rewrite: registry parsing with `jq`, category/template arrays, two-level menu, sentinel handling for empty TSV fields
+- `.devcontainer/manage/dev-template.sh` -- unified script with `install_type` routing (`app`/`overlay` handlers)
 - `.devcontainer/manage/dev-template-ai.sh` -- **deleted**
-- `image/Dockerfile` -- remove `dev-template-ai` symlink
+- `image/Dockerfile` -- removed `dev-template-ai` symlink

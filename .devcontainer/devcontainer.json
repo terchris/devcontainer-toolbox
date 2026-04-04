@@ -50,6 +50,10 @@
     },
     "remoteUser": "vscode",
     "containerUser": "vscode",
+    // TODO: Docker socket mount is broken on Rancher Desktop (macOS) — see investigation:
+    // website/docs/ai-developer/plans/backlog/INVESTIGATE-docker-socket-cross-platform.md
+    // This hardcoded path works on Docker Desktop / OrbStack / Linux but NOT Rancher Desktop.
+    // Do not remove until the replacement approach is tested and confirmed.
     "remoteEnv": {
         "DOCKER_HOST": "unix:///var/run/docker.sock",
         "DOCKER_HOST_URI": "/var/run/docker.sock",
