@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Backlog
+## Status: ✅ Completed (solution applied 2026-04-05)
 
 **Goal**: Find a way to reliably mount the Docker socket into the devcontainer across all platforms (Mac, Windows, Linux) and Docker runtimes (Docker Desktop, Rancher Desktop, Colima, Podman), without breaking the "one standard devcontainer.json" principle.
 
@@ -1161,7 +1161,7 @@ The feature is part of the official devcontainer specification (`ghcr.io/devcont
 
 ## Next Steps
 
-- [ ] **IMPLEMENT**: Add feature to `devcontainer-user-template.json`
-- [ ] **IMPLEMENT**: Remove hardcoded socket mount and `DOCKER_HOST`/`PODMAN_SOCKET` from `.devcontainer/devcontainer.json`, add feature
-- [ ] **DOC**: Update getting started guide
-- [ ] Create PLAN for the implementation work
+- [x] **IMPLEMENT**: Add feature to `devcontainer-user-template.json` (2026-04-05)
+- [x] **IMPLEMENT**: Remove hardcoded socket mount and `DOCKER_HOST`/`PODMAN_SOCKET` from `.devcontainer/devcontainer.json`, add feature (2026-04-05)
+- [ ] **DOC**: Update getting started guide (follow-up)
+- [x] `install-tool-docker-cli.sh` removed — superseded by the feature

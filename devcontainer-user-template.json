@@ -38,6 +38,12 @@
         "DCT_WORKSPACE": "/workspace"
     },
 
+    // Docker socket + CLI for all platforms (Docker Desktop, OrbStack, Rancher Desktop,
+    // Colima, Linux, Windows). No hardcoded socket mount needed.
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
 
