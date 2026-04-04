@@ -313,6 +313,15 @@ function cleanup_and_complete() {
     step=$((step + 1))
   fi
 
+  # Check if template has requires (needs dev-template configure)
+  if [ -f "$CALLER_DIR/template-info.yaml" ] && grep -q '^requires:' "$CALLER_DIR/template-info.yaml" 2>/dev/null; then
+    echo "   $step. Configure services (database, auth, etc.):"
+    echo "      Edit template-info.yaml params, then run:"
+    echo "      dev-template configure"
+    echo ""
+    step=$((step + 1))
+  fi
+
   echo "   $step. Start building your project"
   echo ""
 }
@@ -324,11 +333,13 @@ function show_help() {
   echo ""
   echo "🛠️  Template Installer v${SCRIPT_VERSION}"
   echo ""
-  echo "Usage: dev-template [template-id]"
+  echo "Usage: dev-template [template-id | configure]"
   echo ""
   echo "  dev-template                           Show interactive menu"
   echo "  dev-template python-basic-webserver    Install app template"
   echo "  dev-template plan-based-workflow       Install AI workflow template"
+  echo "  dev-template configure                 Configure services (after install)"
+  echo "  dev-template configure --param k=v     Configure with CLI params"
   echo "  dev-template --help                    Show this help"
   echo ""
   echo "Installs project templates from helpers-no/dev-templates."
@@ -341,6 +352,10 @@ function show_help() {
   echo "  folder is downloaded via git sparse-checkout. Tools declared"
   echo "  in the template are installed automatically."
   echo ""
+  echo "  If the template requires services (e.g., PostgreSQL), run"
+  echo "  dev-template configure after install to create databases"
+  echo "  and wire connections into .env."
+  echo ""
   echo "Source: https://github.com/helpers-no/dev-templates"
   echo ""
 }
@@ -352,6 +367,12 @@ function show_help() {
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   show_help
   exit 0
+fi
+
+# Route 'configure' subcommand to separate script
+if [[ "${1:-}" == "configure" ]]; then
+  shift
+  exec bash "$SCRIPT_DIR/dev-template-configure.sh" "$@"
 fi
 
 SELECTED_TEMPLATE_ARG="${1:-}"
