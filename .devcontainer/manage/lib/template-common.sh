@@ -1,27 +1,23 @@
 #!/bin/bash
 # File: .devcontainer/manage/lib/template-common.sh
-# Description: Shared functions for template installer scripts
-#              (dev-template.sh and dev-template-ai.sh).
+# Description: Shared functions for the unified dev-template installer.
+#              Fetches template-registry.json, builds menus with jq,
+#              downloads only the selected template via sparse-checkout.
 #
 # Usage: source "$SCRIPT_DIR/lib/template-common.sh"
 #
 # Required variables (must be set before sourcing):
 #   CALLER_DIR     — caller's original working directory
 #   ADDITIONS_DIR  — path to .devcontainer/additions/ (for tool install)
-#
-# Provided functions:
-#   check_template_prerequisites   — verify dialog and git are installed
-#   download_template_repo         — sparse-checkout only the needed folder
-#   read_template_info             — read TEMPLATE_INFO from a template dir
-#   scan_templates                 — scan templates and build arrays
-#   select_template                — interactive (two-level menu) or direct selection
-#   show_template_details_dialog   — show template details confirmation dialog
-#   install_template_tools         — install devcontainer tools declared in TEMPLATE_TOOLS
-#   replace_template_placeholder   — replace a placeholder in a single file
 #------------------------------------------------------------------------------
 
+# Registry URLs
+REGISTRY_PRIMARY="https://tmp.sovereignsky.no/data/template-registry.json"
+REGISTRY_FALLBACK="https://raw.githubusercontent.com/helpers-no/dev-templates/main/website/src/data/template-registry.json"
+REPO_URL="https://github.com/helpers-no/dev-templates.git"
+
 #------------------------------------------------------------------------------
-# Check prerequisites (dialog and git)
+# Check prerequisites (dialog, git, jq)
 #------------------------------------------------------------------------------
 check_template_prerequisites() {
   if ! command -v dialog >/dev/null 2>&1; then
@@ -33,181 +29,129 @@ check_template_prerequisites() {
     echo "❌ Error: git is not installed"
     exit 2
   fi
+  if ! command -v jq >/dev/null 2>&1; then
+    echo "❌ Error: jq is not installed"
+    exit 2
+  fi
 }
 
 #------------------------------------------------------------------------------
-# Download a specific folder from helpers-no/dev-templates using sparse-checkout
-#
-# Arguments:
-#   $1 — templates subdirectory (e.g., "templates" or "ai-templates")
+# Fetch template-registry.json
 #
 # Sets globals:
-#   TEMP_DIR, TEMPLATE_REPO_DIR
+#   REGISTRY_FILE — path to downloaded registry JSON
+#   TEMP_DIR      — temp directory (created here)
 #------------------------------------------------------------------------------
-download_template_repo() {
-  local templates_subdir="$1"
-  local repo_url="https://github.com/helpers-no/dev-templates.git"
-
+fetch_registry() {
   TEMP_DIR=$(mktemp -d)
-  TEMPLATE_REPO_DIR="$TEMP_DIR/repo"
+  REGISTRY_FILE="$TEMP_DIR/registry.json"
 
-  echo "📥 Fetching latest templates from GitHub..."
-  echo "   Downloading: $templates_subdir/"
-  echo ""
+  echo "📥 Fetching template registry..."
 
-  if ! git clone --no-checkout --depth 1 "$repo_url" "$TEMPLATE_REPO_DIR" 2>/dev/null; then
-    echo "❌ Failed to download templates"
+  if curl -sfL "$REGISTRY_PRIMARY" -o "$REGISTRY_FILE" 2>/dev/null && [ -s "$REGISTRY_FILE" ] && jq empty "$REGISTRY_FILE" 2>/dev/null; then
+    echo "   Source: $REGISTRY_PRIMARY"
+  elif curl -sfL "$REGISTRY_FALLBACK" -o "$REGISTRY_FILE" 2>/dev/null && [ -s "$REGISTRY_FILE" ] && jq empty "$REGISTRY_FILE" 2>/dev/null; then
+    echo "   Source: $REGISTRY_FALLBACK (fallback)"
+  else
+    echo "❌ Failed to fetch template registry"
     echo ""
-    echo "   Repository: $repo_url"
+    echo "   Tried:"
+    echo "   - $REGISTRY_PRIMARY"
+    echo "   - $REGISTRY_FALLBACK"
     echo ""
     echo "   Possible causes:"
     echo "   - No internet connection"
-    echo "   - GitHub is unreachable (firewall, proxy, DNS)"
+    echo "   - GitHub is unreachable"
     rm -rf "$TEMP_DIR"
     exit 1
   fi
 
-  cd "$TEMPLATE_REPO_DIR"
-  git sparse-checkout init --cone 2>/dev/null
-  git sparse-checkout set "$templates_subdir" 2>/dev/null
-  git checkout 2>/dev/null
-
-  if [ ! -d "$TEMPLATE_REPO_DIR/$templates_subdir" ]; then
-    echo "❌ Directory not found in repository"
-    echo "   Expected: $templates_subdir/"
-    rm -rf "$TEMP_DIR"
-    exit 1
-  fi
-
-  echo "✅ Templates fetched successfully"
+  echo "✅ Registry fetched"
   echo ""
 }
 
 #------------------------------------------------------------------------------
-# Read TEMPLATE_INFO from a template directory
-#
-# Sets globals: INFO_NAME, INFO_DESCRIPTION, INFO_CATEGORY, INFO_ABSTRACT,
-#               INFO_TOOLS, INFO_README
-#------------------------------------------------------------------------------
-read_template_info() {
-  local template_dir="$1"
-  local info_file="$template_dir/TEMPLATE_INFO"
-
-  INFO_NAME=$(basename "$template_dir")
-  INFO_DESCRIPTION="No description"
-  INFO_CATEGORY="UNCATEGORIZED"
-  INFO_ABSTRACT=""
-  INFO_TOOLS=""
-  INFO_README=""
-
-  if [ -f "$info_file" ]; then
-    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_ABSTRACT TEMPLATE_TOOLS TEMPLATE_README
-    source "$info_file"
-    INFO_NAME="${TEMPLATE_NAME:-$INFO_NAME}"
-    INFO_DESCRIPTION="${TEMPLATE_DESCRIPTION:-$INFO_DESCRIPTION}"
-    INFO_CATEGORY="${TEMPLATE_CATEGORY:-$INFO_CATEGORY}"
-    INFO_ABSTRACT="${TEMPLATE_ABSTRACT:-$INFO_ABSTRACT}"
-    INFO_TOOLS="${TEMPLATE_TOOLS:-$INFO_TOOLS}"
-    INFO_README="${TEMPLATE_README:-$INFO_README}"
-    unset TEMPLATE_NAME TEMPLATE_DESCRIPTION TEMPLATE_CATEGORY TEMPLATE_ABSTRACT TEMPLATE_TOOLS TEMPLATE_README
-  fi
-}
-
-#------------------------------------------------------------------------------
-# Load category definitions from TEMPLATE_CATEGORIES file
+# Parse registry — build arrays for categories and templates
 #
 # Arguments:
-#   $1 — path to TEMPLATE_CATEGORIES file
+#   $1 — context filter ("dct" or "uis")
 #
 # Sets globals:
-#   CAT_IDS[]     — category IDs in display order
-#   CAT_NAMES[]   — associative: ID → display name
-#   CAT_EMOJIS[]  — associative: ID → emoji
-#   CAT_COUNTS[]  — associative: ID → template count (initialized to 0)
-#   CAT_TEMPLATES[] — associative: ID → space-separated template indices
+#   CAT_IDS[], CAT_NAMES[], CAT_EMOJIS[], CAT_COUNTS[], CAT_TEMPLATES[]
+#   TEMPLATE_IDS[], TEMPLATE_NAMES[], TEMPLATE_DESCRIPTIONS[],
+#   TEMPLATE_CATEGORIES[], TEMPLATE_ABSTRACTS[], TEMPLATE_TOOLS_LIST[],
+#   TEMPLATE_README_LIST[], TEMPLATE_FOLDERS[], TEMPLATE_INSTALL_TYPES[]
 #------------------------------------------------------------------------------
-load_template_categories() {
-  local cat_file="$1"
+parse_registry() {
+  local context="$1"
 
+  # Category arrays
   declare -g -a CAT_IDS=()
   declare -g -A CAT_NAMES=()
   declare -g -A CAT_EMOJIS=()
   declare -g -A CAT_COUNTS=()
   declare -g -A CAT_TEMPLATES=()
 
-  # Source the file to get TEMPLATE_CATEGORY_TABLE
-  unset TEMPLATE_CATEGORY_TABLE
-  source "$cat_file"
-
-  while IFS='|' read -r order id name desc tags logo emoji; do
-    [[ -z "$id" ]] && continue
-    CAT_IDS+=("$id")
-    CAT_NAMES["$id"]="$name"
-    CAT_EMOJIS["$id"]="${emoji}"
-    CAT_COUNTS["$id"]=0
-    CAT_TEMPLATES["$id"]=""
-  done <<< "$(echo "$TEMPLATE_CATEGORY_TABLE" | grep -v "^$")"
-}
-
-#------------------------------------------------------------------------------
-# Scan templates and build arrays
-#
-# Arguments:
-#   $1 — templates subdirectory (e.g., "templates" or "ai-templates")
-#
-# Sets globals:
-#   TEMPLATE_DIRS[], TEMPLATE_NAMES[], TEMPLATE_DESCRIPTIONS[],
-#   TEMPLATE_CATEGORIES[], TEMPLATE_ABSTRACTS[], TEMPLATE_TOOLS_LIST[],
-#   TEMPLATE_README_LIST[]
-#   Also populates CAT_COUNTS[] and CAT_TEMPLATES[]
-#------------------------------------------------------------------------------
-scan_templates() {
-  local templates_subdir="$1"
-
-  TEMPLATE_DIRS=()
+  # Template arrays
+  TEMPLATE_IDS=()
   TEMPLATE_NAMES=()
   TEMPLATE_DESCRIPTIONS=()
   TEMPLATE_CATEGORIES=()
   TEMPLATE_ABSTRACTS=()
   TEMPLATE_TOOLS_LIST=()
   TEMPLATE_README_LIST=()
+  TEMPLATE_FOLDERS=()
+  TEMPLATE_INSTALL_TYPES=()
 
-  # Load category definitions
-  local cat_file="$TEMPLATE_REPO_DIR/$templates_subdir/TEMPLATE_CATEGORIES"
-  load_template_categories "$cat_file"
+  echo "📋 Loading templates..."
 
-  echo "📋 Scanning available templates..."
-  for dir in "$TEMPLATE_REPO_DIR/$templates_subdir"/*; do
-    [ -d "$dir" ] || continue
-    # Skip TEMPLATE_CATEGORIES file (it's not a template directory)
-    [ -f "$dir/TEMPLATE_INFO" ] || continue
+  # Parse categories (sorted by order)
+  while IFS=$'\t' read -r cat_id cat_name cat_emoji; do
+    CAT_IDS+=("$cat_id")
+    CAT_NAMES["$cat_id"]="$cat_name"
+    CAT_EMOJIS["$cat_id"]="$cat_emoji"
+    CAT_COUNTS["$cat_id"]=0
+    CAT_TEMPLATES["$cat_id"]=""
+  done < <(jq -r --arg ctx "$context" \
+    '.categories[] | select(.context == $ctx) | [.id, .name, .emoji] | @tsv' \
+    "$REGISTRY_FILE" | sort -t$'\t' -k1,1)
 
-    read_template_info "$dir"
+  # Parse templates
+  # Note: use "//" as empty-field replacement to prevent bash read from collapsing empty tab fields
+  while IFS=$'\t' read -r t_id t_name t_desc t_cat t_abstract t_tools t_readme t_folder t_install_type; do
+    # Replace sentinel back to empty
+    [ "$t_tools" = "-" ] && t_tools=""
+    [ "$t_readme" = "-" ] && t_readme=""
+    [ "$t_abstract" = "-" ] && t_abstract=""
 
-    local idx=${#TEMPLATE_DIRS[@]}
-    TEMPLATE_DIRS+=("$(basename "$dir")")
-    TEMPLATE_NAMES+=("$INFO_NAME")
-    TEMPLATE_DESCRIPTIONS+=("$INFO_DESCRIPTION")
-    TEMPLATE_CATEGORIES+=("$INFO_CATEGORY")
-    TEMPLATE_ABSTRACTS+=("$INFO_ABSTRACT")
-    TEMPLATE_TOOLS_LIST+=("$INFO_TOOLS")
-    TEMPLATE_README_LIST+=("$INFO_README")
+    local idx=${#TEMPLATE_IDS[@]}
+    TEMPLATE_IDS+=("$t_id")
+    TEMPLATE_NAMES+=("$t_name")
+    TEMPLATE_DESCRIPTIONS+=("$t_desc")
+    TEMPLATE_CATEGORIES+=("$t_cat")
+    TEMPLATE_ABSTRACTS+=("$t_abstract")
+    TEMPLATE_TOOLS_LIST+=("$t_tools")
+    TEMPLATE_README_LIST+=("$t_readme")
+    TEMPLATE_FOLDERS+=("$t_folder")
+    TEMPLATE_INSTALL_TYPES+=("$t_install_type")
 
     # Group by category
-    local cat="$INFO_CATEGORY"
-    if [[ -n "${CAT_COUNTS[$cat]+x}" ]]; then
-      CAT_COUNTS["$cat"]=$((${CAT_COUNTS["$cat"]} + 1))
-      CAT_TEMPLATES["$cat"]="${CAT_TEMPLATES["$cat"]} $idx"
+    if [[ -n "${CAT_COUNTS[$t_cat]+x}" ]]; then
+      CAT_COUNTS["$t_cat"]=$((${CAT_COUNTS["$t_cat"]} + 1))
+      CAT_TEMPLATES["$t_cat"]="${CAT_TEMPLATES["$t_cat"]} $idx"
     fi
-  done
+  done < <(jq -r --arg ctx "$context" \
+    'def nonempty: if . == "" or . == null then "-" else . end;
+     .templates[] | select(.context == $ctx) | [.id, .name, .description, .category, (.abstract | nonempty), (.tools | nonempty), (.readme | nonempty), .folder, .install_type] | @tsv' \
+    "$REGISTRY_FILE")
 
-  if [ ${#TEMPLATE_DIRS[@]} -eq 0 ]; then
-    echo "❌ No templates found"
+  if [ ${#TEMPLATE_IDS[@]} -eq 0 ]; then
+    echo "❌ No templates found for context '$context'"
     rm -rf "$TEMP_DIR"
     exit 1
   fi
 
-  echo "✅ Found ${#TEMPLATE_DIRS[@]} template(s)"
+  echo "✅ Found ${#TEMPLATE_IDS[@]} template(s) in ${#CAT_IDS[@]} categories"
   echo ""
 }
 
@@ -215,10 +159,9 @@ scan_templates() {
 # Show template category menu (first level)
 #
 # Arguments:
-#   $1 — dialog title (e.g., "Project Templates")
+#   $1 — dialog title
 #
 # Returns: selected category ID via stdout
-# Exit: non-zero if ESC/cancel
 #------------------------------------------------------------------------------
 show_template_category_menu() {
   local title="$1"
@@ -265,8 +208,8 @@ show_template_category_menu() {
 #   $1 — category ID
 #   $2 — dialog title
 #
-# Sets globals on success: TEMPLATE_INDEX, SELECTED_TEMPLATE
-# Returns: 0 if template selected and confirmed, 1 if ESC/back
+# Sets globals on success: TEMPLATE_INDEX
+# Returns: 0 if confirmed, 1 if ESC/back
 #------------------------------------------------------------------------------
 show_templates_in_category() {
   local category_id="$1"
@@ -274,7 +217,6 @@ show_templates_in_category() {
   local cat_name="${CAT_NAMES[$category_id]}"
 
   while true; do
-    # Build menu from templates in this category
     local menu_options=()
     local index_map=()
     local option_num=1
@@ -295,52 +237,38 @@ show_templates_in_category() {
       2>&1 >/dev/tty)
 
     if [[ $? -ne 0 ]]; then
-      # ESC — go back to category menu
       return 1
     fi
 
     local selected_idx="${index_map[$((choice - 1))]}"
 
-    # Show details and confirm
     if show_template_details_dialog "$selected_idx"; then
       TEMPLATE_INDEX=$selected_idx
-      SELECTED_TEMPLATE="${TEMPLATE_DIRS[$selected_idx]}"
       return 0
     fi
-    # "No" at details — loop back to template list
   done
 }
 
 #------------------------------------------------------------------------------
 # Show template details confirmation dialog
-#
-# Arguments:
-#   $1 — index into TEMPLATE_NAMES/etc. arrays
-#
-# Returns: dialog exit code (0 = yes, 1 = no)
 #------------------------------------------------------------------------------
 show_template_details_dialog() {
   local idx=$1
-  local template_name="${TEMPLATE_NAMES[$idx]}"
-  local template_desc="${TEMPLATE_DESCRIPTIONS[$idx]}"
-  local template_category="${TEMPLATE_CATEGORIES[$idx]}"
-  local template_abstract="${TEMPLATE_ABSTRACTS[$idx]:-}"
-
   local details=""
-  details+="Name: $template_name\n\n"
-  details+="Category: $template_category\n\n"
-  details+="Description:\n$template_desc\n\n"
+  details+="Name: ${TEMPLATE_NAMES[$idx]}\n\n"
+  details+="Category: ${TEMPLATE_CATEGORIES[$idx]}\n\n"
+  details+="Description:\n${TEMPLATE_DESCRIPTIONS[$idx]}\n\n"
 
-  if [ -n "$template_abstract" ]; then
-    details+="About:\n$template_abstract\n\n"
+  if [ -n "${TEMPLATE_ABSTRACTS[$idx]:-}" ]; then
+    details+="About:\n${TEMPLATE_ABSTRACTS[$idx]}\n\n"
   fi
 
-  local template_tools="${TEMPLATE_TOOLS_LIST[$idx]:-}"
-  if [ -n "$template_tools" ]; then
-    details+="Tools to install:\n$template_tools\n\n"
+  local tools="${TEMPLATE_TOOLS_LIST[$idx]:-}"
+  if [ -n "$tools" ]; then
+    details+="Tools to install:\n$tools\n\n"
   fi
 
-  details+="Directory: ${TEMPLATE_DIRS[$idx]}"
+  details+="Install type: ${TEMPLATE_INSTALL_TYPES[$idx]}"
 
   dialog --clear \
     --title "Template Details" \
@@ -354,40 +282,37 @@ show_template_details_dialog() {
 # Select template — interactive (two-level menu) or direct by name
 #
 # Arguments:
-#   $1 — template name (empty for interactive)
-#   $2 — templates subdirectory ("templates" or "ai-templates")
-#   $3 — dialog title ("Project Templates" or "AI Workflow Templates")
+#   $1 — template ID (empty for interactive)
+#   $2 — dialog title
 #
-# Sets globals: TEMPLATE_INDEX, SELECTED_TEMPLATE, TEMPLATE_PATH
+# Sets globals: TEMPLATE_INDEX, TEMPLATE_PATH
 #------------------------------------------------------------------------------
 select_template() {
   local param_name="$1"
-  local templates_subdir="$2"
-  local title="$3"
+  local title="$2"
 
   if [ -n "$param_name" ]; then
-    # Direct selection by directory name
-    SELECTED_TEMPLATE="$param_name"
+    # Direct selection by ID
+    local found=false
+    for i in "${!TEMPLATE_IDS[@]}"; do
+      if [ "${TEMPLATE_IDS[$i]}" == "$param_name" ]; then
+        TEMPLATE_INDEX=$i
+        found=true
+        break
+      fi
+    done
 
-    if [ ! -d "$TEMPLATE_REPO_DIR/$templates_subdir/$SELECTED_TEMPLATE" ]; then
-      echo "❌ Template '$SELECTED_TEMPLATE' not found"
+    if ! $found; then
+      echo "❌ Template '$param_name' not found"
       echo ""
       echo "   Available templates:"
-      for i in "${!TEMPLATE_DIRS[@]}"; do
-        echo "   - ${TEMPLATE_DIRS[$i]}  (${TEMPLATE_NAMES[$i]})"
+      for i in "${!TEMPLATE_IDS[@]}"; do
+        echo "   - ${TEMPLATE_IDS[$i]}  (${TEMPLATE_NAMES[$i]})"
       done
       echo ""
       rm -rf "$TEMP_DIR"
       exit 2
     fi
-
-    # Find index
-    for i in "${!TEMPLATE_DIRS[@]}"; do
-      if [ "${TEMPLATE_DIRS[$i]}" == "$SELECTED_TEMPLATE" ]; then
-        TEMPLATE_INDEX=$i
-        break
-      fi
-    done
   else
     # Interactive two-level menu
     while true; do
@@ -400,10 +325,8 @@ select_template() {
       fi
 
       if show_templates_in_category "$category" "$title"; then
-        # TEMPLATE_INDEX and SELECTED_TEMPLATE set by show_templates_in_category
         break
       fi
-      # ESC at template level — loop back to category menu
     done
   fi
 
@@ -417,8 +340,39 @@ select_template() {
     echo "   ${TEMPLATE_ABSTRACTS[$TEMPLATE_INDEX]}"
   fi
   echo ""
+}
 
-  TEMPLATE_PATH="$TEMPLATE_REPO_DIR/$templates_subdir/$SELECTED_TEMPLATE"
+#------------------------------------------------------------------------------
+# Download only the selected template via sparse-checkout
+#
+# Sets globals: TEMPLATE_PATH
+#------------------------------------------------------------------------------
+download_selected_template() {
+  local folder="${TEMPLATE_FOLDERS[$TEMPLATE_INDEX]}"
+  local repo_dir="$TEMP_DIR/repo"
+
+  echo "📥 Downloading template: $folder/"
+
+  if ! git clone --no-checkout --depth 1 "$REPO_URL" "$repo_dir" 2>/dev/null; then
+    echo "❌ Failed to download template"
+    rm -rf "$TEMP_DIR"
+    exit 1
+  fi
+
+  cd "$repo_dir"
+  git sparse-checkout init --cone 2>/dev/null
+  git sparse-checkout set "$folder" 2>/dev/null
+  git checkout 2>/dev/null
+
+  if [ ! -d "$repo_dir/$folder" ]; then
+    echo "❌ Template folder not found after download: $folder/"
+    rm -rf "$TEMP_DIR"
+    exit 1
+  fi
+
+  TEMPLATE_PATH="$repo_dir/$folder"
+  echo "✅ Template downloaded"
+  echo ""
 }
 
 #------------------------------------------------------------------------------
