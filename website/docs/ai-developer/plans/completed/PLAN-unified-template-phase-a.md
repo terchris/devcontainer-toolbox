@@ -103,13 +103,13 @@ Only the selected template folder is downloaded. `template-info.yaml` copied to 
   - `copy_template_files()` -- copy to root
   - `setup_github_workflows()` -- copy .github/
   - `merge_gitignore()` -- merge .gitignore
-  - `process_template_files()` -- replace {{GITHUB_USERNAME}} and {{REPO_NAME}} in YAML
+  - `process_template_files()` -- replace `&#123;&#123;GITHUB_USERNAME&#125;&#125;` and `&#123;&#123;REPO_NAME&#125;&#125;` in YAML
 - [x] 3.3 Move `dev-template-ai.sh` overlay-specific logic into `install_overlay_template()`:
   - `verify_template()` -- check template/ subdirectory
   - `copy_template_files()` -- copy template/ preserving paths, safe re-run
   - `handle_claude_md()` -- CLAUDE.md conflict handling
   - `rename_project_template()` -- rename project-TEMPLATE.md
-  - `process_template_files()` -- replace {{REPO_NAME}} in .md files
+  - `process_template_files()` -- replace `&#123;&#123;REPO_NAME&#125;&#125;` in .md files
 - [x] 3.4 Both handlers call shared: `install_template_tools()`, show completion with README
 
 ### Validation
