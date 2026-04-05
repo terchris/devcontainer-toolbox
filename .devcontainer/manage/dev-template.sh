@@ -379,7 +379,7 @@ SELECTED_TEMPLATE_ARG="${1:-}"
 
 check_template_prerequisites
 detect_and_validate_repo_info
-clear
+clear 2>/dev/null || true
 echo ""
 echo "🛠️  Template Installer"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

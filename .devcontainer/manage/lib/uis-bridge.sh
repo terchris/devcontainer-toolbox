@@ -111,38 +111,60 @@ uis_bridge_configure() {
     fi
   done
 
-  # Run command
-  local response
+  # Run command, capturing stdout and stderr separately so we can surface
+  # stderr as detail when UIS (or docker exec) doesn't emit a JSON envelope.
+  local stdout_file stderr_file
+  stdout_file=$(mktemp)
+  stderr_file=$(mktemp)
+
   if $has_stdin; then
-    response=$(uis_bridge_run_stdin "${args[@]}" 2>/dev/null)
+    uis_bridge_run_stdin "${args[@]}" >"$stdout_file" 2>"$stderr_file"
   else
-    response=$(uis_bridge_run "${args[@]}" 2>/dev/null)
+    uis_bridge_run "${args[@]}" >"$stdout_file" 2>"$stderr_file"
   fi
   local exit_code=$?
 
+  local response stderr_content
+  response=$(cat "$stdout_file")
+  stderr_content=$(cat "$stderr_file")
+  rm -f "$stdout_file" "$stderr_file"
+
   UIS_RESPONSE="$response"
 
-  # Parse JSON response
-  if [ $exit_code -ne 0 ] || [ -z "$response" ]; then
-    UIS_STATUS="error"
+  # Try JSON parse even when exit != 0 — UIS emits structured JSON error
+  # envelopes on stdout with non-zero exit codes.
+  if [ -n "$response" ]; then
+    local parsed_status
+    parsed_status=$(echo "$response" | jq -r '.status // empty' 2>/dev/null)
+    if [ -n "$parsed_status" ]; then
+      UIS_STATUS="$parsed_status"
+      case "$UIS_STATUS" in
+        ok|already_configured)
+          UIS_LOCAL_URL=$(echo "$response" | jq -r '.local.database_url // .local.url // ""')
+          UIS_CLUSTER_URL=$(echo "$response" | jq -r '.cluster.database_url // .cluster.url // ""')
+          return 0
+          ;;
+        *)
+          UIS_ERROR_PHASE=$(echo "$response" | jq -r '.phase // "unknown"')
+          UIS_ERROR_DETAIL=$(echo "$response" | jq -r '.detail // "Unknown error"')
+          return 1
+          ;;
+      esac
+    fi
+  fi
+
+  # No parseable JSON — distinguish container-down from other failures.
+  UIS_STATUS="error"
+  if echo "$stderr_content" | grep -q "is not running\|No such container"; then
     UIS_ERROR_PHASE="connection"
-    UIS_ERROR_DETAIL="Failed to communicate with UIS container"
-    return 1
-  fi
-
-  UIS_STATUS=$(echo "$response" | jq -r '.status // "unknown"')
-
-  if [ "$UIS_STATUS" = "ok" ]; then
-    UIS_LOCAL_URL=$(echo "$response" | jq -r '.local.database_url // .local.url // ""')
-    UIS_CLUSTER_URL=$(echo "$response" | jq -r '.cluster.database_url // .cluster.url // ""')
-    return 0
-  elif [ "$UIS_STATUS" = "already_configured" ]; then
-    UIS_LOCAL_URL=$(echo "$response" | jq -r '.local.database_url // .local.url // ""')
-    UIS_CLUSTER_URL=$(echo "$response" | jq -r '.cluster.database_url // .cluster.url // ""')
-    return 0
+    UIS_ERROR_DETAIL="UIS container '${UIS_CONTAINER}' is not running"
   else
-    UIS_ERROR_PHASE=$(echo "$response" | jq -r '.phase // "unknown"')
-    UIS_ERROR_DETAIL=$(echo "$response" | jq -r '.detail // "Unknown error"')
-    return 1
+    UIS_ERROR_PHASE="unknown"
+    if [ -n "$stderr_content" ]; then
+      UIS_ERROR_DETAIL="$stderr_content"
+    else
+      UIS_ERROR_DETAIL="uis configure failed (exit $exit_code) with no output"
+    fi
   fi
+  return 1
 }

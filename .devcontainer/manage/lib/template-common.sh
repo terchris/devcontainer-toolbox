@@ -318,7 +318,7 @@ select_template() {
     while true; do
       local category
       if ! category=$(show_template_category_menu "$title"); then
-        clear
+        clear 2>/dev/null || true
         echo "ℹ️  Selection cancelled"
         rm -rf "$TEMP_DIR"
         exit 3
@@ -330,7 +330,7 @@ select_template() {
     done
   fi
 
-  clear
+  clear 2>/dev/null || true
   echo ""
   echo "✅ Selected: ${TEMPLATE_NAMES[$TEMPLATE_INDEX]}"
 

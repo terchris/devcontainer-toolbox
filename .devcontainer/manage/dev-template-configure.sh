@@ -132,6 +132,34 @@ apply_param_overrides() {
 }
 
 #------------------------------------------------------------------------------
+# Persist CLI-provided params back to template-info.yaml so future re-runs
+# use the same values. Only writes back params supplied via --param flags,
+# not env vars (env vars are for CI/CD with fresh checkouts).
+#------------------------------------------------------------------------------
+persist_cli_params_to_yaml() {
+  local yaml_file="$1"
+  local updated=0
+
+  for override in "${CLI_PARAMS[@]}"; do
+    local key="${override%%=*}"
+    local value="${override#*=}"
+    # Escape sed replacement specials: & and \
+    local safe_value
+    safe_value=$(printf '%s' "$value" | sed 's/[&\\]/\\&/g')
+    # Update the indented "  key: ..." line (inside params: block)
+    if grep -qE "^[[:space:]]+${key}:" "$yaml_file"; then
+      sed -i "s|^\([[:space:]]\{1,\}\)${key}:[[:space:]]*.*|\1${key}: \"${safe_value}\"|" "$yaml_file"
+      updated=$((updated + 1))
+    fi
+  done
+
+  if [ $updated -gt 0 ]; then
+    echo "💾 Persisted $updated CLI param(s) to template-info.yaml"
+    echo ""
+  fi
+}
+
+#------------------------------------------------------------------------------
 # Validate all required params are filled
 #------------------------------------------------------------------------------
 validate_params() {
@@ -419,6 +447,11 @@ parse_params "$YAML_FILE"
 if [ ${#PARAM_KEYS[@]} -gt 0 ]; then
   apply_param_overrides
   validate_params
+
+  # Persist CLI args to YAML so re-runs don't need them again
+  if [ ${#CLI_PARAMS[@]} -gt 0 ]; then
+    persist_cli_params_to_yaml "$YAML_FILE"
+  fi
 
   echo "📝 Parameters:"
   for key in "${PARAM_KEYS[@]}"; do
