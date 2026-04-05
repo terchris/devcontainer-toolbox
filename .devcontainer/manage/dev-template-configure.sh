@@ -220,6 +220,7 @@ process_requires() {
   local current_service=""
   local current_database=""
   local current_init=""
+  local current_env_var=""
   local in_requires=false
   local in_config=false
 
@@ -233,7 +234,7 @@ process_requires() {
     if $in_requires && [[ "$line" =~ ^[a-z] && ! "$line" =~ ^[[:space:]] ]]; then
       # Process last service
       if [ -n "$current_service" ]; then
-        _configure_service "$current_service" "$current_database" "$current_init"
+        _configure_service "$current_service" "$current_database" "$current_init" "$current_env_var"
       fi
       break
     fi
@@ -242,12 +243,19 @@ process_requires() {
     if $in_requires && [[ "$line" =~ ^[[:space:]]+-[[:space:]]+service:[[:space:]]*(.*) ]]; then
       # Process previous service first
       if [ -n "$current_service" ]; then
-        _configure_service "$current_service" "$current_database" "$current_init"
+        _configure_service "$current_service" "$current_database" "$current_init" "$current_env_var"
       fi
       current_service="${BASH_REMATCH[1]}"
       current_database=""
       current_init=""
+      current_env_var=""
       in_config=false
+      continue
+    fi
+
+    # Optional env_var at requires-entry level (e.g., "    env_var: DATABASE_URL")
+    if $in_requires && ! $in_config && [[ "$line" =~ ^[[:space:]]+env_var:[[:space:]]*(.*) ]]; then
+      current_env_var=$(echo "${BASH_REMATCH[1]}" | tr -d '"' | tr -d "'")
       continue
     fi
 
@@ -269,7 +277,7 @@ process_requires() {
 
   # Process last service (if file doesn't end with another top-level key)
   if [ -n "$current_service" ]; then
-    _configure_service "$current_service" "$current_database" "$current_init"
+    _configure_service "$current_service" "$current_database" "$current_init" "$current_env_var"
   fi
 
   # Summary
@@ -306,7 +314,22 @@ _configure_service() {
   local service="$1"
   local database="$2"
   local init_file="$3"
+  local env_var="$4"
   local app_name="${PARAMS[app_name]:-$TEMPLATE_ID}"
+
+  # Default env var name if not specified in template-info.yaml:
+  #   data services → DATABASE_URL (conventional for web frameworks)
+  #   other services → <SERVICE>_URL
+  if [ -z "$env_var" ]; then
+    case "$service" in
+      postgresql|mysql|mariadb|mongodb)
+        env_var="DATABASE_URL"
+        ;;
+      *)
+        env_var=$(echo "${service}_URL" | tr '[:lower:]' '[:upper:]')
+        ;;
+    esac
+  fi
 
   echo "   📦 Configuring $service..."
 
@@ -368,8 +391,7 @@ _configure_service() {
 
   # Write connection details to .env
   if [ -n "$UIS_LOCAL_URL" ]; then
-    local env_key
-    env_key=$(echo "${service}_URL" | tr '[:lower:]' '[:upper:]')
+    local env_key="$env_var"
     # Append to .env (create if doesn't exist)
     if [ -f "$CALLER_DIR/.env" ] && grep -q "^${env_key}=" "$CALLER_DIR/.env"; then
       # Update existing
@@ -381,8 +403,7 @@ _configure_service() {
   fi
 
   if [ -n "$UIS_CLUSTER_URL" ]; then
-    local env_key
-    env_key=$(echo "${service}_URL" | tr '[:lower:]' '[:upper:]')
+    local env_key="$env_var"
     if [ -f "$CALLER_DIR/.env.cluster" ] && grep -q "^${env_key}=" "$CALLER_DIR/.env.cluster"; then
       sed -i "s|^${env_key}=.*|${env_key}=${UIS_CLUSTER_URL}|" "$CALLER_DIR/.env.cluster"
     else
