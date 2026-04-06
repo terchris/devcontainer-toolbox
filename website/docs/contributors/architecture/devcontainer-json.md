@@ -6,9 +6,35 @@ sidebar_label: devcontainer.json
 
 The `devcontainer-user-template.json` in the repo root is the **single source of truth** for user project configuration. Install scripts (`install.sh`, `install.ps1`) download this file and place it at `.devcontainer/devcontainer.json` in the user's project.
 
-Developers should not need to edit this file. If they do, something is missing from DCT.
-
 The DCT development devcontainer (`.devcontainer/devcontainer.json`) has additional build-time fields but follows the same field conventions documented here.
+
+---
+
+## This file is managed by DCT
+
+**Developers should not edit `.devcontainer/devcontainer.json`.** It is owned and maintained by `dev-update`. If a developer needs something that requires editing this file, that's a missing feature in DCT — open an issue instead.
+
+### How it stays up to date
+
+1. **Initial install:** `install.sh` downloads `devcontainer-user-template.json` from GitHub and places it as `.devcontainer/devcontainer.json`
+2. **On every update:** `dev-update` downloads the latest template from GitHub, backs up the current file to `.devcontainer/backup/devcontainer.json.<version>`, and replaces it with the new template. This ensures all users get new fields (env vars, features, extensions) automatically.
+3. **CI keeps the template current:** The `build-image.yml` workflow auto-updates `DCT_IMAGE_VERSION` in `devcontainer-user-template.json` after each image build.
+
+### What happens to customizations
+
+Any changes a developer made to devcontainer.json will be overwritten on the next `dev-update`. The old file is preserved in `.devcontainer/backup/` so customizations can be found and re-applied if needed.
+
+The `.devcontainer/backup/` directory is gitignored — it's a local safety net, not a shared resource.
+
+### Where project-specific config belongs
+
+| Need | Where to put it |
+|------|----------------|
+| VS Code extensions | Install via VS Code UI (stored in user settings, not devcontainer.json) |
+| Tools and runtimes | `.devcontainer.extend/enabled-tools.conf` |
+| Services | `.devcontainer.extend/enabled-services.conf` |
+| Custom setup scripts | `.devcontainer.extend/project-installs.sh` |
+| Secrets and credentials | `.devcontainer.secrets/` (gitignored) |
 
 ---
 
