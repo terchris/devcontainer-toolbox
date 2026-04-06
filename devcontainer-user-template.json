@@ -20,7 +20,8 @@
             ]
         },
         "devcontainer-toolbox": {
-            "documentation": "https://dct.sovereignsky.no/docs/contributors/architecture/devcontainer-json"
+            "documentation": "https://dct.sovereignsky.no/docs/contributors/architecture/devcontainer-json",
+            "managed": "This file is managed by dev-update. Do not edit — changes will be overwritten."
         }
     },
     "remoteEnv": {
@@ -30,7 +31,9 @@
         "DEV_HOST_USER": "${localEnv:USER}",
         "DEV_HOST_USERNAME": "${localEnv:USERNAME}",
         "DEV_HOST_OS": "${localEnv:OS}",
-        "DEV_HOST_HOME": "${localEnv:HOME}"
+        "DEV_HOST_HOME": "${localEnv:HOME}",
+        "DEV_HOST_LOGNAME": "${localEnv:LOGNAME}",
+        "DEV_HOST_LANG": "${localEnv:LANG}"
     },
     "features": {
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
