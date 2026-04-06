@@ -90,10 +90,8 @@ if [ -f "$ADDITIONS_DIR/config-azure-devops.sh" ]; then
     bash "$ADDITIONS_DIR/config-azure-devops.sh" --verify || true
 fi
 
-# Refresh host info
-if [ -f "$ADDITIONS_DIR/config-host-info.sh" ]; then
-    bash "$ADDITIONS_DIR/config-host-info.sh" --refresh 2>/dev/null || true
-fi
+# Note: config-host-info --verify is called from dev-welcome.sh (first terminal)
+# because remoteEnv (DEV_HOST_*) is not available during ENTRYPOINT execution.
 
 # Start supervisord services (checks PID file, won't start twice)
 echo ""

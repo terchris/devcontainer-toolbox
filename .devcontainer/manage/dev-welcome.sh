@@ -24,6 +24,15 @@ elif [ -f "/workspace/.devcontainer/manage/lib/version-utils.sh" ]; then
     VERSION_UTILS="/workspace/.devcontainer/manage/lib/version-utils.sh"
 fi
 
+# Refresh host info on first terminal (remoteEnv is available here, not in entrypoint)
+_dct_host_refresh="/tmp/.dct-host-refreshed"
+if [ ! -f "$_dct_host_refresh" ]; then
+    if [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/additions/config-host-info.sh" ]; then
+        bash "$DCT_HOME/additions/config-host-info.sh" --verify 2>/dev/null || true
+    fi
+    touch "$_dct_host_refresh" 2>/dev/null || true
+fi
+
 if [ -n "$VERSION_UTILS" ]; then
     source "$VERSION_UTILS"
     echo ""
