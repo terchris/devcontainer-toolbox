@@ -116,21 +116,32 @@ Full update cycle works end-to-end. **One command + one click.**
 
 ---
 
-## Phase 6: Template sync for existing users — OPEN
+## Phase 6: Template replacement on every update — OPEN
 
-**Problem discovered during E2E testing:** `dev-update` pulls the new image and updates `DCT_IMAGE_VERSION`, but does NOT add new fields to devcontainer.json. When we add features to the template (e.g., `DEV_HOST_*` env vars in v1.7.20), existing users don't get them.
+**Problem:** `dev-update` only changes `DCT_IMAGE_VERSION` but doesn't update the rest of devcontainer.json. When we add new fields to the template (e.g., `DEV_HOST_*` env vars, new features), existing users don't get them.
+
+**Strategy:** DCT owns devcontainer.json — developers should not edit it. On every `dev-update`, replace the file entirely with the latest template. Back up the old one in case the user did customize.
 
 ### Tasks
 
-- [ ] 6.1 Add `dev-update --sync-template` flag that downloads the latest `devcontainer-user-template.json`
-- [ ] 6.2 Back up current `devcontainer.json` to `devcontainer.json.backup`
-- [ ] 6.3 Replace with latest template, preserving `DCT_IMAGE_VERSION` from the current version
-- [ ] 6.4 Show diff of what changed
-- [ ] 6.5 Test: add a new field to template, run `--sync-template` on an existing install, verify field appears
+- [ ] 6.1 Add a `"managed"` message to `customizations.devcontainer-toolbox` in the template:
+  ```json
+  "devcontainer-toolbox": {
+      "documentation": "https://dct.sovereignsky.no/docs/contributors/architecture/devcontainer-json",
+      "managed": "This file is managed by dev-update. Do not edit — changes will be overwritten. See documentation URL above."
+  }
+  ```
+- [ ] 6.2 In `dev-update`, after pulling the image: download the latest `devcontainer-user-template.json` from GitHub
+- [ ] 6.3 Back up current devcontainer.json to `.devcontainer/backup/devcontainer.json.<old-version>` (create dir if needed, gitignore it)
+- [ ] 6.4 Replace devcontainer.json with the downloaded template
+- [ ] 6.5 Set `DCT_IMAGE_VERSION` to the new version in the replaced file (via sed)
+- [ ] 6.6 VS Code detects the change → rebuild prompt (already works)
+- [ ] 6.7 Add `.devcontainer/backup/` to `.gitignore` via `ensure-gitignore.sh`
+- [ ] 6.8 Test: existing install with old template → `dev-update` → verify new fields appear, backup exists
 
 ### Validation
 
-Existing users can get new template fields by running `dev-update --sync-template`. Backup preserves any customizations.
+`dev-update` replaces devcontainer.json entirely. Old file backed up. New template fields (env vars, features, extensions) appear without user action.
 
 ---
 
@@ -145,7 +156,9 @@ Existing users can get new template fields by running `dev-update --sync-templat
 - [x] `dev-update --check` still works (version check without pulling)
 - [x] `devcontainer-user-template.json` includes `DCT_IMAGE_VERSION`
 - [x] CI auto-updates `DCT_IMAGE_VERSION` on each image build
-- [ ] `dev-update --sync-template` updates devcontainer.json with latest template fields (Phase 6)
+- [ ] `dev-update` replaces devcontainer.json with latest template on every update (Phase 6)
+- [ ] Old devcontainer.json backed up to `.devcontainer/backup/` (Phase 6)
+- [ ] Template includes "managed by dev-update, do not edit" message (Phase 6)
 
 ---
 
