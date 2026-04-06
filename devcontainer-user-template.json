@@ -36,6 +36,7 @@
         "DEV_HOST_LANG": "${localEnv:LANG}",
         "DEV_HOST_SHELL": "${localEnv:SHELL}",
         "DEV_HOST_TERM_PROGRAM": "${localEnv:TERM_PROGRAM}",
+        "DEV_HOST_HOSTNAME": "${localEnv:HOSTNAME}",
         "DEV_HOST_COMPUTERNAME": "${localEnv:COMPUTERNAME}",
         "DEV_HOST_PROCESSOR_ARCHITECTURE": "${localEnv:PROCESSOR_ARCHITECTURE}",
         "DEV_HOST_ONEDRIVE": "${localEnv:OneDrive}"

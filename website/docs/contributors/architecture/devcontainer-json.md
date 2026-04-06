@@ -168,6 +168,7 @@ These variables pass information from the developer's host machine into the cont
 | `DEV_HOST_LANG` | `LANG` | All | Locale setting (e.g., `en_US.UTF-8`) |
 | `DEV_HOST_SHELL` | `SHELL` | Mac, Linux | Default shell (e.g., `/bin/zsh`) |
 | `DEV_HOST_TERM_PROGRAM` | `TERM_PROGRAM` | Mac | Terminal app (e.g., `vscode`, `Apple_Terminal`) |
+| `DEV_HOST_HOSTNAME` | `HOSTNAME` | Linux | Machine hostname (set by bash; empty on Mac/Windows) |
 | `DEV_HOST_COMPUTERNAME` | `COMPUTERNAME` | Windows only | Machine name |
 | `DEV_HOST_PROCESSOR_ARCHITECTURE` | `PROCESSOR_ARCHITECTURE` | Windows only | CPU architecture (`AMD64`, `ARM64`) |
 | `DEV_HOST_ONEDRIVE` | `OneDrive` | Windows only | OneDrive path (used for organization detection) |

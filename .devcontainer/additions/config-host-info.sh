@@ -161,7 +161,7 @@ _detect_host_vars() {
     if [ "${DEV_HOST_OS:-}" = "Windows_NT" ]; then
         export HOST_OS="Windows"
         export HOST_USER="${DEV_HOST_USERNAME:-${DEV_HOST_USER:-unknown}}"
-        export HOST_HOSTNAME="${DEV_HOST_COMPUTERNAME:-devcontainer}"
+        export HOST_HOSTNAME="${DEV_HOST_COMPUTERNAME:-${DEV_HOST_HOSTNAME:-devcontainer}}"
         export HOST_DOMAIN="none"
         export HOST_ARCH="${DEV_HOST_PROCESSOR_ARCHITECTURE:-}"
         export HOST_CPU_MODEL_NAME=""
@@ -170,7 +170,7 @@ _detect_host_vars() {
     elif [[ "${DEV_HOST_HOME:-}" == /Users/* ]]; then
         export HOST_OS="macOS"
         export HOST_USER="${DEV_HOST_USER:-unknown}"
-        export HOST_HOSTNAME="devcontainer"
+        export HOST_HOSTNAME="${DEV_HOST_HOSTNAME:-devcontainer}"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
@@ -181,7 +181,7 @@ _detect_host_vars() {
     elif [ -n "${DEV_HOST_USER:-}" ]; then
         export HOST_OS="Linux"
         export HOST_USER="$DEV_HOST_USER"
-        export HOST_HOSTNAME="devcontainer"
+        export HOST_HOSTNAME="${DEV_HOST_HOSTNAME:-devcontainer}"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
