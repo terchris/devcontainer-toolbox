@@ -33,7 +33,9 @@
         "DEV_HOST_OS": "${localEnv:OS}",
         "DEV_HOST_HOME": "${localEnv:HOME}",
         "DEV_HOST_LOGNAME": "${localEnv:LOGNAME}",
-        "DEV_HOST_LANG": "${localEnv:LANG}"
+        "DEV_HOST_LANG": "${localEnv:LANG}",
+        "DEV_HOST_SHELL": "${localEnv:SHELL}",
+        "DEV_HOST_TERM_PROGRAM": "${localEnv:TERM_PROGRAM}"
     },
     "features": {
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
