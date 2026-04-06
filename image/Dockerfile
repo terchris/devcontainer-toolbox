@@ -19,7 +19,7 @@ FROM mcr.microsoft.com/devcontainers/python:1-3.12-bookworm
 USER vscode
 
 # Set versions (update these as needed)
-ARG NODE_VERSION=22.12.0
+ARG NODE_VERSION=22.22.2
 
 # Environment — no host-specific build args (those move to remoteEnv)
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -172,8 +172,7 @@ ENV DEBIAN_FRONTEND=
 
 # Container summary:
 # - Python 3.12 (from base image)
-# - Node.js 22.12.0 LTS with npm
-# - Docker CLI 27.5.1 (static binary)
+# - Node.js 22.22.2 LTS with npm
 # - GitHub CLI (gh)
 # - Supervisord for multi-process management
 # - Toolbox scripts at /opt/devcontainer-toolbox/
