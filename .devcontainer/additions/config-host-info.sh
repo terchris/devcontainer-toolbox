@@ -90,12 +90,24 @@ get_docker_server_stats() {
         local paused=$(echo "$docker_info" | grep "^  Paused:" | awk '{print $2}')
         local images=$(echo "$docker_info" | grep "^ Images:" | awk '{print $2}')
 
+        # Extract host info from Docker engine
+        local docker_name=$(echo "$docker_info" | grep "^ Name:" | awk '{print $2}')
+        local docker_cpus=$(echo "$docker_info" | grep "^ CPUs:" | awk '{print $2}')
+        local docker_memory=$(echo "$docker_info" | grep "^ Total Memory:" | sed 's/.*: //')
+        local docker_arch=$(echo "$docker_info" | grep "^ Architecture:" | awk '{print $2}')
+        local docker_os=$(echo "$docker_info" | grep "^ Operating System:" | sed 's/.*: //')
+
         # Export for later use
         export DOCKER_CONTAINERS_TOTAL="${total:-0}"
         export DOCKER_CONTAINERS_RUNNING="${running:-0}"
         export DOCKER_CONTAINERS_STOPPED="${stopped:-0}"
         export DOCKER_CONTAINERS_PAUSED="${paused:-0}"
         export DOCKER_IMAGES_TOTAL="${images:-0}"
+        export DOCKER_HOST_NAME="${docker_name:-}"
+        export DOCKER_HOST_CPUS="${docker_cpus:-}"
+        export DOCKER_HOST_MEMORY="${docker_memory:-}"
+        export DOCKER_HOST_ARCH="${docker_arch:-}"
+        export DOCKER_HOST_OS="${docker_os:-}"
         return 0
     fi
 
@@ -105,6 +117,11 @@ get_docker_server_stats() {
     export DOCKER_CONTAINERS_STOPPED="0"
     export DOCKER_CONTAINERS_PAUSED="0"
     export DOCKER_IMAGES_TOTAL="0"
+    export DOCKER_HOST_NAME=""
+    export DOCKER_HOST_CPUS=""
+    export DOCKER_HOST_MEMORY=""
+    export DOCKER_HOST_ARCH=""
+    export DOCKER_HOST_OS=""
     return 1
 }
 
@@ -249,7 +266,12 @@ _print_host_summary() {
     [ -n "$ORGANIZATION_NAME" ] && echo "  Organization: $ORGANIZATION_NAME"
     [ -n "$ORGANIZATION_PREFIX" ] && echo "  Org Prefix: $ORGANIZATION_PREFIX"
     [ -n "$ORGANIZATION_MACHINE_OWNERSHIP" ] && echo "  Machine Type: $ORGANIZATION_MACHINE_OWNERSHIP"
-    echo "  Docker Server:"
+    echo "  Docker Engine:"
+    [ -n "$DOCKER_HOST_NAME" ] && echo "    Name: $DOCKER_HOST_NAME"
+    [ -n "$DOCKER_HOST_CPUS" ] && echo "    CPUs: $DOCKER_HOST_CPUS"
+    [ -n "$DOCKER_HOST_MEMORY" ] && echo "    Memory: $DOCKER_HOST_MEMORY"
+    [ -n "$DOCKER_HOST_ARCH" ] && echo "    Architecture: $DOCKER_HOST_ARCH"
+    [ -n "$DOCKER_HOST_OS" ] && echo "    OS: $DOCKER_HOST_OS"
     echo "    Containers: $DOCKER_CONTAINERS_TOTAL (Running: $DOCKER_CONTAINERS_RUNNING, Stopped: $DOCKER_CONTAINERS_STOPPED, Paused: $DOCKER_CONTAINERS_PAUSED)"
     echo "    Images: $DOCKER_IMAGES_TOTAL"
 }
@@ -288,6 +310,13 @@ export HOST_CPU_LOGICAL_COUNT="${HOST_CPU_LOGICAL_COUNT:-}"
 export ORGANIZATION_NAME="${ORGANIZATION_NAME:-}"
 export ORGANIZATION_PREFIX="${ORGANIZATION_PREFIX:-}"
 export ORGANIZATION_MACHINE_OWNERSHIP="${ORGANIZATION_MACHINE_OWNERSHIP:-}"
+
+# Docker engine info
+export DOCKER_HOST_NAME="${DOCKER_HOST_NAME:-}"
+export DOCKER_HOST_CPUS="${DOCKER_HOST_CPUS:-}"
+export DOCKER_HOST_MEMORY="${DOCKER_HOST_MEMORY:-}"
+export DOCKER_HOST_ARCH="${DOCKER_HOST_ARCH:-}"
+export DOCKER_HOST_OS="${DOCKER_HOST_OS:-}"
 
 # Docker server statistics
 export DOCKER_CONTAINERS_TOTAL="$DOCKER_CONTAINERS_TOTAL"
@@ -331,7 +360,12 @@ show_config() {
     echo "  HOST_DOMAIN:   ${HOST_DOMAIN:-<not set>}"
     echo "  HOST_CPU_ARCH: ${HOST_CPU_ARCH:-<not set>}"
     echo ""
-    echo "Docker Statistics:"
+    echo "Docker Engine:"
+    echo "  Name:          ${DOCKER_HOST_NAME:-<not set>}"
+    echo "  CPUs:          ${DOCKER_HOST_CPUS:-<not set>}"
+    echo "  Memory:        ${DOCKER_HOST_MEMORY:-<not set>}"
+    echo "  Architecture:  ${DOCKER_HOST_ARCH:-<not set>}"
+    echo "  OS:            ${DOCKER_HOST_OS:-<not set>}"
     echo "  Containers:    ${DOCKER_CONTAINERS_TOTAL:-0} (Running: ${DOCKER_CONTAINERS_RUNNING:-0})"
     echo "  Images:        ${DOCKER_IMAGES_TOTAL:-0}"
     echo ""
