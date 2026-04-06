@@ -66,27 +66,101 @@ From `.devcontainer/devcontainer.json`:
 
 ---
 
+## Audit Results (2026-04-07)
+
+### Only one script uses these variables
+
+`config-host-info.sh` is the **only** script that reads `DEV_MAC_*`, `DEV_WIN_*`, or `DEV_LINUX_*`. No other scripts in `manage/` or `additions/` reference them.
+
+### Variables actually consumed by `config-host-info.sh`
+
+**Platform detection (used on all platforms):**
+| Variable | What it derives | Needed in template? |
+|----------|----------------|-------------------|
+| `DEV_MAC_USER` | `HOST_USER`, `HOST_OS=macOS` | Yes → mapped to `DEV_HOST_USER` |
+| `DEV_LINUX_USER` | `HOST_USER`, `HOST_OS=Linux` | Yes → mapped to `DEV_HOST_USER` |
+| `DEV_WIN_USERNAME` | `HOST_USER`, `HOST_OS=Windows` | Yes → mapped to `DEV_HOST_USERNAME` |
+
+**Windows-only details (only read when `DEV_WIN_USERNAME` is set):**
+| Variable | What it derives |
+|----------|----------------|
+| `DEV_WIN_COMPUTERNAME` | `HOST_HOSTNAME` |
+| `DEV_WIN_USERDOMAIN` | `HOST_DOMAIN` |
+| `DEV_WIN_PROCESSOR_ARCHITECTURE` | `HOST_ARCH` |
+| `DEV_WIN_PROCESSOR_IDENTIFIER` | `HOST_CPU_MODEL_NAME` |
+| `DEV_WIN_NUMBER_OF_PROCESSORS` | `HOST_CPU_LOGICAL_COUNT` |
+| `DEV_WIN_ONEDRIVE` | Organization detection (via `parse_organization_from_onedrive`) |
+| `DEV_WIN_LOGONSERVER` | Organization detection fallback |
+
+**Never read by any script:**
+| Variable | Status |
+|----------|--------|
+| `DEV_MAC_LOGNAME` | Unused — `DEV_MAC_USER` is used instead |
+| `DEV_LINUX_LOGNAME` | Unused — `DEV_LINUX_USER` is used instead |
+| `DEV_WIN_OS` | Unused — Windows is detected by `DEV_WIN_USERNAME` being set |
+| `DEV_WIN_USERDNSDOMAIN` | Unused |
+| `DEV_WIN_USERDOMAIN_ROAMINGPROFILE` | Unused |
+
+### What's already in the user template (v1.7.23)
+
+```json
+"DEV_HOST_USER": "${localEnv:USER}",
+"DEV_HOST_USERNAME": "${localEnv:USERNAME}",
+"DEV_HOST_OS": "${localEnv:OS}",
+"DEV_HOST_HOME": "${localEnv:HOME}",
+"DEV_HOST_LOGNAME": "${localEnv:LOGNAME}",
+"DEV_HOST_LANG": "${localEnv:LANG}",
+"DEV_HOST_SHELL": "${localEnv:SHELL}",
+"DEV_HOST_TERM_PROGRAM": "${localEnv:TERM_PROGRAM}"
+```
+
+### What's missing for `config-host-info.sh` to work
+
+The script checks `DEV_MAC_USER`, `DEV_LINUX_USER`, `DEV_WIN_USERNAME` — not the new `DEV_HOST_*` names. Two options:
+
+**Option A: Add old variable names to template alongside new ones.**
+Keeps `config-host-info.sh` working without changes. Adds 10 more env vars (noisy).
+
+**Option B: Update `config-host-info.sh` to use the new `DEV_HOST_*` names.**
+Cleaner. Detection logic becomes:
+```bash
+if [ "${DEV_HOST_OS}" = "Windows_NT" ]; then
+    HOST_OS="Windows"
+    HOST_USER="$DEV_HOST_USERNAME"
+elif [[ "${DEV_HOST_HOME}" == /Users/* ]]; then
+    HOST_OS="macOS"
+    HOST_USER="$DEV_HOST_USER"
+else
+    HOST_OS="Linux"
+    HOST_USER="$DEV_HOST_USER"
+fi
+```
+BUT: loses Windows-specific details (COMPUTERNAME, PROCESSOR_ARCHITECTURE, OneDrive organization detection) unless we add those to the template too.
+
+**Option C (recommended): Option B + add Windows-specific vars for the details that matter.**
+Add to template:
+```json
+"DEV_HOST_COMPUTERNAME": "${localEnv:COMPUTERNAME}",
+"DEV_HOST_PROCESSOR_ARCHITECTURE": "${localEnv:PROCESSOR_ARCHITECTURE}",
+"DEV_HOST_ONEDRIVE": "${localEnv:OneDrive}"
+```
+These are empty on Mac/Linux. Only 3 extra vars instead of 10. Covers everything `config-host-info.sh` needs.
+
+Drop the rest (`USERDNSDOMAIN`, `USERDOMAIN_ROAMINGPROFILE`, `LOGONSERVER`, `PROCESSOR_IDENTIFIER`, `NUMBER_OF_PROCESSORS`) — not worth the noise for what they provide.
+
+---
+
 ## Questions to Answer
 
 ### 1. Which variables do scripts actually use?
 
-Before moving all 15 variables, audit which ones are actually read by DCT scripts. Unused variables are just noise in the environment.
-
-```bash
-grep -r "DEV_MAC_\|DEV_WIN_\|DEV_LINUX_" .devcontainer/manage/ .devcontainer/additions/
-```
+**ANSWERED** — see audit above. Only `config-host-info.sh`.
 
 ### 2. Can we simplify the variable set?
 
-Instead of 15 platform-specific variables, could we derive a single `DCT_HOST_OS` variable?
+**ANSWERED** — Option C: update `config-host-info.sh` to use `DEV_HOST_*`, add 3 Windows-specific vars. Total: 11 vars in template (8 current + 3 new).
 
-```json
-"remoteEnv": {
-    "DEV_HOST_OS": "${localEnv:OS}",
-    "DEV_HOST_USER": "${localEnv:USER}",
-    "DEV_HOST_USERNAME": "${localEnv:USERNAME}"
-}
-```
+### ~~3.~~ Remaining questions
 
 Detection logic:
 - `DEV_HOST_OS` = "Windows_NT" → Windows
@@ -188,9 +262,12 @@ Pro: clean, 4 variables instead of 15. Con: requires updating scripts that curre
 
 ## Next Steps
 
-- [ ] Audit: which `DEV_MAC_*` / `DEV_WIN_*` / `DEV_LINUX_*` variables are actually used by scripts?
-- [ ] Check if `Dockerfile.base` uses any of the `build.args`
-- [ ] Decide: Option A (all 15), B (only used), or C (simplified 4)
-- [ ] Implement: add chosen variables to `devcontainer-user-template.json`
-- [ ] Update devcontainer-json.md documentation
-- [ ] Test on Mac, Windows, and Linux hosts
+- [x] Audit: which variables are actually used by scripts? → Only `config-host-info.sh` (2026-04-07)
+- [x] 8 generic `DEV_HOST_*` vars already in user template (v1.7.23)
+- [x] E2E confirmed on Mac: `DEV_HOST_USER`, `DEV_HOST_SHELL`, `DEV_HOST_HOME` all populated (2026-04-07)
+- [ ] Check if `Dockerfile.base` uses any `build.args` at build time (may need to keep them in dev devcontainer)
+- [ ] Decide: Option C recommended — add 3 Windows-specific vars, update `config-host-info.sh`
+- [ ] Add `DEV_HOST_COMPUTERNAME`, `DEV_HOST_PROCESSOR_ARCHITECTURE`, `DEV_HOST_ONEDRIVE` to template
+- [ ] Update `config-host-info.sh` to use `DEV_HOST_*` instead of `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*`
+- [ ] Update devcontainer-json.md documentation with all host env vars
+- [ ] Test on Windows host (need Windows tester)
