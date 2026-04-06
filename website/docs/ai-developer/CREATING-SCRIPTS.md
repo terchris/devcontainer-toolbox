@@ -208,6 +208,56 @@ See existing libraries in `.devcontainer/additions/lib/` for patterns.
 
 ---
 
+## Version Pinning Rules
+
+When a script installs software, decide whether to pin a `DEFAULT_VERSION` or install latest. Wrong choice either way causes problems: unpinned runtimes break user code on surprise upgrades, stale pins give users 3-year-old software.
+
+### Pin when
+
+**Rule 1: Pin if the version affects user code compatibility.**
+Languages, runtimes, SDKs, and frameworks. A version change can break builds, imports, or APIs.
+Pin: Go, Java, .NET, PHP, Node.js, Hugo, Python.
+Don't pin: shellcheck, jq, curl, wget, git.
+
+**Rule 2: Pin if config format changes between versions.**
+Tools where the user writes config files tied to a specific schema.
+Pin: OTel Collector (config YAML schema changes), Kubernetes tools (API versions).
+
+### Don't pin when
+
+**Rule 3: Don't pin if installed via a package manager that handles compatibility.**
+apt, npm global, pip, rustup — these resolve dependencies themselves.
+
+**Rule 4: Don't pin utilities where "latest" is always safe.**
+Small CLI tools, formatters, dev helpers. Breaking changes are rare and low-impact.
+
+### How to pin
+
+**Rule 5: Every pin MUST have a Renovate annotation.**
+No pin without a maintenance path. Format:
+```bash
+# renovate: datasource=github-releases depName=golang/go
+DEFAULT_VERSION="1.26.1"
+```
+If Renovate is not yet set up, document the pin with a date comment:
+```bash
+DEFAULT_VERSION="1.26.1"  # Pinned 2026-04-06, check https://go.dev/dl/
+```
+
+**Rule 6: Pin to the latest stable, not an arbitrary old version.**
+When adding a new pin, always check upstream for the current stable release. Never copy a version from a tutorial or blog post without verifying.
+
+**Rule 7: Use LTS/stable tracks, not bleeding edge.**
+For software with LTS releases, pin to the active LTS:
+- Node.js: latest v22.x (Jod LTS), not v24.x until it becomes LTS
+- Java: 17 or 21 (LTS), not 22 (short-term)
+- .NET: 8.0 (LTS), not 10.0 (current but short-term support)
+
+**Rule 8: `--version` flag must always be available.**
+Every script with a `DEFAULT_VERSION` must accept `--version X.Y.Z` so users can override. The pin is a sensible default, not a constraint.
+
+---
+
 ## Validation Checklist
 
 Before committing a new script:
@@ -227,6 +277,7 @@ Before committing a new script:
 8. [ ] `--uninstall` flag works (for install scripts)
 9. [ ] Script is idempotent (safe to run twice)
 10. [ ] **All tests pass** (CI will reject PRs with failing tests)
+11. [ ] **Install cycle test passes** if you changed a version pin or install logic (`run-all-tests.sh install <script>`)
 
 ---
 
@@ -247,6 +298,26 @@ If tests fail:
 - Static test failures → Check metadata, syntax, categories
 - Unit test failures → Check `--help` and `--verify` implementations
 - Install test failures → Check install/uninstall logic
+
+### When to run install cycle tests (Level 3)
+
+The install cycle test (`run-all-tests.sh install`) actually downloads, installs, verifies, uninstalls, and re-verifies. It is **not run in CI** — it runs locally in the devcontainer only.
+
+**You MUST run it when:**
+- Bumping a `DEFAULT_VERSION` pin (e.g., Go 1.21 → 1.26)
+- Changing download URLs or archive handling logic
+- Adding a new install script
+- Modifying install/uninstall logic
+
+```bash
+# After changing install-dev-golang.sh:
+.devcontainer/additions/tests/run-all-tests.sh install install-dev-golang.sh
+
+# Full cycle for ALL scripts (slow — downloads everything, 15-30 min):
+.devcontainer/additions/tests/run-all-tests.sh install
+```
+
+The test auto-discovers all `install-*.sh` scripts — no hardcoded list. New scripts are automatically included.
 
 See [testing.md](../contributors/testing) for details on the test framework.
 See [CI-CD.md](../contributors/ci-cd) for what CI checks.

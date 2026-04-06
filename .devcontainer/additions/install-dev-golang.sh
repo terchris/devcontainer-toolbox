@@ -63,7 +63,7 @@ source "${SCRIPT_DIR}/lib/logging.sh"
 
 # --- Default Configuration ---
 # Standard version variables (for scripts that support --version flag)
-DEFAULT_VERSION="1.21.0"  # Default version to install if --version not specified
+DEFAULT_VERSION="1.26.1"  # Default version to install if --version not specified
 TARGET_VERSION=""         # Actual version to install (set by --version flag or defaults to DEFAULT_VERSION)
 
 
