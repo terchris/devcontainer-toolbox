@@ -127,19 +127,66 @@ VS Code extensions installed automatically when the container starts. These are 
 "remoteEnv": {
     "DCT_HOME": "/opt/devcontainer-toolbox",
     "DCT_WORKSPACE": "/workspace",
-    "DCT_IMAGE_VERSION": "1.7.16"    
+    "DCT_IMAGE_VERSION": "1.7.23",
+    "DEV_HOST_USER": "${localEnv:USER}",
+    "DEV_HOST_USERNAME": "${localEnv:USERNAME}",
+    "DEV_HOST_OS": "${localEnv:OS}",
+    "DEV_HOST_HOME": "${localEnv:HOME}",
+    "DEV_HOST_LOGNAME": "${localEnv:LOGNAME}",
+    "DEV_HOST_LANG": "${localEnv:LANG}",
+    "DEV_HOST_SHELL": "${localEnv:SHELL}",
+    "DEV_HOST_TERM_PROGRAM": "${localEnv:TERM_PROGRAM}",
+    "DEV_HOST_COMPUTERNAME": "${localEnv:COMPUTERNAME}",
+    "DEV_HOST_PROCESSOR_ARCHITECTURE": "${localEnv:PROCESSOR_ARCHITECTURE}",
+    "DEV_HOST_ONEDRIVE": "${localEnv:OneDrive}"
 }
 ```
 
-Environment variables available inside the container. Set by VS Code at container start, available to all processes.
+Environment variables available inside the container. Set by VS Code at container start, available to all processes. `${localEnv:...}` reads the value from the **host machine** — empty if the variable doesn't exist on the host.
+
+#### DCT system variables
 
 | Variable | Value | Purpose |
 |----------|-------|---------|
 | `DCT_HOME` | `/opt/devcontainer-toolbox` | Root of the toolbox installation. All scripts reference this. |
 | `DCT_WORKSPACE` | `/workspace` | The mounted project directory. Scripts use this instead of hardcoding `/workspace`. |
-| `DCT_IMAGE_VERSION` | e.g. `1.7.17` | The image version this devcontainer.json was last updated for. `dev-update` writes the new version here after pulling, which triggers VS Code's rebuild prompt. |
+| `DCT_IMAGE_VERSION` | e.g. `1.7.23` | The image version this devcontainer.json was last updated for. `dev-update` downloads the latest template which has this set by CI. VS Code detects the change and prompts rebuild. |
 
-**Why `remoteEnv` instead of Dockerfile `ENV`:** These values are set by VS Code, not baked into the image. This allows the same image to work with different workspace paths or toolbox locations if needed. It also means `DCT_IMAGE_VERSION` can be updated by `dev-update` without rebuilding.
+#### Host detection variables
+
+These variables pass information from the developer's host machine into the container. Used by `config-host-info.sh` for telemetry and by scripts that need to adapt to the host platform.
+
+**To see all host variables inside the container, run:** `config-host-info --env`
+
+| Variable | Host source | Set on | Purpose |
+|----------|------------|--------|---------|
+| `DEV_HOST_USER` | `USER` | Mac, Linux | Username |
+| `DEV_HOST_USERNAME` | `USERNAME` | Windows, Mac | Username (Windows primary, also set on Mac) |
+| `DEV_HOST_OS` | `OS` | Windows only | `Windows_NT` if Windows, empty otherwise |
+| `DEV_HOST_HOME` | `HOME` | Mac, Linux | Home directory (starts with `/Users/` on Mac) |
+| `DEV_HOST_LOGNAME` | `LOGNAME` | Mac, Linux | Login name |
+| `DEV_HOST_LANG` | `LANG` | All | Locale setting (e.g., `en_US.UTF-8`) |
+| `DEV_HOST_SHELL` | `SHELL` | Mac, Linux | Default shell (e.g., `/bin/zsh`) |
+| `DEV_HOST_TERM_PROGRAM` | `TERM_PROGRAM` | Mac | Terminal app (e.g., `vscode`, `Apple_Terminal`) |
+| `DEV_HOST_COMPUTERNAME` | `COMPUTERNAME` | Windows only | Machine name |
+| `DEV_HOST_PROCESSOR_ARCHITECTURE` | `PROCESSOR_ARCHITECTURE` | Windows only | CPU architecture (`AMD64`, `ARM64`) |
+| `DEV_HOST_ONEDRIVE` | `OneDrive` | Windows only | OneDrive path (used for organization detection) |
+
+#### Platform detection logic
+
+Scripts can determine the host OS from these variables:
+
+```bash
+if [ "${DEV_HOST_OS}" = "Windows_NT" ]; then
+    # Windows host
+elif [[ "${DEV_HOST_HOME}" == /Users/* ]]; then
+    # macOS host
+else
+    # Linux host
+fi
+```
+
+**Why `remoteEnv` instead of Dockerfile `ENV`:** These values are set by VS Code at container start, not baked into the image. This allows the same image to work across all platforms. Host-specific values (username, OS, paths) are injected at runtime via `${localEnv:...}`.
 
 ---
 

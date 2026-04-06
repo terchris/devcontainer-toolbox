@@ -127,6 +127,7 @@ RUN sudo ln -sf /opt/devcontainer-toolbox/manage/dev-setup.sh /usr/local/bin/dev
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-cubes.sh /usr/local/bin/dev-cubes && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-log.sh /usr/local/bin/dev-log && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-tools.sh /usr/local/bin/dev-tools && \
+    sudo ln -sf /opt/devcontainer-toolbox/additions/config-host-info.sh /usr/local/bin/config-host-info && \
     # Make all scripts executable (files owned by vscode via --chown)
     chmod +x /opt/devcontainer-toolbox/manage/*.sh && \
     chmod +x /opt/devcontainer-toolbox/additions/*.sh 2>/dev/null || true && \

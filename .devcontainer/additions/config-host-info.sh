@@ -152,45 +152,74 @@ parse_organization_from_onedrive() {
     export ORGANIZATION_MACHINE_OWNERSHIP
 }
 
-detect_host_info() {
-    log_info "Detecting host information for telemetry..."
-    echo ""
+#------------------------------------------------------------------------------
+# SHARED DETECTION — reads DEV_HOST_* (new), falls back to DEV_MAC_*/DEV_WIN_*/DEV_LINUX_* (legacy)
+#------------------------------------------------------------------------------
 
-    # Detect OS and user from environment variables
-    if [ -n "$DEV_MAC_USER" ]; then
+_detect_host_vars() {
+    # New DEV_HOST_* variables (from devcontainer-user-template.json remoteEnv)
+    if [ "${DEV_HOST_OS:-}" = "Windows_NT" ]; then
+        export HOST_OS="Windows"
+        export HOST_USER="${DEV_HOST_USERNAME:-${DEV_HOST_USER:-unknown}}"
+        export HOST_HOSTNAME="${DEV_HOST_COMPUTERNAME:-devcontainer}"
+        export HOST_DOMAIN="none"
+        export HOST_ARCH="${DEV_HOST_PROCESSOR_ARCHITECTURE:-}"
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        parse_organization_from_onedrive "${DEV_HOST_ONEDRIVE:-}" ""
+    elif [[ "${DEV_HOST_HOME:-}" == /Users/* ]]; then
+        export HOST_OS="macOS"
+        export HOST_USER="${DEV_HOST_USER:-unknown}"
+        export HOST_HOSTNAME="devcontainer"
+        export HOST_DOMAIN="none"
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
+    elif [ -n "${DEV_HOST_USER:-}" ]; then
+        export HOST_OS="Linux"
+        export HOST_USER="$DEV_HOST_USER"
+        export HOST_HOSTNAME="devcontainer"
+        export HOST_DOMAIN="none"
+        export HOST_ARCH=""
+        export HOST_CPU_MODEL_NAME=""
+        export HOST_CPU_LOGICAL_COUNT=""
+        export ORGANIZATION_NAME=""
+        export ORGANIZATION_PREFIX=""
+        export ORGANIZATION_MACHINE_OWNERSHIP=""
+    # Legacy fallback: DEV_MAC_* / DEV_WIN_* / DEV_LINUX_* (from dev devcontainer build.args)
+    elif [ -n "${DEV_MAC_USER:-}" ]; then
         export HOST_OS="macOS"
         export HOST_USER="$DEV_MAC_USER"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
-        # Non-Windows: set empty values for Windows-specific attributes
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
         export HOST_CPU_LOGICAL_COUNT=""
         export ORGANIZATION_NAME=""
         export ORGANIZATION_PREFIX=""
         export ORGANIZATION_MACHINE_OWNERSHIP=""
-    elif [ -n "$DEV_LINUX_USER" ]; then
+    elif [ -n "${DEV_LINUX_USER:-}" ]; then
         export HOST_OS="Linux"
         export HOST_USER="$DEV_LINUX_USER"
         export HOST_HOSTNAME="devcontainer"
         export HOST_DOMAIN="none"
-        # Non-Windows: set empty values for Windows-specific attributes
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
         export HOST_CPU_LOGICAL_COUNT=""
         export ORGANIZATION_NAME=""
         export ORGANIZATION_PREFIX=""
         export ORGANIZATION_MACHINE_OWNERSHIP=""
-    elif [ -n "$DEV_WIN_USERNAME" ]; then
+    elif [ -n "${DEV_WIN_USERNAME:-}" ]; then
         export HOST_OS="Windows"
         export HOST_USER="$DEV_WIN_USERNAME"
         export HOST_HOSTNAME="${DEV_WIN_COMPUTERNAME:-devcontainer}"
         export HOST_DOMAIN="${DEV_WIN_USERDOMAIN:-none}"
-        # Windows extended variables using OTel semantic conventions
         export HOST_ARCH="${DEV_WIN_PROCESSOR_ARCHITECTURE:-}"
         export HOST_CPU_MODEL_NAME="${DEV_WIN_PROCESSOR_IDENTIFIER:-}"
         export HOST_CPU_LOGICAL_COUNT="${DEV_WIN_NUMBER_OF_PROCESSORS:-}"
-        # Parse organization from OneDrive path
         parse_organization_from_onedrive "${DEV_WIN_ONEDRIVE:-}" "${DEV_WIN_LOGONSERVER:-}"
     else
         export HOST_OS="unknown"
@@ -205,22 +234,16 @@ detect_host_info() {
         export ORGANIZATION_MACHINE_OWNERSHIP=""
     fi
 
-    # Get architecture using helper function
     export HOST_CPU_ARCH="$(get_architecture)"
-
-    # Get Docker server statistics
     get_docker_server_stats
+}
 
-    # Save to environment file for persistence
-    save_host_info_to_env
-
-    # Display summary
+_print_host_summary() {
     echo "  OS: $HOST_OS"
     echo "  User: $HOST_USER"
     echo "  Hostname: $HOST_HOSTNAME"
     [ -n "$HOST_DOMAIN" ] && [ "$HOST_DOMAIN" != "none" ] && echo "  Domain: $HOST_DOMAIN"
     echo "  Architecture: $HOST_CPU_ARCH"
-    # Show Windows extended info if available
     [ -n "$HOST_CPU_LOGICAL_COUNT" ] && echo "  Processors: $HOST_CPU_LOGICAL_COUNT"
     [ -n "$HOST_ARCH" ] && echo "  Processor Arch: $HOST_ARCH"
     [ -n "$ORGANIZATION_NAME" ] && echo "  Organization: $ORGANIZATION_NAME"
@@ -229,6 +252,16 @@ detect_host_info() {
     echo "  Docker Server:"
     echo "    Containers: $DOCKER_CONTAINERS_TOTAL (Running: $DOCKER_CONTAINERS_RUNNING, Stopped: $DOCKER_CONTAINERS_STOPPED, Paused: $DOCKER_CONTAINERS_PAUSED)"
     echo "    Images: $DOCKER_IMAGES_TOTAL"
+}
+
+detect_host_info() {
+    log_info "Detecting host information for telemetry..."
+    echo ""
+
+    _detect_host_vars
+    save_host_info_to_env
+
+    _print_host_summary
     echo ""
     log_success "Host information detected"
 }
@@ -313,63 +346,57 @@ show_config() {
 verify_host_info() {
     # Silent mode - just detect and save
     setup_persistent_storage
+    _detect_host_vars
+    save_host_info_to_env
+    return 0
+}
 
-    # Always detect fresh (host info can change if user switches machines)
-    if [ -n "$DEV_MAC_USER" ]; then
-        export HOST_OS="macOS"
-        export HOST_USER="$DEV_MAC_USER"
-        export HOST_HOSTNAME="devcontainer"
-        export HOST_DOMAIN="none"
-        # Non-Windows: set empty values for Windows-specific attributes
-        export HOST_ARCH=""
-        export HOST_CPU_MODEL_NAME=""
-        export HOST_CPU_LOGICAL_COUNT=""
-        export ORGANIZATION_NAME=""
-        export ORGANIZATION_PREFIX=""
-        export ORGANIZATION_MACHINE_OWNERSHIP=""
-    elif [ -n "$DEV_LINUX_USER" ]; then
-        export HOST_OS="Linux"
-        export HOST_USER="$DEV_LINUX_USER"
-        export HOST_HOSTNAME="devcontainer"
-        export HOST_DOMAIN="none"
-        # Non-Windows: set empty values for Windows-specific attributes
-        export HOST_ARCH=""
-        export HOST_CPU_MODEL_NAME=""
-        export HOST_CPU_LOGICAL_COUNT=""
-        export ORGANIZATION_NAME=""
-        export ORGANIZATION_PREFIX=""
-        export ORGANIZATION_MACHINE_OWNERSHIP=""
-    elif [ -n "$DEV_WIN_USERNAME" ]; then
-        export HOST_OS="Windows"
-        export HOST_USER="$DEV_WIN_USERNAME"
-        export HOST_HOSTNAME="${DEV_WIN_COMPUTERNAME:-devcontainer}"
-        export HOST_DOMAIN="${DEV_WIN_USERDOMAIN:-none}"
-        # Windows extended variables using OTel semantic conventions
-        export HOST_ARCH="${DEV_WIN_PROCESSOR_ARCHITECTURE:-}"
-        export HOST_CPU_MODEL_NAME="${DEV_WIN_PROCESSOR_IDENTIFIER:-}"
-        export HOST_CPU_LOGICAL_COUNT="${DEV_WIN_NUMBER_OF_PROCESSORS:-}"
-        # Parse organization from OneDrive path
-        parse_organization_from_onedrive "${DEV_WIN_ONEDRIVE:-}" "${DEV_WIN_LOGONSERVER:-}"
-    else
-        export HOST_OS="unknown"
-        export HOST_USER="unknown"
-        export HOST_HOSTNAME="devcontainer"
-        export HOST_DOMAIN="none"
-        export HOST_ARCH=""
-        export HOST_CPU_MODEL_NAME=""
-        export HOST_CPU_LOGICAL_COUNT=""
-        export ORGANIZATION_NAME=""
-        export ORGANIZATION_PREFIX=""
-        export ORGANIZATION_MACHINE_OWNERSHIP=""
+refresh_host_info() {
+    # Re-detect from current env vars, save, and show result
+    setup_persistent_storage
+    _detect_host_vars
+    save_host_info_to_env
+
+    echo ""
+    echo "🔄 Host information refreshed:"
+    echo ""
+    _print_host_summary
+    echo ""
+    log_success "Saved to $PERSISTENT_FILE"
+    echo ""
+}
+
+#------------------------------------------------------------------------------
+# SHOW HOST ENV - Display all DEV_HOST_* environment variables
+#------------------------------------------------------------------------------
+
+show_host_env() {
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🖥️  Host Environment Variables (from devcontainer.json remoteEnv)"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    local found=0
+    while IFS='=' read -r name value; do
+        if [[ "$name" == DEV_HOST_* ]]; then
+            if [ -n "$value" ]; then
+                printf "  %-30s %s\n" "$name" "$value"
+            else
+                printf "  %-30s %s\n" "$name" "(empty)"
+            fi
+            found=$((found + 1))
+        fi
+    done < <(env | sort)
+
+    if [ $found -eq 0 ]; then
+        echo "  No DEV_HOST_* variables found."
+        echo ""
+        echo "  These are set in .devcontainer/devcontainer.json remoteEnv."
+        echo "  Run 'dev-update' to get the latest template with host variables."
     fi
 
-    # Get architecture using helper function
-    export HOST_CPU_ARCH="$(get_architecture)"
-
-    # Get Docker server statistics
-    get_docker_server_stats
-
-    save_host_info_to_env
+    echo ""
 
     return 0
 }
@@ -385,16 +412,26 @@ main() {
             show_config
             exit $?
             ;;
+        --env)
+            show_host_env
+            exit $?
+            ;;
+        --refresh)
+            refresh_host_info
+            exit $?
+            ;;
         --verify)
             verify_host_info
             exit $?
             ;;
         --help)
-            echo "Usage: $0 [--show|--verify|--help]"
+            echo "Usage: config-host-info [--show|--env|--refresh|--verify|--help]"
             echo ""
-            echo "  (no args)  Detect and save host information"
-            echo "  --show     Display current host information"
-            echo "  --verify   Refresh host information (non-interactive)"
+            echo "  (no args)  Detect and save host information (interactive)"
+            echo "  --show     Display saved host information (from .host-info file)"
+            echo "  --env      Display all DEV_HOST_* environment variables from host"
+            echo "  --refresh  Re-detect from current env vars, save, and show result"
+            echo "  --verify   Silent re-detect and save (used by entrypoint on startup)"
             echo "  --help     Show this help"
             exit 0
             ;;
