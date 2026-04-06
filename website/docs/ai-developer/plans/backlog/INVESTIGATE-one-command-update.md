@@ -318,6 +318,56 @@ For a proper E2E test, the tester's devcontainer.json should use `:latest` (matc
 
 ---
 
+## Open Problem: Template Drift for Existing Users
+
+`dev-update` pulls the new image and updates `DCT_IMAGE_VERSION`, but does NOT add new fields to devcontainer.json. When we add features to the template (e.g., `DEV_HOST_*` env vars, new extensions, new features), existing users don't get them.
+
+**Example:** v1.7.20 added `DEV_HOST_USER`, `DEV_HOST_USERNAME`, `DEV_HOST_OS`, `DEV_HOST_HOME` to the template. The tester (existing install) didn't get these — only new installs via `install.sh` get them.
+
+**Options to solve:**
+
+**Option A: `dev-update` replaces devcontainer.json entirely**
+Download the latest template, overwrite the local file. Simple but dangerous — any user customizations (added extensions, custom runArgs, network settings) would be lost.
+
+**Option B: `dev-update` merges new fields**
+Download the template, compare with local file, add missing fields. Complex — need JSON merge logic (jq can't handle JSONC, but our file is now clean JSON). Would need to handle:
+- New remoteEnv entries → add
+- Removed entries → leave or warn?
+- Changed values → keep local or use template?
+- New top-level fields (features, etc.) → add
+
+**Option C: `dev-update --sync-template`**
+Separate flag that downloads the latest template and shows a diff:
+```
+dev-update --sync-template
+
+Template changes available:
+  + remoteEnv.DEV_HOST_USER: "${localEnv:USER}"
+  + remoteEnv.DEV_HOST_USERNAME: "${localEnv:USERNAME}"
+  + remoteEnv.DEV_HOST_OS: "${localEnv:OS}"
+  + remoteEnv.DEV_HOST_HOME: "${localEnv:HOME}"
+
+Apply? [y/N]
+```
+Interactive, safe, user sees what changes.
+
+**Option D: Full template replacement with backup**
+```
+dev-update --sync-template
+  → Downloads latest template
+  → Backs up current to devcontainer.json.backup
+  → Replaces with template
+  → Restores DCT_IMAGE_VERSION from backup
+  → Shows diff of what changed
+```
+Simple, safe (backup exists), handles all cases. User customizations in the backup can be manually re-applied.
+
+**Recommendation:** Option D — simple, complete, safe with backup. The devcontainer.json should be treated as DCT-managed (per our docs: "developers should not need to edit this file"). If they did customize, the backup preserves their changes.
+
+**This should be Phase 6 of the plan.**
+
+---
+
 ## Next Steps
 
 - [x] **Test**: VS Code triggers on `remoteEnv` config changes, not comments (2026-04-06)
@@ -325,8 +375,10 @@ For a proper E2E test, the tester's devcontainer.json should use `:latest` (matc
 - [x] **Test**: ghcr.io versioned tags work as image source (2026-04-06)
 - [x] **Finding**: `dev-sync` causes false rebuild prompt on startup — must be removed (2026-04-06)
 - [x] **Finding**: pinned image tags need special handling in `dev-update` (2026-04-06)
-- [ ] **E2E test**: Full flow with `:latest` image (simulate old version via docker tag)
-- [ ] **Implement**: Phase 1-5 per PLAN-one-command-update.md
+- [x] **E2E test**: Full flow v1.7.19 → v1.7.20: notification → dev-update → pull → rebuild prompt (2026-04-06)
+- [x] **E2E test**: No false prompt on clean start (confirmed — earlier false prompt was test artifact)
+- [x] **Implement**: Phase 1-5 per PLAN-one-command-update.md
+- [ ] **Open**: Template drift — existing users don't get new devcontainer.json fields (needs Phase 6)
 
 ---
 
