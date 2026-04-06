@@ -136,11 +136,16 @@ if [ -f "$ADDITIONS_DIR/otel/scripts/send-tools-inventory.sh" ]; then
     fi
 fi
 
-# Auto-sync scripts (quiet, non-blocking, 10s timeout)
-if [ -f "$DCT_HOME/manage/dev-sync.sh" ]; then
+# Check for container image updates (lightweight version check only)
+_remote_ver=$(timeout 5 curl -fsSL "https://raw.githubusercontent.com/helpers-no/devcontainer-toolbox/main/version.txt" 2>/dev/null | tr -d '[:space:]' || echo "")
+_local_ver=""
+if [ -f "$DCT_HOME/version.txt" ]; then
+    _local_ver=$(cat "$DCT_HOME/version.txt" 2>/dev/null | tr -d '[:space:]')
+fi
+if [ -n "$_remote_ver" ] && [ -n "$_local_ver" ] && [ "$_remote_ver" != "$_local_ver" ]; then
     echo ""
-    echo "🔄 Checking for script updates..."
-    timeout 10 bash "$DCT_HOME/manage/dev-sync.sh" --quiet 2>/dev/null || true
+    echo "⚠️  DCT update available: v${_local_ver} → v${_remote_ver}"
+    echo "   Run: dev-update"
 fi
 
 # =============================================================================

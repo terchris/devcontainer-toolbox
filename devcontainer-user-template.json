@@ -35,7 +35,8 @@
 
     "remoteEnv": {
         "DCT_HOME": "/opt/devcontainer-toolbox",
-        "DCT_WORKSPACE": "/workspace"
+        "DCT_WORKSPACE": "/workspace",
+        "DCT_IMAGE_VERSION": "1.7.17"
     },
 
     // Docker socket + CLI for all platforms (Docker Desktop, OrbStack, Rancher Desktop,
