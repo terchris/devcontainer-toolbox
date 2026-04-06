@@ -116,26 +116,20 @@ Full update cycle works end-to-end. **One command + one click.**
 
 ---
 
-## Phase 6: Template replacement on every update — OPEN
+## Phase 6: Template replacement on every update — ✅ DONE
 
-**Problem:** `dev-update` only changes `DCT_IMAGE_VERSION` but doesn't update the rest of devcontainer.json. When we add new fields to the template (e.g., `DEV_HOST_*` env vars, new features), existing users don't get them.
+**Problem:** `dev-update` only changed `DCT_IMAGE_VERSION` but didn't update the rest of devcontainer.json. When we add new fields to the template (e.g., `DEV_HOST_*` env vars, new features), existing users didn't get them.
 
-**Strategy:** DCT owns devcontainer.json — developers should not edit it. On every `dev-update`, replace the file entirely with the latest template. Back up the old one in case the user did customize.
+**Solution:** DCT owns devcontainer.json. On every `dev-update`, download the latest template from GitHub, back up the old file, replace entirely. CI already sets `DCT_IMAGE_VERSION` in the template, so no sed needed.
 
 ### Tasks
 
-- [ ] 6.1 Add a `"managed"` message to `customizations.devcontainer-toolbox` in the template:
-  ```json
-  "devcontainer-toolbox": {
-      "documentation": "https://dct.sovereignsky.no/docs/contributors/architecture/devcontainer-json",
-      "managed": "This file is managed by dev-update. Do not edit — changes will be overwritten. See documentation URL above."
-  }
-  ```
-- [ ] 6.2 In `dev-update`, after pulling the image: download the latest `devcontainer-user-template.json` from GitHub
-- [ ] 6.3 Back up current devcontainer.json to `.devcontainer/backup/devcontainer.json.<old-version>` (create dir if needed, gitignore it)
-- [ ] 6.4 Replace devcontainer.json with the downloaded template
-- [ ] 6.5 Set `DCT_IMAGE_VERSION` to the new version in the replaced file (via sed)
-- [ ] 6.6 VS Code detects the change → rebuild prompt (already works)
+- [x] 6.1 Added `"managed"` message to `customizations.devcontainer-toolbox` in template (v1.7.21)
+- [x] 6.2 `dev-update` downloads latest `devcontainer-user-template.json` after pulling image
+- [x] 6.3 Back up current devcontainer.json to `.devcontainer/backup/devcontainer.json.<old-version>`
+- [x] 6.4 Replace devcontainer.json with downloaded template (CI already has correct `DCT_IMAGE_VERSION`)
+- [x] ~~6.5 Set DCT_IMAGE_VERSION via sed~~ — not needed, CI handles it in the template
+- [x] 6.6 VS Code detects the change → rebuild prompt (already works)
 - [ ] 6.7 Add `.devcontainer/backup/` to `.gitignore` via `ensure-gitignore.sh`
 - [ ] 6.8 Test: existing install with old template → `dev-update` → verify new fields appear, backup exists
 

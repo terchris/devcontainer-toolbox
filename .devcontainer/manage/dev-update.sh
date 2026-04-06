@@ -133,23 +133,46 @@ if ! docker pull "$IMAGE"; then
     exit 1
 fi
 
-# ─── Trigger VS Code rebuild prompt ──────────────────────────────────────────
+# ─── Update devcontainer.json with latest template ───────────────────────────
+
+TEMPLATE_URL="https://raw.githubusercontent.com/$REPO/main/devcontainer-user-template.json"
 
 echo ""
-if [ -f "$DEVCONTAINER_JSON" ] && grep -q "DCT_IMAGE_VERSION" "$DEVCONTAINER_JSON"; then
-    sed -i "s/\"DCT_IMAGE_VERSION\": \"[^\"]*\"/\"DCT_IMAGE_VERSION\": \"${REMOTE_VERSION}\"/" "$DEVCONTAINER_JSON"
-    echo "✅ DCT v${REMOTE_VERSION} downloaded."
-    echo ""
-    echo "   VS Code should prompt you to rebuild — click \"Rebuild\" to apply."
-    echo ""
-    echo "   If you missed the prompt:"
-    echo "     Cmd+Shift+P (Mac) or Ctrl+Shift+P (Windows/Linux)"
-    echo "     → 'Dev Containers: Rebuild Container'"
-    echo ""
-    echo "   Your files in /workspace are safe."
+echo "📄 Updating devcontainer.json..."
+
+if [ -f "$DEVCONTAINER_JSON" ]; then
+    # Download latest template
+    TEMPLATE_CONTENT=$(curl -fsSL "$TEMPLATE_URL" 2>/dev/null || echo "")
+
+    if [ -n "$TEMPLATE_CONTENT" ]; then
+        # Back up current file
+        BACKUP_DIR="$WORKSPACE/.devcontainer/backup"
+        mkdir -p "$BACKUP_DIR"
+        cp "$DEVCONTAINER_JSON" "$BACKUP_DIR/devcontainer.json.${CURRENT_VERSION}"
+
+        # Replace with latest template
+        echo "$TEMPLATE_CONTENT" > "$DEVCONTAINER_JSON"
+
+        echo "   ✅ devcontainer.json updated to v${REMOTE_VERSION}"
+        echo "   Backup: .devcontainer/backup/devcontainer.json.${CURRENT_VERSION}"
+    else
+        echo "   ⚠️  Could not download template — updating version only"
+        if grep -q "DCT_IMAGE_VERSION" "$DEVCONTAINER_JSON"; then
+            sed -i "s/\"DCT_IMAGE_VERSION\": \"[^\"]*\"/\"DCT_IMAGE_VERSION\": \"${REMOTE_VERSION}\"/" "$DEVCONTAINER_JSON"
+        fi
+    fi
 else
-    echo "✅ DCT v${REMOTE_VERSION} downloaded."
-    echo "   To apply: VS Code → Cmd/Ctrl+Shift+P → 'Dev Containers: Rebuild Container'"
-    echo "   Your files in /workspace are safe."
+    echo "   ⚠️  devcontainer.json not found at $DEVCONTAINER_JSON"
 fi
+
+echo ""
+echo "✅ DCT v${REMOTE_VERSION} downloaded."
+echo ""
+echo "   VS Code should prompt you to rebuild — click \"Rebuild\" to apply."
+echo ""
+echo "   If you missed the prompt:"
+echo "     Cmd+Shift+P (Mac) or Ctrl+Shift+P (Windows/Linux)"
+echo "     → 'Dev Containers: Rebuild Container'"
+echo ""
+echo "   Your files in /workspace are safe."
 echo ""

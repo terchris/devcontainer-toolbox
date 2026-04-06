@@ -22,6 +22,13 @@ EOF
         echo "# DevContainer Toolbox - credentials folder (NEVER commit)" >> "$gitignore_file"
         echo ".devcontainer.secrets/" >> "$gitignore_file"
     fi
+
+    # Ensure .devcontainer/backup/ is gitignored (dev-update backups)
+    if [ -f "$gitignore_file" ] && ! grep -q "^\.devcontainer/backup" "$gitignore_file" 2>/dev/null; then
+        echo "" >> "$gitignore_file"
+        echo "# DevContainer Toolbox - devcontainer.json backups from dev-update" >> "$gitignore_file"
+        echo ".devcontainer/backup/" >> "$gitignore_file"
+    fi
 }
 
 # Run the check when sourced
