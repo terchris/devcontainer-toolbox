@@ -26,7 +26,7 @@
     "remoteEnv": {
         "DCT_HOME": "/opt/devcontainer-toolbox",
         "DCT_WORKSPACE": "/workspace",
-        "DCT_IMAGE_VERSION": "1.7.18"
+        "DCT_IMAGE_VERSION": "1.7.19"
     },
     "features": {
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
