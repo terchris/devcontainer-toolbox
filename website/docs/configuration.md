@@ -161,7 +161,7 @@ Container Starts (ENTRYPOINT runs)
 Every start:
   - Configure git identity
   - Start background services
-  - Sync latest scripts
+  - Check for updates (shows notification if newer version available)
        ↓
 First start only:
   - Create .devcontainer.extend/ with defaults
