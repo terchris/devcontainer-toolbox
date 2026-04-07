@@ -127,7 +127,7 @@ VS Code extensions installed automatically when the container starts. These are 
 "remoteEnv": {
     "DCT_HOME": "/opt/devcontainer-toolbox",
     "DCT_WORKSPACE": "/workspace",
-    "DCT_IMAGE_VERSION": "1.7.23",
+    "DCT_IMAGE_VERSION": "1.7.31",
     "DEV_HOST_USER": "${localEnv:USER}",
     "DEV_HOST_USERNAME": "${localEnv:USERNAME}",
     "DEV_HOST_OS": "${localEnv:OS}",
@@ -136,6 +136,7 @@ VS Code extensions installed automatically when the container starts. These are 
     "DEV_HOST_LANG": "${localEnv:LANG}",
     "DEV_HOST_SHELL": "${localEnv:SHELL}",
     "DEV_HOST_TERM_PROGRAM": "${localEnv:TERM_PROGRAM}",
+    "DEV_HOST_HOSTNAME": "${localEnv:HOSTNAME}",
     "DEV_HOST_COMPUTERNAME": "${localEnv:COMPUTERNAME}",
     "DEV_HOST_PROCESSOR_ARCHITECTURE": "${localEnv:PROCESSOR_ARCHITECTURE}",
     "DEV_HOST_ONEDRIVE": "${localEnv:OneDrive}"
@@ -150,7 +151,7 @@ Environment variables available inside the container. Set by VS Code at containe
 |----------|-------|---------|
 | `DCT_HOME` | `/opt/devcontainer-toolbox` | Root of the toolbox installation. All scripts reference this. |
 | `DCT_WORKSPACE` | `/workspace` | The mounted project directory. Scripts use this instead of hardcoding `/workspace`. |
-| `DCT_IMAGE_VERSION` | e.g. `1.7.23` | The image version this devcontainer.json was last updated for. `dev-update` downloads the latest template which has this set by CI. VS Code detects the change and prompts rebuild. |
+| `DCT_IMAGE_VERSION` | e.g. `1.7.31` | The image version this devcontainer.json was last updated for. `dev-update` downloads the latest template which has this set by CI. VS Code detects the change and prompts rebuild. |
 
 #### Host detection variables
 
@@ -285,6 +286,27 @@ Adds a tiny init process (`tini`) as PID 1 inside the container. This properly h
 
 ---
 
+### initializeCommand
+
+```json
+"initializeCommand": "mkdir -p .devcontainer.secrets/env-vars && hostname -s > .devcontainer.secrets/env-vars/.host-hostname 2>/dev/null || hostname > .devcontainer.secrets/env-vars/.host-hostname 2>/dev/null || true"
+```
+
+Runs on the **host machine** before the container starts. This is the only devcontainer lifecycle command that executes outside the container.
+
+Used to capture the host's real hostname, which is not available via `remoteEnv` on macOS (zsh doesn't export `HOSTNAME`). The file `.devcontainer.secrets/env-vars/.host-hostname` is read by `config-host-info.sh` as a fallback when `DEV_HOST_HOSTNAME` is empty.
+
+| Platform | What `hostname -s` returns |
+|----------|---------------------------|
+| macOS | Machine name (e.g., `MBP-J4G0G066W2`) |
+| Linux | Machine hostname (e.g., `terje-desktop`) |
+| Windows (WSL2) | WSL hostname |
+| Windows (PowerShell) | Falls back to `hostname` without `-s` |
+
+The `mkdir -p` ensures the secrets directory exists on fresh installs. The file is in `.devcontainer.secrets/` which is gitignored.
+
+---
+
 ### postStartCommand
 
 ```json
@@ -293,14 +315,13 @@ Adds a tiny init process (`tini`) as PID 1 inside the container. This properly h
 
 Runs after VS Code connects to the container, on every start. At this point `remoteEnv` variables (`DEV_HOST_*`) are available.
 
-This refreshes `.devcontainer.secrets/env-vars/.host-info` with correct host detection data (OS, username, Docker engine info). The ENTRYPOINT runs before VS Code injects remoteEnv, so it cannot detect the host — `postStartCommand` fills this gap.
+This refreshes `.devcontainer.secrets/env-vars/.host-info` with correct host detection data (OS, username, hostname, Docker engine info). The data is used by OTel telemetry, `dev-env`, and Grafana dashboards.
 
-**Why not in the entrypoint:** The entrypoint is a Docker-level construct that runs before VS Code connects. `remoteEnv` variables are injected by VS Code after the container starts. Any host detection in the entrypoint sees empty `DEV_HOST_*` variables and writes `unknown`.
+**Why not in the entrypoint:** The ENTRYPOINT is a Docker-level construct that runs before VS Code connects. `remoteEnv` variables are injected by VS Code after the container starts. Any host detection in the entrypoint sees empty `DEV_HOST_*` variables and writes `unknown`. `postStartCommand` runs after VS Code has set up the environment.
 
-```json
-"init": true
-```
-
-Adds a tiny init process (`tini`) as PID 1 inside the container. This properly handles zombie processes and signal forwarding.
+**Execution order on container start:**
+1. `initializeCommand` — on host, captures hostname
+2. ENTRYPOINT — in container, no remoteEnv (git identity, services, tool install)
+3. `postStartCommand` — in container, remoteEnv available (host info detection)
 
 **Must be `true`** — without it, orphaned child processes (from background tools, services, or crashed scripts) accumulate and never get reaped. The init process also ensures `SIGTERM` is forwarded correctly when the container stops, allowing graceful shutdown of services managed by supervisord.
