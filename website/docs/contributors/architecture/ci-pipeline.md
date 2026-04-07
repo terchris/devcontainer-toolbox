@@ -40,7 +40,15 @@ flowchart TD
 | 4 | Unit Tests (Level 2) | `--help` execution, `--verify`, library functions |
 | 5 | Test Summary | Reports results, fails if static or unit tests failed |
 
-**Important:** Level 3 (install cycle) tests are NOT run in CI — they require a full devcontainer environment and download software. These run locally only.
+**Important:** Level 3 (install cycle) tests are NOT run in CI — they require a full devcontainer environment and download software. Contributors **must** run Level 3 locally after major changes (version bumps, install script modifications, new scripts). See [CREATING-SCRIPTS.md](../../ai-developer/CREATING-SCRIPTS#when-to-run-install-cycle-tests-level-3) for when and how to run them.
+
+```bash
+# Run inside the devcontainer after changing install scripts:
+.devcontainer/additions/tests/run-all-tests.sh install install-dev-golang.sh
+
+# Full cycle for ALL scripts (15-30 min):
+.devcontainer/additions/tests/run-all-tests.sh install
+```
 
 **Known constraint:** The CI container runs as `vscode` but the workspace is mounted with the GitHub Actions runner user. Scripts that write to workspace files must handle "Permission denied" gracefully (see `ensure-gitignore.sh`).
 
