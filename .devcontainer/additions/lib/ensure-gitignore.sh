@@ -12,22 +12,26 @@ _ensure_gitignore() {
 
     if [ ! -f "$gitignore_file" ]; then
         # Create .gitignore with .devcontainer.secrets
-        cat > "$gitignore_file" <<'EOF'
+        cat > "$gitignore_file" 2>/dev/null <<'EOF' || true
 # DevContainer Toolbox - credentials folder (NEVER commit)
 .devcontainer.secrets/
 EOF
     elif ! grep -q "^\.devcontainer\.secrets" "$gitignore_file" 2>/dev/null; then
         # Append to existing .gitignore
-        echo "" >> "$gitignore_file"
-        echo "# DevContainer Toolbox - credentials folder (NEVER commit)" >> "$gitignore_file"
-        echo ".devcontainer.secrets/" >> "$gitignore_file"
+        {
+            echo ""
+            echo "# DevContainer Toolbox - credentials folder (NEVER commit)"
+            echo ".devcontainer.secrets/"
+        } >> "$gitignore_file" 2>/dev/null || true
     fi
 
     # Ensure .devcontainer/backup/ is gitignored (dev-update backups)
     if [ -f "$gitignore_file" ] && ! grep -q "^\.devcontainer/backup" "$gitignore_file" 2>/dev/null; then
-        echo "" >> "$gitignore_file"
-        echo "# DevContainer Toolbox - devcontainer.json backups from dev-update" >> "$gitignore_file"
-        echo ".devcontainer/backup/" >> "$gitignore_file"
+        {
+            echo ""
+            echo "# DevContainer Toolbox - devcontainer.json backups from dev-update"
+            echo ".devcontainer/backup/"
+        } >> "$gitignore_file" 2>/dev/null || true
     fi
 }
 

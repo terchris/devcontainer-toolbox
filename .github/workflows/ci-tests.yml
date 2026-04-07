@@ -191,21 +191,6 @@ jobs:
             devcontainer-test:latest \
             bash /workspace/.devcontainer/additions/tests/run-all-tests.sh unit
 
-      - name: Debug failing scripts (if unit tests failed)
-        if: failure()
-        run: |
-          echo "=== Debug: cmd-ai.sh --help ==="
-          docker run --rm \
-            -v "${{ github.workspace }}:/workspace" \
-            -w /workspace \
-            devcontainer-test:latest \
-            bash -c 'bash /workspace/.devcontainer/additions/cmd-ai.sh --help 2>&1; echo "EXIT=$?"'
-          echo "=== Debug: service-nginx.sh --help ==="
-          docker run --rm \
-            -v "${{ github.workspace }}:/workspace" \
-            -w /workspace \
-            devcontainer-test:latest \
-            bash -c 'bash /workspace/.devcontainer/additions/service-nginx.sh --help 2>&1; echo "EXIT=$?"'
 
   # ===========================================================================
   # Summary Job
