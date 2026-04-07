@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Backlog
+## Status: ✅ Completed (2026-04-07)
 
 **Goal**: Make updating DCT a single command that any developer can run, regardless of whether they understand devcontainers, Docker, or VS Code.
 
@@ -318,7 +318,7 @@ For a proper E2E test, the tester's devcontainer.json should use `:latest` (matc
 
 ---
 
-## Open Problem: Template Drift for Existing Users
+## ~~Open Problem~~ RESOLVED: Template Drift for Existing Users
 
 `dev-update` pulls the new image and updates `DCT_IMAGE_VERSION`, but does NOT add new fields to devcontainer.json. When we add features to the template (e.g., `DEV_HOST_*` env vars, new extensions, new features), existing users don't get them.
 
@@ -378,7 +378,7 @@ Simple, safe (backup exists), handles all cases. User customizations in the back
 - [x] **E2E test**: Full flow v1.7.19 → v1.7.20: notification → dev-update → pull → rebuild prompt (2026-04-06)
 - [x] **E2E test**: No false prompt on clean start (confirmed — earlier false prompt was test artifact)
 - [x] **Implement**: Phase 1-5 per PLAN-one-command-update.md
-- [ ] **Open**: Template drift — existing users don't get new devcontainer.json fields (needs Phase 6)
+- [x] **Resolved**: Template drift — Phase 6 implemented: dev-update replaces full devcontainer.json with latest template (2026-04-07)
 
 ---
 
