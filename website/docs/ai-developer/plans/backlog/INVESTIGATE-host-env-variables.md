@@ -260,14 +260,69 @@ Pro: clean, 4 variables instead of 15. Con: requires updating scripts that curre
 
 ---
 
-## Next Steps
+## Implementation (completed 2026-04-07)
 
-- [x] Audit: which variables are actually used by scripts? → Only `config-host-info.sh` (2026-04-07)
-- [x] 8 generic `DEV_HOST_*` vars already in user template (v1.7.23)
-- [x] E2E confirmed on Mac: `DEV_HOST_USER`, `DEV_HOST_SHELL`, `DEV_HOST_HOME` all populated (2026-04-07)
+### What was implemented
+
+Option C was implemented with several additions discovered during testing.
+
+**14 remoteEnv variables in user template (v1.7.31):**
+- 3 DCT system: `DCT_HOME`, `DCT_WORKSPACE`, `DCT_IMAGE_VERSION`
+- 8 generic host: `DEV_HOST_USER`, `DEV_HOST_USERNAME`, `DEV_HOST_OS`, `DEV_HOST_HOME`, `DEV_HOST_LOGNAME`, `DEV_HOST_LANG`, `DEV_HOST_SHELL`, `DEV_HOST_TERM_PROGRAM`
+- 1 Linux hostname: `DEV_HOST_HOSTNAME` (set by bash on Linux, empty on Mac/Windows)
+- 3 Windows-specific: `DEV_HOST_COMPUTERNAME`, `DEV_HOST_PROCESSOR_ARCHITECTURE`, `DEV_HOST_ONEDRIVE`
+
+**Hostname resolution chain** (in `config-host-info.sh`):
+1. `DEV_HOST_HOSTNAME` — works on Linux (bash exports it)
+2. `DEV_HOST_COMPUTERNAME` — works on Windows
+3. `.devcontainer.secrets/env-vars/.host-hostname` — written by `initializeCommand`, works on Mac/Linux/Windows
+4. Fallback: `"devcontainer"`
+
+**`initializeCommand`** added to user template — runs `hostname -s` on the host before container starts, writes to `.devcontainer.secrets/env-vars/.host-hostname`. This is the only way to get the Mac hostname since macOS doesn't export `HOSTNAME`.
+
+**`postStartCommand`** added to user template — runs `config-host-info.sh --verify` after VS Code connects (when remoteEnv is available). This was needed because the ENTRYPOINT runs before VS Code injects remoteEnv — `DEV_HOST_*` variables are empty during entrypoint execution.
+
+**`config-host-info.sh` rewritten:**
+- Shared `_detect_host_vars()` function — reads `DEV_HOST_*` first, falls back to legacy `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*`
+- `get_host_hostname()` — resolution chain above
+- `get_container_name()` — reads container name via `docker inspect $(hostname)`
+- New flags: `--env` (show all DEV_HOST_* vars), `--refresh` (re-detect + show)
+- `config-host-info` command available via symlink in Dockerfile
+- Docker engine info captured: Name, CPUs, Memory, Architecture, OS, Container Name
+
+**Key discovery: remoteEnv timing**
+
+`remoteEnv` variables (`DEV_HOST_*`) are injected by VS Code AFTER the container's ENTRYPOINT runs. This means:
+- ENTRYPOINT: `DEV_HOST_*` = empty → host detection writes `unknown`
+- `postStartCommand`: `DEV_HOST_*` = populated → host detection works correctly
+- Terminal: `DEV_HOST_*` = populated → manual `--refresh` works
+
+Solution: `postStartCommand` in the user template handles the detection. The entrypoint still runs its detection (writes `unknown` initially), but `postStartCommand` overwrites with correct values immediately after.
+
+The DCT dev devcontainer (`Dockerfile.base`) bakes the old `DEV_MAC_*`/`DEV_WIN_*` variables into the image via `ENV` in the Dockerfile, so the entrypoint sees them at runtime. This is why it "worked before" in the dev environment but not in user projects (which use the pre-built image without `ENV`).
+
+### E2E test results (Mac, v1.7.31)
+
+```
+HOST_OS="macOS"
+HOST_USER="terje.christensen"
+HOST_HOSTNAME="MBP-J4G0G066W2"
+DOCKER_CONTAINER_NAME="musing_sanderson"
+DOCKER_HOST_NAME="lima-rancher-desktop"
+DOCKER_HOST_CPUS="8"
+DOCKER_HOST_MEMORY="15.6GiB"
+DOCKER_HOST_ARCH="aarch64"
+DOCKER_HOST_OS="Alpine Linux v3.23"
+```
+
+All fields populated correctly on a fresh rebuild.
+
+---
+
+## Remaining Work
+
 - [ ] Check if `Dockerfile.base` uses any `build.args` at build time (may need to keep them in dev devcontainer)
-- [ ] Decide: Option C recommended — add 3 Windows-specific vars, update `config-host-info.sh`
-- [ ] Add `DEV_HOST_COMPUTERNAME`, `DEV_HOST_PROCESSOR_ARCHITECTURE`, `DEV_HOST_ONEDRIVE` to template
-- [ ] Update `config-host-info.sh` to use `DEV_HOST_*` instead of `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*`
-- [ ] Update devcontainer-json.md documentation with all host env vars
+- [ ] Remove legacy `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*` `build.args` from dev devcontainer and `Dockerfile.base` — replace with `remoteEnv` in `.devcontainer/devcontainer.json`
+- [ ] Update devcontainer-json.md with `initializeCommand` and `postStartCommand` documentation
 - [ ] Test on Windows host (need Windows tester)
+- [ ] Test on Linux host (need Linux tester)
