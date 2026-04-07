@@ -73,9 +73,40 @@ get_architecture() {
 }
 
 get_host_hostname() {
-    # For devcontainer environments, the hostname is the container ID
-    # Use a generic identifier since we're in a virtualized environment
+    # Try DEV_HOST_HOSTNAME (set on Linux via remoteEnv)
+    if [ -n "${DEV_HOST_HOSTNAME:-}" ]; then
+        echo "$DEV_HOST_HOSTNAME"
+        return
+    fi
+    # Try DEV_HOST_COMPUTERNAME (set on Windows via remoteEnv)
+    if [ -n "${DEV_HOST_COMPUTERNAME:-}" ]; then
+        echo "$DEV_HOST_COMPUTERNAME"
+        return
+    fi
+    # Try hostname file written by initializeCommand (works on Mac/Linux/Windows)
+    local hostname_file="${DCT_WORKSPACE:-/workspace}/.devcontainer.secrets/env-vars/.host-hostname"
+    if [ -f "$hostname_file" ]; then
+        local saved_hostname
+        saved_hostname=$(cat "$hostname_file" 2>/dev/null | tr -d '[:space:]')
+        if [ -n "$saved_hostname" ]; then
+            echo "$saved_hostname"
+            return
+        fi
+    fi
     echo "devcontainer"
+}
+
+get_container_name() {
+    # Get the container name from Docker (requires docker-outside-of-docker)
+    if command -v docker >/dev/null 2>&1; then
+        local name
+        name=$(docker inspect "$(hostname)" --format '{{.Name}}' 2>/dev/null | sed 's|^/||')
+        if [ -n "$name" ]; then
+            echo "$name"
+            return
+        fi
+    fi
+    echo "$(hostname)"
 }
 
 get_docker_server_stats() {
@@ -174,11 +205,18 @@ parse_organization_from_onedrive() {
 #------------------------------------------------------------------------------
 
 _detect_host_vars() {
+    # Resolve hostname once (checks DEV_HOST_HOSTNAME, COMPUTERNAME, file from initializeCommand)
+    local resolved_hostname
+    resolved_hostname=$(get_host_hostname)
+
+    # Resolve container name
+    export DOCKER_CONTAINER_NAME=$(get_container_name)
+
     # New DEV_HOST_* variables (from devcontainer-user-template.json remoteEnv)
     if [ "${DEV_HOST_OS:-}" = "Windows_NT" ]; then
         export HOST_OS="Windows"
         export HOST_USER="${DEV_HOST_USERNAME:-${DEV_HOST_USER:-unknown}}"
-        export HOST_HOSTNAME="${DEV_HOST_COMPUTERNAME:-${DEV_HOST_HOSTNAME:-devcontainer}}"
+        export HOST_HOSTNAME="$resolved_hostname"
         export HOST_DOMAIN="none"
         export HOST_ARCH="${DEV_HOST_PROCESSOR_ARCHITECTURE:-}"
         export HOST_CPU_MODEL_NAME=""
@@ -187,7 +225,7 @@ _detect_host_vars() {
     elif [[ "${DEV_HOST_HOME:-}" == /Users/* ]]; then
         export HOST_OS="macOS"
         export HOST_USER="${DEV_HOST_USER:-unknown}"
-        export HOST_HOSTNAME="${DEV_HOST_HOSTNAME:-devcontainer}"
+        export HOST_HOSTNAME="$resolved_hostname"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
@@ -198,7 +236,7 @@ _detect_host_vars() {
     elif [ -n "${DEV_HOST_USER:-}" ]; then
         export HOST_OS="Linux"
         export HOST_USER="$DEV_HOST_USER"
-        export HOST_HOSTNAME="${DEV_HOST_HOSTNAME:-devcontainer}"
+        export HOST_HOSTNAME="$resolved_hostname"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
@@ -210,7 +248,7 @@ _detect_host_vars() {
     elif [ -n "${DEV_MAC_USER:-}" ]; then
         export HOST_OS="macOS"
         export HOST_USER="$DEV_MAC_USER"
-        export HOST_HOSTNAME="devcontainer"
+        export HOST_HOSTNAME="$resolved_hostname"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
@@ -221,7 +259,7 @@ _detect_host_vars() {
     elif [ -n "${DEV_LINUX_USER:-}" ]; then
         export HOST_OS="Linux"
         export HOST_USER="$DEV_LINUX_USER"
-        export HOST_HOSTNAME="devcontainer"
+        export HOST_HOSTNAME="$resolved_hostname"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
@@ -241,7 +279,7 @@ _detect_host_vars() {
     else
         export HOST_OS="unknown"
         export HOST_USER="unknown"
-        export HOST_HOSTNAME="devcontainer"
+        export HOST_HOSTNAME="$resolved_hostname"
         export HOST_DOMAIN="none"
         export HOST_ARCH=""
         export HOST_CPU_MODEL_NAME=""
@@ -267,6 +305,7 @@ _print_host_summary() {
     [ -n "$ORGANIZATION_PREFIX" ] && echo "  Org Prefix: $ORGANIZATION_PREFIX"
     [ -n "$ORGANIZATION_MACHINE_OWNERSHIP" ] && echo "  Machine Type: $ORGANIZATION_MACHINE_OWNERSHIP"
     echo "  Docker Engine:"
+    [ -n "$DOCKER_CONTAINER_NAME" ] && echo "    Container: $DOCKER_CONTAINER_NAME"
     [ -n "$DOCKER_HOST_NAME" ] && echo "    Name: $DOCKER_HOST_NAME"
     [ -n "$DOCKER_HOST_CPUS" ] && echo "    CPUs: $DOCKER_HOST_CPUS"
     [ -n "$DOCKER_HOST_MEMORY" ] && echo "    Memory: $DOCKER_HOST_MEMORY"
@@ -312,6 +351,7 @@ export ORGANIZATION_PREFIX="${ORGANIZATION_PREFIX:-}"
 export ORGANIZATION_MACHINE_OWNERSHIP="${ORGANIZATION_MACHINE_OWNERSHIP:-}"
 
 # Docker engine info
+export DOCKER_CONTAINER_NAME="${DOCKER_CONTAINER_NAME:-}"
 export DOCKER_HOST_NAME="${DOCKER_HOST_NAME:-}"
 export DOCKER_HOST_CPUS="${DOCKER_HOST_CPUS:-}"
 export DOCKER_HOST_MEMORY="${DOCKER_HOST_MEMORY:-}"
@@ -361,6 +401,7 @@ show_config() {
     echo "  HOST_CPU_ARCH: ${HOST_CPU_ARCH:-<not set>}"
     echo ""
     echo "Docker Engine:"
+    echo "  Container:     ${DOCKER_CONTAINER_NAME:-<not set>}"
     echo "  Name:          ${DOCKER_HOST_NAME:-<not set>}"
     echo "  CPUs:          ${DOCKER_HOST_CPUS:-<not set>}"
     echo "  Memory:        ${DOCKER_HOST_MEMORY:-<not set>}"
