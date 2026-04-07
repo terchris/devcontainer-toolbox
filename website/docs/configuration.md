@@ -153,23 +153,42 @@ Secrets survive container rebuilds because they're stored in the workspace, not 
 
 ## How It All Works Together
 
-The container image includes a startup script (ENTRYPOINT) that handles all initialization automatically, regardless of which IDE you use:
+The container startup involves three stages that run in order. Each stage has access to different information:
 
+```mermaid
+sequenceDiagram
+    participant Host as Host Machine
+    participant Docker as Docker Engine
+    participant VSCode as VS Code
+    participant Container as Container
+
+    Note over Host: Stage 1: initializeCommand
+    Host->>Host: Capture hostname to .devcontainer.secrets/
+
+    Note over Docker,Container: Stage 2: ENTRYPOINT
+    Docker->>Container: Start container
+    Container->>Container: Configure git identity
+    Container->>Container: Start background services (supervisord)
+    Container->>Container: Check for updates (show notification)
+    
+    alt First start only
+        Container->>Container: Create .devcontainer.extend/ defaults
+        Container->>Container: Restore configs from .devcontainer.secrets/
+        Container->>Container: Install tools from enabled-tools.conf
+        Container->>Container: Run project-installs.sh
+    end
+
+    Note over VSCode,Container: Stage 3: postStartCommand
+    VSCode->>Container: Inject remoteEnv (DEV_HOST_* variables)
+    VSCode->>Container: Run postStartCommand
+    Container->>Container: Detect host OS, user, Docker engine info
+    Container->>Container: Save to .devcontainer.secrets/env-vars/.host-info
+
+    Note over Container: Ready to develop
 ```
-Container Starts (ENTRYPOINT runs)
-       ↓
-Every start:
-  - Configure git identity
-  - Start background services
-  - Check for updates (shows notification if newer version available)
-       ↓
-First start only:
-  - Create .devcontainer.extend/ with defaults
-  - Restore configs from .devcontainer.secrets/
-  - Install tools from enabled-tools.conf
-  - Run project-installs.sh
-       ↓
-Ready to develop!
-```
+
+**Why three stages?** The ENTRYPOINT runs before VS Code connects, so it cannot access host environment variables (`DEV_HOST_*`). Host detection runs in `postStartCommand` where VS Code has injected the variables. The `initializeCommand` runs on the host itself to capture data (like hostname) that isn't available via environment variables.
 
 This happens automatically — open the project in VS Code and click "Reopen in Container".
+
+See [devcontainer.json reference](contributors/architecture/devcontainer-json) for details on each field.
