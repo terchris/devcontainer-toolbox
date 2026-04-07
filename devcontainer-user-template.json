@@ -50,5 +50,6 @@
     "containerUser": "vscode",
     "shutdownAction": "stopContainer",
     "updateRemoteUserUID": true,
-    "init": true
+    "init": true,
+    "postStartCommand": "bash /opt/devcontainer-toolbox/additions/config-host-info.sh --verify 2>/dev/null || true"
 }

@@ -282,3 +282,25 @@ VS Code updates the `vscode` user's UID inside the container to match the host u
 Adds a tiny init process (`tini`) as PID 1 inside the container. This properly handles zombie processes and signal forwarding.
 
 **Must be `true`** — without it, orphaned child processes (from background tools, services, or crashed scripts) accumulate and never get reaped. The init process also ensures `SIGTERM` is forwarded correctly when the container stops, allowing graceful shutdown of services managed by supervisord.
+
+---
+
+### postStartCommand
+
+```json
+"postStartCommand": "bash /opt/devcontainer-toolbox/additions/config-host-info.sh --verify 2>/dev/null || true"
+```
+
+Runs after VS Code connects to the container, on every start. At this point `remoteEnv` variables (`DEV_HOST_*`) are available.
+
+This refreshes `.devcontainer.secrets/env-vars/.host-info` with correct host detection data (OS, username, Docker engine info). The ENTRYPOINT runs before VS Code injects remoteEnv, so it cannot detect the host — `postStartCommand` fills this gap.
+
+**Why not in the entrypoint:** The entrypoint is a Docker-level construct that runs before VS Code connects. `remoteEnv` variables are injected by VS Code after the container starts. Any host detection in the entrypoint sees empty `DEV_HOST_*` variables and writes `unknown`.
+
+```json
+"init": true
+```
+
+Adds a tiny init process (`tini`) as PID 1 inside the container. This properly handles zombie processes and signal forwarding.
+
+**Must be `true`** — without it, orphaned child processes (from background tools, services, or crashed scripts) accumulate and never get reaped. The init process also ensures `SIGTERM` is forwarded correctly when the container stops, allowing graceful shutdown of services managed by supervisord.
