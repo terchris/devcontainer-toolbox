@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: ✅ Completed (2026-04-07, macOS tested. Windows testing: see PLAN-windows-testing.md)
 
 **Goal**: Make updating DCT a single `dev-update` command + one click, and remove the legacy `dev-sync` mechanism.
 
@@ -130,8 +130,8 @@ Full update cycle works end-to-end. **One command + one click.**
 - [x] 6.4 Replace devcontainer.json with downloaded template (CI already has correct `DCT_IMAGE_VERSION`)
 - [x] ~~6.5 Set DCT_IMAGE_VERSION via sed~~ — not needed, CI handles it in the template
 - [x] 6.6 VS Code detects the change → rebuild prompt (already works)
-- [ ] 6.7 Add `.devcontainer/backup/` to `.gitignore` via `ensure-gitignore.sh`
-- [ ] 6.8 Test: existing install with old template → `dev-update` → verify new fields appear, backup exists
+- [x] 6.7 `.devcontainer/backup/` added to `.gitignore` via `ensure-gitignore.sh` (with CI permission fix)
+- [x] 6.8 Tested: tester's old template → `dev-update` → new env vars appeared, backup created
 
 ### Validation
 
@@ -150,9 +150,9 @@ Full update cycle works end-to-end. **One command + one click.**
 - [x] `dev-update --check` still works (version check without pulling)
 - [x] `devcontainer-user-template.json` includes `DCT_IMAGE_VERSION`
 - [x] CI auto-updates `DCT_IMAGE_VERSION` on each image build
-- [ ] `dev-update` replaces devcontainer.json with latest template on every update (Phase 6)
-- [ ] Old devcontainer.json backed up to `.devcontainer/backup/` (Phase 6)
-- [ ] Template includes "managed by dev-update, do not edit" message (Phase 6)
+- [x] `dev-update` replaces devcontainer.json with latest template on every update (Phase 6)
+- [x] Old devcontainer.json backed up to `.devcontainer/backup/` (Phase 6)
+- [x] Template includes "managed by dev-update, do not edit" message (Phase 6)
 
 ---
 
