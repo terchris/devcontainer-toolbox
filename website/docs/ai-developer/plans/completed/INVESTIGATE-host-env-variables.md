@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Backlog
+## Status: ✅ Completed (2026-04-07)
 
 **Goal**: Move host detection environment variables (`DEV_MAC_*`, `DEV_WIN_*`, `DEV_LINUX_*`) from the DCT dev devcontainer into the user template so scripts can detect the host platform in all user projects.
 
@@ -366,9 +366,7 @@ Added `get_docker_server_stats()` to capture all of these and save to `.host-inf
 
 ---
 
-## Remaining Work
+## Remaining Work (follow-up, not blocking)
 
-- [ ] Check if `Dockerfile.base` uses any `build.args` at build time (may need to keep them in dev devcontainer)
-- [ ] Remove legacy `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*` `build.args` from dev devcontainer and `Dockerfile.base` — replace with `remoteEnv` in `.devcontainer/devcontainer.json`
-- [ ] Test on Windows host (need Windows tester)
-- [ ] Test on Linux host (need Linux tester)
+- [ ] Remove legacy `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*` `build.args` from `Dockerfile.base` — cleanup task
+- [ ] Test on Windows/Linux hosts — see `PLAN-windows-testing.md`
