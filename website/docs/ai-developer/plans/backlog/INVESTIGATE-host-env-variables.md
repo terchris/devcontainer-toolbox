@@ -319,10 +319,56 @@ All fields populated correctly on a fresh rebuild.
 
 ---
 
+## Issues Discovered and Fixed During Implementation
+
+### 1. remoteEnv not available in ENTRYPOINT
+
+`remoteEnv` variables (`DEV_HOST_*`) are injected by VS Code AFTER the container's ENTRYPOINT runs. The entrypoint saw empty variables and wrote `HOST_OS=unknown` to `.host-info`.
+
+**Fix:** Added `postStartCommand` to the user template. It runs after VS Code connects and injects remoteEnv. Calls `config-host-info.sh --verify` to save correct host info.
+
+**Execution order:**
+1. `initializeCommand` — on host (hostname capture)
+2. ENTRYPOINT — in container (no remoteEnv)
+3. `postStartCommand` — in container (remoteEnv available)
+
+### 2. Mac hostname not available via environment variables
+
+macOS (zsh) doesn't export `HOSTNAME`. The `DEV_HOST_HOSTNAME` remoteEnv variable is empty on Mac. Linux bash exports it, Windows has `COMPUTERNAME`.
+
+**Fix:** Added `initializeCommand` to the user template that runs `hostname -s` on the host and writes to `.devcontainer.secrets/env-vars/.host-hostname`. `config-host-info.sh` reads this file as a fallback.
+
+### 3. DCT dev devcontainer vs user template — why it "worked before"
+
+The DCT dev devcontainer (`Dockerfile.base`) has:
+```dockerfile
+ENV DEV_MAC_USER=$DEV_MAC_USER \
+    DEV_WIN_USERNAME=$DEV_WIN_USERNAME \
+    ...
+```
+Build args are baked into the image as ENV — available at runtime including in the entrypoint. This is why host detection "always worked" in the dev environment.
+
+The user template uses the pre-built image (`image/Dockerfile`) which does NOT have these ENV lines. Host detection in the entrypoint never worked for user projects — it always wrote `unknown`. Nobody noticed because OTel wasn't widely deployed.
+
+### 4. CI tests failing — ensure-gitignore.sh permission denied
+
+Adding the `.devcontainer/backup/` gitignore entry to `ensure-gitignore.sh` broke CI. The CI workspace is mounted with runner-user ownership, but the container runs as `vscode`. Writing to `.gitignore` failed with "Permission denied".
+
+This killed ALL cmd and service script `--help` tests because `logging.sh` sources `ensure-gitignore.sh` on every script invocation.
+
+**Fix:** Wrapped all `.gitignore` writes with `2>/dev/null || true` so permission errors don't propagate.
+
+### 5. Docker engine info for Grafana
+
+`docker info` provides useful host data not available via environment variables: CPUs, memory, architecture, Docker engine name (which reveals the runtime: `lima-rancher-desktop`, `docker-desktop`, `orbstack`), and the container name.
+
+Added `get_docker_server_stats()` to capture all of these and save to `.host-info`.
+
+---
+
 ## Remaining Work
 
 - [ ] Check if `Dockerfile.base` uses any `build.args` at build time (may need to keep them in dev devcontainer)
 - [ ] Remove legacy `DEV_MAC_*`/`DEV_WIN_*`/`DEV_LINUX_*` `build.args` from dev devcontainer and `Dockerfile.base` — replace with `remoteEnv` in `.devcontainer/devcontainer.json`
-- [ ] Update devcontainer-json.md with `initializeCommand` and `postStartCommand` documentation
 - [ ] Test on Windows host (need Windows tester)
 - [ ] Test on Linux host (need Linux tester)
