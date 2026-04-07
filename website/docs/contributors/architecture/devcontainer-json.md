@@ -324,4 +324,6 @@ This refreshes `.devcontainer.secrets/env-vars/.host-info` with correct host det
 2. ENTRYPOINT — in container, no remoteEnv (git identity, services, tool install)
 3. `postStartCommand` — in container, remoteEnv available (host info detection)
 
+For the full startup sequence with detailed steps, see [Startup Lifecycle](startup-lifecycle).
+
 **Must be `true`** — without it, orphaned child processes (from background tools, services, or crashed scripts) accumulate and never get reaped. The init process also ensures `SIGTERM` is forwarded correctly when the container stops, allowing graceful shutdown of services managed by supervisord.
