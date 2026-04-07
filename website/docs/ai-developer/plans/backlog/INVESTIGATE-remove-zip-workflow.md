@@ -49,5 +49,8 @@ The workflow is called "Zip and Upload Artifacts" — should be renamed to somet
 - [ ] Verify: confirm nothing else downloads `dev_containers.zip` (search GitHub for references)
 - [ ] Simplify `zip_dev_setup.yml`: remove zip, release, artifact upload, .version file
 - [ ] Rename workflow to "Update Install Scripts"
-- [ ] Update `ci-pipeline.md` documentation
+- [ ] Update `ci-pipeline.md` — remove Workflow 3 (Zip and Upload), update pipeline overview mermaid diagram
+- [ ] Update `releasing.md` — remove references to `dev_containers.zip` and GitHub release
+- [ ] Update `configuration.md` — if it references the zip or release
+- [ ] Check all docs for references to `dev_containers.zip`, `.devcontainer/.version`, or the GitHub release
 - [ ] Remove the existing `latest` GitHub release (cleanup)
