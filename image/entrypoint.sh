@@ -217,6 +217,9 @@ PROJECT_EOF
         source "$ADDITIONS_DIR/lib/component-scanner.sh" 2>/dev/null || true
 
         while IFS=$'\t' read -r script_basename config_name config_desc config_cat check_cmd; do
+            # Skip config-host-info — it needs remoteEnv which isn't available in entrypoint.
+            # It runs from dev-welcome.sh on first terminal open instead.
+            [[ "$script_basename" == "config-host-info.sh" ]] && continue
             local_config_path="$ADDITIONS_DIR/$script_basename"
             if [ -f "$local_config_path" ] && grep -q '= "--verify"' "$local_config_path" 2>/dev/null; then
                 if bash "$local_config_path" --verify 2>/dev/null; then
