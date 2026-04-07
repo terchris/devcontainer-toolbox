@@ -165,6 +165,12 @@ else
     echo "   ⚠️  devcontainer.json not found at $DEVCONTAINER_JSON"
 fi
 
+# Refresh host info while we're in a terminal (DEV_HOST_* vars are available here).
+# This ensures .host-info has correct values that persist through the rebuild.
+if [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/additions/config-host-info.sh" ]; then
+    bash "$DCT_HOME/additions/config-host-info.sh" --verify 2>/dev/null || true
+fi
+
 echo ""
 echo "✅ DCT v${REMOTE_VERSION} downloaded."
 echo ""
