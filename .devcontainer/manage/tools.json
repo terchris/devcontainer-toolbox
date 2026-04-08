@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-03-20T17:55:40+01:00",
+  "generated": "2026-04-08T11:56:43+02:00",
   "tools": [
     {
       "id": "dev-ai-claudecode",
@@ -327,6 +327,33 @@
     }
 ,
     {
+      "id": "fwk-docusaurus",
+      "version": "0.1.0",
+      "type": "install",
+      "file": "install-fwk-docusaurus.sh",
+      "name": "Docusaurus",
+      "description": "Installs a Docusaurus documentation site with GitHub Pages deployment.",
+      "category": "FRAMEWORKS",
+      "tags": ["docusaurus static-site-generator ssg framework web documentation react"],
+      "abstract": "Docusaurus documentation site with TypeScript, Mermaid, local search, and GitHub Pages CI/CD.",
+      "logo": "fwk-docusaurus-logo.webp",
+      "website": "https://docusaurus.io",
+      "summary": "Installs a complete Docusaurus 3.x documentation site in website/ with TypeScript configuration, Mermaid diagram support, local search, image zoom, auto-generated sidebars, and a GitHub Actions workflow for deploying to GitHub Pages.",
+      "related": ["fwk-hugo"],
+      "checkCommand": "[ -d /workspace/website ]",
+      "packages": {
+        "system": [],
+        "node": [],
+        "python": [],
+        "cargo": [],
+        "go": [],
+        "powershell": [],
+        "dotnet": []
+      },
+      "extensions": ["unifiedjs.vscode-mdx", "eliostruyf.vscode-front-matter"]
+    }
+,
+    {
       "id": "fwk-hugo",
       "version": "0.0.1",
       "type": "install",
@@ -570,33 +597,6 @@
     }
 ,
     {
-      "id": "tool-dev-utils",
-      "version": "0.0.1",
-      "type": "install",
-      "file": "install-tool-dev-utils.sh",
-      "name": "Development Utilities",
-      "description": "Database management (SQLTools), API testing (REST Client), and container management (Docker) for multi-language development",
-      "category": "INFRA_CONFIG",
-      "tags": ["database sql docker containers rest http utilities"],
-      "abstract": "Development utilities for database management, API testing, and Docker container management.",
-      "logo": "tool-dev-utils-logo.webp",
-      "website": "https://vscode-sqltools.mteixeira.dev",
-      "summary": "Language-agnostic development utilities including SQLTools for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB), REST Client for HTTP API testing, and Docker extension for container, image, and volume management.",
-      "related": ["tool-api-dev tool-kubernetes"],
-      "checkCommand": "code --list-extensions 2>/dev/null | grep -q mtxr.sqltools",
-      "packages": {
-        "system": ["docker.io"],
-        "node": [],
-        "python": [],
-        "cargo": [],
-        "go": [],
-        "powershell": [],
-        "dotnet": []
-      },
-      "extensions": ["mtxr.sqltools", "humao.rest-client", "ms-azuretools.vscode-docker"]
-    }
-,
-    {
       "id": "tool-iac",
       "version": "0.0.1",
       "type": "install",
@@ -636,7 +636,7 @@
       "logo": "tool-kubernetes-logo.webp",
       "website": "https://kubernetes.io",
       "summary": "Kubernetes development toolkit including kubectl CLI for cluster management, k9s terminal UI for interactive cluster exploration, Helm for package management, and VS Code Kubernetes extension. Sets up .devcontainer.secrets for secure kubeconfig storage.",
-      "related": ["tool-iac tool-azure-dev tool-dev-utils"],
+      "related": ["tool-iac tool-azure-dev tool-sql-rest"],
       "checkCommand": "command -v kubectl >/dev/null 2>&1 || command -v k9s >/dev/null 2>&1 || command -v helm >/dev/null 2>&1",
       "packages": {
         "system": [],
@@ -729,6 +729,33 @@
         "dotnet": []
       },
       "extensions": ["ms-vscode.powershell"]
+    }
+,
+    {
+      "id": "tool-sql-rest",
+      "version": "0.0.1",
+      "type": "install",
+      "file": "install-tool-sql-rest.sh",
+      "name": "SQL & REST Tools",
+      "description": "Database management (Database Client) and REST API testing (REST Client) for multi-language development",
+      "category": "INFRA_CONFIG",
+      "tags": ["database sql rest http api mongodb redis"],
+      "abstract": "SQL/NoSQL database management and REST API testing tools for VS Code.",
+      "logo": "tool-sql-rest-logo.webp",
+      "website": "https://database-client.com",
+      "summary": "Language-agnostic VS Code extensions: Database Client by cweijan for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis, ClickHouse, ElasticSearch — all drivers bundled, no separate driver install) and REST Client for HTTP API testing. Docker CLI is provided by the devcontainer feature — no separate install needed.",
+      "related": ["tool-api-dev tool-kubernetes"],
+      "checkCommand": "code --list-extensions 2>/dev/null | grep -q cweijan.vscode-database-client2",
+      "packages": {
+        "system": [],
+        "node": [],
+        "python": [],
+        "cargo": [],
+        "go": [],
+        "powershell": [],
+        "dotnet": []
+      },
+      "extensions": ["cweijan.vscode-database-client2", "humao.rest-client"]
     }
 ,
     {

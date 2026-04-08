@@ -46,7 +46,7 @@ Done! The container starts in seconds. Run `dev-setup` to install tools.
 | **Cloud & Infrastructure Tools** | API, Azure Dev, Azure DevOps CLI, Azure Ops, Okta, Power Platform |
 | **Data & Analytics Tools** | Data Analytics, Databricks |
 | **Background Services & Daemons** | Nginx Reverse Proxy, OpenTelemetry Monitoring |
-| **Infrastructure & Configuration** | Dev Utilities, Terraform, Ansible, Kubernetes |
+| **Infrastructure & Configuration** | Terraform, Ansible, Kubernetes, SQL & REST |
 | **Contributor Tools** | Image Processing |
 | **Frameworks & Standalone Binaries** | Docusaurus, Hugo Extended |
 

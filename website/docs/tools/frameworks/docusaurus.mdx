@@ -1,0 +1,114 @@
+---
+title: Docusaurus
+hide_title: true
+---
+
+import RelatedTools from '@site/src/components/RelatedTools';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+<div style={{
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '1.5rem',
+  marginBottom: '1.5rem',
+  padding: '1.5rem',
+  background: 'var(--ifm-card-background-color)',
+  borderRadius: '8px',
+  border: '1px solid var(--ifm-color-emphasis-200)'
+}}>
+  <img
+    src={useBaseUrl('/img/tools/fwk-docusaurus-logo.webp')}
+    alt="Docusaurus"
+    style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
+  />
+  <div style={{flex: 1}}>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Docusaurus</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Docusaurus documentation site with TypeScript, Mermaid, local search, and GitHub Pages CI/CD.</p>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>docusaurus</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>static-site-generator</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>ssg</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>framework</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>web</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>documentation</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>react</span>
+    </div>
+  </div>
+</div>
+
+:::info Overview
+Installs a complete Docusaurus 3.x documentation site in website/ with TypeScript configuration, Mermaid diagram support, local search, image zoom, auto-generated sidebars, and a GitHub Actions workflow for deploying to GitHub Pages.
+:::
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
+  <div>
+    <strong>Script ID:</strong> <code>fwk-docusaurus</code>
+  </div>
+  <div>
+    <strong>Version:</strong> <code>0.1.0</code>
+  </div>
+  <div>
+    <strong>Script:</strong> <code>install-fwk-docusaurus.sh</code>
+  </div>
+  <div>
+    <strong>Website:</strong> <a href="https://docusaurus.io" target="_blank">https://docusaurus.io</a>
+  </div>
+</div>
+
+## VS Code Extensions
+
+| Extension | Description |
+|-----------|-------------|
+| [MDX](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) | MDX language support with syntax highlighting and IntelliSense |
+| [Front Matter CMS](https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-front-matter) | Content management for static site generators |
+
+## Installation
+
+Install via the interactive menu:
+
+```bash
+dev-setup
+```
+
+Or install directly:
+
+```bash
+.devcontainer/additions/install-fwk-docusaurus.sh
+```
+
+<details>
+<summary>Full installation options (click to expand)</summary>
+
+```
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Docusaurus
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ID:           fwk-docusaurus
+Name:         Docusaurus
+Script version: 0.1.0
+Category:     FRAMEWORKS, Frameworks & Standalone Binaries
+Description:  Installs a Docusaurus documentation site with GitHub Pages deployment.
+
+Usage:
+
+  Action:
+      install-fwk-docusaurus.sh         # Install Docusaurus site and CI/CD workflow
+      install-fwk-docusaurus.sh --uninstall # Uninstall Docusaurus site and workflow
+
+  Info:
+      install-fwk-docusaurus.sh --help  # Show help and usage information
+
+VS Code Extensions:
+  - MDX (unifiedjs.vscode-mdx) - MDX language support with syntax highlighting and IntelliSense
+  - Front Matter CMS (eliostruyf.vscode-front-matter) - Content management for static site generators
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+</details>
+
+## Related Tools
+
+<RelatedTools relatedIds={['fwk-hugo']} />

@@ -1,46 +1,44 @@
 #!/bin/bash
-# file: .devcontainer/additions/install-tool-dev-utils.sh
+# file: .devcontainer/additions/install-tool-sql-rest.sh
 #
-# Installs general development utilities useful across multiple programming languages.
-# These tools are language-agnostic and can be used with PHP, Python, Node.js, Java, C#, etc.
-# For usage information, run: ./install-tool-dev-utils.sh --help
+# Installs SQL database management (SQLTools) and REST API testing (REST Client)
+# VS Code extensions. Language-agnostic tools useful for any backend project.
+# For usage information, run: ./install-tool-sql-rest.sh --help
 #
 #------------------------------------------------------------------------------
 # CONFIGURATION - Modify this section for each new script
 #------------------------------------------------------------------------------
 
 # --- Script Metadata ---
-SCRIPT_ID="tool-dev-utils"
+SCRIPT_ID="tool-sql-rest"
 SCRIPT_VER="0.0.1"
-SCRIPT_NAME="Development Utilities"
-SCRIPT_DESCRIPTION="Database management (SQLTools), API testing (REST Client), and container management (Docker) for multi-language development"
+SCRIPT_NAME="SQL & REST Tools"
+SCRIPT_DESCRIPTION="Database management (Database Client) and REST API testing (REST Client) for multi-language development"
 SCRIPT_CATEGORY="INFRA_CONFIG"
 
-# NOTE: We check only the primary extension (SQLTools) instead of all extensions
+# NOTE: We check only the primary extension (Database Client) instead of all extensions
 # to avoid tight coupling between SCRIPT_CHECK_COMMAND and the EXTENSIONS array.
 # This makes the script more maintainable - if someone adds/removes extensions,
 # they don't need to update this check. The extension installer is idempotent anyway.
-SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'mtxr.sqltools'"
+SCRIPT_CHECK_COMMAND="code --list-extensions 2>/dev/null | grep -q 'cweijan.vscode-database-client2'"
 
 # --- Extended Metadata (for website documentation) ---
-SCRIPT_TAGS="database sql docker containers rest http utilities"
-SCRIPT_ABSTRACT="Development utilities for database management, API testing, and Docker container management."
-SCRIPT_LOGO="tool-dev-utils-logo.webp"
-SCRIPT_WEBSITE="https://vscode-sqltools.mteixeira.dev"
-SCRIPT_SUMMARY="Language-agnostic development utilities including SQLTools for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB), REST Client for HTTP API testing, and Docker extension for container, image, and volume management."
+SCRIPT_TAGS="database sql rest http api mongodb redis"
+SCRIPT_ABSTRACT="SQL/NoSQL database management and REST API testing tools for VS Code."
+SCRIPT_LOGO="tool-sql-rest-logo.webp"
+SCRIPT_WEBSITE="https://database-client.com"
+SCRIPT_SUMMARY="Language-agnostic VS Code extensions: Database Client by cweijan for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis, ClickHouse, ElasticSearch — all drivers bundled, no separate driver install) and REST Client for HTTP API testing. Docker CLI is provided by the devcontainer feature — no separate install needed."
 SCRIPT_RELATED="tool-api-dev tool-kubernetes"
 
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(
-    "Action||Install development utilities||false|"
-    "Action|--uninstall|Uninstall development utilities||false|"
+    "Action||Install SQL & REST tools||false|"
+    "Action|--uninstall|Uninstall SQL & REST tools||false|"
     "Info|--help|Show help and usage information||false|"
 )
 
-# System packages
-PACKAGES_SYSTEM=(
-    "docker.io"  # Docker CLI for container management
-)
+# System packages (none — Docker CLI is provided by devcontainer feature)
+PACKAGES_SYSTEM=()
 
 # Node.js packages
 PACKAGES_NODE=()
@@ -50,9 +48,8 @@ PACKAGES_PYTHON=()
 
 # VS Code extensions
 EXTENSIONS=(
-    "SQLTools (mtxr.sqltools) - Database management and SQL query tool for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB"
+    "Database Client (cweijan.vscode-database-client2) - Database management for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis, ClickHouse, ElasticSearch — all drivers bundled"
     "REST Client (humao.rest-client) - Send HTTP requests and view responses directly in VS Code"
-    "Docker (ms-azuretools.vscode-docker) - Manage containers, images, volumes, networks, and Dockerfiles"
 )
 
 #------------------------------------------------------------------------------
@@ -83,16 +80,14 @@ post_installation_message() {
     echo "🎉 Installation complete!"
     echo
     echo "Quick start:"
-    echo "  - Test Docker:  docker ps"
-    echo "  - Docker UI:    Click Docker icon in VS Code sidebar"
-    echo "  - SQLTools:     Click database icon in VS Code sidebar"
-    echo "  - REST Client:  Create .http file and write HTTP requests"
+    echo "  - Database Client: Click database icon in VS Code sidebar, then 'Create Connection'"
+    echo "                     (Drivers for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis are bundled)"
+    echo "  - REST Client:     Create .http file and write HTTP requests"
     echo
     echo "Example .http file:"
     echo "  GET https://api.github.com/users/octocat"
     echo
-    echo "Docs: https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker"
-    echo "      https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools"
+    echo "Docs: https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-database-client2"
     echo "      https://marketplace.visualstudio.com/items?itemName=humao.rest-client"
     echo
 }
