@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: ✅ Completed (2026-04-08, v1.7.32, all 3 workflows green)
 
 **Goal**: Remove the unused `zip_dev_setup.yml` workflow and all related dead code. Clean up documentation.
 

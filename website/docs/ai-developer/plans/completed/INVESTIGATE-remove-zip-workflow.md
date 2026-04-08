@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Backlog
+## Status: ✅ Completed (2026-04-08, implemented via PLAN-remove-zip-workflow.md)
 
 **Goal**: Remove the unused `dev_containers.zip` creation and GitHub release from the CI pipeline.
 

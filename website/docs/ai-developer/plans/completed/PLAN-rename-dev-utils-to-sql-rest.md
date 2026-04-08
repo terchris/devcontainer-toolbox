@@ -4,7 +4,7 @@
 > - [WORKFLOW.md](../../WORKFLOW.md) - The implementation process
 > - [PLANS.md](../../PLANS.md) - Plan structure and best practices
 
-## Status: Active
+## Status: ✅ Completed (2026-04-08, v1.7.33, E2E tested)
 
 **Goal**: Rename `install-tool-dev-utils.sh` to `install-tool-sql-rest.sh`, remove Docker bits (redundant with docker-outside-of-docker feature), and focus the script on SQLTools + REST Client.
 
