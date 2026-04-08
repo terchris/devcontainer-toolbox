@@ -505,6 +505,64 @@ Order matters: **CI testing first, then Renovate.** Don't automate version bumps
 
 ---
 
+## GitHub Actions — Node.js 20 Deprecation
+
+Discovered 2026-04-08 in CI build output:
+
+```
+Warning: Node.js 20 actions are deprecated. The following actions are running on
+Node.js 20 and may not work as expected:
+  - actions/checkout@v4
+  - actions/setup-node@v4
+  - actions/upload-artifact@v4
+```
+
+GitHub Actions runners will force these to Node.js 24 by default starting **June 2, 2026**. After that, Node.js 20 will be removed from runners on **September 16, 2026**.
+
+### Affected actions in DCT workflows
+
+| Action | Current | Status |
+|--------|---------|--------|
+| `actions/checkout@v4` | v4 (Node 20) | Newer version (v5) likely available |
+| `actions/setup-node@v4` | v4 (Node 20) | Newer version (v5) likely available |
+| `actions/upload-artifact@v4` | v4 (Node 20) | Newer version (v5) likely available |
+| `actions/download-artifact@v4` | v4 (Node 20) | Newer version (v5) likely available |
+| `docker/setup-qemu-action@v3` | v3 | Check for v4 |
+| `docker/setup-buildx-action@v3` | v3 | Check for v4 |
+| `docker/login-action@v3` | v3 | Check for v4 |
+| `docker/build-push-action@v6` | v6 | Likely current |
+
+### Action items
+
+- [ ] Check latest version of each action on GitHub Marketplace
+- [ ] Update all `@vN` references in `.github/workflows/*.yml`
+- [ ] Test that workflows still pass after the bump
+- [ ] Consider Renovate Bot for automated GitHub Actions version updates (it supports this natively, no regex annotations needed)
+
+### Files to update
+
+- `.github/workflows/ci-tests.yml`
+- `.github/workflows/build-image.yml`
+- `.github/workflows/deploy-docs.yml`
+
+---
+
+## Docusaurus Build Warning (separate issue)
+
+Discovered 2026-04-08 during local docs build:
+
+```
+Warning: Duplicate routes found!
+- Attempting to create page at /docs/ai-developer/, but a page already exists
+  at this route.
+```
+
+There are two files producing the same URL `/docs/ai-developer/`. Likely both `README.md` and `index.md` (or similar) exist in `website/docs/ai-developer/`. Need to delete one or rename it.
+
+This is a Docusaurus structure issue, not an outdated version issue. Tracking it here for visibility — should be fixed in a separate PR.
+
+---
+
 ## Next Steps
 
 - [x] Update Node.js version in `image/Dockerfile` (22.12.0 → 22.22.2, 2026-04-06)

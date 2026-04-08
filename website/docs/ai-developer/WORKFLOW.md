@@ -194,6 +194,41 @@ See [RELEASING.md](../contributors/releasing) for full release process.
 
 ---
 
+## Docs Build Check (MANDATORY for documentation changes)
+
+**CRITICAL:** When changing files in `website/docs/` (especially when deleting, moving, or renaming files), Claude MUST run the Docusaurus build locally before pushing:
+
+```bash
+cd /workspace/website
+npm run build
+```
+
+**Why this matters:** Docusaurus validates ALL internal links during build. Broken links cause the `Deploy Documentation` CI workflow to fail. Catching these locally takes 1-2 minutes; waiting for CI takes 5-10 minutes per push and creates noisy failed runs.
+
+**When to run:**
+- After deleting any `.md` file in `website/docs/`
+- After moving a file between `backlog/`, `active/`, and `completed/`
+- After renaming a file
+- After major doc restructuring
+- Before creating a PR with documentation changes
+
+**What it catches:**
+- Broken internal links (`[text](path)`) — the most common failure
+- MDX syntax errors
+- Missing referenced files
+- Frontmatter issues
+
+**Example failure caught locally:**
+```
+[ERROR] Docusaurus found broken links!
+- Broken link on /docs/ai-developer/plans/completed/INVESTIGATE-dev-template-no-git-required:
+   -> linking to ../backlog/ISSUE-urbalurba-dev-templates-cicd.md
+```
+
+If this had been caught locally, no failed CI run, no broken-link commit + fix commit, no waiting.
+
+---
+
 ## Quick Reference
 
 ### Commands to give Claude:
