@@ -10,7 +10,7 @@
 
 **Last Updated**: 2026-04-06
 
-**Investigation**: [INVESTIGATE-one-command-update.md](../backlog/INVESTIGATE-one-command-update.md) — all research and testing completed
+**Investigation**: [INVESTIGATE-one-command-update.md](INVESTIGATE-one-command-update.md) — all research and testing completed
 
 **Priority**: High — current update flow requires Docker knowledge most developers don't have
 
