@@ -47,7 +47,7 @@ PACKAGES_PYTHON=()
 PACKAGES_PWSH=()
 
 # VS Code extensions (PHP/Laravel-specific only)
-# Note: For database management and API testing, install: install-tool-dev-utils.sh
+# Note: For database management and API testing, install: install-tool-sql-rest.sh
 EXTENSIONS=(
     "PHP Intelephense (bmewburn.vscode-intelephense-client) - Advanced PHP language support with IntelliSense"
     "PHP Debug (xdebug.php-debug) - Debug PHP applications using Xdebug"
@@ -315,7 +315,7 @@ post_installation_message() {
     echo "  - Use port 8000 in browser (Vite runs in background)"
     echo
     echo "Optional: Install database and API testing tools:"
-    echo "  .devcontainer/additions/install-tool-dev-utils.sh"
+    echo "  .devcontainer/additions/install-tool-sql-rest.sh"
     echo "  (Installs SQLTools for databases and REST Client for API testing)"
     echo
     echo "Docs: https://laravel.com/docs/12.x"

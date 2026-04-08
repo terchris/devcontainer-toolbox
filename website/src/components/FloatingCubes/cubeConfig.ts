@@ -99,14 +99,14 @@ export const defaultCubes: CubeConfig[] = [
       "front": "tool-databricks-logo.webp",
       "back": "config-nginx-logo.webp",
       "left": "dev-golang-logo.webp",
-      "right": "tool-dev-utils-logo.webp"
+      "right": "tool-sql-rest-logo.webp"
     },
     "names": {
       "top": "Fortran",
       "front": "Databricks",
       "back": "Nginx",
       "left": "Go",
-      "right": "Dev Utils"
+      "right": "SQL & REST"
     },
     "size": "medium",
     "position": {

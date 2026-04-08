@@ -22,7 +22,7 @@ SCRIPT_ABSTRACT="Kubernetes development tools with kubectl, k9s terminal UI, and
 SCRIPT_LOGO="tool-kubernetes-logo.webp"
 SCRIPT_WEBSITE="https://kubernetes.io"
 SCRIPT_SUMMARY="Kubernetes development toolkit including kubectl CLI for cluster management, k9s terminal UI for interactive cluster exploration, Helm for package management, and VS Code Kubernetes extension. Sets up .devcontainer.secrets for secure kubeconfig storage."
-SCRIPT_RELATED="tool-iac tool-azure-dev tool-dev-utils"
+SCRIPT_RELATED="tool-iac tool-azure-dev tool-sql-rest"
 
 # Commands for dev-setup.sh menu integration
 SCRIPT_COMMANDS=(

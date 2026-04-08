@@ -48,7 +48,7 @@ This document tracks the sources for all logos used in the devcontainer-toolbox 
 | Logo ID | Tool | Source | Direct URL | License |
 |---------|------|--------|------------|---------|
 | `tool-api-dev-logo` | Thunder Client | [Simple Icons](https://simpleicons.org/) | API icon | - |
-| `tool-dev-utils-logo` | Dev Utils | [Simple Icons](https://simpleicons.org/) | Database/Docker icon | - |
+| `tool-sql-rest-logo` | SQL & REST Tools | [Simple Icons](https://simpleicons.org/) | Database icon | - |
 
 ### Services
 

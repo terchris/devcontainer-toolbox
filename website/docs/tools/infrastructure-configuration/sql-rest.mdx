@@ -1,5 +1,5 @@
 ---
-title: Development Utilities
+title: SQL & REST Tools
 hide_title: true
 ---
 
@@ -17,57 +17,50 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
   border: '1px solid var(--ifm-color-emphasis-200)'
 }}>
   <img
-    src={useBaseUrl('/img/tools/tool-dev-utils-logo.webp')}
-    alt="Development Utilities"
+    src={useBaseUrl('/img/tools/tool-sql-rest-logo.webp')}
+    alt="SQL & REST Tools"
     style={{width: '80px', height: '80px', objectFit: 'contain', flexShrink: 0}}
   />
   <div style={{flex: 1}}>
-    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>Development Utilities</h1>
-    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>Development utilities for database management, API testing, and Docker container management.</p>
+    <h1 style={{marginTop: 0, marginBottom: '0.5rem', fontSize: '1.75rem'}}>SQL & REST Tools</h1>
+    <p style={{fontSize: '1rem', color: 'var(--ifm-color-emphasis-700)', marginBottom: '0.75rem'}}>SQL/NoSQL database management and REST API testing tools for VS Code.</p>
     <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem'}}>
       <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>database</span>
       <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>sql</span>
-      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>docker</span>
-      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>containers</span>
       <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>rest</span>
       <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>http</span>
-      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>utilities</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>api</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>mongodb</span>
+      <span style={{background: 'var(--ifm-color-emphasis-200)', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem'}}>redis</span>
     </div>
   </div>
 </div>
 
 :::info Overview
-Language-agnostic development utilities including SQLTools for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB), REST Client for HTTP API testing, and Docker extension for container, image, and volume management.
+Language-agnostic VS Code extensions: Database Client by cweijan for database management (MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis, ClickHouse, ElasticSearch — all drivers bundled, no separate driver install) and REST Client for HTTP API testing. Docker CLI is provided by the devcontainer feature — no separate install needed.
 :::
 
 <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem'}}>
   <div>
-    <strong>Script ID:</strong> <code>tool-dev-utils</code>
+    <strong>Script ID:</strong> <code>tool-sql-rest</code>
   </div>
   <div>
     <strong>Version:</strong> <code>0.0.1</code>
   </div>
   <div>
-    <strong>Script:</strong> <code>install-tool-dev-utils.sh</code>
+    <strong>Script:</strong> <code>install-tool-sql-rest.sh</code>
   </div>
   <div>
-    <strong>Website:</strong> <a href="https://vscode-sqltools.mteixeira.dev" target="_blank">https://vscode-sqltools.mteixeira.dev</a>
+    <strong>Website:</strong> <a href="https://database-client.com" target="_blank">https://database-client.com</a>
   </div>
 </div>
-
-## System Packages
-
-| Package | Description |
-|---------|-------------|
-| [docker.io](https://packages.debian.org/bookworm/docker.io) | Docker CLI for container management |
 
 ## VS Code Extensions
 
 | Extension | Description |
 |-----------|-------------|
-| [SQLTools](https://marketplace.visualstudio.com/items?itemName=mtxr.sqltools) | Database management and SQL query tool for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB |
+| [Database Client](https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-database-client2) | Database management for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis, ClickHouse, ElasticSearch — all drivers bundled |
 | [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) | Send HTTP requests and view responses directly in VS Code |
-| [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) | Manage containers, images, volumes, networks, and Dockerfiles |
 
 ## Installation
 
@@ -80,7 +73,7 @@ dev-setup
 Or install directly:
 
 ```bash
-.devcontainer/additions/install-tool-dev-utils.sh
+.devcontainer/additions/install-tool-sql-rest.sh
 ```
 
 <details>
@@ -90,31 +83,27 @@ Or install directly:
 
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 Development Utilities
+📋 SQL & REST Tools
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ID:           tool-dev-utils
-Name:         Development Utilities
+ID:           tool-sql-rest
+Name:         SQL & REST Tools
 Script version: 0.0.1
 Category:     INFRA_CONFIG, Infrastructure & Configuration
-Description:  Database management (SQLTools), API testing (REST Client), and container management (Docker) for multi-language development
+Description:  Database management (Database Client) and REST API testing (REST Client) for multi-language development
 
 Usage:
 
   Action:
-      install-tool-dev-utils.sh         # Install development utilities
-      install-tool-dev-utils.sh --uninstall # Uninstall development utilities
+      install-tool-sql-rest.sh          # Install SQL & REST tools
+      install-tool-sql-rest.sh --uninstall # Uninstall SQL & REST tools
 
   Info:
-      install-tool-dev-utils.sh --help  # Show help and usage information
-
-System Packages (APT):
-  - docker.io
+      install-tool-sql-rest.sh --help   # Show help and usage information
 
 VS Code Extensions:
-  - SQLTools (mtxr.sqltools) - Database management and SQL query tool for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB
+  - Database Client (cweijan.vscode-database-client2) - Database management for MySQL, PostgreSQL, SQLite, MSSQL, MongoDB, Redis, ClickHouse, ElasticSearch — all drivers bundled
   - REST Client (humao.rest-client) - Send HTTP requests and view responses directly in VS Code
-  - Docker (ms-azuretools.vscode-docker) - Manage containers, images, volumes, networks, and Dockerfiles
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
