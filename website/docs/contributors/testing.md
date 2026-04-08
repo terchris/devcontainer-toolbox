@@ -115,7 +115,7 @@ Tests run automatically in CI on every PR:
 - **Unit tests**: Always run (safe execution)
 - **Install tests**: Run locally only (require devcontainer)
 
-See [CI/CD](ci-cd) for details on GitHub Actions.
+See [CI/CD Pipeline](architecture/ci-pipeline) for details on GitHub Actions.
 
 ---
 

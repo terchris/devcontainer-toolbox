@@ -17,7 +17,7 @@ The toolbox has a single version tracked in `version.txt`:
 
 This is bumped manually before releases. Changes to `version.txt` trigger:
 - A Docker image build and push to `ghcr.io/helpers-no/devcontainer-toolbox`
-- A GitHub release with `dev_containers.zip` (for initial installs via `install.sh`)
+- CI auto-updates `DCT_IMAGE_VERSION` in `devcontainer-user-template.json`
 
 Users update via `dev-update` which pulls the new image and triggers a VS Code rebuild.
 
@@ -49,9 +49,8 @@ When you merge a PR to `main`, GitHub Actions automatically:
 2. Auto-updates documentation if needed
 3. If tests pass:
    - Builds and pushes Docker image (tagged with version + `latest`)
-   - Creates `.devcontainer/.version` file
-   - Packages everything into `dev_containers.zip`
-   - Creates GitHub release tagged "latest"
+   - Auto-commits the new `DCT_IMAGE_VERSION` to `devcontainer-user-template.json`
+   - Deploys the website to GitHub Pages
 
 ---
 
@@ -95,11 +94,10 @@ On container startup, the entrypoint checks for updates and shows a notification
 |------|------|
 | `version.txt` | Version number (manual bump triggers release) |
 | `devcontainer-user-template.json` | Template for user projects (includes `DCT_IMAGE_VERSION`) |
-| `.devcontainer/.version` | Created during release |
 | `.devcontainer/devcontainer.json` | Build-mode config (toolbox development only) |
 | `.github/workflows/ci-tests.yml` | Runs tests on push |
-| `.github/workflows/zip_dev_setup.yml` | Creates release |
-| `.github/workflows/build-image.yml` | Builds Docker image (on version.txt change) |
+| `.github/workflows/build-image.yml` | Builds Docker image + updates `DCT_IMAGE_VERSION` (on version.txt change) |
+| `.github/workflows/deploy-docs.yml` | Deploys Docusaurus website to GitHub Pages |
 
 ---
 
@@ -119,10 +117,11 @@ dev-help
 
 ## Troubleshooting
 
-### Release not created?
+### Image not built?
 
 1. Check if CI tests passed: Go to Actions tab on GitHub
-2. The zip workflow only runs after CI tests succeed
+2. The image build workflow runs in parallel with CI tests
+3. Verify `version.txt` was updated — image build only runs when version.txt or scripts change
 
 ### Users not seeing update?
 

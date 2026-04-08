@@ -19,26 +19,21 @@ _get_devcontainer_dir() {
 
 # ─── Container version ──────────────────────────────────────────────────────
 
-# Read container version info from .version file or version.txt
+# Read container version info from version.txt
 # Sets: TOOLBOX_VERSION, TOOLBOX_REPO
 _load_version_info() {
     local devcontainer_dir="$(_get_devcontainer_dir)"
-    local version_file="$devcontainer_dir/.version"
     local workspace_root="$devcontainer_dir/.."
     local version_txt="$workspace_root/version.txt"
 
     TOOLBOX_VERSION="unknown"
-    TOOLBOX_REPO=""
+    # Hardcoded — DCT is always at this repo
+    TOOLBOX_REPO="helpers-no/devcontainer-toolbox"
 
-    # First try .devcontainer/.version (created by dev-update for installed users)
-    if [ -f "$version_file" ]; then
-        TOOLBOX_VERSION=$(grep "^VERSION=" "$version_file" 2>/dev/null | cut -d= -f2)
-        TOOLBOX_REPO=$(grep "^REPO=" "$version_file" 2>/dev/null | cut -d= -f2)
-    # Image mode: version.txt is inside $DCT_HOME (not in parent dir)
-    elif [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/version.txt" ]; then
+    # Image mode: version.txt is inside $DCT_HOME
+    if [ -n "$DCT_HOME" ] && [ -f "$DCT_HOME/version.txt" ]; then
         TOOLBOX_VERSION=$(cat "$DCT_HOME/version.txt" 2>/dev/null | tr -d '[:space:]')
-        TOOLBOX_REPO="helpers-no/devcontainer-toolbox"
-    # Copy mode: version.txt in workspace root (parent of .devcontainer/)
+    # Dev devcontainer: version.txt in workspace root (parent of .devcontainer/)
     elif [ -f "$version_txt" ]; then
         TOOLBOX_VERSION=$(cat "$version_txt" 2>/dev/null | tr -d '[:space:]')
     fi

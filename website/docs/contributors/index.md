@@ -101,7 +101,7 @@ Then create a Pull Request on GitHub.
 |-------|-------------|
 | [Adding Tools](adding-tools) | Overview of adding new tools |
 | [Testing](testing) | Running and writing tests |
-| [CI/CD](ci-cd) | GitHub Actions and automated checks |
+| [CI/CD Pipeline](architecture/ci-pipeline) | GitHub Actions workflows and pipeline overview |
 | [Releasing](releasing) | Version bumping and releases |
 | [Documentation Website](website) | Working with this Docusaurus site |
 

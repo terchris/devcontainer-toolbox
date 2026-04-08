@@ -9,7 +9,7 @@ How plans become implemented features.
 
 **Related:**
 - [PLANS.md](PLANS.md) - Plan structure, templates, and best practices
-- [CI-CD.md](../contributors/ci-cd) - What to check before merging to main
+- [CI/CD Pipeline](../contributors/architecture/ci-pipeline) - GitHub Actions workflows
 
 ---
 
@@ -173,7 +173,7 @@ Claude will:
 
 7. **Documentation**: CI auto-updates docs after merge - no manual step needed.
 
-See [CI-CD.md](../contributors/ci-cd) for details on what happens after merge.
+See [CI/CD Pipeline](../contributors/architecture/ci-pipeline) for details on what happens after merge.
 
 ---
 

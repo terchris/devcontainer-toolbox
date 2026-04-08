@@ -16,7 +16,7 @@ Instructions for AI coding assistants (Claude, Copilot, etc.) working on devcont
 | [WORKFLOW.md](WORKFLOW.md) | End-to-end flow from idea to implemented feature (start here) |
 | [PLANS.md](PLANS.md) | Plan structure, templates, and how to write plans |
 | [CREATING-SCRIPTS.md](CREATING-SCRIPTS.md) | How to create new install/service/config scripts |
-| [CI/CD](../contributors/ci-cd) | GitHub Actions, versioning, and pre-merge checklist |
+| [CI/CD Pipeline](../contributors/architecture/ci-pipeline) | GitHub Actions workflows and pipeline overview |
 
 ---
 

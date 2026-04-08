@@ -320,7 +320,7 @@ The install cycle test (`run-all-tests.sh install`) actually downloads, installs
 The test auto-discovers all `install-*.sh` scripts — no hardcoded list. New scripts are automatically included.
 
 See [testing.md](../contributors/testing) for details on the test framework.
-See [CI-CD.md](../contributors/ci-cd) for what CI checks.
+See [CI/CD Pipeline](../contributors/architecture/ci-pipeline) for what CI checks.
 
 ---
 
