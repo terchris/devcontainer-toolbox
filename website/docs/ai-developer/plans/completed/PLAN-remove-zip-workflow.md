@@ -12,7 +12,7 @@
 
 **Last Updated**: 2026-04-07
 
-**Investigation**: [INVESTIGATE-remove-zip-workflow.md](../backlog/INVESTIGATE-remove-zip-workflow.md) — all questions answered
+**Investigation**: [INVESTIGATE-remove-zip-workflow.md](INVESTIGATE-remove-zip-workflow.md) — all questions answered
 
 ---
 
