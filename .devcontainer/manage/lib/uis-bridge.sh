@@ -8,8 +8,9 @@
 #
 # Functions:
 #   uis_bridge_check      — verify Docker CLI and UIS container are available
-#   uis_bridge_run        — run a command in UIS container
+#   uis_bridge_run        — run a command in UIS container (no TTY, no stdin)
 #   uis_bridge_run_stdin  — run a command piping stdin (for init files)
+#   uis_bridge_run_tty    — run a command with TTY (for interactive commands)
 #   uis_bridge_configure  — call uis configure, parse JSON response
 #------------------------------------------------------------------------------
 
@@ -22,14 +23,13 @@ UIS_CONTAINER="uis-provision-host"
 # Returns: 0 if ready, 1 if not (with error message)
 #------------------------------------------------------------------------------
 uis_bridge_check() {
-  # Check Docker CLI
+  # Check Docker CLI (provided by docker-outside-of-docker devcontainer feature)
   if ! command -v docker >/dev/null 2>&1; then
-    echo "❌ Docker CLI is not installed."
+    echo "❌ Docker CLI is not available."
     echo ""
-    echo "   Install it with: dev-setup"
-    echo "   (Select 'Docker CLI' from Infrastructure & Configuration)"
-    echo ""
-    echo "   Or directly: bash .devcontainer/additions/install-tool-docker-cli.sh"
+    echo "   This devcontainer should have it via the docker-outside-of-docker"
+    echo "   feature. Check .devcontainer/devcontainer.json includes:"
+    echo '   "features": { "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {} }'
     return 1
   fi
 
@@ -77,6 +77,19 @@ uis_bridge_run_stdin() {
 }
 
 #------------------------------------------------------------------------------
+# Run a command in UIS container with a TTY allocated (for interactive commands
+# like `uis connect`, `uis status`, etc. that produce formatted/coloured output)
+#
+# Arguments:
+#   $@ — command and arguments
+#
+# Returns: exit code from docker exec
+#------------------------------------------------------------------------------
+uis_bridge_run_tty() {
+  docker exec -it "$UIS_CONTAINER" uis "$@"
+}
+
+#------------------------------------------------------------------------------
 # Call uis configure and parse the JSON response
 #
 # Arguments:
@@ -88,17 +101,25 @@ uis_bridge_run_stdin() {
 #
 # Returns: 0 on success, 1 on error
 # Sets globals:
-#   UIS_RESPONSE       — full JSON response
-#   UIS_STATUS         — "ok" or "error"
-#   UIS_LOCAL_URL      — local connection URL (e.g., DATABASE_URL for local dev)
-#   UIS_CLUSTER_URL    — cluster connection URL (for K8s deployment)
-#   UIS_ERROR_PHASE    — error phase if failed
-#   UIS_ERROR_DETAIL   — error detail if failed
+#   UIS_RESPONSE        — full JSON response
+#   UIS_STATUS          — "ok", "already_configured", or "error"
+#   UIS_LOCAL_URL       — local connection URL (e.g., DATABASE_URL for local dev)
+#   UIS_CLUSTER_URL     — cluster connection URL (deprecated, kept for one cycle)
+#   UIS_SECRET_NAME     — K8s secret name (set when --namespace + --secret-name-prefix passed)
+#   UIS_SECRET_NAMESPACE — K8s namespace where the secret lives
+#   UIS_SECRET_ENV_VAR  — env var name in the K8s secret (e.g., DATABASE_URL)
+#   UIS_ERROR_PHASE     — error phase if failed
+#   UIS_ERROR_DETAIL    — error detail if failed
 #------------------------------------------------------------------------------
 uis_bridge_configure() {
   local service="$1"
   local app_name="$2"
   shift 2
+
+  # Reset secret fields so callers never read stale values from a previous call
+  UIS_SECRET_NAME=""
+  UIS_SECRET_NAMESPACE=""
+  UIS_SECRET_ENV_VAR=""
 
   local has_stdin=false
   local args=("configure" "$service" "--app" "$app_name" "--json")
@@ -142,6 +163,10 @@ uis_bridge_configure() {
         ok|already_configured)
           UIS_LOCAL_URL=$(echo "$response" | jq -r '.local.database_url // .local.url // ""')
           UIS_CLUSTER_URL=$(echo "$response" | jq -r '.cluster.database_url // .cluster.url // ""')
+          # K8s Secret fields (set when --namespace + --secret-name-prefix passed)
+          UIS_SECRET_NAME=$(echo "$response" | jq -r '.secret_name // ""')
+          UIS_SECRET_NAMESPACE=$(echo "$response" | jq -r '.secret_namespace // ""')
+          UIS_SECRET_ENV_VAR=$(echo "$response" | jq -r '.env_var // ""')
           return 0
           ;;
         *)
