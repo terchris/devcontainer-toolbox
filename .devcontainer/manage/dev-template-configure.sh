@@ -18,6 +18,7 @@ ADDITIONS_DIR="$DEVCONTAINER_DIR/additions"
 
 # Source libraries
 source "$SCRIPT_DIR/lib/uis-bridge.sh"
+source "$ADDITIONS_DIR/lib/git-identity.sh"
 
 #------------------------------------------------------------------------------
 # Script Metadata
@@ -337,6 +338,21 @@ _configure_service() {
   local extra_args=()
   [ -n "$database" ] && extra_args+=("--database" "$database")
 
+  # K8s namespace + secret name prefix (Phase 1, item 1.9 of
+  # INVESTIGATE-improve-template-docs-with-services).
+  #
+  # namespace: where the deployed app lives — uses subdomain (user-friendly app
+  #   name) if set, otherwise app_name, otherwise the git repo name.
+  # secret_name_prefix: matches the deployment manifest's existing
+  #   {{REPO_NAME}}-db convention. Always the git repo name.
+  #
+  # Both flags are passed only when GIT_REPO is set (i.e., the project has a
+  # git remote). Without it, UIS works in legacy mode (no K8s secret).
+  if [ -n "${GIT_REPO:-}" ]; then
+    local namespace="${PARAMS[subdomain]:-${PARAMS[app_name]:-$GIT_REPO}}"
+    extra_args+=("--namespace" "$namespace" "--secret-name-prefix" "$GIT_REPO")
+  fi
+
   # Handle init file
   if [ -n "$init_file" ]; then
     local init_path="$CALLER_DIR/$init_file"
@@ -389,7 +405,7 @@ _configure_service() {
   fi
   succeeded_services+=("$service")
 
-  # Write connection details to .env
+  # Write local connection URL to .env (for local development)
   if [ -n "$UIS_LOCAL_URL" ]; then
     local env_key="$env_var"
     # Append to .env (create if doesn't exist)
@@ -399,10 +415,16 @@ _configure_service() {
     else
       echo "${env_key}=${UIS_LOCAL_URL}" >> "$CALLER_DIR/.env"
     fi
-    echo "   → .env: ${env_key}=${UIS_LOCAL_URL}"
+    echo "   → .env: ${env_key}=${UIS_LOCAL_URL} (local)"
   fi
 
-  if [ -n "$UIS_CLUSTER_URL" ]; then
+  # Report the K8s Secret if UIS created one (cluster credentials live there,
+  # not in .env.cluster — the deployment manifest's secretKeyRef reads it).
+  if [ -n "${UIS_SECRET_NAME:-}" ] && [ -n "${UIS_SECRET_NAMESPACE:-}" ]; then
+    echo "   → K8s Secret: ${UIS_SECRET_NAME} in namespace ${UIS_SECRET_NAMESPACE} (cluster)"
+  elif [ -n "$UIS_CLUSTER_URL" ]; then
+    # Legacy fallback: no secret created (e.g., older UIS or no GIT_REPO).
+    # Write to .env.cluster so callers that read it still work.
     local env_key="$env_var"
     if [ -f "$CALLER_DIR/.env.cluster" ] && grep -q "^${env_key}=" "$CALLER_DIR/.env.cluster"; then
       sed -i "s|^${env_key}=.*|${env_key}=${UIS_CLUSTER_URL}|" "$CALLER_DIR/.env.cluster"
@@ -454,6 +476,11 @@ echo ""
 if ! uis_bridge_check; then
   exit 1
 fi
+
+# Detect git identity for namespace + secret_name_prefix.
+# Best-effort: if there's no git remote, GIT_REPO will be empty and we fall
+# back to legacy mode (no K8s secret created).
+detect_git_identity "$CALLER_DIR" 2>/dev/null || true
 
 # Read template-info.yaml
 YAML_FILE="$CALLER_DIR/template-info.yaml"
