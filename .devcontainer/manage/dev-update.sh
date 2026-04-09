@@ -23,6 +23,44 @@ IMAGE="ghcr.io/$REPO:latest"
 WORKSPACE="${DCT_WORKSPACE:-/workspace}"
 DEVCONTAINER_JSON="$WORKSPACE/.devcontainer/devcontainer.json"
 
+# ─── Cleanup old DCT images ──────────────────────────────────────────────────
+# DCT users don't manage Docker tags themselves. There should only ever be
+# one DCT image on disk: the current one. Anything else is wasted space.
+
+_cleanup_old_dct_images() {
+    command -v docker &>/dev/null || return 0
+
+    # Full ID of the image we want to keep (current :latest)
+    local keep_id
+    keep_id=$(docker image inspect "$IMAGE" --format '{{.Id}}' 2>/dev/null) || return 0
+    [ -z "$keep_id" ] && return 0
+
+    # All DCT image IDs (tagged + dangling), full sha, deduplicated
+    local all_ids
+    all_ids=$( {
+        docker images "ghcr.io/$REPO" --format '{{.ID}}' --no-trunc 2>/dev/null
+        docker images --filter "dangling=true" --filter "reference=ghcr.io/$REPO" --format '{{.ID}}' --no-trunc 2>/dev/null
+    } | sort -u)
+
+    local removed=0
+    for full_id in $all_ids; do
+        [ "$full_id" = "$keep_id" ] && continue
+        if docker rmi -f "$full_id" >/dev/null 2>&1; then
+            removed=$((removed + 1))
+        fi
+    done
+
+    if [ "$removed" -gt 0 ]; then
+        echo ""
+        echo "🧹 Freeing up disk space..."
+        if [ "$removed" -eq 1 ]; then
+            echo "   ✅ Removed 1 old version"
+        else
+            echo "   ✅ Removed $removed old versions"
+        fi
+    fi
+}
+
 # Parse arguments
 FORCE=false
 CHECK_ONLY=false
@@ -78,6 +116,7 @@ echo ""
 
 if [ "$FORCE" = false ] && [ "$CURRENT_VERSION" = "$REMOTE_VERSION" ]; then
     echo "   ✅ Already up to date (version $CURRENT_VERSION)"
+    _cleanup_old_dct_images
     exit 0
 fi
 
@@ -132,6 +171,8 @@ if ! docker pull "$IMAGE"; then
     echo "   ❌ Failed to pull image. Check your network connection."
     exit 1
 fi
+
+_cleanup_old_dct_images
 
 # ─── Update devcontainer.json with latest template ───────────────────────────
 
