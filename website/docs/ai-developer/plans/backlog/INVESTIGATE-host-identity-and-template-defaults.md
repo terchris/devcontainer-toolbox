@@ -71,7 +71,9 @@ It never runs `git config --global user.email` or `user.name`. So priority 3 alw
 
 ### Bug A2 — `git remote get-url origin` may fail at entrypoint time
 
-The entrypoint runs `git config --global --add safe.directory "$DCT_WORKSPACE"` early (line 38), then calls `config-git.sh --verify` which calls `git remote get-url origin`. This *should* work, but the order of UID mapping vs. safe-directory marking is fragile. Worth verifying that `git remote get-url origin` actually returns the real URL on a fresh container start, not just on second-and-later starts.
+The entrypoint runs `git config --global --add safe.directory "$DCT_WORKSPACE"` early (line 38), then calls `config-git.sh --verify` which calls `git remote get-url origin`. This *should* work, but the order of UID mapping vs. safe-directory marking is fragile.
+
+**Update 2026-04-10:** Real-world test on a freshly-cloned `terchris/delete-test` opened in VS Code shows `git remote get-url origin` works correctly at entrypoint time — `Repo: terchris/delete-test` and `Branch: main` were both detected on the first start. So Bug A2 **does not reproduce** in this environment. It may still surface in other environments (different UID mapping, slow filesystem, etc.) but it's not load-bearing for the main fix. **Demote from "open question" to "monitor".**
 
 ### Bug B — Template defaults don't use the repo name
 
@@ -136,20 +138,29 @@ Bug B means even when `GIT_REPO` *is* detected correctly, the template ignores i
 
 Together: a fresh-clone user gets either `workspace`-prefixed names or `my-app`-prefixed names — never the actual repo name they expect.
 
-### Bug C — `dev-check` doesn't know about host capture
+### Bug C — `dev-check` (and the welcome message) don't know about host capture
 
-`dev-check` is a generic configuration checker (`.devcontainer/manage/dev-check.sh`) that scans `additions/config-*.sh` scripts and runs each one's `SCRIPT_CHECK_COMMAND` to mark it CONFIGURED / NOT_CONFIGURED. For git identity, the check command (`config-git.sh:15`) is:
+There are **two surfaces** that show the "git not configured" warning, both rooted in the same check.
+
+**Surface 1 — `dev-check`** (`.devcontainer/manage/dev-check.sh`): a generic configuration checker that scans `additions/config-*.sh` scripts and runs each one's `SCRIPT_CHECK_COMMAND`. For git identity (`config-git.sh:15`):
 
 ```bash
 SCRIPT_CHECK_COMMAND="git config --global user.name >/dev/null 2>&1 && git config --global user.email >/dev/null 2>&1"
 ```
 
-This checks the **container's** `git config`. It does **not** check whether `.git-host-email` / `.git-host-name` exist on disk. So on a fresh clone where Bug A bites:
+**Surface 2 — the welcome message** at every container start (streamed via `dev-welcome.sh` from `/tmp/.dct-startup.log`). This *also* runs an identity check independently and prints:
 
-1. `dev-check` reports `❌ Git Identity — NOT_CONFIGURED`
-2. Offers the interactive `configure_git_identity()` flow (`config-git.sh:198`)
-3. The interactive flow prompts the user from scratch with no awareness that the host has a perfectly good `git config user.email` available
-4. User retypes information they already have on their host
+```
+⚠️  Git identity not configured - run 'dev-setup' to set your name and email
+```
+
+Both surfaces check the **container's** `git config`. Neither checks whether `.git-host-email` / `.git-host-name` exist on disk. So on a fresh clone where Bug A bites:
+
+1. The welcome message warns "Git identity not configured" on every container start
+2. `dev-check` (if run) would report `❌ Git Identity — NOT_CONFIGURED`
+3. Both offer the interactive `configure_git_identity()` flow (`config-git.sh:198`)
+4. The interactive flow prompts the user from scratch with no awareness that the host has a perfectly good `git config user.email` available
+5. User retypes information they already have on their host
 
 This is a third symptom of Bug A: the manual recovery path is awkward because nothing surfaces "your host has X, do you want to use that?".
 
@@ -347,3 +358,56 @@ Then:
 - [ ] `kubectl get secret my-cool-app-db -n my-cool-app -o jsonpath='{.data.DATABASE_URL}' | base64 -d` returns a working cluster URL
 - [ ] User did not edit a single file
 - [ ] **Negative path:** if the user has no git identity on their host, `dev-check` shows a clear actionable message (not silent fallback to `vscode@localhost`)
+
+---
+
+## Real-world reproduction (2026-04-10, DCT v1.7.36)
+
+Captured during the v1.7.36 E2E test setup. After:
+
+1. `rm -rf ~/learn/helpers/testing/delete-test`
+2. `git clone https://github.com/terchris/delete-test.git`
+3. `code delete-test` → "Reopen in Container"
+4. VS Code pulled `:latest` (v1.7.36) and built the derived container
+5. Opened first terminal — entrypoint output streamed via the welcome script:
+
+```
+DevContainer Toolbox v1.7.36 - Type 'dev-help' for commands
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 DevContainer Toolbox — Starting up
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 Configuring git identity...
+
+✅ Git identity detected:
+   Email:    vscode@localhost                              ← Bug A: priority-5 fallback
+   Provider: github                                         ← parsed correctly
+   Repo:     terchris/delete-test                           ← parsed correctly (Bug A2 NOT manifesting)
+   Branch:   main                                           ← parsed correctly
+   Hostname: dev-vscode-localhost-mbp-j4g0g066w2            ← derived from the bad email
+
+...
+
+⚠️  Git identity not configured - run 'dev-setup' to set     ← Bug C, surface 2:
+    your name and email                                       welcome message warning
+```
+
+The host (Mac) has a real `git config --global user.email` set, but **none of it reached the container** because the `initializeCommand` only writes `.host-hostname`, never `.git-host-email`.
+
+### What this confirms
+
+| Bug | Predicted | Observed | Status |
+|---|---|---|---|
+| **A** (host email not captured) | `vscode@localhost` shown | `vscode@localhost` shown | ✅ Confirmed |
+| **A2** (git remote may fail) | `Repo: workspace` fallback | `Repo: terchris/delete-test` correct | ❌ Does not manifest in this environment |
+| **B** (template defaults wrong) | Will manifest at `dev-template configure` | (not yet tested in this run) | Pending |
+| **C** (dev-check unaware of host capture) | Warning surfaces on fresh clones | Welcome message warning surfaced; `dev-check` not run but same root cause | ✅ Confirmed (and revealed surface 2) |
+
+### What the user has to do today (workaround)
+
+After this output, the user has to either:
+1. **Ignore the warning and proceed** — works for `dev-template configure` because that flow uses `git remote get-url origin` (which works) for `GIT_REPO`, not the email. The bad email doesn't break the E2E.
+2. **Run `dev-setup` and manually re-enter** the email and name they already have on their host.
+
+Neither is acceptable as a long-term experience for new users.

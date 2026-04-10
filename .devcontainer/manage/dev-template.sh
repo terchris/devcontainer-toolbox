@@ -275,6 +275,119 @@ function install_overlay_template() {
 }
 
 #------------------------------------------------------------------------------
+# Parse the optional `quickstart:` block from template-info.yaml.
+#
+# Schema (all fields optional individually, but quickstart: must exist):
+#   quickstart:
+#     title: "Run the Flask app"
+#     commands:
+#       - uv venv
+#       - uv pip install -r requirements.txt
+#       - uv run python app/app.py
+#     note: |
+#       Free-form text shown after the commands.
+#       Multi-line is supported via YAML literal block (|).
+#
+# Sets globals (caller checks if QUICKSTART_TITLE is non-empty):
+#   QUICKSTART_TITLE     — single-line label
+#   QUICKSTART_COMMANDS  — bash array, one entry per command
+#   QUICKSTART_NOTE      — free-form text (may contain newlines)
+#------------------------------------------------------------------------------
+function parse_quickstart_block() {
+  local yaml_file="$1"
+
+  QUICKSTART_TITLE=""
+  QUICKSTART_COMMANDS=()
+  QUICKSTART_NOTE=""
+
+  [ ! -f "$yaml_file" ] && return 0
+
+  local in_quickstart=false
+  local in_commands=false
+  local in_note=false
+  local note_lines=()
+  local line
+
+  while IFS= read -r line; do
+    # Detect quickstart block start
+    if [[ "$line" =~ ^quickstart: ]]; then
+      in_quickstart=true
+      continue
+    fi
+
+    # Exit quickstart when we hit another top-level key
+    if $in_quickstart && [[ "$line" =~ ^[a-zA-Z] && ! "$line" =~ ^[[:space:]] ]]; then
+      break
+    fi
+
+    if ! $in_quickstart; then
+      continue
+    fi
+
+    # Note continuation lines (when in_note is true)
+    if $in_note; then
+      if [[ "$line" =~ ^[[:space:]]{4,} ]]; then
+        # Strip 4 leading spaces (the YAML block indent), keep the rest
+        note_lines+=("${line:4}")
+        continue
+      elif [[ -z "$line" ]]; then
+        # Blank line is part of the note block
+        note_lines+=("")
+        continue
+      else
+        in_note=false
+        # Fall through so this line is processed as a regular field
+      fi
+    fi
+
+    # Commands list (lines like "  - uv venv")
+    if $in_commands; then
+      if [[ "$line" =~ ^[[:space:]]+-[[:space:]]+(.*)$ ]]; then
+        local cmd="${BASH_REMATCH[1]}"
+        # Strip surrounding quotes if present
+        cmd=$(echo "$cmd" | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//")
+        QUICKSTART_COMMANDS+=("$cmd")
+        continue
+      else
+        in_commands=false
+        # Fall through
+      fi
+    fi
+
+    # Field detection: "  title: ..."
+    if [[ "$line" =~ ^[[:space:]]+title:[[:space:]]*(.*)$ ]]; then
+      QUICKSTART_TITLE=$(echo "${BASH_REMATCH[1]}" | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//")
+      continue
+    fi
+
+    # "  commands:" (start of list)
+    if [[ "$line" =~ ^[[:space:]]+commands:[[:space:]]*$ ]]; then
+      in_commands=true
+      continue
+    fi
+
+    # "  note: |" (start of literal block scalar)
+    if [[ "$line" =~ ^[[:space:]]+note:[[:space:]]*\|[[:space:]]*$ ]]; then
+      in_note=true
+      continue
+    fi
+
+    # "  note: text" (single-line)
+    if [[ "$line" =~ ^[[:space:]]+note:[[:space:]]*(.*)$ ]]; then
+      QUICKSTART_NOTE=$(echo "${BASH_REMATCH[1]}" | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//")
+      continue
+    fi
+  done < "$yaml_file"
+
+  # Join collected note lines
+  if [ ${#note_lines[@]} -gt 0 ]; then
+    QUICKSTART_NOTE=$(printf '%s\n' "${note_lines[@]}")
+    # Strip trailing newline
+    QUICKSTART_NOTE="${QUICKSTART_NOTE%$'\n'}"
+  fi
+}
+
+#------------------------------------------------------------------------------
 # Cleanup and show completion
 #------------------------------------------------------------------------------
 function cleanup_and_complete() {
@@ -322,8 +435,30 @@ function cleanup_and_complete() {
     step=$((step + 1))
   fi
 
-  echo "   $step. Start building your project"
-  echo ""
+  # Parse optional quickstart block from template-info.yaml
+  parse_quickstart_block "$CALLER_DIR/template-info.yaml"
+
+  if [ -n "${QUICKSTART_TITLE:-}" ] && [ ${#QUICKSTART_COMMANDS[@]} -gt 0 ]; then
+    echo "   $step. Run your app — $QUICKSTART_TITLE"
+    echo ""
+    for cmd in "${QUICKSTART_COMMANDS[@]}"; do
+      echo "         $cmd"
+    done
+    echo ""
+    if [ -n "${QUICKSTART_NOTE:-}" ]; then
+      while IFS= read -r note_line; do
+        if [ -n "$note_line" ]; then
+          echo "      $note_line"
+        else
+          echo ""
+        fi
+      done <<< "$QUICKSTART_NOTE"
+      echo ""
+    fi
+  else
+    echo "   $step. Start building your project"
+    echo ""
+  fi
 }
 
 #------------------------------------------------------------------------------
