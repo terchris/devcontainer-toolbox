@@ -208,7 +208,12 @@ process_requires() {
     return 0
   fi
 
-  echo "🔧 Configuring services..."
+  # Count services so we can show "1 service" or "3 services" in the header
+  local n_requires
+  n_requires=$(grep -c '^[[:space:]]*-[[:space:]]*service:' "$yaml_file")
+  local svc_word="service requirement"
+  [ "$n_requires" -ne 1 ] && svc_word="service requirements"
+  echo "🔧 Configuring $n_requires $svc_word..."
   echo ""
 
   local configured=0
@@ -281,31 +286,45 @@ process_requires() {
     _configure_service "$current_service" "$current_database" "$current_init" "$current_env_var"
   fi
 
-  # Summary
+  # ─── Summary box ─────────────────────────────────────────────────
+  local total_elapsed=$((SECONDS - ${TOTAL_START:-$SECONDS}))
   echo ""
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   if [ $failed -eq 0 ]; then
-    echo "✅ Configuration complete!"
+    echo "✅ Configuration complete ($configured configured, $skipped skipped, $failed failed)"
   else
-    echo "❌ Configuration incomplete:"
+    echo "❌ Configuration incomplete ($configured configured, $skipped skipped, $failed failed)"
   fi
+  echo "   Total time: ${total_elapsed}s"
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  echo ""
-
-  for svc in "${succeeded_services[@]}"; do
-    echo "   ✅ $svc"
-  done
-  for svc in "${failed_services[@]}"; do
-    echo "   ❌ $svc"
-  done
 
   if [ $failed -gt 0 ]; then
     echo ""
+    for svc in "${failed_services[@]}"; do
+      echo "   ❌ $svc"
+    done
+    echo ""
     echo "   Fix the issue and run: dev-template configure"
+    echo ""
+    return $failed
   fi
-  echo ""
 
-  return $failed
+  # ─── Next steps ──────────────────────────────────────────────────
+  if [ -n "${LAST_SERVICE:-}" ]; then
+    echo ""
+    echo "📋 Next steps:"
+    if [ -n "${LAST_DATABASE:-}" ]; then
+      echo "   • Verify the database:    uis connect $LAST_SERVICE $LAST_DATABASE"
+    fi
+    if [ -n "${LAST_SECRET_NAME:-}" ] && [ -n "${LAST_SECRET_NAMESPACE:-}" ]; then
+      echo "   • Check the K8s secret:   kubectl get secret $LAST_SECRET_NAME -n $LAST_SECRET_NAMESPACE"
+    fi
+    echo "   • Check port forwards:    uis expose --status"
+    echo "   • Run the app:            see README for run instructions"
+    echo ""
+  fi
+
+  return 0
 }
 
 #------------------------------------------------------------------------------
@@ -332,108 +351,209 @@ _configure_service() {
     esac
   fi
 
-  echo "   📦 Configuring $service..."
+  # ─── Section header ──────────────────────────────────────────────
+  printf "   ─── %s " "$service"
+  local pad_len=$((60 - ${#service}))
+  [ "$pad_len" -lt 0 ] && pad_len=0
+  printf '─%.0s' $(seq 1 $pad_len)
+  echo ""
 
-  # Build args
-  local extra_args=()
-  [ -n "$database" ] && extra_args+=("--database" "$database")
-
-  # K8s namespace + secret name prefix (Phase 1, item 1.9 of
-  # INVESTIGATE-improve-template-docs-with-services).
-  #
-  # namespace: where the deployed app lives — uses subdomain (user-friendly app
-  #   name) if set, otherwise app_name, otherwise the git repo name.
-  # secret_name_prefix: matches the deployment manifest's existing
-  #   {{REPO_NAME}}-db convention. Always the git repo name.
-  #
-  # Both flags are passed only when GIT_REPO is set (i.e., the project has a
-  # git remote). Without it, UIS works in legacy mode (no K8s secret).
+  # ─── Resolve config (namespace + secret_name_prefix) ─────────────
+  # K8s namespace + secret name prefix (Phase 1, item 1.9).
+  # namespace: subdomain → app_name → git repo
+  # secret_name_prefix: always git repo (matches deployment.yaml's {{REPO_NAME}}-db)
+  local namespace=""
+  local secret_prefix=""
   if [ -n "${GIT_REPO:-}" ]; then
-    local namespace="${PARAMS[subdomain]:-${PARAMS[app_name]:-$GIT_REPO}}"
-    extra_args+=("--namespace" "$namespace" "--secret-name-prefix" "$GIT_REPO")
+    namespace="${PARAMS[subdomain]:-${PARAMS[app_name]:-$GIT_REPO}}"
+    secret_prefix="$GIT_REPO"
   fi
 
-  # Handle init file
+  echo "   Database:           ${database:-<none>}"
+  echo "   K8s namespace:      ${namespace:-<none — legacy mode>}"
+  echo "   K8s secret prefix:  ${secret_prefix:-<none — legacy mode>}"
+  echo "   Env var:            $env_var"
+  echo ""
+
+  # Build the actual args array passed to uis_bridge_configure
+  local extra_args=()
+  [ -n "$database" ] && extra_args+=("--database" "$database")
+  if [ -n "$namespace" ] && [ -n "$secret_prefix" ]; then
+    extra_args+=("--namespace" "$namespace" "--secret-name-prefix" "$secret_prefix")
+  fi
+
+  # ─── Init file ───────────────────────────────────────────────────
+  local temp_init=""
   if [ -n "$init_file" ]; then
     local init_path="$CALLER_DIR/$init_file"
+    echo "   📄 Reading init file..."
     if [ ! -f "$init_path" ]; then
-      echo "   ⚠️  Init file not found: $init_file"
+      echo "   ❌ Init file not found: $init_file"
       failed=$((failed + 1))
       failed_services+=("$service — init file not found: $init_file")
       return
     fi
+    local size_bytes lines size_human
+    size_bytes=$(wc -c < "$init_path" | tr -d ' ')
+    lines=$(wc -l < "$init_path" | tr -d ' ')
+    if [ "$size_bytes" -ge 1024 ]; then
+      size_human=$(awk "BEGIN {printf \"%.1f KB\", $size_bytes/1024}")
+    else
+      size_human="$size_bytes bytes"
+    fi
+    echo "   ✓ Path: $init_file"
+    echo "   ✓ Size: $size_human ($lines lines)"
+    echo ""
 
-    # Substitute params in init file and pipe via stdin
-    local temp_init
+    # Substitute params and write to a temp file
     temp_init=$(mktemp)
     substitute_params "$(cat "$init_path")" > "$temp_init"
-
     extra_args+=("--init-file" "-")
-    if uis_bridge_configure "$service" "$app_name" "${extra_args[@]}" < "$temp_init"; then
-      rm -f "$temp_init"
-    else
-      rm -f "$temp_init"
-      echo "   ❌ Failed to configure $service"
-      if [ -n "$UIS_ERROR_DETAIL" ]; then
-        echo ""
-        echo "   Init file failed: $init_file (applied to $service)"
-        echo "   $UIS_ERROR_DETAIL"
-      fi
-      failed=$((failed + 1))
-      failed_services+=("$service — $UIS_ERROR_DETAIL")
-      return
-    fi
-  else
-    if ! uis_bridge_configure "$service" "$app_name" "${extra_args[@]}"; then
-      echo "   ❌ Failed to configure $service"
-      if [ -n "$UIS_ERROR_DETAIL" ]; then
-        echo "   $UIS_ERROR_DETAIL"
-      fi
-      failed=$((failed + 1))
-      failed_services+=("$service — ${UIS_ERROR_DETAIL:-unknown error}")
-      return
-    fi
   fi
 
-  # Success
+  # ─── Show the UIS command being called (copy-pasteable) ──────────
+  echo "   📡 Calling UIS (you can copy-paste this to debug):"
+  local cmd_line="docker exec -i uis-provision-host uis configure $service $app_name"
+  # Group extra_args into flag/value pairs for pretty printing
+  local i=0
+  while [ $i -lt ${#extra_args[@]} ]; do
+    local flag="${extra_args[$i]}"
+    local value=""
+    # Most of our flags take a value; --init-file - is also a flag+value pair
+    if [ $((i + 1)) -lt ${#extra_args[@]} ]; then
+      value="${extra_args[$((i + 1))]}"
+      cmd_line+=" \\
+        $flag $value"
+      i=$((i + 2))
+    else
+      cmd_line+=" \\
+        $flag"
+      i=$((i + 1))
+    fi
+  done
+  cmd_line+=" \\
+        --json"
+  if [ -n "$init_file" ]; then
+    cmd_line+=" \\
+        < $init_file"
+  fi
+  echo "      $cmd_line"
+  echo ""
+
+  # ─── Call UIS ────────────────────────────────────────────────────
+  echo "   Waiting for UIS response..."
+  local call_start=$SECONDS
+  local call_result=0
+  if [ -n "$temp_init" ]; then
+    uis_bridge_configure "$service" "$app_name" "${extra_args[@]}" < "$temp_init" || call_result=$?
+    rm -f "$temp_init"
+  else
+    uis_bridge_configure "$service" "$app_name" "${extra_args[@]}" || call_result=$?
+  fi
+  local call_elapsed=$((SECONDS - call_start))
+
+  if [ "$call_result" -ne 0 ]; then
+    echo "   ❌ Failed (took ${call_elapsed}s)"
+    if [ -n "$UIS_ERROR_DETAIL" ]; then
+      echo ""
+      [ -n "$init_file" ] && echo "   Init file applied: $init_file"
+      echo "   Error: $UIS_ERROR_DETAIL"
+    fi
+    failed=$((failed + 1))
+    failed_services+=("$service — ${UIS_ERROR_DETAIL:-unknown error}")
+    echo ""
+    return
+  fi
+  echo "   ✓ Status: $UIS_STATUS (took ${call_elapsed}s)"
+  echo ""
+
+  # ─── Show what UIS created ───────────────────────────────────────
+  echo "   📦 UIS created:"
+  echo "      Database: ${UIS_DATABASE:-<unknown>}"
+  echo "      Username: ${UIS_USERNAME:-<unknown>}"
+  if [ -n "$UIS_PASSWORD" ]; then
+    echo "      Password: *** (hidden)"
+  fi
+  echo ""
+
+  # ─── Port-forward stacked diagram ────────────────────────────────
+  if [ -n "$UIS_LOCAL_HOST" ] && [ -n "$UIS_LOCAL_PORT" ]; then
+    echo "   🔌 Port forward (created by UIS, lives inside uis-provision-host):"
+    echo ""
+    echo "      ┌─────────────────────────────────────────────────┐"
+    printf  "      │  DCT  →  %-39s│  ← your app connects here\n" "${UIS_LOCAL_HOST}:${UIS_LOCAL_PORT}"
+    echo "      └─────────────────────────────────────────────────┘"
+    echo "                       ↕"
+    echo "      ┌─────────────────────────────────────────────────┐"
+    printf  "      │  Mac/Linux host  →  port %-23s│  ← Docker port-publish\n" "${UIS_LOCAL_PORT}"
+    echo "      └─────────────────────────────────────────────────┘"
+    echo "                       ↕"
+    echo "      ┌─────────────────────────────────────────────────┐"
+    printf  "      │  uis-provision-host container  →  port %-9s│  ← kubectl port-forward\n" "${UIS_LOCAL_PORT}"
+    echo "      └─────────────────────────────────────────────────┘    lives inside this container"
+    if [ -n "$UIS_CLUSTER_HOST" ] && [ -n "$UIS_CLUSTER_PORT" ]; then
+      echo "                       ↕"
+      echo "      ┌─────────────────────────────────────────────────┐"
+      printf  "      │  K8s: %-42s│  ← actual ${service} pod\n" "${UIS_CLUSTER_HOST}:${UIS_CLUSTER_PORT}"
+      echo "      └─────────────────────────────────────────────────┘"
+    fi
+    echo ""
+    echo "      Survives DCT rebuilds. Dies if you restart uis-provision-host."
+    echo "      Manage:  uis expose --status                (list all forwards)"
+    echo "               uis expose ${service} --stop       (tear down this one)"
+    echo ""
+  fi
+
+  # ─── Write .env ──────────────────────────────────────────────────
+  if [ -n "$UIS_LOCAL_URL" ]; then
+    echo "   💾 Writing local URL to .env..."
+    local env_file="$CALLER_DIR/.env"
+    if [ -f "$env_file" ] && grep -q "^${env_var}=" "$env_file"; then
+      sed -i "s|^${env_var}=.*|${env_var}=${UIS_LOCAL_URL}|" "$env_file"
+    else
+      echo "${env_var}=${UIS_LOCAL_URL}" >> "$env_file"
+    fi
+    echo "   ✓ File:  $env_file"
+    echo "   ✓ Key:   $env_var"
+    # Mask password in display
+    local masked_url
+    masked_url=$(echo "$UIS_LOCAL_URL" | sed 's|://\([^:]*\):[^@]*@|://\1:***@|')
+    echo "   ✓ Value: $masked_url"
+    echo ""
+  fi
+
+  # ─── K8s Secret report ───────────────────────────────────────────
+  if [ -n "${UIS_SECRET_NAME:-}" ] && [ -n "${UIS_SECRET_NAMESPACE:-}" ]; then
+    echo "   🔐 K8s Secret (created by UIS for ArgoCD/in-cluster pods):"
+    echo "      Name:      $UIS_SECRET_NAME"
+    echo "      Namespace: $UIS_SECRET_NAMESPACE"
+    echo "      Key:       ${UIS_SECRET_ENV_VAR:-$env_var}"
+    echo "      Verify:    kubectl get secret $UIS_SECRET_NAME -n $UIS_SECRET_NAMESPACE"
+  elif [ -n "$UIS_CLUSTER_URL" ]; then
+    # Legacy fallback: no secret created (older UIS or no GIT_REPO).
+    # Write to .env.cluster so callers that read it still work.
+    local cluster_file="$CALLER_DIR/.env.cluster"
+    if [ -f "$cluster_file" ] && grep -q "^${env_var}=" "$cluster_file"; then
+      sed -i "s|^${env_var}=.*|${env_var}=${UIS_CLUSTER_URL}|" "$cluster_file"
+    else
+      echo "${env_var}=${UIS_CLUSTER_URL}" >> "$cluster_file"
+    fi
+    echo "   ⚠ Legacy mode: cluster URL written to $cluster_file (no K8s secret)"
+  fi
+
+  # Bookkeeping for the summary
   if [ "$UIS_STATUS" = "already_configured" ]; then
-    echo "   ⏭️  $service — already configured"
     skipped=$((skipped + 1))
   else
-    echo "   ✅ $service — configured"
     configured=$((configured + 1))
   fi
   succeeded_services+=("$service")
 
-  # Write local connection URL to .env (for local development)
-  if [ -n "$UIS_LOCAL_URL" ]; then
-    local env_key="$env_var"
-    # Append to .env (create if doesn't exist)
-    if [ -f "$CALLER_DIR/.env" ] && grep -q "^${env_key}=" "$CALLER_DIR/.env"; then
-      # Update existing
-      sed -i "s|^${env_key}=.*|${env_key}=${UIS_LOCAL_URL}|" "$CALLER_DIR/.env"
-    else
-      echo "${env_key}=${UIS_LOCAL_URL}" >> "$CALLER_DIR/.env"
-    fi
-    echo "   → .env: ${env_key}=${UIS_LOCAL_URL} (local)"
-  fi
-
-  # Report the K8s Secret if UIS created one (cluster credentials live there,
-  # not in .env.cluster — the deployment manifest's secretKeyRef reads it).
-  if [ -n "${UIS_SECRET_NAME:-}" ] && [ -n "${UIS_SECRET_NAMESPACE:-}" ]; then
-    echo "   → K8s Secret: ${UIS_SECRET_NAME} in namespace ${UIS_SECRET_NAMESPACE} (cluster)"
-  elif [ -n "$UIS_CLUSTER_URL" ]; then
-    # Legacy fallback: no secret created (e.g., older UIS or no GIT_REPO).
-    # Write to .env.cluster so callers that read it still work.
-    local env_key="$env_var"
-    if [ -f "$CALLER_DIR/.env.cluster" ] && grep -q "^${env_key}=" "$CALLER_DIR/.env.cluster"; then
-      sed -i "s|^${env_key}=.*|${env_key}=${UIS_CLUSTER_URL}|" "$CALLER_DIR/.env.cluster"
-    else
-      echo "${env_key}=${UIS_CLUSTER_URL}" >> "$CALLER_DIR/.env.cluster"
-    fi
-  fi
-
-  echo ""
+  # Remember last successful service for the "Next steps" section
+  LAST_SERVICE="$service"
+  LAST_DATABASE="$UIS_DATABASE"
+  LAST_SECRET_NAME="$UIS_SECRET_NAME"
+  LAST_SECRET_NAMESPACE="$UIS_SECRET_NAMESPACE"
 }
 
 #------------------------------------------------------------------------------
@@ -472,24 +592,39 @@ echo "🔧 Template Configure"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Check UIS bridge prerequisites
+TOTAL_START=$SECONDS
+
+# ─── Check UIS bridge ────────────────────────────────────────────────────────
+echo "🔌 Checking UIS bridge..."
 if ! uis_bridge_check; then
   exit 1
 fi
-
-# Detect git identity for namespace + secret_name_prefix.
-# Best-effort: if there's no git remote, GIT_REPO will be empty and we fall
-# back to legacy mode (no K8s secret created).
-detect_git_identity "$CALLER_DIR" 2>/dev/null || true
-
-# Read template-info.yaml
-YAML_FILE="$CALLER_DIR/template-info.yaml"
-read_template_info_yaml "$YAML_FILE"
-
-echo "📋 Template: $TEMPLATE_ID (install_type: $TEMPLATE_INSTALL_TYPE)"
+echo "   ✓ uis-provision-host container is running"
 echo ""
 
-# Parse and validate params
+# ─── Detect git identity ─────────────────────────────────────────────────────
+# Best-effort: if there's no git remote, GIT_REPO will be empty and we fall
+# back to legacy mode (no K8s secret created).
+echo "🔍 Detecting git identity..."
+detect_git_identity "$CALLER_DIR" 2>/dev/null || true
+if [ -n "${GIT_REPO_FULL:-}" ]; then
+  echo "   ✓ Repo:   $GIT_REPO_FULL"
+  echo "   ✓ Branch: ${GIT_BRANCH:-unknown}"
+else
+  echo "   ⚠ No git remote — will use legacy mode (no K8s secret)"
+fi
+echo ""
+
+# ─── Read template-info.yaml ─────────────────────────────────────────────────
+echo "📄 Reading template-info.yaml..."
+YAML_FILE="$CALLER_DIR/template-info.yaml"
+read_template_info_yaml "$YAML_FILE"
+echo "   ✓ File: $YAML_FILE"
+echo "   ✓ ID:   $TEMPLATE_ID"
+echo "   ✓ Type: $TEMPLATE_INSTALL_TYPE"
+echo ""
+
+# ─── Parse params ────────────────────────────────────────────────────────────
 parse_params "$YAML_FILE"
 
 if [ ${#PARAM_KEYS[@]} -gt 0 ]; then
@@ -502,11 +637,18 @@ if [ ${#PARAM_KEYS[@]} -gt 0 ]; then
   fi
 
   echo "📝 Parameters:"
+  # Compute longest key for alignment
+  _max_key_width=0
   for key in "${PARAM_KEYS[@]}"; do
-    echo "   $key = ${PARAMS[$key]}"
+    [ ${#key} -gt $_max_key_width ] && _max_key_width=${#key}
+  done
+  for key in "${PARAM_KEYS[@]}"; do
+    printf "   %-${_max_key_width}s = %s\n" "$key" "${PARAMS[$key]}"
   done
   echo ""
 fi
 
-# Process requires
+# ─── Process requires ────────────────────────────────────────────────────────
+# TOTAL_START is read by process_requires for the summary box
 process_requires "$YAML_FILE"
+exit $?

@@ -101,25 +101,45 @@ uis_bridge_run_tty() {
 #
 # Returns: 0 on success, 1 on error
 # Sets globals:
-#   UIS_RESPONSE        — full JSON response
-#   UIS_STATUS          — "ok", "already_configured", or "error"
-#   UIS_LOCAL_URL       — local connection URL (e.g., DATABASE_URL for local dev)
-#   UIS_CLUSTER_URL     — cluster connection URL (deprecated, kept for one cycle)
-#   UIS_SECRET_NAME     — K8s secret name (set when --namespace + --secret-name-prefix passed)
+#   UIS_RESPONSE         — full JSON response
+#   UIS_STATUS           — "ok", "already_configured", or "error"
+#   UIS_LOCAL_URL        — local connection URL (e.g., DATABASE_URL for local dev)
+#   UIS_LOCAL_HOST       — local host (e.g., "host.docker.internal")
+#   UIS_LOCAL_PORT       — local port (e.g., 35432, the auto-exposed port-forward)
+#   UIS_CLUSTER_URL      — cluster connection URL
+#   UIS_CLUSTER_HOST     — in-cluster host (e.g., "postgresql.default.svc.cluster.local")
+#   UIS_CLUSTER_PORT     — in-cluster port (e.g., 5432)
+#   UIS_DATABASE         — database name UIS created
+#   UIS_USERNAME         — username UIS created
+#   UIS_PASSWORD         — password UIS generated (handle with care; do not log)
+#   UIS_SECRET_NAME      — K8s secret name (set when --namespace + --secret-name-prefix passed)
 #   UIS_SECRET_NAMESPACE — K8s namespace where the secret lives
-#   UIS_SECRET_ENV_VAR  — env var name in the K8s secret (e.g., DATABASE_URL)
-#   UIS_ERROR_PHASE     — error phase if failed
-#   UIS_ERROR_DETAIL    — error detail if failed
+#   UIS_SECRET_ENV_VAR   — env var name in the K8s secret (e.g., DATABASE_URL)
+#   UIS_ERROR_PHASE      — error phase if failed
+#   UIS_ERROR_DETAIL     — error detail if failed
 #------------------------------------------------------------------------------
 uis_bridge_configure() {
   local service="$1"
   local app_name="$2"
   shift 2
 
-  # Reset secret fields so callers never read stale values from a previous call
+  # Reset all output fields so callers never read stale values from a previous call
+  UIS_RESPONSE=""
+  UIS_STATUS=""
+  UIS_LOCAL_URL=""
+  UIS_LOCAL_HOST=""
+  UIS_LOCAL_PORT=""
+  UIS_CLUSTER_URL=""
+  UIS_CLUSTER_HOST=""
+  UIS_CLUSTER_PORT=""
+  UIS_DATABASE=""
+  UIS_USERNAME=""
+  UIS_PASSWORD=""
   UIS_SECRET_NAME=""
   UIS_SECRET_NAMESPACE=""
   UIS_SECRET_ENV_VAR=""
+  UIS_ERROR_PHASE=""
+  UIS_ERROR_DETAIL=""
 
   local has_stdin=false
   local args=("configure" "$service" "--app" "$app_name" "--json")
@@ -162,7 +182,14 @@ uis_bridge_configure() {
       case "$UIS_STATUS" in
         ok|already_configured)
           UIS_LOCAL_URL=$(echo "$response" | jq -r '.local.database_url // .local.url // ""')
+          UIS_LOCAL_HOST=$(echo "$response" | jq -r '.local.host // ""')
+          UIS_LOCAL_PORT=$(echo "$response" | jq -r '.local.port // ""')
           UIS_CLUSTER_URL=$(echo "$response" | jq -r '.cluster.database_url // .cluster.url // ""')
+          UIS_CLUSTER_HOST=$(echo "$response" | jq -r '.cluster.host // ""')
+          UIS_CLUSTER_PORT=$(echo "$response" | jq -r '.cluster.port // ""')
+          UIS_DATABASE=$(echo "$response" | jq -r '.database // ""')
+          UIS_USERNAME=$(echo "$response" | jq -r '.username // ""')
+          UIS_PASSWORD=$(echo "$response" | jq -r '.password // ""')
           # K8s Secret fields (set when --namespace + --secret-name-prefix passed)
           UIS_SECRET_NAME=$(echo "$response" | jq -r '.secret_name // ""')
           UIS_SECRET_NAMESPACE=$(echo "$response" | jq -r '.secret_namespace // ""')
