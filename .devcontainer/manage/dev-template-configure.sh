@@ -476,9 +476,47 @@ _configure_service() {
   fi
   echo ""
 
-  # ─── Port-forward stacked diagram ────────────────────────────────
+  # ─── Port-forward verification + diagram ─────────────────────────
+  # UIS's JSON response says it created a port-forward, but we verify it
+  # independently. We use TWO checks because each catches different failures:
+  #   1. pgrep inside uis-provision-host — authoritative (process actually exists)
+  #   2. TCP probe from DCT to host.docker.internal:port — what users actually care about
+  # On Docker Desktop / Mac vpnkit gives false-positive TCP successes when the
+  # port-forward process is dead, so the TCP check alone is insufficient.
   if [ -n "$UIS_LOCAL_HOST" ] && [ -n "$UIS_LOCAL_PORT" ]; then
-    echo "   🔌 Port forward (created by UIS, lives inside uis-provision-host):"
+    local pf_process_found=false
+    local pf_tcp_open=false
+
+    if docker exec uis-provision-host pgrep -f "kubectl.*port-forward.*${UIS_LOCAL_PORT}" >/dev/null 2>&1; then
+      pf_process_found=true
+    fi
+    if timeout 2 bash -c "</dev/tcp/${UIS_LOCAL_HOST}/${UIS_LOCAL_PORT}" 2>/dev/null; then
+      pf_tcp_open=true
+    fi
+
+    if $pf_process_found && $pf_tcp_open; then
+      echo "   🔌 Port forward (verified reachable from DCT):"
+    elif $pf_process_found && ! $pf_tcp_open; then
+      echo "   ⚠ Port forward process exists but DCT can't reach it!"
+      echo "      kubectl port-forward is running inside uis-provision-host,"
+      echo "      but TCP to ${UIS_LOCAL_HOST}:${UIS_LOCAL_PORT} from DCT failed."
+      echo "      Likely a Docker bridge/network issue."
+      echo ""
+    elif ! $pf_process_found && $pf_tcp_open; then
+      echo "   ⚠ Port forward MISSING (Docker proxy false positive)"
+      echo "      No kubectl port-forward process found inside uis-provision-host,"
+      echo "      but Docker Desktop's vpnkit is accepting TCP handshakes anyway."
+      echo "      DCT will appear to connect but get no data — your app will hang."
+      echo "      Likely cause: UIS auto-expose silently failed."
+      echo "      Fix: uis expose ${service}"
+      echo ""
+    else
+      echo "   ⚠ Port forward NOT reachable!"
+      echo "      No kubectl port-forward process found, no TCP listener."
+      echo "      Likely cause: UIS auto-expose silently failed."
+      echo "      Fix: uis expose ${service}"
+      echo ""
+    fi
     echo ""
     echo "      ┌─────────────────────────────────────────────────┐"
     printf  "      │  DCT  →  %-39s│  ← your app connects here\n" "${UIS_LOCAL_HOST}:${UIS_LOCAL_PORT}"
@@ -498,9 +536,11 @@ _configure_service() {
       echo "      └─────────────────────────────────────────────────┘"
     fi
     echo ""
-    echo "      Survives DCT rebuilds. Dies if you restart uis-provision-host."
-    echo "      Manage:  uis expose --status                (list all forwards)"
-    echo "               uis expose ${service} --stop       (tear down this one)"
+    if $pf_process_found && $pf_tcp_open; then
+      echo "      Survives DCT rebuilds. Dies if you restart uis-provision-host."
+      echo "      Manage:  uis expose --status                (list all forwards)"
+      echo "               uis expose ${service} --stop       (tear down this one)"
+    fi
     echo ""
   fi
 

@@ -27,7 +27,7 @@
     "remoteEnv": {
         "DCT_HOME": "/opt/devcontainer-toolbox",
         "DCT_WORKSPACE": "/workspace",
-        "DCT_IMAGE_VERSION": "1.7.36",
+        "DCT_IMAGE_VERSION": "1.7.37",
         "DEV_HOST_USER": "${localEnv:USER}",
         "DEV_HOST_USERNAME": "${localEnv:USERNAME}",
         "DEV_HOST_OS": "${localEnv:OS}",
@@ -46,6 +46,12 @@
     },
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "portsAttributes": {
+        "30000-39999": {
+            "label": "UIS service forwarded port (host.docker.internal:<port>)",
+            "onAutoForward": "ignore"
+        }
+    },
     "remoteUser": "vscode",
     "containerUser": "vscode",
     "shutdownAction": "stopContainer",

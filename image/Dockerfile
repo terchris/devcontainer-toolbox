@@ -129,6 +129,14 @@ RUN sudo ln -sf /opt/devcontainer-toolbox/manage/dev-setup.sh /usr/local/bin/dev
     sudo ln -sf /opt/devcontainer-toolbox/manage/dev-tools.sh /usr/local/bin/dev-tools && \
     sudo ln -sf /opt/devcontainer-toolbox/additions/config-host-info.sh /usr/local/bin/config-host-info && \
     sudo ln -sf /opt/devcontainer-toolbox/manage/uis.sh /usr/local/bin/uis && \
+    # uis-exec multi-call shim — proxies kubectl/helm/k9s/etc through
+    # docker exec into uis-provision-host. No tools installed in DCT;
+    # the same script handles every name via $0 dispatch (busybox pattern).
+    # Add new shims by adding another symlink line below.
+    sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/uis-exec && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/kubectl && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/helm && \
+    sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/k9s && \
     # Make all scripts executable (files owned by vscode via --chown)
     chmod +x /opt/devcontainer-toolbox/manage/*.sh && \
     chmod +x /opt/devcontainer-toolbox/additions/*.sh 2>/dev/null || true && \

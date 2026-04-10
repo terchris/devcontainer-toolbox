@@ -124,6 +124,127 @@ Combine `initializeCommand` (runs on host, copies file) with the `KUBECONFIG` en
 Pro: Automatic, no user action, kubeconfig always fresh on container start.
 Con: Need a cross-platform `initializeCommand` script that handles Mac `sed` vs Linux `sed`.
 
+### Option F: `uis-exec` passthrough — proxy kubectl through `uis-provision-host`
+
+**Fundamentally different approach:** don't move the kubeconfig at all. Don't install kubectl in DCT. Instead, proxy `kubectl` (and any other binary in the UIS container) through `docker exec uis-provision-host ...` via thin shims on DCT's PATH.
+
+This is the same multi-call pattern busybox uses, and the same shim pattern DCT v1.7.34+ already uses for the `uis` CLI itself.
+
+**Discovered 2026-04-10** during the v1.7.36 E2E test of `python-basic-webserver-database`, when `dev-template configure`'s "next steps" recommended `kubectl get secret delete-test-db -n delete-test` and the user hit `bash: kubectl: command not found`. DCT doesn't ship kubectl, but uis-provision-host does — and it's the kubectl already configured for the cluster the user is working with.
+
+#### Design
+
+**One generic script: `.devcontainer/manage/uis-exec.sh`**
+
+Looks at `$0` (the name it was called as) and decides what to do:
+
+| Invoked as | What it runs |
+|---|---|
+| `uis-exec kubectl get pods` | `docker exec uis-provision-host kubectl get pods` |
+| `kubectl get pods` (via symlink) | `docker exec uis-provision-host kubectl get pods` |
+| `helm list` (via symlink) | `docker exec uis-provision-host helm list` |
+| `uis-exec bash` | `docker exec -it uis-provision-host bash` (interactive shell into UIS container) |
+| `uis-exec ls /opt` | `docker exec uis-provision-host ls /opt` |
+| `uis-exec` (no args) | Print usage |
+
+```bash
+#!/bin/bash
+# uis-exec — execute commands inside the uis-provision-host container.
+#
+# Multi-call: behaves differently based on $0:
+#   /usr/local/bin/uis-exec kubectl get pods   → docker exec uis-provision-host kubectl get pods
+#   /usr/local/bin/kubectl get pods            → same (via symlink)
+#   /usr/local/bin/helm list                   → same (via symlink)
+set -e
+
+SCRIPT_REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_REAL_PATH")"
+source "$SCRIPT_DIR/lib/uis-bridge.sh"
+
+INVOKED_AS="$(basename "$0")"
+case "$INVOKED_AS" in
+    uis-exec)
+        if [ $# -eq 0 ]; then
+            cat <<'EOF'
+uis-exec — run any command inside the uis-provision-host container
+
+Usage: uis-exec <command> [args]
+
+Examples:
+  uis-exec kubectl get pods
+  uis-exec helm list
+  uis-exec bash               (interactive shell)
+EOF
+            exit 0
+        fi
+        CMD=("$@")
+        ;;
+    *)
+        CMD=("$INVOKED_AS" "$@")
+        ;;
+esac
+
+if ! uis_bridge_check 2>/dev/null; then
+    echo "❌ uis-provision-host is not running" >&2
+    exit 1
+fi
+
+if [ -t 0 ] && [ -t 1 ]; then
+    docker exec -it "$UIS_CONTAINER" "${CMD[@]}"
+elif [ ! -t 0 ]; then
+    docker exec -i "$UIS_CONTAINER" "${CMD[@]}"
+else
+    docker exec "$UIS_CONTAINER" "${CMD[@]}"
+fi
+```
+
+Plus symlinks in `image/Dockerfile`:
+
+```dockerfile
+sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/uis-exec && \
+sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/kubectl && \
+sudo ln -sf /opt/devcontainer-toolbox/manage/uis-exec.sh /usr/local/bin/helm && \
+```
+
+Adding a new shim later (k9s, kubectx, etc.) is one symlink line — zero new code per addition.
+
+#### Pro / Con
+
+**Pro:**
+- **Zero install** in DCT — no kubectl, helm, or any K8s binary in the image
+- **Single source of truth** — the kubectl that DCT uses is the same kubectl uis-provision-host uses, so version drift is impossible
+- **No kubeconfig copying** — uis-provision-host already has the right config for the cluster it manages
+- **No platform issues** — no Mac vs Linux sed, no PowerShell, no path rewriting, no `127.0.0.1` → `host.docker.internal` rewrites
+- **Same proven pattern** as the existing `uis` shim from v1.7.34 (which works flawlessly)
+- **Minimal maintenance** — one script handles all current and future commands; new commands are just symlinks
+- **Natural syntax** — users type `kubectl get pods` like they expect, no awareness of proxying
+
+**Con:**
+- **Only works for clusters managed by uis-provision-host.** A user who wants kubectl against their personal Rancher Desktop cluster (separate from UIS) is not helped by this. Options A-E remain relevant for that use case.
+- **uis-provision-host must be running.** If it's down, kubectl is unavailable. Same constraint as the `uis` shim — and if the user is working on a UIS-deployed app, uis-provision-host should be up anyway.
+- **Three subtleties from the docker exec model** that need documenting:
+  1. **Pipes run on the DCT side, not inside the container.** `kubectl get pods | grep mypod` works (kubectl in container, grep in DCT). Usually what you want.
+  2. **File paths in args are interpreted inside the container.** `kubectl apply -f /workspace/foo.yaml` ❌ fails (no `/workspace` inside uis-provision-host). Workaround: pipe via stdin — `kubectl apply -f - < /workspace/foo.yaml` ✅ works.
+  3. **DCT-side env vars don't propagate.** `KUBECONFIG=/foo kubectl get pods` won't change which config is used inside the container. Usually what you want — the container has the right config.
+
+#### How Option F relates to Options A-E
+
+These aren't mutually exclusive. They serve different audiences:
+
+| User scenario | Best option |
+|---|---|
+| Working on a UIS-deployed app, only needs to talk to the cluster UIS manages | **Option F** (proxy through uis-provision-host) |
+| Working on a personal cluster (Rancher Desktop, EKS, etc.) unrelated to UIS | **Option E** (copy host kubeconfig + URL rewrite) |
+| Both — e.g., dev on UIS cluster, occasionally check personal cluster | **Both** — Option F gives `kubectl` for UIS, user can install a separate `kubectl-personal` tool for personal clusters |
+
+If we ship Option F, it serves the **majority** case (UIS-managed clusters) without any of the kubeconfig complexity. Option E (or another A-E variant) can still be added later for the personal-cluster case.
+
+#### Recommendation
+
+**Ship Option F first.** It solves the immediate problem (the kubectl recommendation in v1.7.36's `dev-template configure` output doesn't work on a fresh DCT) with zero install footprint and zero platform shenanigans. It's the pattern we already validated with the `uis` shim. Cost: ~50 lines of shell + 3 Dockerfile lines.
+
+Then revisit Options A-E later if/when users with personal clusters complain.
+
 ---
 
 ## Cross-Platform sed Challenge
